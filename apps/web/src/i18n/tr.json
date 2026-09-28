@@ -1,9 +1,31 @@
 {
-  "app": {
-    "coreVersion": "stoafi core v{version}"
+  "home": {
+    "title": "Ana sayfa",
+    "welcome": "Stoafi maaşını ve düzenli giderlerini aylık bir plana çevirir. Önce ne girdiğini ve ne çıktığını anlat.",
+    "setUpProfile": "Profilini oluştur",
+    "thisMonth": "Bu ay",
+    "income": "Maaşlar",
+    "obligations": "Düzenli giderler",
+    "living": "Yaşam giderleri",
+    "installments": "Taksitler",
+    "left": "Hepsinden sonra kalan",
+    "overspent": "Aylık giderlerin gelirinin üstünde.",
+    "fundLow": "Acil durum fonun hedefinin altında.",
+    "emergencyFund": "Acil durum fonu",
+    "emergencyFundLine": "{saved} aylık ihtiyaç birikmiş, hedef {target}",
+    "activePlan": "Aktif plan",
+    "needs": "İhtiyaçlar",
+    "wants": "İstekler",
+    "savings": "Birikim",
+    "investing": "Yatırım",
+    "changePlan": "Planı değiştir",
+    "nextInQueue": "Kuyruktaki sıradakiler",
+    "addToQueue": "Kuyruğuna ekle",
+    "openQueue": "Kuyruğu aç"
   },
   "nav": {
     "ariaLabel": "Ana",
+    "home": "Ana sayfa",
     "profile": "Profil",
     "plan": "Plan",
     "queue": "Kuyruk",
@@ -14,11 +36,30 @@
   },
   "profile": {
     "title": "Profil",
-    "monthlyIncome": "Aylık gelir",
     "currentSavings": "Mevcut birikim",
     "emergencyFundMonths": "Acil durum fonu hedefi (ay)",
     "annualInflation": "Yıllık enflasyon beklentisi",
-    "save": "Profili kaydet"
+    "save": "Profili kaydet",
+    "salariesTitle": "Maaşlar",
+    "salariesHint": "Sadece düzenli aylık maaş. Tek seferlik paralar hesaba katılmaz.",
+    "salaryName": "Maaş {n} adı",
+    "salaryNamePlaceholder": "örn. Ana iş",
+    "salaryAmount": "Maaş {n} tutarı",
+    "addSalary": "Maaş ekle",
+    "removeSalary": "Maaş {n} sil",
+    "expensesTitle": "Düzenli giderler",
+    "expensesHint": "Krediler, taksitler, faturalar, abonelikler: her ay hesabından çıkan her şey.",
+    "expenseName": "Gider {n} adı",
+    "expenseNamePlaceholder": "örn. Araba kredisi",
+    "expenseAmount": "Gider {n} tutarı",
+    "expenseType": "Gider {n} türü",
+    "typeNeed": "İhtiyaç",
+    "typeWant": "İstek",
+    "addExpense": "Gider ekle",
+    "removeExpense": "Gider {n} sil",
+    "livingExpenses": "Aylık yaşam giderleri",
+    "livingExpensesHint": "Mutfak ve günlük harcamalar tek bir aylık toplam olarak.",
+    "inflationHint": "Yüzde olarak gir, örn. %30 için 30."
   },
   "plan": {
     "title": "Plan",
@@ -26,7 +67,9 @@
     "needs": "İhtiyaçlar",
     "wants": "İstekler",
     "savings": "Birikim",
-    "investing": "Yatırım"
+    "investing": "Yatırım",
+    "usePlan": "Bu planı kullan",
+    "activePlan": "Aktif plan"
   },
   "queue": {
     "title": "Kuyruk",
@@ -41,7 +84,30 @@
     "important": "önemli",
     "notImportant": "önemli değil",
     "moveUpLabel": "Yukarı taşı",
-    "moveDownLabel": "Aşağı taşı"
+    "moveDownLabel": "Aşağı taşı",
+    "addTitle": "Kuyruğa ekle",
+    "editTitle": "Öğeyi düzenle",
+    "name": "Ad",
+    "price": "Fiyat",
+    "cashPrice": "Peşin fiyat (isteğe bağlı)",
+    "kind": "Tür",
+    "kindWant": "İstek",
+    "kindNeed": "İhtiyaç",
+    "urgency": "Aciliyet",
+    "importanceLabel": "Önem",
+    "level1": "Düşük",
+    "level2": "Orta",
+    "level3": "Yüksek",
+    "expectedUses": "Beklenen kullanım",
+    "add": "Ekle",
+    "saveChanges": "Değişiklikleri kaydet",
+    "cancel": "İptal",
+    "edit": "{name} düzenle",
+    "delete": "{name} sil",
+    "nameRequired": "Bir ad gir.",
+    "priceRequired": "Sıfırdan büyük bir fiyat gir.",
+    "empty": "Kuyrukta henüz bir şey yok. İstediğin ya da ihtiyacın olanları yukarıdan ekle.",
+    "goToProfile": "Profile git"
   },
   "queuePreview": {
     "wantsBeforeAfter": "İstekler önce / sonra",
@@ -51,7 +117,9 @@
     "accept": "Kabul et",
     "iKnow": "Biliyorum",
     "confirm": "Onayla",
-    "calculateWithInstallments": "Taksitle hesapla"
+    "calculateWithInstallments": "Taksitle hesapla",
+    "installmentLoadBeforeAfter": "Taksit yükü önce / sonra",
+    "payCashInstead": "Peşin öde"
   },
   "installments": {
     "title": "Taksitle hesapla",
@@ -60,7 +128,13 @@
     "pv": "Bugünkü değer",
     "realSaving": "Reel tasarruf",
     "select": "Seç",
-    "monthsAriaLabel": "{index}. teklif için ay sayısı"
+    "monthsAriaLabel": "Teklif {index} ay sayısı",
+    "paymentAriaLabel": "Teklif {index} aylık ödeme",
+    "hint": "Her teklifin aylık ödemesini banka ya da mağazanın verdiği tutarla gir.",
+    "totalPaid": "Toplam ödeme",
+    "incomplete": "—",
+    "addOffer": "Teklif ekle",
+    "removeOffer": "Teklif {index} sil"
   },
   "timeline": {
     "coolingDownUntil": "{date} tarihine kadar bekleme süresinde",
@@ -93,7 +167,12 @@
   },
   "decisions": {
     "title": "Kararlar",
-    "totalSaved": "Vazgeçilen alımlarla biriken toplam: {amount}"
+    "totalSaved": "Vazgeçilen alımlarla biriken toplam: {amount}",
+    "outcome": {
+      "bought": "alındı",
+      "postponed": "ertelendi",
+      "skipped": "vazgeçildi"
+    }
   },
   "settings": {
     "title": "Ayarlar",
@@ -103,5 +182,13 @@
     "importBackup": "Yedeği içe aktar",
     "sampleAmountLabel": "Örnek tutar",
     "sampleDateLabel": "Örnek tarih"
+  },
+  "installmentExpenses": {
+    "title": "Satın alımlardan taksitler",
+    "hint": "Kuyruktan taksitle bir şey aldığında otomatik eklenir.",
+    "empty": "Henüz taksitli alım yok.",
+    "row": "{month} ayına kadar ayda {amount}",
+    "thisMonth": "Bu ayki taksitler: {amount}",
+    "remove": "{name} sil"
   }
 }

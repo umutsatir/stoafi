@@ -1,8 +1,10 @@
+import { useMemo } from "react";
 import { create } from "zustand";
 import {
+  installmentCommitments,
   projectSeries,
-  type Card,
   type Commitment,
+  type Card,
   type Decision,
   type Minor,
   type Month,
@@ -12,6 +14,7 @@ import {
   type SinkingFund,
 } from "@stoafi/core";
 import type { Locale } from "@/i18n/messages";
+import type { LoadedState } from "@/storage/bootstrap";
 
 export interface AppState {
   profile: Profile | null;
@@ -20,17 +23,20 @@ export interface AppState {
   sinkingFunds: SinkingFund[];
   cards: Card[];
   decisions: Decision[];
-  commitments: Commitment[];
   locale: Locale;
   currency: string;
+  /** Local date (YYYY-MM-DD) set at the app boundary; core never reads the clock. */
+  today: string;
+  /** False until the first load from Dexie has finished. */
+  hydrated: boolean;
 
+  hydrate: (loaded: LoadedState, today: string) => void;
   setProfile: (profile: Profile) => void;
   setPlanState: (planState: PlanStateInput) => void;
   setQueueItems: (items: QueueItem[]) => void;
   setSinkingFunds: (funds: SinkingFund[]) => void;
   setCards: (cards: Card[]) => void;
   setDecisions: (decisions: Decision[]) => void;
-  setCommitments: (commitments: Commitment[]) => void;
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: string) => void;
 }
@@ -42,17 +48,18 @@ export const useAppStore = create<AppState>((set) => ({
   sinkingFunds: [],
   cards: [],
   decisions: [],
-  commitments: [],
   locale: "en",
   currency: "TRY",
+  today: "1970-01-01",
+  hydrated: false,
 
+  hydrate: (loaded, today) => set({ ...loaded, today, hydrated: true }),
   setProfile: (profile) => set({ profile }),
   setPlanState: (planState) => set({ planState }),
   setQueueItems: (queueItems) => set({ queueItems }),
   setSinkingFunds: (sinkingFunds) => set({ sinkingFunds }),
   setCards: (cards) => set({ cards }),
   setDecisions: (decisions) => set({ decisions }),
-  setCommitments: (commitments) => set({ commitments }),
   setLocale: (locale) => set({ locale }),
   setCurrency: (currency) => set({ currency }),
 }));
@@ -68,5 +75,14 @@ export function deriveProjection(
   months: Month[],
   bucketLimits?: Parameters<typeof projectSeries>[3],
 ) {
-  return projectSeries({ income }, state.commitments, months, bucketLimits);
+  return projectSeries({ income }, installmentCommitments(state.queueItems), months, bucketLimits);
+}
+
+/**
+ * The ledger's active commitments, derived from queue items bought in
+ * installments. Cash purchases are decisions only and never become commitments.
+ */
+export function useCommitments(): Commitment[] {
+  const queueItems = useAppStore((s) => s.queueItems);
+  return useMemo(() => installmentCommitments(queueItems), [queueItems]);
 }

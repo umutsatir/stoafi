@@ -27,11 +27,14 @@ export { exportAll, BackupSchema, type Backup } from "../modules/backup/schema";
 export { importAll, type ImportResult } from "../modules/backup/import";
 
 export { ProfileSchema, type Profile } from "../modules/profile/schema";
+export { hourlyNetIncome, monthlyNeeds, netMonthlyIncome } from "../modules/profile/selectors";
+export { migrateProfileV1ToV2 } from "../modules/profile/migrations";
 export { PlanStateSchema, type PlanStateInput } from "../modules/plan/schema";
 export { strategies as strategyRegistry } from "../modules/plan/strategies-registry";
 export {
   compareStrategies,
   currentAllocation,
+  defaultPlanState,
   type StrategyComparison,
 } from "../modules/plan/selectors";
 export type { Strategy, Insight } from "../strategies/types";
@@ -44,6 +47,11 @@ export { DecisionSchema, type Decision } from "../modules/decisions/schema";
 export { costInWorkHours, costPerUse, eisenhowerQuadrant } from "../modules/queue/selectors";
 export { cooldownStatus, type CooldownStatus } from "../modules/queue/cooldown";
 export { toDraftCommitment } from "../modules/queue/to-commitment";
+export {
+  activeQueueItems,
+  installmentCommitments,
+  toInstallmentCommitment,
+} from "../modules/queue/installment-purchase";
 export { scheduleQueue, type ScheduleResult } from "../modules/queue/scheduler";
 
 export {
@@ -65,6 +73,6 @@ export {
   type OfferResult,
 } from "../modules/installments/selectors";
 export { installmentLoadTimeline, capacityRemaining } from "../modules/installments/capacity";
-export { InstallmentOfferSchema } from "../modules/installments/schema";
+export { InstallmentOfferSchema, type InstallmentOfferInput } from "../modules/installments/schema";
 export { defaultGuardRules, type GuardContext, type GuardRule } from "../modules/guards/schema";
 export { evaluateGuards, type GuardBreach } from "../modules/guards/selectors";

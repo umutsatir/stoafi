@@ -1,9 +1,31 @@
 {
-  "app": {
-    "coreVersion": "stoafi core v{version}"
+  "home": {
+    "title": "Home",
+    "welcome": "Stoafi turns your salary and regular costs into a monthly plan. Start by telling it what comes in and what goes out.",
+    "setUpProfile": "Set up your profile",
+    "thisMonth": "This month",
+    "income": "Salaries",
+    "obligations": "Recurring expenses",
+    "living": "Living costs",
+    "installments": "Installments",
+    "left": "Left after all of these",
+    "overspent": "Your monthly costs are above your income.",
+    "fundLow": "Your emergency fund is below your target.",
+    "emergencyFund": "Emergency fund",
+    "emergencyFundLine": "{saved} months of needs saved, target {target}",
+    "activePlan": "Active plan",
+    "needs": "Needs",
+    "wants": "Wants",
+    "savings": "Savings",
+    "investing": "Investing",
+    "changePlan": "Change plan",
+    "nextInQueue": "Next in your queue",
+    "addToQueue": "Add to your queue",
+    "openQueue": "Open the queue"
   },
   "nav": {
     "ariaLabel": "Main",
+    "home": "Home",
     "profile": "Profile",
     "plan": "Plan",
     "queue": "Queue",
@@ -14,11 +36,30 @@
   },
   "profile": {
     "title": "Profile",
-    "monthlyIncome": "Monthly income",
     "currentSavings": "Current savings",
     "emergencyFundMonths": "Emergency fund target (months)",
     "annualInflation": "Annual inflation expectation",
-    "save": "Save profile"
+    "save": "Save profile",
+    "salariesTitle": "Salaries",
+    "salariesHint": "Regular monthly pay only. One-off money is not counted.",
+    "salaryName": "Salary {n} name",
+    "salaryNamePlaceholder": "e.g. Main job",
+    "salaryAmount": "Salary {n} amount",
+    "addSalary": "Add salary",
+    "removeSalary": "Remove salary {n}",
+    "expensesTitle": "Recurring expenses",
+    "expensesHint": "Loans, installments, bills, subscriptions: anything that leaves your account every month.",
+    "expenseName": "Expense {n} name",
+    "expenseNamePlaceholder": "e.g. Car loan",
+    "expenseAmount": "Expense {n} amount",
+    "expenseType": "Expense {n} type",
+    "typeNeed": "Need",
+    "typeWant": "Want",
+    "addExpense": "Add expense",
+    "removeExpense": "Remove expense {n}",
+    "livingExpenses": "Monthly living costs",
+    "livingExpensesHint": "Groceries and everyday spending as one monthly total.",
+    "inflationHint": "Enter a percent, e.g. 30 for 30%."
   },
   "plan": {
     "title": "Plan",
@@ -26,7 +67,9 @@
     "needs": "Needs",
     "wants": "Wants",
     "savings": "Savings",
-    "investing": "Investing"
+    "investing": "Investing",
+    "usePlan": "Use this plan",
+    "activePlan": "Active plan"
   },
   "queue": {
     "title": "Queue",
@@ -41,7 +84,30 @@
     "important": "important",
     "notImportant": "not important",
     "moveUpLabel": "Move up",
-    "moveDownLabel": "Move down"
+    "moveDownLabel": "Move down",
+    "addTitle": "Add to queue",
+    "editTitle": "Edit item",
+    "name": "Name",
+    "price": "Price",
+    "cashPrice": "Cash price (optional)",
+    "kind": "Type",
+    "kindWant": "Want",
+    "kindNeed": "Need",
+    "urgency": "Urgency",
+    "importanceLabel": "Importance",
+    "level1": "Low",
+    "level2": "Medium",
+    "level3": "High",
+    "expectedUses": "Expected uses",
+    "add": "Add",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "edit": "Edit {name}",
+    "delete": "Delete {name}",
+    "nameRequired": "Enter a name.",
+    "priceRequired": "Enter a price above zero.",
+    "empty": "Nothing in the queue yet. Add what you want or need above.",
+    "goToProfile": "Go to Profile"
   },
   "queuePreview": {
     "wantsBeforeAfter": "Wants before / after",
@@ -51,7 +117,9 @@
     "accept": "Accept",
     "iKnow": "I know",
     "confirm": "Confirm",
-    "calculateWithInstallments": "Calculate with installments"
+    "calculateWithInstallments": "Calculate with installments",
+    "installmentLoadBeforeAfter": "Installment load before / after",
+    "payCashInstead": "Pay cash instead"
   },
   "installments": {
     "title": "Calculate with installments",
@@ -60,7 +128,13 @@
     "pv": "PV",
     "realSaving": "Real saving",
     "select": "Select",
-    "monthsAriaLabel": "Months for offer {index}"
+    "monthsAriaLabel": "Offer {index} months",
+    "paymentAriaLabel": "Offer {index} monthly payment",
+    "hint": "Enter each offer's monthly payment as quoted by the bank or store.",
+    "totalPaid": "Total paid",
+    "incomplete": "—",
+    "addOffer": "Add offer",
+    "removeOffer": "Remove offer {index}"
   },
   "timeline": {
     "coolingDownUntil": "cooling down until {date}",
@@ -93,7 +167,12 @@
   },
   "decisions": {
     "title": "Decisions",
-    "totalSaved": "Total saved by skipped purchases: {amount}"
+    "totalSaved": "Total saved by skipped purchases: {amount}",
+    "outcome": {
+      "bought": "bought",
+      "postponed": "postponed",
+      "skipped": "skipped"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -103,5 +182,13 @@
     "importBackup": "Import backup",
     "sampleAmountLabel": "Sample amount",
     "sampleDateLabel": "Sample date"
+  },
+  "installmentExpenses": {
+    "title": "Installments from purchases",
+    "hint": "Added automatically when you buy something from the queue in installments.",
+    "empty": "No installment purchases yet.",
+    "row": "{amount} a month until {month}",
+    "thisMonth": "Installments this month: {amount}",
+    "remove": "Remove {name}"
   }
 }

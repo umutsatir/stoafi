@@ -37,3 +37,8 @@ export function compareStrategies(
     allocation: strategy.allocate(profile, strategy.params.parse({})),
   }));
 }
+
+/** The plan used until the user picks one: 50/30/20 with its default params. */
+export function defaultPlanState(): PlanState {
+  return { strategyId: "fifty-thirty-twenty", params: {} };
+}

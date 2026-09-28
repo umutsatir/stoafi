@@ -1,3 +1,4 @@
+import { migrateProfileV1ToV2 as migrateProfileShape } from "@stoafi/core";
 import type { Transaction } from "dexie";
 
 /**
@@ -14,5 +15,15 @@ export async function migrateProfileV1ToV2(tx: Transaction): Promise<void> {
       if (row.note === undefined) {
         row.note = null;
       }
+    });
+}
+
+/** v3: rewrites the stored profile to the salaries-only / livingExpenses shape (T9.1). */
+export async function migrateProfileV2ToV3(tx: Transaction): Promise<void> {
+  await tx
+    .table("profile")
+    .toCollection()
+    .modify((row: { data: unknown }) => {
+      row.data = migrateProfileShape(row.data);
     });
 }

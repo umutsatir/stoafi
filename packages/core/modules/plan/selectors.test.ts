@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { compareStrategies, currentAllocation } from "./selectors";
+import { compareStrategies, currentAllocation, defaultPlanState } from "./selectors";
 import { strategies } from "./strategies-registry";
 import type { Profile } from "../profile/schema";
 
 function makeProfile(overrides: Partial<Profile> = {}): Profile {
   return {
-    incomes: [{ label: "Salary", monthly: 10000, variable: false }],
+    incomes: [{ label: "Salary", monthly: 10000 }],
     fixedExpenses: [],
-    avgVariableExpenses: [],
+    livingExpenses: 0,
     savings: 0,
     emergencyFundTargetMonths: 6,
     annualInflationExpectation: 0.3,
@@ -46,5 +46,16 @@ describe("compareStrategies", () => {
       const directAllocation = strategy?.allocate(profile, directParams);
       expect(allocation).toEqual(directAllocation);
     }
+  });
+});
+
+describe("defaultPlanState", () => {
+  it("names a registered strategy and allocates without extra params", () => {
+    const state = defaultPlanState();
+    expect(Object.keys(strategies)).toContain(state.strategyId);
+    const allocation = currentAllocation(makeProfile(), state);
+    expect(allocation.needs + allocation.wants + allocation.savings + allocation.investing).toBe(
+      10000,
+    );
   });
 });

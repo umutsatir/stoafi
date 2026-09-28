@@ -10,9 +10,9 @@ import HealthPage from "@/app/health/page";
 import QueuePage from "@/app/queue/page";
 
 const profile: Profile = {
-  incomes: [{ label: "Salary", monthly: 10000, variable: false }],
+  incomes: [{ label: "Salary", monthly: 10000 }],
   fixedExpenses: [{ label: "Rent", monthly: 4000, bucket: "needs" }],
-  avgVariableExpenses: [],
+  livingExpenses: 0,
   savings: 30000,
   emergencyFundTargetMonths: 6,
   annualInflationExpectation: 0.3,
@@ -39,7 +39,6 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
       profile: null,
       planState: null,
       queueItems: [],
-      commitments: [],
       decisions: [],
     });
   });
@@ -48,6 +47,7 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
     renderWithIntl(
       <QueueList
         items={[item]}
+        onItemsChange={() => undefined}
         profile={profile}
         planState={planState}
         today="2026-01-01"
@@ -60,7 +60,7 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
   });
 
   it("guards/health -> room-for-error", () => {
-    useAppStore.setState({ profile, commitments: [] });
+    useAppStore.setState({ profile });
     renderWithIntl(<HealthPage />);
     expect(screen.getByTestId("lesson-link-room-for-error")).toBeInTheDocument();
   });
@@ -71,7 +71,7 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
   });
 
   it("sinking-funds -> sinking-funds card (linked from queue, its closest existing screen)", () => {
-    useAppStore.setState({ profile, planState, queueItems: [], commitments: [], decisions: [] });
+    useAppStore.setState({ profile, planState, queueItems: [], decisions: [] });
     renderWithIntl(<QueuePage />);
     expect(screen.getByTestId("lesson-link-sinking-funds")).toBeInTheDocument();
   });

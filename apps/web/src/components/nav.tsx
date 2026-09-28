@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 const ROUTES = [
+  { href: "/", key: "home" },
   { href: "/profile", key: "profile" },
   { href: "/plan", key: "plan" },
   { href: "/queue", key: "queue" },

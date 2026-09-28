@@ -1,14 +1,16 @@
 import type { Module } from "../../kernel/module";
 import { ProfileSchema } from "./schema";
-import { hourlyNetIncome, netMonthlyIncome } from "./selectors";
+import { migrateProfileV1ToV2 } from "./migrations";
+import { hourlyNetIncome, monthlyNeeds, netMonthlyIncome } from "./selectors";
 
 export const profileModule: Module<typeof ProfileSchema> = {
   id: "profile",
-  version: 1,
+  version: 2,
   schema: ProfileSchema,
-  migrations: [],
+  migrations: [migrateProfileV1ToV2],
   selectors: {
     hourlyNetIncome,
+    monthlyNeeds,
     netMonthlyIncome,
   },
 };

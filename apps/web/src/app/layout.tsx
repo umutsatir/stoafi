@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import "./globals.css";
+import { AppBootstrap } from "@/components/app-bootstrap";
 import { IntlProvider } from "@/components/intl-provider";
 import { Nav } from "@/components/nav";
 
@@ -31,7 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <IntlProvider>
           <Nav />
-          {children}
+          <AppBootstrap>{children}</AppBootstrap>
         </IntlProvider>
       </body>
     </html>

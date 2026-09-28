@@ -22,6 +22,10 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "download",
   "timeZone",
   "locale",
+  "inputMode",
+  "autoComplete",
+  "aria-hidden",
+  "role",
 ]);
 
 export interface HardcodedStringViolation {

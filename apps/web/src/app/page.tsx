@@ -1,9 +1,15 @@
 "use client";
 
-import { CORE_VERSION } from "@stoafi/core";
-import { useTranslations } from "next-intl";
+import { Dashboard } from "@/components/dashboard";
+import { useAppStore } from "@/store";
 
 export default function Home() {
-  const t = useTranslations("app");
-  return <main>{t("coreVersion", { version: CORE_VERSION })}</main>;
+  const profile = useAppStore((s) => s.profile);
+  const planState = useAppStore((s) => s.planState);
+  const queueItems = useAppStore((s) => s.queueItems);
+  const today = useAppStore((s) => s.today);
+
+  return (
+    <Dashboard profile={profile} planState={planState} queueItems={queueItems} today={today} />
+  );
 }

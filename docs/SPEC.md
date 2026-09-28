@@ -18,7 +18,7 @@ The MVP ships ten modules; investment depth, price tracking, AI and demo mode ar
 
 | Module | What the MVP includes |
 | --- | --- |
-| Profile | Income streams, fixed and average variable expenses, savings, emergency fund target, inflation expectation |
+| Profile | Salaries, recurring obligations (loans, installments, bills, subscriptions), one lump monthly living-costs line, savings, emergency fund target, inflation expectation |
 | Plan | 4 strategies, monthly allocation, strategy comparison, lesson cards, rule-based insights |
 | Purchase queue | Items, Eisenhower quadrant, cost in work hours, cost per use, 30-day rule, drag-and-drop ordering, auto-scheduling |
 | Installment engine | Installment capacity, 12-month load timeline, cash vs. installment NPV comparison |
@@ -101,9 +101,9 @@ type Bucket = 'needs' | 'wants' | 'savings' | 'investing';
 interface Money { amount: Minor; currency: string; }
 
 interface Profile {
-  incomes: { label: string; monthly: Minor; variable: boolean }[];
-  fixedExpenses: { label: string; monthly: Minor; bucket: Bucket; isSubscription?: boolean }[];
-  avgVariableExpenses: { label: string; monthly: Minor; bucket: Bucket }[];
+  incomes: { label: string; monthly: Minor }[];            // salaries only; one-off money is not modeled
+  fixedExpenses: { label: string; monthly: Minor; bucket: Bucket; isSubscription?: boolean }[]; // recurring obligations
+  livingExpenses: Minor;               // lump monthly day-to-day costs (groceries etc.), counted as needs
   savings: Minor;
   emergencyFundTargetMonths: number;   // e.g. 6
   annualInflationExpectation: number;  // e.g. 0.30, user-entered

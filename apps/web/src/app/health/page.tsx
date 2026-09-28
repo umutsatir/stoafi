@@ -1,15 +1,17 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { project } from "@stoafi/core";
+import { monthlyNeeds, project } from "@stoafi/core";
 import { HealthMetrics } from "@/components/health-metrics";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
-import { useAppStore } from "@/store";
+import { monthOf } from "@/lib/clock";
+import { useAppStore, useCommitments } from "@/store";
 
 export default function HealthPage() {
   const profile = useAppStore((s) => s.profile);
-  const commitments = useAppStore((s) => s.commitments);
+  const commitments = useCommitments();
+  const today = useAppStore((s) => s.today);
   const t = useTranslations("health");
   const locale = useLocale() as Locale;
   const roomForErrorLesson = getLessonCard("room-for-error", locale);
@@ -24,10 +26,8 @@ export default function HealthPage() {
   }
 
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
-  const monthlyNeeds = profile.fixedExpenses
-    .filter((e) => e.bucket === "needs")
-    .reduce((sum, e) => sum + e.monthly, 0);
-  const projection = project({ income }, commitments, "2026-01");
+  const needs = monthlyNeeds(profile);
+  const projection = project({ income }, commitments, monthOf(today));
 
   return (
     <main>
@@ -35,7 +35,7 @@ export default function HealthPage() {
       <HealthMetrics
         projection={projection}
         savingsBalance={profile.savings}
-        monthlyNeeds={monthlyNeeds}
+        monthlyNeeds={needs}
       />
       {roomForErrorLesson && (
         <a

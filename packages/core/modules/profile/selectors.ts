@@ -15,3 +15,11 @@ export function hourlyNetIncome(profile: Profile, hoursPerMonth = 160): number {
   if (hoursPerMonth === 0) return 0;
   return netMonthlyIncome(profile) / hoursPerMonth;
 }
+
+/** Needs-bucket recurring obligations plus the lump living-costs line. */
+export function monthlyNeeds(profile: Profile): number {
+  const fixedNeeds = profile.fixedExpenses
+    .filter((e) => e.bucket === "needs")
+    .reduce((sum, e) => sum + e.monthly, 0);
+  return fixedNeeds + profile.livingExpenses;
+}

@@ -597,6 +597,83 @@ Goal: full TR/EN coverage, final lesson-card content for the remaining sourced c
 
 ---
 
+## Phase 9 — Usability pass: inputs, profile model, queue, purchase flow, home
+
+Goal: the app is usable end to end by a real person. Added after user review of the Phase 8 build. Decisions made with the user (recorded here, SPEC updated in T9.1):
+
+- Income is salaries only; one-off money is out of scope. `variable` incomes go away.
+- Expenses are recurring obligations (loans, installments, bills, subscriptions) plus one lump "monthly living costs" line (groceries etc.). `avgVariableExpenses` goes away.
+- A cash purchase is **not** kept as a monthly commitment: confirming it only writes a decision (`bought`). An installment purchase automatically becomes a recurring expense (derived from the queue item, not stored separately).
+- Inflation is user-entered, shown as a percent. The "too low for Turkey" report was the field showing `0.3` for 30%; no country data is invented or fetched.
+
+- [x] **T9.1** Profile schema v2 + SPEC update
+  Goal: `ProfileSchema`: `incomes: { label, monthly }[]` (drop `variable`), keep `fixedExpenses` (now: recurring obligations), replace `avgVariableExpenses` with `livingExpenses: Minor`. Add `monthlyNeeds(profile)` selector (needs-bucket fixed expenses + living expenses); `baby-steps` uses it. Update SPEC's `Profile` interface.
+  Acceptance: tests written first; every existing fixture updated; `pnpm test`, `typecheck`, `lint` pass.
+  Depends on: T8.5
+  Note: the v1->v2 transform lives in core (`profile/migrations.ts`, registered in `profileModule.migrations`, module version 2) so Dexie (T9.2) and any future backup-import path can share it. Backups exported before this change carry the old profile shape and will be rejected by `importAll` until it applies module migrations; noted, not handled here (no released data yet).
+
+- [x] **T9.2** Dexie v3 migration for the profile row
+  Goal: v3 upgrade maps an old row: drops `variable` from incomes, sums `avgVariableExpenses` into `livingExpenses`.
+  Acceptance: test seeds a v2 row and asserts the migrated shape validates against `ProfileSchema`.
+  Depends on: T9.1
+
+- [x] **T9.3** Money and percent input components
+  Goal: `MoneyInput` (user types major units like `1.250,50`, component emits integer `Minor`, locale-aware) and `PercentInput` (user types `30`, emits `0.3`).
+  Acceptance: component tests: typing `300` emits 30000; `0,01` emits 1; empty emits 0; negative rejected; percent `30` emits `0.3` and displays `30`.
+  Depends on: T9.1
+  Note: text is parsed with string arithmetic (no float), so `0,01` is exactly 1. The locale's group separator counts as grouping only between 3-digit groups (`1.250` in tr is 1250); otherwise `,` and `.` both act as a decimal point, so a dot typed on a Turkish keypad still works. Invalid text stays on screen flagged `aria-invalid` but is never emitted. Added `inputMode`, `autoComplete`, `aria-hidden` to the hard-coded-string scanner's attribute allow-list (technical tokens, not UI text).
+
+- [x] **T9.4** Profile form rebuild
+  Goal: salaries list (add/remove), recurring expenses list (add/remove, label + amount + bucket), one living-costs field, savings, emergency months, inflation percent; all money via `MoneyInput`.
+  Acceptance: component test: adding two salaries and one loan and saving calls `onSave` with the expected `Profile`.
+  Depends on: T9.2, T9.3
+  Note: blank rows (no name, zero amount) are dropped on save, so an untouched form still saves (an empty `incomes` list is valid). Recurring expenses offer need/want only; savings/investing are plan buckets, not expenses. Emergency-fund months stays a plain number input (a count, not money).
+
+- [x] **T9.5** App bootstrap: hydrate store, default plan, app clock
+  Goal: on start load profile/plan/queue/decisions/cards from Dexie into the store; default `planState` to 50/30/20 when none is saved (so Queue is never blocked on a missing plan); replace hard-coded `2026-01`/`2026-01-01` with a `today` supplied at the app boundary.
+  Acceptance: test: seeded DB rows appear in the store after bootstrap; with an empty DB `planState` is the default strategy.
+  Depends on: T9.4
+  Note: the shell renders nothing until the first load finishes (`hydrated`), so pages never flash an empty state or compute with the placeholder date. A stored row that no longer validates is logged with `console.error` and skipped rather than crashing startup (it will be overwritten on the next save; a visible warning is not built). Default plan is `defaultPlanState()` in core (50/30/20). Added a shared `storage/instance.ts` db so pages stop each creating a `StoafiDb`. Decisions written by the queue page are still not persisted; T9.7 owns that.
+
+- [x] **T9.5b** Plan: choose the active strategy
+  Goal: each strategy card on the Plan screen gets a "Use this plan" action that saves `planState` (via the repo) and marks the active one; the queue scheduler and guards use it.
+  Acceptance: component test: clicking "Use this plan" on Pay Yourself First persists `{ strategyId: "pay-yourself-first" }` and marks that card active.
+  Depends on: T9.5
+
+- [x] **T9.5c** Show money formatted everywhere
+  Goal: screens currently print raw minor units (`5000` for 50.00). Add a `useMoney()` hook (minor units -> locale/currency string via next-intl) and use it in plan, queue list/preview, health, decisions, cards.
+  Acceptance: component tests updated: 500000 minor renders as the formatted currency string in both `en` and `tr`; no screen renders a raw minor amount.
+  Depends on: T9.5b
+  Note: `useMoney()` formats with `currencyDisplay: "narrowSymbol"` (plain `TRY` in `en` otherwise). The minimum-payment calculator's balance/floor are now `MoneyInput` and its rates `PercentInput`; its default balance is 10,000.00 instead of 10.00. Decision outcomes are translated (`decisions.outcome.*`). The installment calculator still derives each offer's payment as price/months with no way to type a real bank quote; that is fixed in T9.7.
+
+- [x] **T9.6** Queue: add, edit, remove, reorder (persisted)
+  Goal: form to add a wish/need (name, price, need/want, urgency, importance, expected uses, optional cash price); edit and delete; up/down reorder writes `order`; everything persists via the repo.
+  Acceptance: component test: adding two items shows both, reordering swaps months, reload (re-hydrate) keeps order.
+  Depends on: T9.5
+  Note: `QueueList` became controlled (`items` + `onItemsChange`, optional `onSelect`/`onEdit`/`onDelete`), so the page owns the items and persists them; reorder writes every item's renumbered `order` in one Dexie transaction (`storage/queue-repo.ts`). The old duplicate name-button list on the page is gone (the list's name is the select button). Adding requires a name and a price above zero; expected uses defaults to 1. Added `role` to the hard-coded-string scanner's attribute allow-list.
+
+- [x] **T9.7** Purchase flow: cash or installment
+  Goal: "Buy" on a queue item asks cash or installment. Cash: writes a `bought` decision, removes the item, no commitment. Installment: pick an offer, the item becomes an installment expense over its months (derived into `commitments` for `project`, never stored as a second copy) and shows in the expenses view.
+  Acceptance: tests: cash purchase adds a decision and leaves projection unchanged; installment purchase raises `installmentLoad` in exactly the offer's months; guard "I know" flow still applies.
+  Depends on: T9.6
+  Note: an installment purchase is stored as `QueueItem.installmentPurchase` (chosen offer + first payment month; additive optional field, so no schema version bump or migration). The item leaves the waiting queue and its payments are derived by `installmentCommitments()`; nothing is stored twice and the store no longer has a `commitments` field (`useCommitments()` derives it). Cash purchases write a `bought` decision and delete the item. The installment calculator now takes the real monthly payment per offer (rows can be added/removed) because price/months was an interest-free placeholder. The scheduler and timeline now also receive the installment commitments, so bought installments use up bucket room. The profile page lists running installments (`InstallmentExpenses`) with a remove button for mistakes. Settings import now reloads the store from Dexie. Known gap, not fixed here: `project()` ignores profile recurring expenses and living costs, so `freeCash` and bucket room are computed from commitments only; the Home page (T9.8) shows an income-minus-obligations figure separately. Also unresolved: the 20% installment cap is still hard-coded in the page (open question in SPEC backlog).
+
+- [x] **T9.8** Home page
+  Goal: dashboard: this month's income, recurring obligations, living costs, installment load, what is left; next queue items with their months; guard/health highlights; empty-state call to action pointing to Profile.
+  Acceptance: component test for both the empty state and a filled state.
+  Depends on: T9.7
+  Note: "left" is income minus recurring expenses, living costs and this month's installments; cash purchases are not in it (the user pays those from the account). It is computed in the Dashboard rather than from `project().freeCash` because `project()` does not see profile expenses (see T9.7 note). Added a Home link to the nav and dropped the placeholder `app.coreVersion` string. Dashboard skips scheduling when the plan id is unknown instead of letting `currentAllocation` throw.
+
+- [x] **T9.9** Styling baseline
+  Goal: wire Tailwind (already in the stack) and restyle forms, buttons, nav and cards consistently.
+  Acceptance: `pnpm build` passes; existing tests pass; forms have labels, focus states and mobile layout.
+  Depends on: T9.8
+  Note: Tailwind v4 (`@tailwindcss/postcss`) with base styles for the semantic elements in `globals.css` (light/dark via CSS variables, sticky nav, card sections, wrapping list rows, scrolling tables) rather than utility classes on every element, so markup and tests stayed untouched. Checked in Chromium at 420px through profile -> queue -> installment purchase -> home with no console errors. shadcn/ui components are still not used.
+
+**Stop and report after Phase 9.**
+
+---
+
 ## Acceptance criteria mapping
 
 Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task(s) that implement and verify it.
