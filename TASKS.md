@@ -320,10 +320,11 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Depends on: T4.1, T1.5
   Note: the draft's payment amount uses `item.discountedCashPrice` when set, falling back to `item.price` — a cash purchase should use the cash price when the item has one.
 
-- [ ] **T4.6** Guard rule types and default rules
+- [x] **T4.6** Guard rule types and default rules
   Goal: `packages/core/modules/guards/schema.ts` — `GuardRule` type (id, check function signature, severity), and a `defaultGuardRules` data array (not hard-coded logic) implementing SPEC's three default rules: emergency fund floor, installment cap, wants-bucket limit. Rule parameters (cap %, target months) are data, passed in.
   Acceptance: unit tests: emergency-fund rule fails when a draft would drop savings below `emergencyFundTargetMonths` worth of needs; installment-cap rule fails when a draft pushes 12-month load over the cap; wants-limit rule fails when a draft pushes `byBucket.wants.committed` over `byBucket.wants.limit`; each rule passes when the draft doesn't breach it.
   Depends on: T1.9, T2.5, T3.15
+  Note: each rule's `check(ctx: GuardContext)` is a pure comparison; the thresholds themselves (`emergencyFundTargetMonths`, `installmentCapPct`) and the precomputed figures they compare against (`savingsBalanceAfterDraft`, `projectedInstallmentLoad`, `monthlyNeeds`) are supplied by the caller in `GuardContext`, not computed inside `schema.ts` — keeps guard logic decoupled from how the queue/plan modules derive those numbers.
 
 - [ ] **T4.7** Guard evaluation over a draft
   Goal: `packages/core/modules/guards/selectors.ts` — `evaluateGuards(rules: GuardRule[], before: MonthProjection[], after: MonthProjection[]): GuardBreach[]`.
