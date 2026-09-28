@@ -403,7 +403,7 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Depends on: T1.1
   Note: added `breachedRuleIds?: string[]` to express "linked to a breach" — the schema's `.refine` requires `guardBreachConfirmed === true` whenever `breachedRuleIds` is non-empty, enforced at parse time rather than by a separate selector.
 
-- [ ] **T5.8** Savings summary selector
+- [x] **T5.8** Savings summary selector
   Goal: `packages/core/modules/decisions/selectors.ts` — `savingsSummary(decisions: Decision[]): { totalSaved: Minor; count: number }` summing `amount` for `outcome === 'skipped'` (and, per product intent, `postponed` counted separately) — SPEC acceptance: "Decision log shows total amount saved by skipped purchases."
   Acceptance: unit test: a mixed list of bought/postponed/skipped decisions returns `totalSaved` equal to the sum of only the skipped ones' amounts.
   Depends on: T5.7
