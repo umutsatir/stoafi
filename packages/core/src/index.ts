@@ -90,3 +90,10 @@ export { installmentLoadTimeline, capacityRemaining } from "../modules/installme
 export { InstallmentOfferSchema, type InstallmentOfferInput } from "../modules/installments/schema";
 export { defaultGuardRules, type GuardContext, type GuardRule } from "../modules/guards/schema";
 export { evaluateGuards, type GuardBreach } from "../modules/guards/selectors";
+export { suggestedEmergencyFundMonth } from "../modules/health/suggested-emergency-fund";
+export {
+  INFLATION_COUNTRY_CODES,
+  INFLATION_DATA_AS_OF,
+  INFLATION_DATA_SOURCE,
+  suggestedAnnualInflation,
+} from "../modules/profile/inflation-by-country";

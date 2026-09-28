@@ -69,7 +69,13 @@
     "expenseDueDay": "Gider {n} son ödeme günü",
     "endsLabel": "Biter",
     "expenseHasEnd": "Gider {n} için bitiş ayı var",
-    "expenseEndMonth": "Gider {n} bitiş ayı"
+    "expenseEndMonth": "Gider {n} bitiş ayı",
+    "country": "Ülke",
+    "countryPlaceholder": "Bir ülke seç",
+    "suggestedInflationCaption": "Yaklaşık bir veri kümesinden ({asOf}) önerildi. Güncel rakamları kontrol et, gerekirse düzenle.",
+    "emergencyFundReached": "Acil durum fonu hedefine zaten ulaştın.",
+    "emergencyFundOnTrack": "Şu anki hızınla hedefe {month} ayında ulaşırsın.",
+    "emergencyFundUnreachable": "Aylık artan paran hedefe ulaşmaya henüz yetmiyor."
   },
   "plan": {
     "title": "Plan",

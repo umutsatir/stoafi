@@ -1,6 +1,6 @@
 "use client";
 
-import { ProfileSchema } from "@stoafi/core";
+import { ProfileSchema, project } from "@stoafi/core";
 import { useTranslations } from "next-intl";
 import { InstallmentExpenses } from "@/components/installment-expenses";
 import { ProfileForm } from "@/components/profile-form";
@@ -8,7 +8,7 @@ import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem } from "@/storage/queue-repo";
 import { putSingleton } from "@/storage/repo";
-import { useAppStore } from "@/store";
+import { useAppStore, useCommitments } from "@/store";
 import { Page } from "@/components/ui/page";
 
 export default function ProfilePage() {
@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const queueItems = useAppStore((s) => s.queueItems);
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const today = useAppStore((s) => s.today);
+  const commitments = useCommitments();
   const t = useTranslations("profile");
 
   return (
@@ -26,6 +27,7 @@ export default function ProfilePage() {
         initial={profile ?? undefined}
         currency={currency}
         currentMonth={monthOf(today)}
+        installmentLoad={project({ income: 0 }, commitments, monthOf(today)).installmentLoad}
         onSave={async (value) => {
           const saved = await putSingleton(db, "profile", ProfileSchema, value);
           setProfile(saved);

@@ -1,9 +1,18 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Plus, Trash2 } from "lucide-react";
-import { MonthSchema, type Bucket, type Month, type Profile } from "@stoafi/core";
+import {
+  INFLATION_COUNTRY_CODES,
+  INFLATION_DATA_AS_OF,
+  MonthSchema,
+  suggestedAnnualInflation,
+  suggestedEmergencyFundMonth,
+  type Bucket,
+  type Month,
+  type Profile,
+} from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
@@ -18,6 +27,8 @@ export interface ProfileFormProps {
   currency?: string;
   /** Suggested end month when the user turns an end month on. */
   currentMonth?: Month;
+  /** This month's installment payments, taken off the surplus in the emergency-fund estimate. */
+  installmentLoad?: number;
   onSave: (profile: Profile) => void | Promise<void>;
 }
 
@@ -46,8 +57,15 @@ function isBlank(row: { label: string; monthly: number }): boolean {
   return row.label.trim() === "" && row.monthly === 0;
 }
 
-export function ProfileForm({ initial, currency = "TRY", currentMonth, onSave }: ProfileFormProps) {
+export function ProfileForm({
+  initial,
+  currency = "TRY",
+  currentMonth,
+  installmentLoad = 0,
+  onSave,
+}: ProfileFormProps) {
   const t = useTranslations("profile");
+  const locale = useLocale();
   const nextKey = useRef(0);
   const newKey = () => nextKey.current++;
 
@@ -75,6 +93,28 @@ export function ProfileForm({ initial, currency = "TRY", currentMonth, onSave }:
   const [savings, setSavings] = useState(initial?.savings ?? 0);
   const [fundMonths, setFundMonths] = useState(initial?.emergencyFundTargetMonths ?? 6);
   const [inflation, setInflation] = useState(initial?.annualInflationExpectation ?? 0.3);
+  const [country, setCountry] = useState("");
+
+  const regionNames = new Intl.DisplayNames(locale, { type: "region" });
+
+  // Live estimate from what is on screen, not only what was last saved.
+  const monthlyIncome = salaries.reduce((sum, r) => sum + r.monthly, 0);
+  const activeExpenses = expenses.filter((r) => {
+    const end = MonthSchema.safeParse(r.endMonth);
+    return !currentMonth || !end.success || end.data >= currentMonth;
+  });
+  const monthlyNeeds =
+    activeExpenses.filter((r) => r.bucket === "needs").reduce((sum, r) => sum + r.monthly, 0) +
+    livingExpenses;
+  const monthlySurplus =
+    monthlyIncome -
+    activeExpenses.reduce((sum, r) => sum + r.monthly, 0) -
+    livingExpenses -
+    installmentLoad;
+  const targetAmount = Math.round(monthlyNeeds * fundMonths);
+  const completionMonth = currentMonth
+    ? suggestedEmergencyFundMonth(savings, monthlyNeeds, fundMonths, monthlySurplus, currentMonth)
+    : undefined;
 
   function patchSalary(key: number, patch: Partial<SalaryRow>) {
     setSalaries((rows) => rows.map((r) => (r.key === key ? { ...r, ...patch } : r)));
@@ -305,8 +345,43 @@ export function ProfileForm({ initial, currency = "TRY", currentMonth, onSave }:
               value={fundMonths}
               onChange={(e) => setFundMonths(Math.max(0, Number(e.target.value)))}
             />
+            {currentMonth && (
+              <p data-testid="emergency-fund-caption" className="text-xs text-muted-foreground">
+                {savings >= targetAmount
+                  ? t("emergencyFundReached")
+                  : completionMonth
+                    ? t("emergencyFundOnTrack", { month: completionMonth })
+                    : t("emergencyFundUnreachable")}
+              </p>
+            )}
           </Field>
-          <Field label={t("annualInflation")} htmlFor="inflation" hint={t("inflationHint")}>
+          <Field label={t("country")} htmlFor="country">
+            <NativeSelect
+              id="country"
+              value={country}
+              onChange={(e) => {
+                setCountry(e.target.value);
+                const rate = suggestedAnnualInflation(e.target.value);
+                if (rate !== undefined) setInflation(rate);
+              }}
+            >
+              <option value="">{t("countryPlaceholder")}</option>
+              {INFLATION_COUNTRY_CODES.map((code) => (
+                <option key={code} value={code}>
+                  {regionNames.of(code) ?? code}
+                </option>
+              ))}
+            </NativeSelect>
+          </Field>
+          <Field
+            label={t("annualInflation")}
+            htmlFor="inflation"
+            hint={
+              country
+                ? t("suggestedInflationCaption", { asOf: INFLATION_DATA_AS_OF })
+                : t("inflationHint")
+            }
+          >
             <PercentInput id="inflation" value={inflation} onChange={setInflation} />
           </Field>
         </CardContent>

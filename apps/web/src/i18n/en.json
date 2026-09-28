@@ -69,7 +69,13 @@
     "expenseDueDay": "Expense {n} due day",
     "endsLabel": "Ends",
     "expenseHasEnd": "Expense {n} has an end month",
-    "expenseEndMonth": "Expense {n} end month"
+    "expenseEndMonth": "Expense {n} end month",
+    "country": "Country",
+    "countryPlaceholder": "Choose a country",
+    "suggestedInflationCaption": "Suggested from an approximate snapshot ({asOf}). Check current figures and edit if needed.",
+    "emergencyFundReached": "You already have your emergency fund target.",
+    "emergencyFundOnTrack": "At your current pace you reach the target in {month}.",
+    "emergencyFundUnreachable": "Your monthly surplus is not enough to reach the target yet."
   },
   "plan": {
     "title": "Plan",

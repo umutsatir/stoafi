@@ -681,13 +681,14 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.10
   Note: days are optional and read through `payDayOf`/`dueDayOf` (default 1st), so stored profiles need no migration; the form only saves a day once the user picks one. `monthlyNeeds(profile, month?)` and the dashboard's obligations skip expenses past their `endMonth`; strategies still use the month-agnostic total. An end month that is not yet a full `YYYY-MM` is left out on save. Exported `MonthSchema` from the core barrel. The user's branch also kept `variable` incomes and `avgVariableExpenses`; this branch follows the user's later instruction (salaries only, one lump living-costs line), so only the day/end-month fields are ported.
 
-- [ ] **T9.12** Country inflation snapshot with a suggested value
+- [x] **T9.12** Country inflation snapshot with a suggested value
   Goal: bundle the user's `inflation-by-country.json` (illustrative snapshot, TR 38%, `asOf` shown in the UI) and a country select next to the inflation field that pre-fills a value the user can overwrite. No network.
   Depends on: T9.10
 
-- [ ] **T9.13** Suggested emergency-fund completion month
+- [x] **T9.13** Suggested emergency-fund completion month
   Goal: port `suggestedEmergencyFundMonth` and show the caption under the emergency-fund target.
   Depends on: T9.10
+  Note: the caption is computed live from the form's own state (salaries, active expenses, living costs, savings, target months) minus this month's installment load, so it updates while typing; expenses past their end month do not count. Built together with T9.12 in the same form, so both share one commit.
 
 - [ ] **T9.14** Separate Income & Expenses screen
   Goal: the user's `/income-expenses` route holding salaries and recurring expenses, with the profile screen reduced to savings, emergency-fund target and inflation.

@@ -189,4 +189,97 @@ describe("ProfileForm", () => {
       expect(screen.getByLabelText("Expense 1 end month")).toHaveValue("2027-01");
     });
   });
+
+  describe("country inflation suggestion", () => {
+    it("fills inflation from the chosen country but leaves it editable", () => {
+      const onSave = vi.fn();
+      renderWithIntl(<ProfileForm onSave={onSave} />);
+      expect(screen.getByLabelText("Annual inflation expectation")).toHaveValue("30");
+
+      fireEvent.change(screen.getByLabelText("Country"), { target: { value: "TR" } });
+      expect(screen.getByLabelText("Annual inflation expectation")).toHaveValue("38");
+      expect(screen.getByText(/approximate snapshot \(2025-06\)/i)).toBeInTheDocument();
+
+      type("Annual inflation expectation", "45");
+      expect(screen.getByLabelText("Annual inflation expectation")).toHaveValue("45");
+      fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+      expect(onSave.mock.calls[0]?.[0].annualInflationExpectation).toBeCloseTo(0.45, 10);
+    });
+
+    it("leaves inflation alone when no country is chosen", () => {
+      renderWithIntl(<ProfileForm onSave={vi.fn()} />);
+      fireEvent.change(screen.getByLabelText("Country"), { target: { value: "" } });
+      expect(screen.getByLabelText("Annual inflation expectation")).toHaveValue("30");
+    });
+
+    it("lists countries by their localized names", () => {
+      renderWithIntl(<ProfileForm onSave={vi.fn()} />, "tr");
+      expect(screen.getByRole("option", { name: "Türkiye" })).toHaveValue("TR");
+    });
+  });
+
+  describe("emergency fund completion month", () => {
+    const initial: Profile = {
+      incomes: [{ label: "Job", monthly: 200_000 }],
+      fixedExpenses: [{ label: "Rent", monthly: 100_000, bucket: "needs" }],
+      livingExpenses: 0,
+      savings: 0,
+      emergencyFundTargetMonths: 6,
+      annualInflationExpectation: 0.3,
+    };
+
+    it("suggests the month the target is reached at the current pace", () => {
+      // needs 1,000.00 x 6 = 6,000.00 target, surplus 1,000.00 a month -> 6 months
+      renderWithIntl(<ProfileForm initial={initial} currentMonth="2026-09" onSave={vi.fn()} />);
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("2027-03");
+    });
+
+    it("updates as the target months change", () => {
+      renderWithIntl(<ProfileForm initial={initial} currentMonth="2026-09" onSave={vi.fn()} />);
+      type("Emergency fund target (months)", "3");
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("2026-12");
+    });
+
+    it("says so when the target is already met", () => {
+      renderWithIntl(
+        <ProfileForm
+          initial={{ ...initial, savings: 600_000 }}
+          currentMonth="2026-09"
+          onSave={vi.fn()}
+        />,
+      );
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent(
+        "already have your emergency fund target",
+      );
+    });
+
+    it("says so when the surplus can never close the gap", () => {
+      renderWithIntl(
+        <ProfileForm
+          initial={{ ...initial, livingExpenses: 100_000 }}
+          currentMonth="2026-09"
+          onSave={vi.fn()}
+        />,
+      );
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("not enough to reach");
+    });
+
+    it("subtracts this month's installments from the surplus", () => {
+      renderWithIntl(
+        <ProfileForm
+          initial={initial}
+          currentMonth="2026-09"
+          installmentLoad={50_000}
+          onSave={vi.fn()}
+        />,
+      );
+      // surplus 500.00 -> 12 months
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("2027-09");
+    });
+
+    it("is hidden without a current month", () => {
+      renderWithIntl(<ProfileForm initial={initial} onSave={vi.fn()} />);
+      expect(screen.queryByTestId("emergency-fund-caption")).not.toBeInTheDocument();
+    });
+  });
 });
