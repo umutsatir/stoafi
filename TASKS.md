@@ -249,7 +249,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: same as T3.7.
   Depends on: T3.5
 
-- [ ] **T3.10** Conscious Spending Plan strategy
+- [x] **T3.10** Conscious Spending Plan strategy
   Goal: `packages/core/strategies/conscious-spending.ts` — `allocate` implements four categories mapped onto the app's `Bucket` set (fixed costs→needs, investments→investing, savings→savings, guilt-free spending→wants) per configurable percentages; `diagnose` flags overspend in guilt-free/wants bucket.
   Acceptance: unit tests mirroring T3.6.
   Depends on: T3.4
