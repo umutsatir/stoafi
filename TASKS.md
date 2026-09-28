@@ -413,10 +413,11 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Acceptance: registers via kernel registry without error.
   Depends on: T5.8
 
-- [ ] **T5.10** Backup schema versioning and export
+- [x] **T5.10** Backup schema versioning and export
   Goal: `packages/core/modules/backup/schema.ts` — a top-level `BackupSchema` (`{ version: number; exportedAt: string; data: Record<moduleId, unknown[]> }`) that composes every module's own Zod schema (profile, plan, queue, installments, sinking-funds, cards, health has none, guards has none stored, decisions, and future modules) via the registry (T1.6), so backup "owns: –, produces: JSON export/import, reads: all schemas" per SPEC's table.
   Acceptance: unit test: `exportAll(registry, storeSnapshot)` (pure function taking already-loaded data, no Dexie import) produces an object validating against `BackupSchema`; round-tripping through `JSON.stringify`/`JSON.parse` and re-validating still passes.
   Depends on: T1.6, T3.3, T3.15, T4.11, T2.7, T2.10, T5.4, T5.9
+  Note: `exportAll` takes `exportedAt: string` as an explicit argument (never `Date.now()` internally, per the kernel/module determinism rule) and silently drops any `storeSnapshot` key that isn't a registered module id (forward-compat with stale snapshot data), rather than throwing.
 
 - [ ] **T5.11** Backup import with per-module schema validation
   Goal: `importAll(registry, backupJson: unknown): { data: Record<string, unknown[]> } | { errors: string[] }` — validates the outer `BackupSchema` first, then each module's data against that module's own schema, collecting all errors rather than throwing on the first one.
