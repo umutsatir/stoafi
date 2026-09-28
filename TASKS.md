@@ -270,7 +270,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: same as T3.7.
   Depends on: T3.5
 
-- [ ] **T3.14** Plan module — strategy selection and bucket limits
+- [x] **T3.14** Plan module — strategy selection and bucket limits
   Goal: `packages/core/modules/plan/schema.ts` (selected strategy id + params) and `packages/core/modules/plan/selectors.ts` — `currentAllocation(profile, planState): Record<Bucket, Minor>` dispatching to the selected strategy's `allocate`, and `compareStrategies(profile, allStrategies): { strategyId: string; allocation: Record<Bucket, Minor> }[]` for side-by-side comparison (SPEC acceptance: "shows the monthly allocation for each of the 4 strategies, side by side").
   Acceptance: unit test: `compareStrategies` with all 4 registered strategies returns 4 results for one profile, each internally consistent with that strategy's direct `allocate` output.
   Depends on: T3.6, T3.8, T3.10, T3.12
