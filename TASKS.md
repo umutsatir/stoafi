@@ -514,7 +514,7 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Acceptance: component test: a fixture draft + card combination that triggers a shift renders the tip text with the correct day count; accepting updates the draft's payment month in the store.
   Depends on: T7.5, T5.4
 
-- [ ] **T7.9** Health metrics screen
+- [x] **T7.9** Health metrics screen
   Goal: renders savings rate, emergency fund months, installment ratio, runway (T5.5) from the current projection.
   Acceptance: component test with a fixture profile/ledger renders all four metrics matching direct selector output.
   Depends on: T7.1, T5.6
