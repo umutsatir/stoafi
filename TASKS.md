@@ -326,10 +326,11 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Depends on: T1.9, T2.5, T3.15
   Note: each rule's `check(ctx: GuardContext)` is a pure comparison; the thresholds themselves (`emergencyFundTargetMonths`, `installmentCapPct`) and the precomputed figures they compare against (`savingsBalanceAfterDraft`, `projectedInstallmentLoad`, `monthlyNeeds`) are supplied by the caller in `GuardContext`, not computed inside `schema.ts` — keeps guard logic decoupled from how the queue/plan modules derive those numbers.
 
-- [ ] **T4.7** Guard evaluation over a draft
-  Goal: `packages/core/modules/guards/selectors.ts` — `evaluateGuards(rules: GuardRule[], before: MonthProjection[], after: MonthProjection[]): GuardBreach[]`.
+- [x] **T4.7** Guard evaluation over a draft
+  Goal: `packages/core/modules/guards/selectors.ts` — `evaluateGuards(rules: GuardRule[], ctx: GuardContext): GuardBreach[]`.
   Acceptance: unit test: a draft that breaches 2 of 3 default rules returns exactly 2 breaches with correct rule ids; a clean draft returns an empty array.
   Depends on: T4.6
+  Note: signature changed from the originally planned `(rules, before[], after[])` to `(rules, ctx: GuardContext)` — T4.6 already settled on `GuardContext` (not raw `MonthProjection[]`) as what a `GuardRule.check` needs, since the emergency-fund and installment-cap rules require fields (`savingsBalanceAfterDraft`, `emergencyFundTargetMonths`, `projectedInstallmentLoad`, `installmentCapPct`) that aren't derivable from `MonthProjection` alone.
 
 - [ ] **T4.8** Guards module object with `contributes.guards`
   Goal: `packages/core/modules/guards/module.ts` — `Module` (id `'guards'`) whose `contributes.guards` exposes `defaultGuardRules`, matching SPEC's cross-module `contributes` mechanism (guards read projection read-only, never write).
