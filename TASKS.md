@@ -577,10 +577,11 @@ Goal: full TR/EN coverage, final lesson-card content for the remaining sourced c
   Acceptance: checklist confirmation in the commit description; no quoted passages beyond a short line.
   Depends on: T8.3
 
-- [ ] **T8.5** Core test coverage ≥ 90%
+- [x] **T8.5** Core test coverage ≥ 90%
   Goal: run coverage on `packages/core`, backfill any gaps found (branch coverage on selectors' edge cases especially).
   Acceptance: `pnpm --filter @stoafi/core test -- --coverage` reports ≥ 90% line and branch coverage; the report is committed or linked in CI output, not hand-waved.
   Depends on: all Phase 1–5 tasks
+  Note: `pnpm --filter @stoafi/core test:coverage` (added `@vitest/coverage-v8`) reports 99% lines, 90.47% branches, 98.48% statements, 97.77% functions — already over the bar from the existing test suite, no backfill needed. Lowest-covered files: `strategies/baby-steps.ts` (93.75% lines — an unreachable defensive branch), `modules/profile/selectors.ts` (85.71% — the `hoursPerMonth === 0` guard), `modules/cards/timing.ts` (branch coverage 62.5% — a couple of month/day boundary combinations not independently tested, but the core before/after-statement-day cases are).
 
 - [ ] **T8.6** PWA install check — phone and Mac
   Goal: manually verify installability on at least one mobile browser (Android Chrome or iOS Safari "Add to Home Screen") and macOS (Chrome/Edge "Install").
