@@ -294,7 +294,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
 
 Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldown, and the guard system.
 
-- [ ] **T4.1** Queue item schema
+- [x] **T4.1** Queue item schema
   Goal: `packages/core/modules/queue/schema.ts` — Zod schema for the queue item fields listed in SPEC ("Queue item fields": name, price, optional discounted cash price, installment offers, urgency 1–3, importance 1–3, need/want, expected uses, added date, price updated date), plus `id`, `order` (for drag-and-drop persistence).
   Acceptance: unit tests: a minimal valid item (no installment offers) parses; urgency/importance outside 1–3 rejected; `installmentOffers` reuses `InstallmentOfferSchema` from T2.6.
   Depends on: T2.6
