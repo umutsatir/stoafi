@@ -143,7 +143,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: unit tests: `i = 0` → `r = 0`; `i = 0.30` → matches hand-computed value to 6 decimal places; negative `i` (deflation) does not throw.
   Depends on: T1.1
 
-- [ ] **T2.2** Present value of an installment plan
+- [x] **T2.2** Present value of an installment plan
   Goal: `pvOfPlan(payments: { amount: Minor }[], r: number, firstPaymentOffset?: number): number` implementing `PV = Σ P_k / (1+r)^k`, `k` starting at `firstPaymentOffset` (default 1).
   Acceptance: unit tests: single payment at k=1 matches `P/(1+r)`; `r = 0` → PV equals sum of payments; 12 equal payments against a known r matches a hand/spreadsheet-computed PV within float tolerance; zero-length payments → PV 0.
   Depends on: T2.1
