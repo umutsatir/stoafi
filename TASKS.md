@@ -392,7 +392,7 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Acceptance: unit tests per formula matching the table, including a zero-denominator case for each (e.g. zero net income) returning a defined sentinel without throwing.
   Depends on: T1.7, T3.1
 
-- [ ] **T5.6** Health module object
+- [x] **T5.6** Health module object
   Goal: `packages/core/modules/health/module.ts` — `Module` (id `'health'`, no owned schema per SPEC's table — `owns: –`).
   Acceptance: registers via kernel registry without error; selectors match T5.5 direct exports.
   Depends on: T5.5
