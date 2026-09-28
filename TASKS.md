@@ -366,7 +366,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
 
 Goal: remaining core modules — statement/due-date timing, ratio-based health metrics, decision logging, JSON export/import.
 
-- [ ] **T5.1** Card schema
+- [x] **T5.1** Card schema
   Goal: `packages/core/modules/cards/schema.ts` — `CardSchema` (label, statementDay: 1–31, dueDay: 1–31).
   Acceptance: unit tests: valid card parses; `statementDay`/`dueDay` outside 1–31 rejected.
   Depends on: T1.1
