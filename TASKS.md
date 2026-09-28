@@ -163,7 +163,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: unit tests: two overlapping installment commitments sum correctly per month across a 12-month window; a commitment outside the window is excluded; `capacityRemaining` returns 0 (not negative) when load already exceeds the cap, with a test asserting no negative capacity is ever returned.
   Depends on: T1.9, T2.4
 
-- [ ] **T2.6** Installment schema and Zod validation
+- [x] **T2.6** Installment schema and Zod validation
   Goal: `packages/core/modules/installments/schema.ts` — `InstallmentOfferSchema` (months, per-payment amounts, optional discounted cash price) matching SPEC's queue-item installment offer shape.
   Acceptance: unit tests: a valid offer parses; an offer with a negative payment or zero months is rejected; property test (fast-check) generates random valid offers and asserts they always round-trip through `compareOffers` without throwing.
   Depends on: T2.4
