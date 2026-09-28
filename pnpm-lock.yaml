@@ -82,9 +82,9 @@ importers:
 
   packages/lessons:
     dependencies:
-      zod:
-        specifier: ^4.6.5
-        version: 4.6.5
+      '@stoafi/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       '@stoafi/tsconfig':
         specifier: workspace:*

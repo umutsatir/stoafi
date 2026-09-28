@@ -223,7 +223,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Depends on: T1.4, T1.7, T3.1
   Note: `Strategy.lesson` is typed as `{ id: string }` for now since it precedes T3.5's real `LessonCard` schema in build order; tighten to the real type once T3.5 lands.
 
-- [ ] **T3.5** `LessonCard` schema
+- [x] **T3.5** `LessonCard` schema
   Goal: `packages/core/kernel/lesson.ts` — Zod schema matching SPEC's `LessonCard` interface (id, title, source{author, work}, principle, formula?, fitsWhen, critique).
   Acceptance: unit test parses one valid card and rejects a card missing `principle`; replace the placeholder schema used ad hoc in T0.10 with this one and re-run T0.10's test.
   Depends on: T1.1

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { LessonCardPlaceholderSchema } from "./schema";
+import { LessonCardSchema } from "@stoafi/core";
 
 const packageRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -13,7 +13,7 @@ function jsonFilesIn(dir: string): string[] {
 }
 
 describe("lesson card JSON files", () => {
-  it("every en and tr file parses against the placeholder schema", () => {
+  it("every en and tr file parses against the kernel LessonCard schema", () => {
     const files = [
       ...jsonFilesIn(join(packageRoot, "en")),
       ...jsonFilesIn(join(packageRoot, "tr")),
@@ -23,7 +23,7 @@ describe("lesson card JSON files", () => {
 
     for (const file of files) {
       const raw = readFileSync(file, "utf-8");
-      const result = LessonCardPlaceholderSchema.safeParse(JSON.parse(raw));
+      const result = LessonCardSchema.safeParse(JSON.parse(raw));
       expect(result.success, `${file} failed schema validation`).toBe(true);
     }
   });
