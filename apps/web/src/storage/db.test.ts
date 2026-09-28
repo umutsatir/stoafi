@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { StoafiDb } from "./db";
 
 describe("StoafiDb", () => {
-  it("opens with all expected tables at version 1", async () => {
+  it("opens with all expected tables", async () => {
     const db = new StoafiDb(`test-${Math.random()}`);
     await db.open();
 
@@ -10,7 +10,6 @@ describe("StoafiDb", () => {
     expect(tableNames).toEqual(
       ["cards", "decisions", "guards", "plan", "profile", "queue", "sinkingFunds"].sort(),
     );
-    expect(db.verno).toBe(1);
 
     db.close();
   });

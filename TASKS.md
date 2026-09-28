@@ -449,10 +449,11 @@ Goal: local persistence in `apps/web`, wired to core schemas, with a real migrat
   Acceptance: test: writing a valid profile succeeds and is readable back; writing an invalid profile (e.g. negative savings) throws before any Dexie call (verified via a spy showing the Dexie method was never invoked).
   Depends on: T6.1
 
-- [ ] **T6.3** Migration harness — version bump example
+- [x] **T6.3** Migration harness — version bump example
   Goal: `apps/web/src/storage/migrations.ts` establishing the pattern: a Dexie `.version(2).stores(...).upgrade(tx => ...)` step, demonstrated with one real, minimal schema change (e.g. adding a nullable field to the profile table) so the pattern exists before real modules need it.
   Acceptance: test: a DB seeded at version 1 with sample data, then opened against the version-2 definition, upgrades without data loss (assert the pre-existing row is still present and the new field has the migration's default).
   Depends on: T6.1
+  Note: added `version(2)` directly to `StoafiDb`'s constructor in `db.ts` (Dexie chains versions on one class) rather than a separate class — `migrations.ts` holds the upgrade function. `StoafiDb` now opens at version 2 by default, so T6.1's test dropped its `db.verno === 1` assertion (table-existence is what that task actually cared about; the version number was incidental). The v1→v2 test seeds a plain `Dexie` instance with only the v1 definition (simulating a real pre-existing user DB) before opening it with `StoafiDb`, to prove a genuine upgrade path rather than just opening a fresh v2 DB.
 
 - [ ] **T6.4** Backup export/import wired to Dexie
   Goal: `apps/web/src/storage/backup.ts` — `exportToJson(): Promise<string>` and `importFromJson(json: string): Promise<ImportResult>` calling core's `exportAll`/`importAll` (T5.10/T5.11) against live Dexie tables, wrapped in a transaction for import (all-or-nothing per SPEC acceptance: "JSON export → clear data → import restores everything").

@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from "dexie";
+import { migrateProfileV1ToV2 } from "./migrations";
 
 /**
  * Singleton-shaped tables (profile, plan, guards) always store their one
@@ -37,5 +38,18 @@ export class StoafiDb extends Dexie {
       cards: "id",
       decisions: "id",
     });
+
+    // v2 demonstrates the migration pattern; see migrations.ts.
+    this.version(2)
+      .stores({
+        profile: "id",
+        plan: "id",
+        guards: "id",
+        queue: "id",
+        sinkingFunds: "id",
+        cards: "id",
+        decisions: "id",
+      })
+      .upgrade(migrateProfileV1ToV2);
   }
 }
