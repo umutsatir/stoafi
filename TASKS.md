@@ -281,7 +281,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Depends on: T3.14, T1.9
   Note: `project()`'s `bucketLimits` option was already added in T1.8 (kept the kernel API forward-compatible ahead of plan existing), so no kernel change was needed here — this task just adds the plan module object and the integration test proving `currentAllocation` output flows into it.
 
-- [ ] **T3.16** Lesson-card content review pass
+- [x] **T3.16** Lesson-card content review pass
   Goal: read every card written in T3.7/T3.9/T3.11/T3.13 against the source book/letters and confirm no passage is quoted beyond a short line, per SPEC's "Lesson cards and sources" rules.
   Acceptance: a checklist comment (not code) in the PR/commit description confirming the review; no schema change. This task exists to force the human-in-the-loop check SPEC requires ("each card reviewed against the original book before release").
   Depends on: T3.7, T3.9, T3.11, T3.13
