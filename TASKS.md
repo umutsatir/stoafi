@@ -444,7 +444,7 @@ Goal: local persistence in `apps/web`, wired to core schemas, with a real migrat
   Depends on: T5.12, T0.8
   Note: no separate `installments` table — installment offers are embedded inside queue items (`QueueItem.installmentOffers`), not a standalone list per SPEC's module table ("installments... Owns: Installment offers per item"). `guards` does get a table (it owns "Rule thresholds" per SPEC's table, materialized as `GuardThresholdsSchema` in T4.8). `profile`, `plan` and `guards` are singleton-shaped (one row, not a list) — their tables store that one row under a fixed `SINGLETON_ID`, since their core Zod schemas describe a single object, not per-record items with their own `id`. Added `vitest`/`fake-indexeddb` to `apps/web` and a `test` script (removed in T0.10 for having no tests yet); also added `"type": "module"` to `apps/web/package.json` to silence a Vite CJS/ESM config warning.
 
-- [ ] **T6.2** Write-through validation on every table write
+- [x] **T6.2** Write-through validation on every table write
   Goal: `apps/web/src/storage/repo.ts` — a thin repository layer wrapping each Dexie table's `put`/`add` with the corresponding core Zod schema's `.parse()` before writing, rejecting invalid data before it reaches IndexedDB.
   Acceptance: test: writing a valid profile succeeds and is readable back; writing an invalid profile (e.g. negative savings) throws before any Dexie call (verified via a spy showing the Dexie method was never invoked).
   Depends on: T6.1

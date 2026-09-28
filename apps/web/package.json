@@ -15,7 +15,8 @@
     "dexie": "^4.4.6",
     "next": "^15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@stoafi/tsconfig": "workspace:*",
