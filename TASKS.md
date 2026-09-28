@@ -438,10 +438,11 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
 
 Goal: local persistence in `apps/web`, wired to core schemas, with a real migration path — this is the first phase allowed to touch browser APIs.
 
-- [ ] **T6.1** Dexie database definition
-  Goal: `apps/web/src/storage/db.ts` — a Dexie subclass with one table per module (profile, plan, queue, installments, sinkingFunds, cards, decisions — health/guards own no persisted data per SPEC), version 1 schema matching each module's Zod schema's shape.
+- [x] **T6.1** Dexie database definition
+  Goal: `apps/web/src/storage/db.ts` — a Dexie subclass with one table per module that owns persisted data (profile, plan, guards, queue, sinkingFunds, cards, decisions — health owns none per SPEC), version 1 schema matching each module's Zod schema's shape.
   Acceptance: a test (using `fake-indexeddb` in a Vitest environment for `apps/web`, or a Node-based Dexie test) opens the DB and confirms all expected tables exist with version 1.
   Depends on: T5.12, T0.8
+  Note: no separate `installments` table — installment offers are embedded inside queue items (`QueueItem.installmentOffers`), not a standalone list per SPEC's module table ("installments... Owns: Installment offers per item"). `guards` does get a table (it owns "Rule thresholds" per SPEC's table, materialized as `GuardThresholdsSchema` in T4.8). `profile`, `plan` and `guards` are singleton-shaped (one row, not a list) — their tables store that one row under a fixed `SINGLETON_ID`, since their core Zod schemas describe a single object, not per-record items with their own `id`. Added `vitest`/`fake-indexeddb` to `apps/web` and a `test` script (removed in T0.10 for having no tests yet); also added `"type": "module"` to `apps/web/package.json` to silence a Vite CJS/ESM config warning.
 
 - [ ] **T6.2** Write-through validation on every table write
   Goal: `apps/web/src/storage/repo.ts` — a thin repository layer wrapping each Dexie table's `put`/`add` with the corresponding core Zod schema's `.parse()` before writing, rejecting invalid data before it reaches IndexedDB.
