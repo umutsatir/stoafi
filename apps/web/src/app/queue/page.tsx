@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview } from "@/components/queue-preview";
+import { QueueTimeline } from "@/components/queue-timeline";
 import { useAppStore } from "@/store";
 
 export default function QueuePage() {
@@ -47,6 +48,14 @@ export default function QueuePage() {
         today="2026-01-01"
         startMonth="2026-01"
         hourlyNetIncome={200}
+      />
+      <h2>12-month timeline</h2>
+      <QueueTimeline
+        items={queueItems}
+        profile={profile}
+        planState={planState}
+        today="2026-01-01"
+        startMonth="2026-01"
       />
       {selectedItem && (
         <QueuePreview

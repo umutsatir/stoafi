@@ -504,7 +504,7 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Acceptance: component test: entering 4 offers renders 4 comparison rows with correct computed values from fixture data; selecting one closes the form and the queue card shows an installment draft state.
   Depends on: T7.5, T2.7
 
-- [ ] **T7.7** Flow 3 — auto-schedule visualization
+- [x] **T7.7** Flow 3 — auto-schedule visualization
   Goal: 12-month timeline view showing each queue item's scheduled month or "not affordable yet" flag (T4.9's `null` result), and the 30-day cooldown countdown with a re-prompt when it ends (T4.4).
   Acceptance: component test: a fixture item with `month: null` renders the "not affordable yet" label; a want inside cooldown renders a countdown and is excluded from the schedulable list until `endsOn`.
   Depends on: T7.4
