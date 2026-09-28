@@ -1,6 +1,6 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { addMinor, roundHalfToEven, subMinor } from "./money";
+import { addMinor, MoneySchema, roundHalfToEven, subMinor } from "./money";
 
 describe("roundHalfToEven", () => {
   it("returns zero for zero", () => {
@@ -56,5 +56,28 @@ describe("addMinor / subMinor", () => {
   it("handles zero", () => {
     expect(addMinor(0, 0)).toBe(0);
     expect(subMinor(0, 0)).toBe(0);
+  });
+});
+
+describe("MoneySchema", () => {
+  it("parses a valid money value", () => {
+    const result = MoneySchema.safeParse({ amount: 1500, currency: "TRY" });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a non-integer amount", () => {
+    const result = MoneySchema.safeParse({ amount: 15.5, currency: "TRY" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects an unknown currency code", () => {
+    const result = MoneySchema.safeParse({ amount: 100, currency: "XXX" });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts every currency in the allow-list", () => {
+    for (const currency of ["TRY", "USD", "EUR"]) {
+      expect(MoneySchema.safeParse({ amount: 0, currency }).success).toBe(true);
+    }
   });
 });

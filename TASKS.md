@@ -83,7 +83,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Acceptance: unit tests cover zero, one kuruş, very large amounts (> 2^31), and rounding boundaries (e.g. 0.5, 1.5, 2.5 rounding to even); property test (fast-check) asserts `roundHalfToEven` output is always an integer.
   Depends on: T0.7
 
-- [ ] **T1.2** `Money` and currency handling
+- [x] **T1.2** `Money` and currency handling
   Goal: `packages/core/kernel/money.ts` — `interface Money { amount: Minor; currency: string }`, Zod schema `MoneySchema`.
   Acceptance: schema rejects non-integer `amount` and unknown currency codes outside a configurable allow-list; unit tests for valid/invalid parse.
   Depends on: T1.1

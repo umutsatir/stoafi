@@ -1,5 +1,21 @@
+import { z } from "zod";
+
 /** Integer minor units (kuruş / cents). Never a float once stored. */
 export type Minor = number;
+
+/** Currencies the MVP supports; extend this list as new ones are needed. */
+export const SUPPORTED_CURRENCIES = ["TRY", "USD", "EUR"] as const;
+export type Currency = (typeof SUPPORTED_CURRENCIES)[number];
+
+export interface Money {
+  amount: Minor;
+  currency: Currency;
+}
+
+export const MoneySchema = z.object({
+  amount: z.number().int(),
+  currency: z.enum(SUPPORTED_CURRENCIES),
+}) satisfies z.ZodType<Money>;
 
 /**
  * Rounds a float amount to the nearest integer minor unit, half-to-even
