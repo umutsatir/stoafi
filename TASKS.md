@@ -314,10 +314,11 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Acceptance: unit tests: a need is never subject to cooldown; a want dated 29 days before `today` is still active; 30 days before is inactive; `cooldownDays` is a tunable parameter (default 30), not hard-coded in a way that can't be overridden — test passes a custom value and confirms it changes the boundary.
   Depends on: T4.1
 
-- [ ] **T4.5** Queue item → draft commitment
+- [x] **T4.5** Queue item → draft commitment
   Goal: `toDraftCommitment(item, month: Month): Commitment` with `status: 'draft'`, single payment for cash purchase.
   Acceptance: unit test: resulting commitment validates against `CommitmentSchema` (T1.5); `bucket` derives from `item.isNeed` (needs→`needs`, want→`wants`).
   Depends on: T4.1, T1.5
+  Note: the draft's payment amount uses `item.discountedCashPrice` when set, falling back to `item.price` — a cash purchase should use the cash price when the item has one.
 
 - [ ] **T4.6** Guard rule types and default rules
   Goal: `packages/core/modules/guards/schema.ts` — `GuardRule` type (id, check function signature, severity), and a `defaultGuardRules` data array (not hard-coded logic) implementing SPEC's three default rules: emergency fund floor, installment cap, wants-bucket limit. Rule parameters (cap %, target months) are data, passed in.
