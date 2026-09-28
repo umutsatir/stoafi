@@ -299,7 +299,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Acceptance: unit tests: a minimal valid item (no installment offers) parses; urgency/importance outside 1–3 rejected; `installmentOffers` reuses `InstallmentOfferSchema` from T2.6.
   Depends on: T2.6
 
-- [ ] **T4.2** Cost-in-work-hours and cost-per-use selectors
+- [x] **T4.2** Cost-in-work-hours and cost-per-use selectors
   Goal: `packages/core/modules/queue/selectors.ts` — `costInWorkHours(price: Minor, hourlyNetIncome: Minor): number`, `costPerUse(price: Minor, expectedUses: number): Minor`.
   Acceptance: unit tests match SPEC's ratio table exactly; `expectedUses === 0` returns a defined sentinel (documented) without throwing; `hourlyNetIncome === 0` same.
   Depends on: T4.1, T3.2
