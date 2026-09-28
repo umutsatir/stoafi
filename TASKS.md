@@ -664,10 +664,11 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.7
   Note: "left" is income minus recurring expenses, living costs and this month's installments; cash purchases are not in it (the user pays those from the account). It is computed in the Dashboard rather than from `project().freeCash` because `project()` does not see profile expenses (see T9.7 note). Added a Home link to the nav and dropped the placeholder `app.coreVersion` string. Dashboard skips scheduling when the plan id is unknown instead of letting `currentAllocation` throw.
 
-- [ ] **T9.9** Styling baseline
+- [x] **T9.9** Styling baseline
   Goal: wire Tailwind (already in the stack) and restyle forms, buttons, nav and cards consistently.
   Acceptance: `pnpm build` passes; existing tests pass; forms have labels, focus states and mobile layout.
   Depends on: T9.8
+  Note: Tailwind v4 (`@tailwindcss/postcss`) with base styles for the semantic elements in `globals.css` (light/dark via CSS variables, sticky nav, card sections, wrapping list rows, scrolling tables) rather than utility classes on every element, so markup and tests stayed untouched. Checked in Chromium at 420px through profile -> queue -> installment purchase -> home with no console errors. shadcn/ui components are still not used.
 
 **Stop and report after Phase 9.**
 
