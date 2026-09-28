@@ -629,10 +629,16 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.2, T9.3
   Note: blank rows (no name, zero amount) are dropped on save, so an untouched form still saves (an empty `incomes` list is valid). Recurring expenses offer need/want only; savings/investing are plan buckets, not expenses. Emergency-fund months stays a plain number input (a count, not money).
 
-- [ ] **T9.5** App bootstrap: hydrate store, default plan, app clock
+- [x] **T9.5** App bootstrap: hydrate store, default plan, app clock
   Goal: on start load profile/plan/queue/decisions/cards from Dexie into the store; default `planState` to 50/30/20 when none is saved (so Queue is never blocked on a missing plan); replace hard-coded `2026-01`/`2026-01-01` with a `today` supplied at the app boundary.
   Acceptance: test: seeded DB rows appear in the store after bootstrap; with an empty DB `planState` is the default strategy.
   Depends on: T9.4
+  Note: the shell renders nothing until the first load finishes (`hydrated`), so pages never flash an empty state or compute with the placeholder date. A stored row that no longer validates is logged with `console.error` and skipped rather than crashing startup (it will be overwritten on the next save; a visible warning is not built). Default plan is `defaultPlanState()` in core (50/30/20). Added a shared `storage/instance.ts` db so pages stop each creating a `StoafiDb`. Decisions written by the queue page are still not persisted; T9.7 owns that.
+
+- [ ] **T9.5b** Plan: choose the active strategy
+  Goal: each strategy card on the Plan screen gets a "Use this plan" action that saves `planState` (via the repo) and marks the active one; the queue scheduler and guards use it.
+  Acceptance: component test: clicking "Use this plan" on Pay Yourself First persists `{ strategyId: "pay-yourself-first" }` and marks that card active.
+  Depends on: T9.5
 
 - [ ] **T9.6** Queue: add, edit, remove, reorder (persisted)
   Goal: form to add a wish/need (name, price, need/want, urgency, importance, expected uses, optional cash price); edit and delete; up/down reorder writes `order`; everything persists via the repo.

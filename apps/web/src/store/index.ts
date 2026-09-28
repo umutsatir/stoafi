@@ -12,6 +12,7 @@ import {
   type SinkingFund,
 } from "@stoafi/core";
 import type { Locale } from "@/i18n/messages";
+import type { LoadedState } from "@/storage/bootstrap";
 
 export interface AppState {
   profile: Profile | null;
@@ -23,7 +24,12 @@ export interface AppState {
   commitments: Commitment[];
   locale: Locale;
   currency: string;
+  /** Local date (YYYY-MM-DD) set at the app boundary; core never reads the clock. */
+  today: string;
+  /** False until the first load from Dexie has finished. */
+  hydrated: boolean;
 
+  hydrate: (loaded: LoadedState, today: string) => void;
   setProfile: (profile: Profile) => void;
   setPlanState: (planState: PlanStateInput) => void;
   setQueueItems: (items: QueueItem[]) => void;
@@ -45,7 +51,10 @@ export const useAppStore = create<AppState>((set) => ({
   commitments: [],
   locale: "en",
   currency: "TRY",
+  today: "1970-01-01",
+  hydrated: false,
 
+  hydrate: (loaded, today) => set({ ...loaded, today, hydrated: true }),
   setProfile: (profile) => set({ profile }),
   setPlanState: (planState) => set({ planState }),
   setQueueItems: (queueItems) => set({ queueItems }),

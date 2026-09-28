@@ -3,11 +3,9 @@
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SettingsPanel } from "@/components/settings-panel";
-import { StoafiDb } from "@/storage/db";
+import { db } from "@/storage/instance";
 import { exportToJson, importFromJson } from "@/storage/backup";
 import { useAppStore } from "@/store";
-
-const db = new StoafiDb();
 
 export default function SettingsPage() {
   const currency = useAppStore((s) => s.currency);
@@ -20,7 +18,7 @@ export default function SettingsPage() {
       <SettingsPanel
         currency={currency}
         onCurrencyChange={setCurrency}
-        onExport={() => exportToJson(db, "2026-01-01T00:00:00.000Z")}
+        onExport={() => exportToJson(db, new Date().toISOString())}
         onImport={(json) => importFromJson(db, json)}
       />
       <LocaleSwitcher />

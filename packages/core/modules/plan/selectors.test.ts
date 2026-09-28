@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { compareStrategies, currentAllocation } from "./selectors";
+import { compareStrategies, currentAllocation, defaultPlanState } from "./selectors";
 import { strategies } from "./strategies-registry";
 import type { Profile } from "../profile/schema";
 
@@ -46,5 +46,16 @@ describe("compareStrategies", () => {
       const directAllocation = strategy?.allocate(profile, directParams);
       expect(allocation).toEqual(directAllocation);
     }
+  });
+});
+
+describe("defaultPlanState", () => {
+  it("names a registered strategy and allocates without extra params", () => {
+    const state = defaultPlanState();
+    expect(Object.keys(strategies)).toContain(state.strategyId);
+    const allocation = currentAllocation(makeProfile(), state);
+    expect(allocation.needs + allocation.wants + allocation.savings + allocation.investing).toBe(
+      10000,
+    );
   });
 });

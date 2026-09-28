@@ -3,11 +3,9 @@
 import { ProfileSchema } from "@stoafi/core";
 import { useTranslations } from "next-intl";
 import { ProfileForm } from "@/components/profile-form";
-import { StoafiDb } from "@/storage/db";
+import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
 import { useAppStore } from "@/store";
-
-const db = new StoafiDb();
 
 export default function ProfilePage() {
   const setProfile = useAppStore((s) => s.setProfile);

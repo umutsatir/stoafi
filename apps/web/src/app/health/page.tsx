@@ -5,11 +5,13 @@ import { monthlyNeeds, project } from "@stoafi/core";
 import { HealthMetrics } from "@/components/health-metrics";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
+import { monthOf } from "@/lib/clock";
 import { useAppStore } from "@/store";
 
 export default function HealthPage() {
   const profile = useAppStore((s) => s.profile);
   const commitments = useAppStore((s) => s.commitments);
+  const today = useAppStore((s) => s.today);
   const t = useTranslations("health");
   const locale = useLocale() as Locale;
   const roomForErrorLesson = getLessonCard("room-for-error", locale);
@@ -25,7 +27,7 @@ export default function HealthPage() {
 
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
   const needs = monthlyNeeds(profile);
-  const projection = project({ income }, commitments, "2026-01");
+  const projection = project({ income }, commitments, monthOf(today));
 
   return (
     <main>

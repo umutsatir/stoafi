@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { monthlyNeeds } from "@stoafi/core";
+import { hourlyNetIncome, monthlyNeeds } from "@stoafi/core";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview } from "@/components/queue-preview";
 import { QueueTimeline } from "@/components/queue-timeline";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
+import { monthOf } from "@/lib/clock";
 import { useAppStore } from "@/store";
 
 export default function QueuePage() {
@@ -16,6 +17,7 @@ export default function QueuePage() {
   const queueItems = useAppStore((s) => s.queueItems);
   const commitments = useAppStore((s) => s.commitments);
   const setCommitments = useAppStore((s) => s.setCommitments);
+  const today = useAppStore((s) => s.today);
   const decisions = useAppStore((s) => s.decisions);
   const setDecisions = useAppStore((s) => s.setDecisions);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -54,9 +56,9 @@ export default function QueuePage() {
         items={queueItems}
         profile={profile}
         planState={planState}
-        today="2026-01-01"
-        startMonth="2026-01"
-        hourlyNetIncome={200}
+        today={today}
+        startMonth={monthOf(today)}
+        hourlyNetIncome={hourlyNetIncome(profile)}
       />
       {sinkingFundsLesson && (
         <a
@@ -72,8 +74,8 @@ export default function QueuePage() {
         items={queueItems}
         profile={profile}
         planState={planState}
-        today="2026-01-01"
-        startMonth="2026-01"
+        today={today}
+        startMonth={monthOf(today)}
       />
       {selectedItem && (
         <QueuePreview
@@ -81,7 +83,7 @@ export default function QueuePage() {
           profile={profile}
           planState={planState}
           commitments={commitments}
-          month="2026-01"
+          month={monthOf(today)}
           income={income}
           monthlyNeeds={needs}
           installmentCapPct={0.2}
@@ -93,7 +95,7 @@ export default function QueuePage() {
                 id: activeCommitment.id,
                 queueItemRef: activeCommitment.source.refId,
                 outcome: "bought",
-                timestamp: "2026-01-01T00:00:00.000Z",
+                timestamp: new Date().toISOString(),
                 amount: activeCommitment.payments[0]?.amount ?? 0,
                 breachedRuleIds: breaches.map((b) => b.ruleId),
                 guardBreachConfirmed,

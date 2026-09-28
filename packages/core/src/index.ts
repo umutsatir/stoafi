@@ -34,6 +34,7 @@ export { strategies as strategyRegistry } from "../modules/plan/strategies-regis
 export {
   compareStrategies,
   currentAllocation,
+  defaultPlanState,
   type StrategyComparison,
 } from "../modules/plan/selectors";
 export type { Strategy, Insight } from "../strategies/types";
