@@ -617,10 +617,11 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Acceptance: test seeds a v2 row and asserts the migrated shape validates against `ProfileSchema`.
   Depends on: T9.1
 
-- [ ] **T9.3** Money and percent input components
+- [x] **T9.3** Money and percent input components
   Goal: `MoneyInput` (user types major units like `1.250,50`, component emits integer `Minor`, locale-aware) and `PercentInput` (user types `30`, emits `0.3`).
   Acceptance: component tests: typing `300` emits 30000; `0,01` emits 1; empty emits 0; negative rejected; percent `30` emits `0.3` and displays `30`.
   Depends on: T9.1
+  Note: text is parsed with string arithmetic (no float), so `0,01` is exactly 1. The locale's group separator counts as grouping only between 3-digit groups (`1.250` in tr is 1250); otherwise `,` and `.` both act as a decimal point, so a dot typed on a Turkish keypad still works. Invalid text stays on screen flagged `aria-invalid` but is never emitted. Added `inputMode`, `autoComplete`, `aria-hidden` to the hard-coded-string scanner's attribute allow-list (technical tokens, not UI text).
 
 - [ ] **T9.4** Profile form rebuild
   Goal: salaries list (add/remove), recurring expenses list (add/remove, label + amount + bucket), one living-costs field, savings, emergency months, inflation percent; all money via `MoneyInput`.
