@@ -254,7 +254,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: unit tests mirroring T3.6.
   Depends on: T3.4
 
-- [ ] **T3.11** Conscious Spending Plan lesson card
+- [x] **T3.11** Conscious Spending Plan lesson card
   Goal: `packages/lessons/en/conscious-spending.json` + `tr/` — Ramit Sethi, *I Will Teach You to Be Rich*.
   Acceptance: same as T3.7.
   Depends on: T3.5

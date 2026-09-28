@@ -1,0 +1,12 @@
+{
+  "id": "conscious-spending",
+  "title": "Bilinçli Harcama Planı",
+  "source": {
+    "author": "Ramit Sethi",
+    "work": "I Will Teach You to Be Rich"
+  },
+  "principle": "Her yerden kısmak yerine, hangi kategorilerin cömert harcamayı hak ettiğine ve hangilerinin senin için önemli olmadığına bilinçli olarak karar ver. Sabit giderleri, uzun vadeli yatırımı ve birikimi ayrı otomatik transferlere bağla, sonra kalanı zaten hesaba katıldığı için vicdan azabı duymadan harca.",
+  "formula": "Net gelir; sabit giderler, yatırım, birikim ve vicdan rahatlığıyla harcanacak pay olmak üzere belirli yüzdelere bölünür.",
+  "fitsWhen": "Sevdiğin şeylere vicdan azabı duymadan harcamak istiyorsan, yeter ki sabit giderler, yatırım ve birikim önce ve otomatik olarak halledilsin.",
+  "critique": "İstikrarlı bir gelire ve transferleri otomatikleştirecek disipline sahip olmayı varsayar; gelir düzensizse veya sabit giderler maaşın çoğunu yiyorsa ne yapılacağı konusunda daha az şey söyler."
+}
