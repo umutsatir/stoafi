@@ -97,3 +97,4 @@ export {
   INFLATION_DATA_SOURCE,
   suggestedAnnualInflation,
 } from "../modules/profile/inflation-by-country";
+export { cashFlowSeries, type CashFlowPoint } from "../modules/profile/cash-flow";

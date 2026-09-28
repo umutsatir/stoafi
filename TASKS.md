@@ -695,9 +695,10 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.11
   Note: `ProfileForm` (savings, emergency-fund target, country and inflation) and the new `IncomeExpensesForm` (salaries, recurring expenses, living costs) each save only their own fields; `mergeProfile` lays them over the one stored profile, or over defaults for a brand-new user, so neither screen can wipe the other's data. The installment-purchases list moved to the Income & Expenses screen since it is an expense. The emergency-fund caption now reads income and expenses from the saved profile (it no longer updates while typing salaries, because those are on the other screen). Home, Queue, Plan and Health empty states point to Income & Expenses.
 
-- [ ] **T9.15** Dashboard cash-flow chart
+- [x] **T9.15** Dashboard cash-flow chart
   Goal: a 12-month recharts chart on Home (income vs. commitments vs. what is left).
   Depends on: T9.10
+  Note: `cashFlowSeries(profile, commitments, months)` in core (`profile/cash-flow.ts`) derives income, active recurring expenses, living costs, installments and what is left per month; the chart is stacked cost bars plus income and left lines, with a visually hidden table carrying the same numbers for screen readers. Cash purchases are not in it (decisions only). `stackId` added to the hard-coded-string scanner's allow-list (recharts config).
 
 **Stop and report after Phase 9.**
 

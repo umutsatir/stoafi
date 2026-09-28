@@ -24,7 +24,9 @@
     "changePlan": "Planı değiştir",
     "nextInQueue": "Kuyruktaki sıradakiler",
     "addToQueue": "Kuyruğuna ekle",
-    "openQueue": "Kuyruğu aç"
+    "openQueue": "Kuyruğu aç",
+    "cashFlowTitle": "Önümüzdeki 12 ay",
+    "month": "Ay"
   },
   "nav": {
     "ariaLabel": "Ana",

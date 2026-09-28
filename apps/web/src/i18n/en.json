@@ -24,7 +24,9 @@
     "changePlan": "Change plan",
     "nextInQueue": "Next in your queue",
     "addToQueue": "Add to your queue",
-    "openQueue": "Open the queue"
+    "openQueue": "Open the queue",
+    "cashFlowTitle": "Next 12 months",
+    "month": "Month"
   },
   "nav": {
     "ariaLabel": "Main",

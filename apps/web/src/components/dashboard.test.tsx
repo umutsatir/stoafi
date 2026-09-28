@@ -132,4 +132,32 @@ describe("Dashboard", () => {
     expect(plan.getByText(/50\/30\/20|Warren|Elizabeth/i)).toBeInTheDocument();
     expect(plan.getByTestId("plan-needs")).toHaveTextContent("₺5,000.00");
   });
+
+  it("draws a 12-month cash-flow chart starting this month", () => {
+    renderDashboard();
+    const chart = screen.getByTestId("cash-flow-chart");
+    expect(chart).toHaveAttribute("data-points", "12");
+    const rows = within(chart).getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("2026-09");
+    expect(rows[12]).toHaveTextContent("2027-08");
+  });
+
+  it("shows the chart's installment months from bought purchases", () => {
+    const bought: QueueItem = {
+      ...waiting("Fridge", 0, 600_000),
+      installmentPurchase: {
+        offer: { months: 3, payments: [200_000, 200_000, 200_000] },
+        firstMonth: "2026-10",
+      },
+    };
+    renderDashboard({ queueItems: [bought] });
+    const rows = within(screen.getByTestId("cash-flow-chart")).getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("₺5,000.00"); // September: nothing due yet
+    expect(rows[2]).toHaveTextContent("₺3,000.00"); // October: 2,000.00 installment
+  });
+
+  it("has no chart before a profile exists", () => {
+    renderDashboard({ profile: null });
+    expect(screen.queryByTestId("cash-flow-chart")).not.toBeInTheDocument();
+  });
 });

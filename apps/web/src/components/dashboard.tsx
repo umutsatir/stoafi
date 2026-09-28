@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
   activeFixedExpenses,
+  addMonths,
+  cashFlowSeries,
   activeQueueItems,
   currentAllocation,
   emergencyFundMonths,
@@ -26,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Page } from "@/components/ui/page";
+import { CashFlowChart } from "./cash-flow-chart";
 
 export interface DashboardProps {
   profile: Profile | null;
@@ -71,6 +74,11 @@ export function Dashboard({
   const installments = project({ income }, commitments, month).installmentLoad;
   const left = income - obligations - profile.livingExpenses - installments;
 
+  const cashFlow = cashFlowSeries(
+    profile,
+    commitments,
+    Array.from({ length: 12 }, (_, i) => addMonths(month, i)),
+  );
   const needs = monthlyNeeds(profile, month);
   const savedMonths = emergencyFundMonths(profile.savings, needs);
   const fundLow = savedMonths < profile.emergencyFundTargetMonths;
@@ -225,6 +233,7 @@ export function Dashboard({
           </CardContent>
         </Card>
       </div>
+      <CashFlowChart series={cashFlow} />
     </Page>
   );
 }

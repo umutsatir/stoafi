@@ -1,0 +1,92 @@
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
+import { Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
+import type { CashFlowPoint } from "@stoafi/core";
+import { useMoney } from "@/lib/use-money";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+const COLORS = {
+  obligations: "#0f172a",
+  living: "#64748b",
+  installments: "#0ea5e9",
+  income: "#22c55e",
+  left: "#f59e0b",
+};
+
+/** Income against what goes out each month, with what is left. Also readable as a table. */
+export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
+  const t = useTranslations("home");
+  const locale = useLocale();
+  const money = useMoney();
+
+  return (
+    <Card data-testid="cash-flow-chart" data-points={series.length}>
+      <CardHeader>
+        <CardTitle className="text-base">{t("cashFlowTitle")}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <div className="overflow-x-auto">
+          <ComposedChart width={720} height={300} data={series}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+            <YAxis
+              tick={{ fontSize: 12 }}
+              tickFormatter={(value: number) =>
+                (value / 100).toLocaleString(locale, { notation: "compact" })
+              }
+            />
+            <Tooltip formatter={(value) => money(Number(value))} />
+            <Legend />
+            <Bar
+              dataKey="obligations"
+              name={t("obligations")}
+              stackId="costs"
+              fill={COLORS.obligations}
+            />
+            <Bar dataKey="living" name={t("living")} stackId="costs" fill={COLORS.living} />
+            <Bar
+              dataKey="installments"
+              name={t("installments")}
+              stackId="costs"
+              fill={COLORS.installments}
+            />
+            <Line
+              dataKey="income"
+              name={t("income")}
+              stroke={COLORS.income}
+              dot={false}
+              strokeWidth={2}
+            />
+            <Line
+              dataKey="left"
+              name={t("left")}
+              stroke={COLORS.left}
+              dot={false}
+              strokeWidth={2}
+            />
+          </ComposedChart>
+        </div>
+        <table className="sr-only">
+          <caption>{t("cashFlowTitle")}</caption>
+          <thead>
+            <tr>
+              <th>{t("month")}</th>
+              <th>{t("left")}</th>
+              <th>{t("installments")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {series.map((point) => (
+              <tr key={point.month}>
+                <td>{point.month}</td>
+                <td>{money(point.left)}</td>
+                <td>{money(point.installments)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
