@@ -11,6 +11,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "@stoafi/tsconfig": "workspace:*",
     "typescript": "^5.6.3"
   }
 }

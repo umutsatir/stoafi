@@ -25,7 +25,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm --filter @stoafi/core typecheck` passes on the empty package.
   Depends on: T0.2
 
-- [ ] **T0.4** Shared TS config package
+- [x] **T0.4** Shared TS config package
   Goal: create `packages/tsconfig` (or `tooling/tsconfig`) with a `base.json` enabling `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`; `packages/core` extends it.
   Acceptance: root `pnpm typecheck` (turbo) runs the core package's typecheck via the shared config; changing a core file to break strictness fails the command.
   Depends on: T0.3
