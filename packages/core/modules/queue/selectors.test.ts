@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { costInWorkHours, costPerUse } from "./selectors";
+import { costInWorkHours, costPerUse, eisenhowerQuadrant } from "./selectors";
 
 describe("costInWorkHours", () => {
   it("matches price / hourlyNetIncome", () => {
@@ -20,5 +20,17 @@ describe("costPerUse", () => {
   it("returns a defined sentinel (0) when expectedUses is 0, without throwing", () => {
     expect(() => costPerUse(1000, 0)).not.toThrow();
     expect(costPerUse(1000, 0)).toBe(0);
+  });
+});
+
+describe("eisenhowerQuadrant", () => {
+  it.each([
+    [1, 1, { urgent: false, important: false }],
+    [2, 1, { urgent: true, important: false }],
+    [1, 2, { urgent: false, important: true }],
+    [2, 2, { urgent: true, important: true }],
+    [3, 3, { urgent: true, important: true }],
+  ])("urgency=%i importance=%i -> %o", (urgency, importance, expected) => {
+    expect(eisenhowerQuadrant({ urgency, importance })).toEqual(expected);
   });
 });

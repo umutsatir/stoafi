@@ -304,7 +304,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Acceptance: unit tests match SPEC's ratio table exactly; `expectedUses === 0` returns a defined sentinel (documented) without throwing; `hourlyNetIncome === 0` same.
   Depends on: T4.1, T3.2
 
-- [ ] **T4.3** Eisenhower quadrant selector
+- [x] **T4.3** Eisenhower quadrant selector
   Goal: `eisenhowerQuadrant(item): { urgent: boolean; important: boolean }` implementing `urgent = urgency >= 2`, `important = importance >= 2` per SPEC.
   Acceptance: unit tests for all 4 combinations at the boundary values (1 and 2).
   Depends on: T4.1

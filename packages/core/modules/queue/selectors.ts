@@ -9,3 +9,13 @@ export function costPerUse(price: number, expectedUses: number): number {
   if (expectedUses === 0) return 0;
   return price / expectedUses;
 }
+
+export function eisenhowerQuadrant(item: { urgency: number; importance: number }): {
+  urgent: boolean;
+  important: boolean;
+} {
+  return {
+    urgent: item.urgency >= 2,
+    important: item.importance >= 2,
+  };
+}
