@@ -212,7 +212,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: unit tests: explicit `hourlyNetIncome` is returned unchanged; derived case matches `netIncome / 160` default; custom `hoursPerMonth` overrides default; zero income returns 0, not `NaN`/`Infinity`.
   Depends on: T3.1
 
-- [ ] **T3.3** Profile module object
+- [x] **T3.3** Profile module object
   Goal: `packages/core/modules/profile/module.ts` — `Module` (id `'profile'`, version 1, schema from T3.1, selectors from T3.2, empty migrations).
   Acceptance: registers via kernel registry without error.
   Depends on: T1.6, T3.2
