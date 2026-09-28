@@ -125,7 +125,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Acceptance: unit test: a 3-month installment plan produces nonzero `installmentLoad` in exactly those 3 months and zero elsewhere; a 12-month call with no commitments returns 12 projections with `freeCash === income` each.
   Depends on: T1.8
 
-- [ ] **T1.10** Determinism and purity guard test
+- [x] **T1.10** Determinism and purity guard test
   Goal: a test (and, if feasible, an ESLint rule) asserting `packages/core` has zero imports of `react`, `next`, `dexie`, and no calls to `Date.now()`/`Math.random()` anywhere under `packages/core/**`.
   Acceptance: a grep-based or AST-based test fails if any forbidden import/call is introduced; passes on current tree.
   Depends on: T1.9
