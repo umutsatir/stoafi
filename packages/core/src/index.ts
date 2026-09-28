@@ -28,6 +28,13 @@ export { importAll, type ImportResult } from "../modules/backup/import";
 
 export { ProfileSchema, type Profile } from "../modules/profile/schema";
 export { PlanStateSchema, type PlanStateInput } from "../modules/plan/schema";
+export { strategies as strategyRegistry } from "../modules/plan/strategies-registry";
+export {
+  compareStrategies,
+  currentAllocation,
+  type StrategyComparison,
+} from "../modules/plan/selectors";
+export type { Strategy, Insight } from "../strategies/types";
 export { GuardThresholdsSchema } from "../modules/guards/schema";
 export { QueueItemSchema, type QueueItem } from "../modules/queue/schema";
 export { SinkingFundSchema, type SinkingFund } from "../modules/sinking-funds/schema";

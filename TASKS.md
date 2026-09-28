@@ -481,10 +481,11 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Depends on: T7.1, T3.3
   Note: `ProfileForm` takes `onSave` as a prop (dependency injection) so the component test passes a `vi.fn()` instead of touching Dexie; the page wires it to the real repo. Had to add `test: { globals: true }` to `apps/web/vitest.config.ts` — without it, `@testing-library/react`'s automatic `afterEach(cleanup)` registration silently no-ops (it needs a global `afterEach`), so multiple tests in one file leaked DOM into each other. Styling is plain semantic HTML for now — Tailwind/shadcn from CLAUDE.md's stack aren't wired in yet; no acceptance criterion in Phase 7 currently depends on visual styling, so this is deferred rather than blocking.
 
-- [ ] **T7.3** Plan screen — 4 strategies side by side with lesson cards
+- [x] **T7.3** Plan screen — 4 strategies side by side with lesson cards
   Goal: renders `compareStrategies` (T3.14) output for all 4 strategies, each with its lesson card (T3.5–T3.13) rendered inline/expandable.
   Acceptance: component test: given a fixed profile fixture, all 4 strategy cards render with correct bucket amounts and each links to its lesson card content.
   Depends on: T7.1, T3.16
+  Note: `@stoafi/core`'s barrel now also exports `strategyRegistry`, `compareStrategies`, `currentAllocation`, `Strategy`, `Insight`. Added `@stoafi/web/src/lessons.ts` which imports the 4 strategy lesson JSON files directly from `@stoafi/lessons/en/*.json` (en locale only — TR and a real locale switch are Phase 8's job) and validates them through `LessonCardSchema`. `apps/web/vitest.config.ts` needed a `resolve.alias` for `@/*` — Vite/Vitest doesn't read Next's `tsconfig.json` `paths`, only webpack/Next's own bundler does, so component tests importing via `@/...` failed to resolve until the alias was added explicitly.
 
 - [ ] **T7.4** Queue screen — list, Eisenhower view, drag-and-drop reorder
   Goal: queue list with cost-in-work-hours/cost-per-use badges (T4.2), Eisenhower quadrant grouping (T4.3), dnd-kit reordering calling `scheduleQueue` (T4.9) on drop.
