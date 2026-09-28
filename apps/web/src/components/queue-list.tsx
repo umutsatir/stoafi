@@ -14,6 +14,7 @@ import {
 } from "@stoafi/core";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
+import { useMoney } from "@/lib/use-money";
 
 export interface QueueListProps {
   items: QueueItem[];
@@ -49,6 +50,7 @@ export function QueueList({
   const t = useTranslations("queue");
   const tTimeline = useTranslations("timeline");
   const locale = useLocale() as Locale;
+  const money = useMoney();
   const costInLifeEnergyLesson = getLessonCard("cost-in-life-energy", locale);
   const eisenhowerLesson = getLessonCard("eisenhower-matrix", locale);
 
@@ -96,7 +98,7 @@ export function QueueList({
               </span>
               <span>
                 {t("perUseSuffix", {
-                  amount: costPerUse(item.price, item.expectedUses).toFixed(2),
+                  amount: money(costPerUse(item.price, item.expectedUses)),
                 })}
               </span>
               <button

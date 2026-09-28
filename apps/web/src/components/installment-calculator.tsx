@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { compareOffers, type OfferResult } from "@stoafi/core";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
+import { useMoney } from "@/lib/use-money";
 
 export interface InstallmentCalculatorProps {
   cashPrice: number;
@@ -36,6 +37,7 @@ export function InstallmentCalculator({
   );
   const t = useTranslations("installments");
   const locale = useLocale() as Locale;
+  const money = useMoney();
   const timeValueLesson = getLessonCard("time-value-of-money", locale);
 
   return (
@@ -80,8 +82,10 @@ export function InstallmentCalculator({
                   }}
                 />
               </td>
-              <td data-testid={`monthly-payment-${result.months}`}>{result.monthlyPayment}</td>
-              <td data-testid={`pv-${result.months}`}>{result.pv.toFixed(2)}</td>
+              <td data-testid={`monthly-payment-${result.months}`}>
+                {money(result.monthlyPayment)}
+              </td>
+              <td data-testid={`pv-${result.months}`}>{money(Math.round(result.pv))}</td>
               <td data-testid={`real-saving-${result.months}`}>
                 {(result.realSaving * 100).toFixed(1)}%
               </td>

@@ -114,7 +114,12 @@
   },
   "decisions": {
     "title": "Decisions",
-    "totalSaved": "Total saved by skipped purchases: {amount}"
+    "totalSaved": "Total saved by skipped purchases: {amount}",
+    "outcome": {
+      "bought": "bought",
+      "postponed": "postponed",
+      "skipped": "skipped"
+    }
   },
   "settings": {
     "title": "Settings",

@@ -44,10 +44,10 @@ describe("QueuePreview", () => {
       />,
     );
 
-    expect(screen.getByTestId("wants-before")).toHaveTextContent("0");
-    expect(screen.getByTestId("wants-after")).toHaveTextContent("1000");
-    expect(screen.getByTestId("freecash-before")).toHaveTextContent("10000");
-    expect(screen.getByTestId("freecash-after")).toHaveTextContent("9000");
+    expect(screen.getByTestId("wants-before")).toHaveTextContent("₺0.00");
+    expect(screen.getByTestId("wants-after")).toHaveTextContent("₺10.00");
+    expect(screen.getByTestId("freecash-before")).toHaveTextContent("₺100.00");
+    expect(screen.getByTestId("freecash-after")).toHaveTextContent("₺90.00");
   });
 
   it("shows guard breaches in a visible list when a draft breaches a rule", () => {

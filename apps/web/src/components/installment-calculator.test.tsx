@@ -13,8 +13,8 @@ describe("InstallmentCalculator", () => {
       expect(screen.getByTestId(`offer-row-${months}`)).toBeInTheDocument();
     }
 
-    // 1200 / 3 months = 400/month
-    expect(screen.getByTestId("monthly-payment-3")).toHaveTextContent("400");
+    // 12.00 / 3 months = 4.00/month
+    expect(screen.getByTestId("monthly-payment-3")).toHaveTextContent("₺4.00");
   });
 
   it("selecting an option calls onSelect with that offer's result", () => {

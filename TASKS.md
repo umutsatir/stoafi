@@ -640,10 +640,11 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Acceptance: component test: clicking "Use this plan" on Pay Yourself First persists `{ strategyId: "pay-yourself-first" }` and marks that card active.
   Depends on: T9.5
 
-- [ ] **T9.5c** Show money formatted everywhere
+- [x] **T9.5c** Show money formatted everywhere
   Goal: screens currently print raw minor units (`5000` for 50.00). Add a `useMoney()` hook (minor units -> locale/currency string via next-intl) and use it in plan, queue list/preview, health, decisions, cards.
   Acceptance: component tests updated: 500000 minor renders as the formatted currency string in both `en` and `tr`; no screen renders a raw minor amount.
   Depends on: T9.5b
+  Note: `useMoney()` formats with `currencyDisplay: "narrowSymbol"` (plain `TRY` in `en` otherwise). The minimum-payment calculator's balance/floor are now `MoneyInput` and its rates `PercentInput`; its default balance is 10,000.00 instead of 10.00. Decision outcomes are translated (`decisions.outcome.*`). The installment calculator still derives each offer's payment as price/months with no way to type a real bank quote; that is fixed in T9.7.
 
 - [ ] **T9.6** Queue: add, edit, remove, reorder (persisted)
   Goal: form to add a wish/need (name, price, need/want, urgency, importance, expected uses, optional cash price); edit and delete; up/down reorder writes `order`; everything persists via the repo.

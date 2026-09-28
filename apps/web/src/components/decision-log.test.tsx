@@ -14,7 +14,7 @@ const decisions: Decision[] = [
 describe("DecisionLog", () => {
   it("renders the correct total saved from skipped decisions", () => {
     renderWithIntl(<DecisionLog decisions={decisions} />);
-    expect(screen.getByTestId("total-saved")).toHaveTextContent("800");
+    expect(screen.getByTestId("total-saved")).toHaveTextContent("₺8.00");
   });
 
   it("renders the correct per-row outcome label for each decision", () => {

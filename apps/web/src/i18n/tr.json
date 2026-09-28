@@ -114,7 +114,12 @@
   },
   "decisions": {
     "title": "Kararlar",
-    "totalSaved": "Vazgeçilen alımlarla biriken toplam: {amount}"
+    "totalSaved": "Vazgeçilen alımlarla biriken toplam: {amount}",
+    "outcome": {
+      "bought": "alındı",
+      "postponed": "ertelendi",
+      "skipped": "vazgeçildi"
+    }
   },
   "settings": {
     "title": "Ayarlar",

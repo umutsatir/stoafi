@@ -2,6 +2,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { compareStrategies, strategyRegistry, type Profile } from "@stoafi/core";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
+import { useMoney } from "@/lib/use-money";
 
 export interface PlanComparisonProps {
   profile: Profile;
@@ -14,6 +15,7 @@ export interface PlanComparisonProps {
 export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComparisonProps) {
   const results = compareStrategies(profile, strategyRegistry);
   const t = useTranslations("plan");
+  const money = useMoney();
   const locale = useLocale() as Locale;
   const investingLesson = getLessonCard("index-funds", locale);
 
@@ -28,13 +30,13 @@ export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComp
             <h2>{lesson?.title ?? strategyId}</h2>
             <dl>
               <dt>{t("needs")}</dt>
-              <dd>{allocation.needs}</dd>
+              <dd>{money(allocation.needs)}</dd>
               <dt>{t("wants")}</dt>
-              <dd>{allocation.wants}</dd>
+              <dd>{money(allocation.wants)}</dd>
               <dt>{t("savings")}</dt>
-              <dd>{allocation.savings}</dd>
+              <dd>{money(allocation.savings)}</dd>
               <dt>{t("investing")}</dt>
-              <dd>{allocation.investing}</dd>
+              <dd>{money(allocation.investing)}</dd>
             </dl>
             {onSelect &&
               (strategyId === activeStrategyId ? (

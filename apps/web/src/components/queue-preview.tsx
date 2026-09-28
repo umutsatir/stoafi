@@ -19,6 +19,7 @@ import {
   type Profile,
   type QueueItem,
 } from "@stoafi/core";
+import { useMoney } from "@/lib/use-money";
 import { InstallmentCalculator } from "./installment-calculator";
 
 export interface QueuePreviewProps {
@@ -94,6 +95,7 @@ export function QueuePreview({
   const hasBreach = breaches.length > 0;
   const canConfirm = !hasBreach || acknowledged;
   const t = useTranslations("queuePreview");
+  const money = useMoney();
 
   return (
     <div>
@@ -107,13 +109,13 @@ export function QueuePreview({
         <tbody>
           <tr>
             <td>{t("wantsBeforeAfter")}</td>
-            <td data-testid="wants-before">{before.byBucket.wants.committed}</td>
-            <td data-testid="wants-after">{after.byBucket.wants.committed}</td>
+            <td data-testid="wants-before">{money(before.byBucket.wants.committed)}</td>
+            <td data-testid="wants-after">{money(after.byBucket.wants.committed)}</td>
           </tr>
           <tr>
             <td>{t("freeCashBeforeAfter")}</td>
-            <td data-testid="freecash-before">{before.freeCash}</td>
-            <td data-testid="freecash-after">{after.freeCash}</td>
+            <td data-testid="freecash-before">{money(before.freeCash)}</td>
+            <td data-testid="freecash-after">{money(after.freeCash)}</td>
           </tr>
         </tbody>
       </table>
