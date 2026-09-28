@@ -382,7 +382,7 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Acceptance: unit tests: a known balance/rate/payment combination matches a hand or spreadsheet-computed months-to-payoff and total interest within rounding tolerance; a payment rule where `p*b_t < floor` uses the floor every month (verify via a low-balance case); a pathological case where the payment never covers interest terminates at the safety cap rather than looping forever (test asserts it returns rather than hangs).
   Depends on: T5.1, T2.1
 
-- [ ] **T5.4** Cards module object
+- [x] **T5.4** Cards module object
   Goal: `packages/core/modules/cards/module.ts` — `Module` (id `'cards'`), no `contributes` in MVP beyond reading queue drafts per SPEC's module table (cards "reads" queue drafts — implemented as a selector taking a draft commitment as input, not an import of the queue module).
   Acceptance: registers via kernel registry without error.
   Depends on: T5.2, T5.3
