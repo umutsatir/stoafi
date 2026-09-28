@@ -93,7 +93,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Acceptance: unit tests for year rollover (e.g. `2026-11` + 3 = `2027-02`), negative offsets, equal months, ordering.
   Depends on: T0.7
 
-- [ ] **T1.4** `Bucket` type and validation
+- [x] **T1.4** `Bucket` type and validation
   Goal: `packages/core/kernel/bucket.ts` — `type Bucket = 'needs' | 'wants' | 'savings' | 'investing'`, Zod enum schema.
   Acceptance: unit test rejects an invalid bucket string.
   Depends on: T0.7
