@@ -15,7 +15,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm install` succeeds at root with zero packages; `pnpm -v` and `node -v` match declared engines.
   Depends on: –
 
-- [ ] **T0.2** Init Turborepo
+- [x] **T0.2** Init Turborepo
   Goal: add `turbo.json` with pipeline tasks `build`, `test`, `lint`, `typecheck`, `dev`; add `turbo` as root devDependency.
   Acceptance: `pnpm turbo run test` exits 0 (no-op, no packages yet).
   Depends on: T0.1
