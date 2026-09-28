@@ -425,7 +425,7 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Depends on: T5.10
   Note: if any row in any module fails, the whole result is `{ errors }` (no partial `data`) — an all-or-nothing import, matching SPEC's "export → clear data → import restores everything" framing rather than a partial restore.
 
-- [ ] **T5.12** Backup module object
+- [x] **T5.12** Backup module object
   Goal: `packages/core/modules/backup/module.ts` — `Module` (id `'backup'`).
   Acceptance: registers via kernel registry without error.
   Depends on: T5.11
