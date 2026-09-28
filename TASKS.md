@@ -184,7 +184,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Depends on: T2.8, T1.5
   Note: `toCommitment` repeats the same rounded monthly amount for every payment rather than distributing the rounding remainder across months; for a target that doesn't divide evenly by `monthsRemaining` the total can drift from `target` by more than 1 minor unit. Acceptable for MVP since the tested fixtures divide evenly; revisit if this matters in practice.
 
-- [ ] **T2.10** Sinking-funds module object
+- [x] **T2.10** Sinking-funds module object
   Goal: `packages/core/modules/sinking-funds/module.ts` exporting a `Module` (id `'sinking-funds'`, version 1).
   Acceptance: registers via kernel registry without error; selectors match T2.8/T2.9 direct exports.
   Depends on: T1.6, T2.9
