@@ -1,0 +1,12 @@
+{
+  "id": "time-value-of-money",
+  "title": "Time value of money",
+  "source": {
+    "author": "Standard finance",
+    "work": "Present value"
+  },
+  "principle": "A payment due in the future is worth less today than the same amount paid right now, because money in hand can be saved, invested, or simply protected from inflation in the meantime. Discounting future payments back to today's terms is what makes it possible to compare a lump-sum cash price against a stream of installment payments on equal footing.",
+  "formula": "PV = Σ P_k / (1 + r)^k, where r is the monthly discount rate derived from expected inflation.",
+  "fitsWhen": "You're comparing paying cash now against spreading the same purchase over installment payments, and want the comparison to account for what money is worth over time, not just its face value.",
+  "critique": "The comparison is only as good as the inflation rate you enter — an optimistic or pessimistic guess about future inflation changes which option looks cheaper, and the formula doesn't account for the psychological cost of carrying debt."
+}

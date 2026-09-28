@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { compareOffers, type OfferResult } from "@stoafi/core";
+import { getLessonCard } from "@/lessons";
+import type { Locale } from "@/i18n/messages";
 
 export interface InstallmentCalculatorProps {
   cashPrice: number;
@@ -33,10 +35,21 @@ export function InstallmentCalculator({
     annualInflation,
   );
   const t = useTranslations("installments");
+  const locale = useLocale() as Locale;
+  const timeValueLesson = getLessonCard("time-value-of-money", locale);
 
   return (
     <div>
       <h2>{t("title")}</h2>
+      {timeValueLesson && (
+        <a
+          href={`#lesson-${timeValueLesson.id}`}
+          aria-label={`${timeValueLesson.id} lesson`}
+          data-testid="lesson-link-time-value-of-money"
+        >
+          {timeValueLesson.title}
+        </a>
+      )}
       <table>
         <thead>
           <tr>

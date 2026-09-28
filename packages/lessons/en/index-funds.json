@@ -1,0 +1,11 @@
+{
+  "id": "index-funds",
+  "title": "Index funds and costs",
+  "source": {
+    "author": "John C. Bogle",
+    "work": "The Little Book of Common Sense Investing"
+  },
+  "principle": "Most actively managed funds fail to beat the market after fees, and nobody can reliably tell you in advance which ones will. A low-cost fund that simply owns the whole market captures the market's return minus a tiny fee, and over decades that fee difference compounds into a very large gap. Costs are one of the few things about investing you can actually control.",
+  "fitsWhen": "You're deciding where money allocated to the investing bucket should go, and want a default that doesn't require picking winners.",
+  "critique": "Broad-market index funds still carry full market risk and offer no protection in a downturn; \"low cost\" is not the same as \"low risk,\" and the approach says nothing about asset allocation across stocks, bonds or other classes."
+}

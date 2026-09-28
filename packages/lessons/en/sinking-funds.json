@@ -1,0 +1,12 @@
+{
+  "id": "sinking-funds",
+  "title": "Sinking funds",
+  "source": {
+    "author": "Common personal-finance practice",
+    "work": "Standard budgeting technique"
+  },
+  "principle": "Expenses that are predictable but irregular — an annual insurance bill, a holiday, a car repair — feel like emergencies only because nothing was set aside for them ahead of time. Spread the known cost over the months between now and when it's due, and the \"emergency\" becomes a line item you already planned for.",
+  "formula": "monthly set-aside = max(target − saved so far, 0) ÷ months remaining.",
+  "fitsWhen": "You have a known future expense with a due date and want it to stop competing with your regular monthly budget when it lands.",
+  "critique": "It only works for expenses you can see coming; a sinking fund plan built on last year's costs can undershoot if this year's actual bill is larger, so estimates still need periodic revisiting."
+}

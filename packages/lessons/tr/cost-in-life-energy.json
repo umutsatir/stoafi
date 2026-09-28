@@ -1,0 +1,12 @@
+{
+  "id": "cost-in-life-energy",
+  "title": "Yaşam enerjisi cinsinden maliyet",
+  "source": {
+    "author": "Vicki Robin",
+    "work": "Your Money or Your Life"
+  },
+  "principle": "Para, onu kazanmak için harcadığın hayat saatlerinin yerini tutan bir semboldür. Bir şey almadan önce fiyatını gerçekte sana kaça mal olduğu saatlere çevir — bu yeniden çerçeveleme, bir alışverişin gerçek maliyetini yalnızca fiyat etiketinin gösteremeyeceği bir şekilde görünür kılar.",
+  "formula": "Çalışma saati cinsinden maliyet = fiyat ÷ saatlik net gelir.",
+  "fitsWhen": "Bir alışverişin sana zaman ve emek olarak gerçekte neye mal olduğuna dair, sadece paraya değil, içgüdüsel bir kontrol istiyorsan.",
+  "critique": "Tüm çalışma saatlerini eşit derecede tatsız ve birbirinin yerine geçebilir sayar, bu ise herkes için doğru değildir — bazı işler kendi başına tatmin edicidir, dolayısıyla takas saf bir fedakarlık değildir."
+}

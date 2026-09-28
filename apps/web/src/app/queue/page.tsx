@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview } from "@/components/queue-preview";
 import { QueueTimeline } from "@/components/queue-timeline";
+import { getLessonCard } from "@/lessons";
+import type { Locale } from "@/i18n/messages";
 import { useAppStore } from "@/store";
 
 export default function QueuePage() {
@@ -17,6 +19,10 @@ export default function QueuePage() {
   const setDecisions = useAppStore((s) => s.setDecisions);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const t = useTranslations("queue");
+  const locale = useLocale() as Locale;
+  // No dedicated sinking-funds screen exists yet; queue (dated purchase
+  // planning) is the closest fit among Phase 7's screens for this lesson.
+  const sinkingFundsLesson = getLessonCard("sinking-funds", locale);
 
   if (!profile || !planState) {
     return (
@@ -53,6 +59,15 @@ export default function QueuePage() {
         startMonth="2026-01"
         hourlyNetIncome={200}
       />
+      {sinkingFundsLesson && (
+        <a
+          href={`#lesson-${sinkingFundsLesson.id}`}
+          aria-label={`${sinkingFundsLesson.id} lesson`}
+          data-testid="lesson-link-sinking-funds"
+        >
+          {sinkingFundsLesson.title}
+        </a>
+      )}
       <h2>{t("timelineTitle")}</h2>
       <QueueTimeline
         items={queueItems}

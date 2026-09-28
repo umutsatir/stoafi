@@ -1,0 +1,12 @@
+{
+  "id": "sinking-funds",
+  "title": "Erime fonları",
+  "source": {
+    "author": "Yaygın kişisel finans uygulaması",
+    "work": "Standart bütçeleme tekniği"
+  },
+  "principle": "Öngörülebilir ama düzensiz giderler — yıllık bir sigorta faturası, bir tatil, bir araba tamiri — acil durum gibi hissettirir, çünkü bunlar için önceden hiçbir şey ayrılmamıştır. Bilinen maliyeti, şimdi ile son ödeme tarihi arasındaki aylara yay; böylece \"acil durum\", zaten planladığın bir kalem haline gelir.",
+  "formula": "aylık ayırma = max(hedef − şimdiye kadar biriken, 0) ÷ kalan ay sayısı.",
+  "fitsWhen": "Son tarihi belli, geleceği bilinen bir giderin varsa ve bu giderin, geldiğinde normal aylık bütçenle yarışmasını istemiyorsan.",
+  "critique": "Yalnızca öngörebildiğin giderler için işe yarar; geçen yılın maliyetleri üzerine kurulu bir erime fonu planı, bu yılki gerçek fatura daha büyükse yetersiz kalabilir, bu yüzden tahminlerin periyodik olarak gözden geçirilmesi gerekir."
+}

@@ -1,14 +1,18 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { project } from "@stoafi/core";
 import { HealthMetrics } from "@/components/health-metrics";
+import { getLessonCard } from "@/lessons";
+import type { Locale } from "@/i18n/messages";
 import { useAppStore } from "@/store";
 
 export default function HealthPage() {
   const profile = useAppStore((s) => s.profile);
   const commitments = useAppStore((s) => s.commitments);
   const t = useTranslations("health");
+  const locale = useLocale() as Locale;
+  const roomForErrorLesson = getLessonCard("room-for-error", locale);
 
   if (!profile) {
     return (
@@ -33,6 +37,15 @@ export default function HealthPage() {
         savingsBalance={profile.savings}
         monthlyNeeds={monthlyNeeds}
       />
+      {roomForErrorLesson && (
+        <a
+          href={`#lesson-${roomForErrorLesson.id}`}
+          aria-label={`${roomForErrorLesson.id} lesson`}
+          data-testid="lesson-link-room-for-error"
+        >
+          {roomForErrorLesson.title}
+        </a>
+      )}
     </main>
   );
 }

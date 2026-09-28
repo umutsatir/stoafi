@@ -1,0 +1,12 @@
+{
+  "id": "eisenhower-matrix",
+  "title": "Eisenhower matrisi",
+  "source": {
+    "author": "Stephen Covey",
+    "work": "The 7 Habits of Highly Effective People"
+  },
+  "principle": "Dikkatini isteyen şeyleri tek bir eksen yerine iki bağımsız eksende sırala — ne kadar acil olduğu ve ne kadar önemli olduğu. Acil ama önemsiz olanlar, aciliyet şimdi dikkat talep ettiği için önemli ama henüz acil olmayanların önüne varsayılan olarak geçer; iki ekseni açıkça adlandırmak, önemli ama henüz acil olmayan kararları korumayı mümkün kılar.",
+  "formula": "Aciliyet ≥ 2 ise bir alışveriş acildir, önem ≥ 2 ise önemlidir; bu da kuyruğu sıralamak için dört çeyrek verir.",
+  "fitsWhen": "Alabileceğin şeylerin büyüyen bir listesi varsa ve gerçekten önceliği hak edeni sadece gürültülü olandan ayırmanın hızlı bir yoluna ihtiyacın varsa.",
+  "critique": "Aciliyet ve önem bir kuyruk öğesinde kendi kendine değerlendirilir, dolayısıyla matris ancak onu dolduran kişi kadar dürüsttür — her şeyi hem acil hem önemli işaretleme eğilimini düzeltmez."
+}

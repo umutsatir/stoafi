@@ -1,0 +1,12 @@
+{
+  "id": "room-for-error",
+  "title": "Room for error, \"enough\"",
+  "source": {
+    "author": "Morgan Housel",
+    "work": "The Psychology of Money"
+  },
+  "principle": "Plans built on precise, optimistic assumptions break the moment reality deviates from them. Build in margin — savings beyond what feels necessary, spending below what you could technically afford — so ordinary bad luck doesn't turn into a crisis. Knowing what \"enough\" looks like protects you from the moving goalpost of always wanting more.",
+  "formula": "Guard thresholds (emergency fund floor, installment cap) exist to keep an automatic margin, not just to react to a single bad month.",
+  "fitsWhen": "You're deciding how conservative to be about savings targets, debt limits, or any plan that assumes the future will go roughly as expected.",
+  "critique": "Too much margin has a real cost too — capital sitting idle as a buffer isn't working for you; the right amount of room for error depends on how volatile your actual life and income are, not a universal number."
+}

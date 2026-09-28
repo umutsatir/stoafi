@@ -1,0 +1,12 @@
+{
+  "id": "time-value-of-money",
+  "title": "Paranın zaman değeri",
+  "source": {
+    "author": "Standart finans",
+    "work": "Bugünkü değer"
+  },
+  "principle": "Gelecekte ödenecek bir tutar, bugün ödenen aynı tutardan daha az değerlidir; çünkü eldeki para bu süre zarfında biriktirilebilir, yatırıma dönüştürülebilir veya en azından enflasyona karşı korunabilir. Gelecekteki ödemeleri bugünün koşullarına indirgemek, toplu bir nakit fiyatı ile bir taksit ödemeleri dizisini eşit zeminde karşılaştırmayı mümkün kılan şeydir.",
+  "formula": "BD = Σ P_k / (1 + r)^k; burada r, beklenen enflasyondan türetilen aylık iskonto oranıdır.",
+  "fitsWhen": "Şimdi nakit ödemeyi aynı alışverişi taksitlere yaymakla karşılaştırıyorsan ve karşılaştırmanın sadece nominal değeri değil, paranın zaman içindeki değerini de hesaba katmasını istiyorsan.",
+  "critique": "Karşılaştırma, girdiğin enflasyon oranı kadar iyidir — gelecekteki enflasyon hakkında iyimser ya da kötümser bir tahmin hangi seçeneğin daha ucuz göründüğünü değiştirir ve formül borç taşımanın psikolojik maliyetini hesaba katmaz."
+}

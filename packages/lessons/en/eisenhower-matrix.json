@@ -1,0 +1,12 @@
+{
+  "id": "eisenhower-matrix",
+  "title": "The Eisenhower matrix",
+  "source": {
+    "author": "Stephen Covey",
+    "work": "The 7 Habits of Highly Effective People"
+  },
+  "principle": "Sort what's competing for your attention along two independent axes — how urgent it is and how important it is — instead of one. Urgent-but-unimportant items crowd out important-but-not-urgent ones by default, since urgency demands attention now; naming both axes explicitly makes it possible to protect the important, not-yet-urgent decisions.",
+  "formula": "A purchase is urgent when urgency ≥ 2 and important when importance ≥ 2, giving four quadrants to sort the queue by.",
+  "fitsWhen": "You have a growing list of things you might buy and need a quick way to separate what actually deserves priority from what's just loud.",
+  "critique": "Urgency and importance are self-rated on a queue item, so the matrix is only as honest as the person filling it in — it doesn't correct for a tendency to mark everything as both urgent and important."
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   costInWorkHours,
   costPerUse,
@@ -12,6 +12,8 @@ import {
   type Profile,
   type QueueItem,
 } from "@stoafi/core";
+import { getLessonCard } from "@/lessons";
+import type { Locale } from "@/i18n/messages";
 
 export interface QueueListProps {
   items: QueueItem[];
@@ -46,6 +48,9 @@ export function QueueList({
   const [items, setItems] = useState(initialItems);
   const t = useTranslations("queue");
   const tTimeline = useTranslations("timeline");
+  const locale = useLocale() as Locale;
+  const costInLifeEnergyLesson = getLessonCard("cost-in-life-energy", locale);
+  const eisenhowerLesson = getLessonCard("eisenhower-matrix", locale);
 
   const schedule = useMemo(
     () => scheduleQueue(items, profile, planState, [], today, startMonth),
@@ -54,42 +59,64 @@ export function QueueList({
   const scheduleByItemId = new Map(schedule.map((s) => [s.itemId, s.month]));
 
   return (
-    <ul>
-      {items.map((item, index) => {
-        const quadrant = eisenhowerQuadrant(item);
-        return (
-          <li key={item.id} data-testid={`queue-item-${item.id}`}>
-            <span>{item.name}</span>
-            <span data-testid={`month-${item.id}`}>
-              {scheduleByItemId.get(item.id) ?? tTimeline("notAffordableYet")}
-            </span>
-            <span>{quadrant.urgent ? t("urgent") : t("notUrgent")}</span>
-            <span>{quadrant.important ? t("important") : t("notImportant")}</span>
-            <span>
-              {t("hoursSuffix", { hours: costInWorkHours(item.price, hourlyNetIncome).toFixed(1) })}
-            </span>
-            <span>
-              {t("perUseSuffix", {
-                amount: costPerUse(item.price, item.expectedUses).toFixed(2),
-              })}
-            </span>
-            <button
-              type="button"
-              aria-label={t("moveUp", { name: item.name })}
-              onClick={() => setItems((prev) => reorder(prev, index, -1))}
-            >
-              {t("moveUpLabel")}
-            </button>
-            <button
-              type="button"
-              aria-label={t("moveDown", { name: item.name })}
-              onClick={() => setItems((prev) => reorder(prev, index, 1))}
-            >
-              {t("moveDownLabel")}
-            </button>
-          </li>
-        );
-      })}
-    </ul>
+    <div>
+      {costInLifeEnergyLesson && (
+        <a
+          href={`#lesson-${costInLifeEnergyLesson.id}`}
+          aria-label={`${costInLifeEnergyLesson.id} lesson`}
+          data-testid="lesson-link-cost-in-life-energy"
+        >
+          {costInLifeEnergyLesson.title}
+        </a>
+      )}
+      {eisenhowerLesson && (
+        <a
+          href={`#lesson-${eisenhowerLesson.id}`}
+          aria-label={`${eisenhowerLesson.id} lesson`}
+          data-testid="lesson-link-eisenhower-matrix"
+        >
+          {eisenhowerLesson.title}
+        </a>
+      )}
+      <ul>
+        {items.map((item, index) => {
+          const quadrant = eisenhowerQuadrant(item);
+          return (
+            <li key={item.id} data-testid={`queue-item-${item.id}`}>
+              <span>{item.name}</span>
+              <span data-testid={`month-${item.id}`}>
+                {scheduleByItemId.get(item.id) ?? tTimeline("notAffordableYet")}
+              </span>
+              <span>{quadrant.urgent ? t("urgent") : t("notUrgent")}</span>
+              <span>{quadrant.important ? t("important") : t("notImportant")}</span>
+              <span>
+                {t("hoursSuffix", {
+                  hours: costInWorkHours(item.price, hourlyNetIncome).toFixed(1),
+                })}
+              </span>
+              <span>
+                {t("perUseSuffix", {
+                  amount: costPerUse(item.price, item.expectedUses).toFixed(2),
+                })}
+              </span>
+              <button
+                type="button"
+                aria-label={t("moveUp", { name: item.name })}
+                onClick={() => setItems((prev) => reorder(prev, index, -1))}
+              >
+                {t("moveUpLabel")}
+              </button>
+              <button
+                type="button"
+                aria-label={t("moveDown", { name: item.name })}
+                onClick={() => setItems((prev) => reorder(prev, index, 1))}
+              >
+                {t("moveDownLabel")}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }

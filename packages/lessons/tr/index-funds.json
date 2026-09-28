@@ -1,0 +1,11 @@
+{
+  "id": "index-funds",
+  "title": "Endeks fonları ve maliyetler",
+  "source": {
+    "author": "John C. Bogle",
+    "work": "The Little Book of Common Sense Investing"
+  },
+  "principle": "Aktif yönetilen fonların çoğu, ücretler düşüldükten sonra piyasayı yenemez ve kimse önceden hangilerinin başaracağını güvenilir biçimde söyleyemez. Piyasanın tamamına sahip olan düşük maliyetli bir fon, piyasanın getirisini küçük bir ücret düşülmüş halde yakalar; on yıllar boyunca bu ücret farkı büyük bir açığa dönüşür. Maliyetler, yatırımla ilgili gerçekten kontrol edebileceğin birkaç şeyden biridir.",
+  "fitsWhen": "Yatırım kovasına ayrılan paranın nereye gideceğine karar veriyorsan ve kazananları seçmeyi gerektirmeyen bir varsayılan istiyorsan.",
+  "critique": "Geniş piyasa endeks fonları yine de tam piyasa riski taşır ve bir düşüşte koruma sağlamaz; \"düşük maliyet\" \"düşük risk\" ile aynı şey değildir ve yaklaşım hisse senedi, tahvil veya diğer sınıflar arasındaki varlık dağılımı hakkında bir şey söylemez."
+}

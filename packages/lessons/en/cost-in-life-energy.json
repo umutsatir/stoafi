@@ -1,0 +1,12 @@
+{
+  "id": "cost-in-life-energy",
+  "title": "Cost in life energy",
+  "source": {
+    "author": "Vicki Robin",
+    "work": "Your Money or Your Life"
+  },
+  "principle": "Money is a stand-in for the hours of life you traded to earn it. Before buying something, translate its price into the hours of work it actually cost you — that reframing makes the true cost of a purchase visible in a way the price tag alone doesn't.",
+  "formula": "Cost in work hours = price ÷ hourly net income.",
+  "fitsWhen": "You want a gut check on whether a purchase is worth what it actually costs you in time and effort, not just money.",
+  "critique": "It treats all work hours as equally unpleasant and interchangeable, which isn't true for everyone — some work is itself rewarding, so the trade isn't purely a sacrifice."
+}
