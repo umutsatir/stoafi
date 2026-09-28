@@ -48,6 +48,7 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
     renderWithIntl(
       <QueueList
         items={[item]}
+        onItemsChange={() => undefined}
         profile={profile}
         planState={planState}
         today="2026-01-01"

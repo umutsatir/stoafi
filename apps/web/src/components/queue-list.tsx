@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   costInWorkHours,
@@ -17,7 +17,12 @@ import type { Locale } from "@/i18n/messages";
 import { useMoney } from "@/lib/use-money";
 
 export interface QueueListProps {
+  /** Controlled: the parent owns the items and persists changes. */
   items: QueueItem[];
+  onItemsChange: (items: QueueItem[]) => void;
+  onSelect?: (item: QueueItem) => void;
+  onEdit?: (item: QueueItem) => void;
+  onDelete?: (item: QueueItem) => void;
   profile: Profile;
   planState: PlanStateInput;
   today: string;
@@ -39,14 +44,17 @@ function reorder(items: QueueItem[], index: number, direction: -1 | 1): QueueIte
 }
 
 export function QueueList({
-  items: initialItems,
+  items,
+  onItemsChange,
+  onSelect,
+  onEdit,
+  onDelete,
   profile,
   planState,
   today,
   startMonth,
   hourlyNetIncome,
 }: QueueListProps) {
-  const [items, setItems] = useState(initialItems);
   const t = useTranslations("queue");
   const tTimeline = useTranslations("timeline");
   const locale = useLocale() as Locale;
@@ -80,12 +88,19 @@ export function QueueList({
           {eisenhowerLesson.title}
         </a>
       )}
+      {items.length === 0 && <p>{t("empty")}</p>}
       <ul>
         {items.map((item, index) => {
           const quadrant = eisenhowerQuadrant(item);
           return (
             <li key={item.id} data-testid={`queue-item-${item.id}`}>
-              <span>{item.name}</span>
+              {onSelect ? (
+                <button type="button" onClick={() => onSelect(item)}>
+                  {item.name}
+                </button>
+              ) : (
+                <span>{item.name}</span>
+              )}
               <span data-testid={`month-${item.id}`}>
                 {scheduleByItemId.get(item.id) ?? tTimeline("notAffordableYet")}
               </span>
@@ -104,17 +119,27 @@ export function QueueList({
               <button
                 type="button"
                 aria-label={t("moveUp", { name: item.name })}
-                onClick={() => setItems((prev) => reorder(prev, index, -1))}
+                onClick={() => onItemsChange(reorder(items, index, -1))}
               >
                 {t("moveUpLabel")}
               </button>
               <button
                 type="button"
                 aria-label={t("moveDown", { name: item.name })}
-                onClick={() => setItems((prev) => reorder(prev, index, 1))}
+                onClick={() => onItemsChange(reorder(items, index, 1))}
               >
                 {t("moveDownLabel")}
               </button>
+              {onEdit && (
+                <button type="button" onClick={() => onEdit(item)}>
+                  {t("edit", { name: item.name })}
+                </button>
+              )}
+              {onDelete && (
+                <button type="button" onClick={() => onDelete(item)}>
+                  {t("delete", { name: item.name })}
+                </button>
+              )}
             </li>
           );
         })}

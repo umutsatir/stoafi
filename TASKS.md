@@ -646,10 +646,11 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.5b
   Note: `useMoney()` formats with `currencyDisplay: "narrowSymbol"` (plain `TRY` in `en` otherwise). The minimum-payment calculator's balance/floor are now `MoneyInput` and its rates `PercentInput`; its default balance is 10,000.00 instead of 10.00. Decision outcomes are translated (`decisions.outcome.*`). The installment calculator still derives each offer's payment as price/months with no way to type a real bank quote; that is fixed in T9.7.
 
-- [ ] **T9.6** Queue: add, edit, remove, reorder (persisted)
+- [x] **T9.6** Queue: add, edit, remove, reorder (persisted)
   Goal: form to add a wish/need (name, price, need/want, urgency, importance, expected uses, optional cash price); edit and delete; up/down reorder writes `order`; everything persists via the repo.
   Acceptance: component test: adding two items shows both, reordering swaps months, reload (re-hydrate) keeps order.
   Depends on: T9.5
+  Note: `QueueList` became controlled (`items` + `onItemsChange`, optional `onSelect`/`onEdit`/`onDelete`), so the page owns the items and persists them; reorder writes every item's renumbered `order` in one Dexie transaction (`storage/queue-repo.ts`). The old duplicate name-button list on the page is gone (the list's name is the select button). Adding requires a name and a price above zero; expected uses defaults to 1. Added `role` to the hard-coded-string scanner's attribute allow-list.
 
 - [ ] **T9.7** Purchase flow: cash or installment
   Goal: "Buy" on a queue item asks cash or installment. Cash: writes a `bought` decision, removes the item, no commitment. Installment: pick an offer, the item becomes an installment expense over its months (derived into `commitments` for `project`, never stored as a second copy) and shows in the expenses view.

@@ -25,6 +25,7 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "inputMode",
   "autoComplete",
   "aria-hidden",
+  "role",
 ]);
 
 export interface HardcodedStringViolation {
