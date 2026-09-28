@@ -343,7 +343,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Depends on: T4.5, T4.7, T4.4, T3.15
   Note: dropped the planned `guardRules` param — the scheduler only enforces the bucket-limit constraint (equivalent to the `wants-limit` default guard) and the cooldown. `emergency-fund-floor` and `installment-cap` need a savings balance and a 12-month installment projection that a pure scheduling pass over a queue doesn't have as inputs; those still run via `evaluateGuards` when a specific draft is presented for confirmation (SPEC flow 1), just not during auto-scheduling. Added a `today: string` param instead — cooldown needs a date, not just a `Month`.
 
-- [ ] **T4.10** Reordering re-runs the scheduler
+- [x] **T4.10** Reordering re-runs the scheduler
   Goal: ensure `scheduleQueue` is a pure function of `items` order (no hidden state) so that calling it again with a reordered `items` array changes the returned schedule — SPEC acceptance: "Reordering the queue re-runs the scheduler and updates the month for every item."
   Acceptance: unit test: given the same items in two different orders, at least one item's assigned month differs, and the result is fully determined by input order (call twice with the same order, get identical output — determinism check).
   Depends on: T4.9
