@@ -12,7 +12,16 @@ describe("Nav", () => {
       </NextIntlClientProvider>,
     );
 
-    for (const label of ["Profile", "Plan", "Queue", "Cards", "Health", "Decisions", "Settings"]) {
+    for (const label of [
+      "Home",
+      "Profile",
+      "Plan",
+      "Queue",
+      "Cards",
+      "Health",
+      "Decisions",
+      "Settings",
+    ]) {
       expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
     }
   });

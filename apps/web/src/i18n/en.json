@@ -1,9 +1,31 @@
 {
-  "app": {
-    "coreVersion": "stoafi core v{version}"
+  "home": {
+    "title": "Home",
+    "welcome": "Stoafi turns your salary and regular costs into a monthly plan. Start by telling it what comes in and what goes out.",
+    "setUpProfile": "Set up your profile",
+    "thisMonth": "This month",
+    "income": "Salaries",
+    "obligations": "Recurring expenses",
+    "living": "Living costs",
+    "installments": "Installments",
+    "left": "Left after all of these",
+    "overspent": "Your monthly costs are above your income.",
+    "fundLow": "Your emergency fund is below your target.",
+    "emergencyFund": "Emergency fund",
+    "emergencyFundLine": "{saved} months of needs saved, target {target}",
+    "activePlan": "Active plan",
+    "needs": "Needs",
+    "wants": "Wants",
+    "savings": "Savings",
+    "investing": "Investing",
+    "changePlan": "Change plan",
+    "nextInQueue": "Next in your queue",
+    "addToQueue": "Add to your queue",
+    "openQueue": "Open the queue"
   },
   "nav": {
     "ariaLabel": "Main",
+    "home": "Home",
     "profile": "Profile",
     "plan": "Plan",
     "queue": "Queue",

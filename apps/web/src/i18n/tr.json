@@ -1,9 +1,31 @@
 {
-  "app": {
-    "coreVersion": "stoafi core v{version}"
+  "home": {
+    "title": "Ana sayfa",
+    "welcome": "Stoafi maaşını ve düzenli giderlerini aylık bir plana çevirir. Önce ne girdiğini ve ne çıktığını anlat.",
+    "setUpProfile": "Profilini oluştur",
+    "thisMonth": "Bu ay",
+    "income": "Maaşlar",
+    "obligations": "Düzenli giderler",
+    "living": "Yaşam giderleri",
+    "installments": "Taksitler",
+    "left": "Hepsinden sonra kalan",
+    "overspent": "Aylık giderlerin gelirinin üstünde.",
+    "fundLow": "Acil durum fonun hedefinin altında.",
+    "emergencyFund": "Acil durum fonu",
+    "emergencyFundLine": "{saved} aylık ihtiyaç birikmiş, hedef {target}",
+    "activePlan": "Aktif plan",
+    "needs": "İhtiyaçlar",
+    "wants": "İstekler",
+    "savings": "Birikim",
+    "investing": "Yatırım",
+    "changePlan": "Planı değiştir",
+    "nextInQueue": "Kuyruktaki sıradakiler",
+    "addToQueue": "Kuyruğuna ekle",
+    "openQueue": "Kuyruğu aç"
   },
   "nav": {
     "ariaLabel": "Ana",
+    "home": "Ana sayfa",
     "profile": "Profil",
     "plan": "Plan",
     "queue": "Kuyruk",

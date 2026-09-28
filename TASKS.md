@@ -658,10 +658,11 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.6
   Note: an installment purchase is stored as `QueueItem.installmentPurchase` (chosen offer + first payment month; additive optional field, so no schema version bump or migration). The item leaves the waiting queue and its payments are derived by `installmentCommitments()`; nothing is stored twice and the store no longer has a `commitments` field (`useCommitments()` derives it). Cash purchases write a `bought` decision and delete the item. The installment calculator now takes the real monthly payment per offer (rows can be added/removed) because price/months was an interest-free placeholder. The scheduler and timeline now also receive the installment commitments, so bought installments use up bucket room. The profile page lists running installments (`InstallmentExpenses`) with a remove button for mistakes. Settings import now reloads the store from Dexie. Known gap, not fixed here: `project()` ignores profile recurring expenses and living costs, so `freeCash` and bucket room are computed from commitments only; the Home page (T9.8) shows an income-minus-obligations figure separately. Also unresolved: the 20% installment cap is still hard-coded in the page (open question in SPEC backlog).
 
-- [ ] **T9.8** Home page
+- [x] **T9.8** Home page
   Goal: dashboard: this month's income, recurring obligations, living costs, installment load, what is left; next queue items with their months; guard/health highlights; empty-state call to action pointing to Profile.
   Acceptance: component test for both the empty state and a filled state.
   Depends on: T9.7
+  Note: "left" is income minus recurring expenses, living costs and this month's installments; cash purchases are not in it (the user pays those from the account). It is computed in the Dashboard rather than from `project().freeCash` because `project()` does not see profile expenses (see T9.7 note). Added a Home link to the nav and dropped the placeholder `app.coreVersion` string. Dashboard skips scheduling when the plan id is unknown instead of letting `currentAllocation` throw.
 
 - [ ] **T9.9** Styling baseline
   Goal: wire Tailwind (already in the stack) and restyle forms, buttons, nav and cards consistently.
