@@ -377,7 +377,7 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Depends on: T5.1, T1.3
   Note: dropped the planned `todayMonth` param — the shift is fully determined by `purchaseDate` and the card's `statementDay`/`dueDay`, not by "today"; file placed at `timing.ts` (not `selectors.ts`) since the module has more than one selector file (see `capacity.ts`/`selectors.ts` split in `installments`).
 
-- [ ] **T5.3** Minimum-payment trap calculator
+- [x] **T5.3** Minimum-payment trap calculator
   Goal: `packages/core/modules/cards/selectors.ts` — `minimumPaymentPayoff(balance: Minor, monthlyRate: number, minPaymentRule: { pct: number; floor: Minor }): { months: number; totalInterest: Minor }` implementing SPEC's `b_{t+1} = b_t*(1+c) - max(p*b_t, floor)`, iterating to zero balance with a safety cap (e.g. 600 months) to guarantee termination.
   Acceptance: unit tests: a known balance/rate/payment combination matches a hand or spreadsheet-computed months-to-payoff and total interest within rounding tolerance; a payment rule where `p*b_t < floor` uses the floor every month (verify via a low-balance case); a pathological case where the payment never covers interest terminates at the safety cap rather than looping forever (test asserts it returns rather than hangs).
   Depends on: T5.1, T2.1
