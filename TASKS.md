@@ -353,7 +353,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Acceptance: registers via kernel registry without error.
   Depends on: T4.9
 
-- [ ] **T4.12** Preview mode integration test
+- [x] **T4.12** Preview mode integration test
   Goal: integration test (no new production code) proving SPEC's "Preview mode": selecting a queue item and building `project(ledger + [draft])` (via `includeDrafts: true` from T1.8) shows before/after numbers for buckets, installment capacity and emergency fund without mutating the underlying ledger.
   Acceptance: test builds a ledger, computes `projectSeries` before, adds one draft via `toDraftCommitment`, computes `projectSeries` after, asserts `freeCash` differs in the draft's month and the original ledger array is unchanged (referential/structural equality check).
   Depends on: T4.5, T1.9
