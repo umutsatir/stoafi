@@ -20,7 +20,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm turbo run test` exits 0 (no-op, no packages yet).
   Depends on: T0.1
 
-- [ ] **T0.3** Scaffold `packages/core` with TS strict config
+- [x] **T0.3** Scaffold `packages/core` with TS strict config
   Goal: create `packages/core/package.json` (`@stoafi/core`), `tsconfig.json` extending a shared strict base, empty `src/index.ts`.
   Acceptance: `pnpm --filter @stoafi/core typecheck` passes on the empty package.
   Depends on: T0.2
