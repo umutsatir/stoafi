@@ -62,7 +62,14 @@
     "removeExpense": "Remove expense {n}",
     "livingExpenses": "Monthly living costs",
     "livingExpensesHint": "Groceries and everyday spending as one monthly total.",
-    "inflationHint": "Enter a percent, e.g. 30 for 30%."
+    "inflationHint": "Enter a percent, e.g. 30 for 30%.",
+    "payDayLabel": "Paid on day",
+    "salaryPayDay": "Salary {n} pay day",
+    "dueDayLabel": "Due on day",
+    "expenseDueDay": "Expense {n} due day",
+    "endsLabel": "Ends",
+    "expenseHasEnd": "Expense {n} has an end month",
+    "expenseEndMonth": "Expense {n} end month"
   },
   "plan": {
     "title": "Plan",

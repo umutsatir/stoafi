@@ -26,7 +26,7 @@ export default function HealthPage() {
   }
 
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
-  const needs = monthlyNeeds(profile);
+  const needs = monthlyNeeds(profile, monthOf(today));
   const projection = project({ income }, commitments, monthOf(today));
 
   return (

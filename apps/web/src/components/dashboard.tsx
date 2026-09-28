@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  activeFixedExpenses,
   activeQueueItems,
   currentAllocation,
   emergencyFundMonths,
@@ -65,12 +66,12 @@ export function Dashboard({
 
   const month = monthOf(today);
   const income = netMonthlyIncome(profile);
-  const obligations = profile.fixedExpenses.reduce((sum, e) => sum + e.monthly, 0);
+  const obligations = activeFixedExpenses(profile, month).reduce((sum, e) => sum + e.monthly, 0);
   const commitments = installmentCommitments(queueItems);
   const installments = project({ income }, commitments, month).installmentLoad;
   const left = income - obligations - profile.livingExpenses - installments;
 
-  const needs = monthlyNeeds(profile);
+  const needs = monthlyNeeds(profile, month);
   const savedMonths = emergencyFundMonths(profile.savings, needs);
   const fundLow = savedMonths < profile.emergencyFundTargetMonths;
   const overspent = left < 0;

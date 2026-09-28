@@ -25,6 +25,7 @@ export default function ProfilePage() {
       <ProfileForm
         initial={profile ?? undefined}
         currency={currency}
+        currentMonth={monthOf(today)}
         onSave={async (value) => {
           const saved = await putSingleton(db, "profile", ProfileSchema, value);
           setProfile(saved);

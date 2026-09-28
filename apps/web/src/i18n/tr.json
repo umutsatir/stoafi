@@ -62,7 +62,14 @@
     "removeExpense": "Gider {n} sil",
     "livingExpenses": "Aylık yaşam giderleri",
     "livingExpensesHint": "Mutfak ve günlük harcamalar tek bir aylık toplam olarak.",
-    "inflationHint": "Yüzde olarak gir, örn. %30 için 30."
+    "inflationHint": "Yüzde olarak gir, örn. %30 için 30.",
+    "payDayLabel": "Yatış günü",
+    "salaryPayDay": "Maaş {n} yatış günü",
+    "dueDayLabel": "Son ödeme günü",
+    "expenseDueDay": "Gider {n} son ödeme günü",
+    "endsLabel": "Biter",
+    "expenseHasEnd": "Gider {n} için bitiş ayı var",
+    "expenseEndMonth": "Gider {n} bitiş ayı"
   },
   "plan": {
     "title": "Plan",

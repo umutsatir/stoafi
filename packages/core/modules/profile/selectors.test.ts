@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hourlyNetIncome, monthlyNeeds } from "./selectors";
+import { dueDayOf, hourlyNetIncome, monthlyNeeds, payDayOf } from "./selectors";
 import type { Profile } from "./schema";
 
 function makeProfile(overrides: Partial<Profile> = {}): Profile {
@@ -50,5 +50,39 @@ describe("monthlyNeeds", () => {
       livingExpenses: 7000,
     });
     expect(monthlyNeeds(profile)).toBe(17000);
+  });
+});
+
+describe("payDayOf / dueDayOf", () => {
+  it("returns the explicit day when set", () => {
+    expect(payDayOf({ payDay: 15 })).toBe(15);
+    expect(dueDayOf({ dueDay: 28 })).toBe(28);
+  });
+
+  it("defaults to the 1st when omitted", () => {
+    expect(payDayOf({})).toBe(1);
+    expect(dueDayOf({})).toBe(1);
+  });
+});
+
+describe("monthlyNeeds for a given month", () => {
+  const profile = makeProfile({
+    fixedExpenses: [
+      { label: "Rent", monthly: 10000, bucket: "needs" },
+      { label: "Car loan", monthly: 4000, bucket: "needs", endMonth: "2026-06" },
+    ],
+    livingExpenses: 1000,
+  });
+
+  it("counts an expense through its end month", () => {
+    expect(monthlyNeeds(profile, "2026-06")).toBe(15000);
+  });
+
+  it("drops an expense after its end month", () => {
+    expect(monthlyNeeds(profile, "2026-07")).toBe(11000);
+  });
+
+  it("counts every expense when no month is given", () => {
+    expect(monthlyNeeds(profile)).toBe(15000);
   });
 });
