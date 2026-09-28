@@ -67,3 +67,13 @@ export function project(
     freeCash: input.income - totalCommitted,
   };
 }
+
+/** Projects a series of months, e.g. a 12-month horizon. */
+export function projectSeries(
+  input: ProjectionInput,
+  commitments: Commitment[],
+  months: Month[],
+  options: ProjectOptions = {},
+): MonthProjection[] {
+  return months.map((month) => project(input, commitments, month, options));
+}

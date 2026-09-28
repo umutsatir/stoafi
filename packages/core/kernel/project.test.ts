@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { project } from "./project";
+import { project, projectSeries } from "./project";
 import type { Commitment } from "./commitment";
+import type { Month } from "./month";
 
 function commitment(overrides: Partial<Commitment> = {}): Commitment {
   return {
@@ -48,5 +49,53 @@ describe("project (single month)", () => {
     const result = project({ income: 10000 }, commitments, "2026-09", { includeDrafts: true });
     expect(result.byBucket.wants.committed).toBe(1000);
     expect(result.freeCash).toBe(9000);
+  });
+});
+
+const twelveMonths: Month[] = [
+  "2026-01",
+  "2026-02",
+  "2026-03",
+  "2026-04",
+  "2026-05",
+  "2026-06",
+  "2026-07",
+  "2026-08",
+  "2026-09",
+  "2026-10",
+  "2026-11",
+  "2026-12",
+];
+
+describe("projectSeries", () => {
+  it("returns freeCash === income for every month with no commitments", () => {
+    const results = projectSeries({ income: 10000 }, [], twelveMonths);
+    expect(results).toHaveLength(12);
+    for (const r of results) {
+      expect(r.freeCash).toBe(10000);
+    }
+  });
+
+  it("derives installmentLoad only in the months an installment commitment pays", () => {
+    const installment: Commitment = {
+      id: "inst-1",
+      source: { module: "installments", refId: "offer-1" },
+      bucket: "wants",
+      payments: [
+        { month: "2026-03", amount: 1000 },
+        { month: "2026-04", amount: 1000 },
+        { month: "2026-05", amount: 1000 },
+      ],
+      status: "active",
+    };
+
+    const results = projectSeries({ income: 10000 }, [installment], twelveMonths);
+    const byMonth = new Map(results.map((r) => [r.month, r]));
+
+    expect(byMonth.get("2026-03")?.installmentLoad).toBe(1000);
+    expect(byMonth.get("2026-04")?.installmentLoad).toBe(1000);
+    expect(byMonth.get("2026-05")?.installmentLoad).toBe(1000);
+    expect(byMonth.get("2026-02")?.installmentLoad).toBe(0);
+    expect(byMonth.get("2026-06")?.installmentLoad).toBe(0);
   });
 });

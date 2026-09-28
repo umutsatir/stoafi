@@ -120,7 +120,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Depends on: T1.5, T1.7
   Note: `project()`'s first argument is `{ income: Minor }`, not `Profile` — `Profile` is a `modules/profile` type and kernel cannot depend on it (modules never import each other, and kernel sits below all modules). Plan/profile wiring narrows a real `Profile` down to `{ income }` at the call site in later phases. `bucketLimits` defaults to zero for every bucket until T3.15 wires plan's allocation in. `installmentLoad`/`sinkingSetAside` are derived by convention from `commitment.source.module` (`'installments'` / `'sinking-funds'`), since kernel can't import those modules to check some shared type.
 
-- [ ] **T1.9** `project()` — multi-month series
+- [x] **T1.9** `project()` — multi-month series
   Goal: extend `project.ts` with `projectSeries(profile, commitments, months: Month[]): MonthProjection[]`, deriving `installmentLoad` and `sinkingSetAside` per month by summing payments whose `source.module` is `'installments'` / `'sinking-funds'` respectively (by convention, since kernel cannot import those modules).
   Acceptance: unit test: a 3-month installment plan produces nonzero `installmentLoad` in exactly those 3 months and zero elsewhere; a 12-month call with no commitments returns 12 projections with `freeCash === income` each.
   Depends on: T1.8
