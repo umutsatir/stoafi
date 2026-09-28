@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import "./globals.css";
 import { AppBootstrap } from "@/components/app-bootstrap";
 import { IntlProvider } from "@/components/intl-provider";
 import { Nav } from "@/components/nav";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Stoafi",
@@ -30,10 +30,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <IntlProvider>
-          <Nav />
-          <AppBootstrap>{children}</AppBootstrap>
+          <div className="mx-auto flex min-h-screen max-w-5xl flex-col md:flex-row">
+            <Nav />
+            <div className="flex-1 p-6">
+              <AppBootstrap>{children}</AppBootstrap>
+            </div>
+          </div>
         </IntlProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { CardList } from "@/components/card-list";
 import { MinimumPaymentCalculator } from "@/components/minimum-payment-calculator";
 import { useAppStore } from "@/store";
+import { Page } from "@/components/ui/page";
 
 export default function CardsPage() {
   const cards = useAppStore((s) => s.cards);
@@ -11,10 +12,9 @@ export default function CardsPage() {
   const t = useTranslations("cards");
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
+    <Page title={t("title")}>
       <CardList cards={cards} onAdd={(card) => setCards([...cards, card])} />
       <MinimumPaymentCalculator />
-    </main>
+    </Page>
   );
 }

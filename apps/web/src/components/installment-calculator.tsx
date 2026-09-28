@@ -5,7 +5,19 @@ import { useLocale, useTranslations } from "next-intl";
 import { compareOffers, type OfferResult } from "@stoafi/core";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
+import { Plus, Trash2 } from "lucide-react";
 import { useMoney } from "@/lib/use-money";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useAppStore } from "@/store";
 import { MoneyInput } from "./money-input";
 
@@ -65,48 +77,52 @@ export function InstallmentCalculator({
   const resultByKey = new Map(complete.map((r, i) => [r.key, results[i]]));
 
   return (
-    <div>
-      <h2>{t("title")}</h2>
-      <p>{t("hint")}</p>
+    <div className="flex flex-col gap-3 rounded-lg border border-border p-4">
+      <div>
+        <h2 className="text-base font-semibold">{t("title")}</h2>
+        <p className="text-sm text-muted-foreground">{t("hint")}</p>
+      </div>
       {timeValueLesson && (
         <a
           href={`#lesson-${timeValueLesson.id}`}
           aria-label={`${timeValueLesson.id} lesson`}
           data-testid="lesson-link-time-value-of-money"
+          className="text-sm font-medium text-primary underline-offset-2 hover:underline"
         >
           {timeValueLesson.title}
         </a>
       )}
-      <table>
-        <thead>
-          <tr>
-            <th>{t("months")}</th>
-            <th>{t("monthlyPayment")}</th>
-            <th>{t("totalPaid")}</th>
-            <th>{t("pv")}</th>
-            <th>{t("realSaving")}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t("months")}</TableHead>
+            <TableHead>{t("monthlyPayment")}</TableHead>
+            <TableHead>{t("totalPaid")}</TableHead>
+            <TableHead>{t("pv")}</TableHead>
+            <TableHead>{t("realSaving")}</TableHead>
+            <TableHead />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((row, index) => {
             const result = resultByKey.get(row.key);
             const n = index + 1;
             return (
-              <tr key={row.key} data-testid={`offer-row-${row.months}`}>
-                <td>
-                  <input
+              <TableRow key={row.key} data-testid={`offer-row-${row.months}`}>
+                <TableCell>
+                  <Input
                     aria-label={t("monthsAriaLabel", { index: n })}
                     type="number"
                     min={1}
                     step={1}
+                    className="w-20"
                     value={row.months}
                     onChange={(e) =>
                       patch(row.key, { months: Math.max(0, Math.floor(Number(e.target.value))) })
                     }
                   />
-                </td>
-                <td data-testid={`monthly-payment-${row.months}`}>
+                </TableCell>
+                <TableCell data-testid={`monthly-payment-${row.months}`}>
                   <MoneyInput
                     id={`offer-payment-${row.key}`}
                     aria-label={t("paymentAriaLabel", { index: n })}
@@ -114,44 +130,60 @@ export function InstallmentCalculator({
                     value={row.monthlyPayment}
                     onChange={(monthlyPayment) => patch(row.key, { monthlyPayment })}
                   />
-                </td>
-                <td data-testid={`total-paid-${row.months}`}>
+                </TableCell>
+                <TableCell data-testid={`total-paid-${row.months}`}>
                   {result ? money(row.months * row.monthlyPayment) : t("incomplete")}
-                </td>
-                <td data-testid={`pv-${row.months}`}>
+                </TableCell>
+                <TableCell data-testid={`pv-${row.months}`}>
                   {result ? money(Math.round(result.pv)) : t("incomplete")}
-                </td>
-                <td data-testid={`real-saving-${row.months}`}>
-                  {result ? `${(result.realSaving * 100).toFixed(1)}%` : t("incomplete")}
-                </td>
-                <td>
-                  {result && (
-                    <button type="button" onClick={() => onSelect(result)}>
-                      {t("select")}
-                    </button>
+                </TableCell>
+                <TableCell data-testid={`real-saving-${row.months}`}>
+                  {result ? (
+                    <Badge variant={result.realSaving >= 0 ? "secondary" : "destructive"}>
+                      {`${(result.realSaving * 100).toFixed(1)}%`}
+                    </Badge>
+                  ) : (
+                    t("incomplete")
                   )}
-                  {rows.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => setRows((prev) => prev.filter((r) => r.key !== row.key))}
-                    >
-                      {t("removeOffer", { index: n })}
-                    </button>
-                  )}
-                </td>
-              </tr>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center justify-end gap-1">
+                    {result && (
+                      <Button type="button" size="sm" onClick={() => onSelect(result)}>
+                        {t("select")}
+                      </Button>
+                    )}
+                    {rows.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t("removeOffer", { index: n })}
+                        onClick={() => setRows((prev) => prev.filter((r) => r.key !== row.key))}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
             );
           })}
-        </tbody>
-      </table>
-      <button
-        type="button"
-        onClick={() =>
-          setRows((prev) => [...prev, { key: nextKey.current++, months: 3, monthlyPayment: 0 }])
-        }
-      >
-        {t("addOffer")}
-      </button>
+        </TableBody>
+      </Table>
+      <div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setRows((prev) => [...prev, { key: nextKey.current++, months: 3, monthlyPayment: 0 }])
+          }
+        >
+          <Plus className="h-4 w-4" />
+          {t("addOffer")}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -13,6 +13,9 @@ import {
   type GuardBreach,
   type QueueItem,
 } from "@stoafi/core";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Page } from "@/components/ui/page";
 import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
@@ -49,11 +52,16 @@ export default function QueuePage() {
 
   if (!profile || !planState) {
     return (
-      <main>
-        <h1>{t("title")}</h1>
-        <p>{t("fillProfileAndPlanFirst")}</p>
-        <Link href="/profile">{t("goToProfile")}</Link>
-      </main>
+      <Page title={t("title")}>
+        <Card>
+          <CardContent className="flex flex-col items-start gap-4 pt-6">
+            <p className="text-sm text-muted-foreground">{t("fillProfileAndPlanFirst")}</p>
+            <Button asChild>
+              <Link href="/profile">{t("goToProfile")}</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </Page>
     );
   }
 
@@ -123,8 +131,7 @@ export default function QueuePage() {
   }
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
+    <Page title={t("title")}>
       <QueueForm
         key={editingItem?.id ?? "new"}
         initial={editingItem}
@@ -153,11 +160,12 @@ export default function QueuePage() {
           href={`#lesson-${sinkingFundsLesson.id}`}
           aria-label={`${sinkingFundsLesson.id} lesson`}
           data-testid="lesson-link-sinking-funds"
+          className="text-sm font-medium text-primary underline-offset-2 hover:underline"
         >
           {sinkingFundsLesson.title}
         </a>
       )}
-      <h2>{t("timelineTitle")}</h2>
+      <h2 className="text-lg font-semibold tracking-tight">{t("timelineTitle")}</h2>
       <QueueTimeline
         items={waitingItems}
         commitments={commitments}
@@ -179,6 +187,6 @@ export default function QueuePage() {
           onConfirm={handleConfirm}
         />
       )}
-    </main>
+    </Page>
   );
 }

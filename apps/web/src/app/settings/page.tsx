@@ -8,6 +8,7 @@ import { exportToJson, importFromJson } from "@/storage/backup";
 import { localIsoDate } from "@/lib/clock";
 import { loadAppState } from "@/storage/bootstrap";
 import { useAppStore } from "@/store";
+import { Page } from "@/components/ui/page";
 
 export default function SettingsPage() {
   const currency = useAppStore((s) => s.currency);
@@ -16,8 +17,7 @@ export default function SettingsPage() {
   const t = useTranslations("settings");
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
+    <Page title={t("title")}>
       <SettingsPanel
         currency={currency}
         onCurrencyChange={setCurrency}
@@ -30,6 +30,6 @@ export default function SettingsPage() {
         }}
       />
       <LocaleSwitcher />
-    </main>
+    </Page>
   );
 }

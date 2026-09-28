@@ -6,6 +6,7 @@ import { PlanComparison } from "@/components/plan-comparison";
 import { putSingleton } from "@/storage/repo";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
+import { Page } from "@/components/ui/page";
 
 export default function PlanPage() {
   const profile = useAppStore((s) => s.profile);
@@ -14,8 +15,7 @@ export default function PlanPage() {
   const t = useTranslations("plan");
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
+    <Page title={t("title")}>
       {profile ? (
         <PlanComparison
           profile={profile}
@@ -27,8 +27,8 @@ export default function PlanPage() {
           }}
         />
       ) : (
-        <p>{t("fillProfileFirst")}</p>
+        <p className="text-sm text-muted-foreground">{t("fillProfileFirst")}</p>
       )}
-    </main>
+    </Page>
   );
 }

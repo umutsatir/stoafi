@@ -2,7 +2,13 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
+import { Plus, Trash2 } from "lucide-react";
 import type { Bucket, Profile } from "@stoafi/core";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { MoneyInput } from "./money-input";
 import { PercentInput } from "./percent-input";
 
@@ -76,136 +82,169 @@ export function ProfileForm({ initial, currency = "TRY", onSave }: ProfileFormPr
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <fieldset>
-        <legend>{t("salariesTitle")}</legend>
-        <p>{t("salariesHint")}</p>
-        {salaries.map((row, index) => {
-          const n = index + 1;
-          return (
-            <div key={row.key}>
-              <input
-                type="text"
-                aria-label={t("salaryName", { n })}
-                placeholder={t("salaryNamePlaceholder")}
-                value={row.label}
-                onChange={(e) => patchSalary(row.key, { label: e.target.value })}
-              />
-              <MoneyInput
-                id={`salary-${row.key}`}
-                aria-label={t("salaryAmount", { n })}
-                currency={currency}
-                value={row.monthly}
-                onChange={(monthly) => patchSalary(row.key, { monthly })}
-              />
-              {salaries.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => setSalaries((rows) => rows.filter((r) => r.key !== row.key))}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("salariesTitle")}</CardTitle>
+          <CardDescription>{t("salariesHint")}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          {salaries.map((row, index) => {
+            const n = index + 1;
+            return (
+              <div key={row.key} className="flex flex-wrap items-center gap-2">
+                <Input
+                  type="text"
+                  className="w-full sm:w-56"
+                  aria-label={t("salaryName", { n })}
+                  placeholder={t("salaryNamePlaceholder")}
+                  value={row.label}
+                  onChange={(e) => patchSalary(row.key, { label: e.target.value })}
+                />
+                <MoneyInput
+                  id={`salary-${row.key}`}
+                  aria-label={t("salaryAmount", { n })}
+                  currency={currency}
+                  value={row.monthly}
+                  onChange={(monthly) => patchSalary(row.key, { monthly })}
+                />
+                {salaries.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t("removeSalary", { n })}
+                    onClick={() => setSalaries((rows) => rows.filter((r) => r.key !== row.key))}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setSalaries((rows) => [...rows, { key: newKey(), label: "", monthly: 0 }])
+              }
+            >
+              <Plus className="h-4 w-4" />
+              {t("addSalary")}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("expensesTitle")}</CardTitle>
+          <CardDescription>{t("expensesHint")}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          {expenses.map((row, index) => {
+            const n = index + 1;
+            return (
+              <div key={row.key} className="flex flex-wrap items-center gap-2">
+                <Input
+                  type="text"
+                  className="w-full sm:w-56"
+                  aria-label={t("expenseName", { n })}
+                  placeholder={t("expenseNamePlaceholder")}
+                  value={row.label}
+                  onChange={(e) => patchExpense(row.key, { label: e.target.value })}
+                />
+                <MoneyInput
+                  id={`expense-${row.key}`}
+                  aria-label={t("expenseAmount", { n })}
+                  currency={currency}
+                  value={row.monthly}
+                  onChange={(monthly) => patchExpense(row.key, { monthly })}
+                />
+                <NativeSelect
+                  className="w-32"
+                  aria-label={t("expenseType", { n })}
+                  value={row.bucket}
+                  onChange={(e) =>
+                    patchExpense(row.key, { bucket: e.target.value as ExpenseBucket })
+                  }
                 >
-                  {t("removeSalary", { n })}
-                </button>
-              )}
-            </div>
-          );
-        })}
-        <button
-          type="button"
-          onClick={() => setSalaries((rows) => [...rows, { key: newKey(), label: "", monthly: 0 }])}
-        >
-          {t("addSalary")}
-        </button>
-      </fieldset>
+                  {EXPENSE_BUCKETS.map((bucket) => (
+                    <option key={bucket} value={bucket}>
+                      {t(bucket === "needs" ? "typeNeed" : "typeWant")}
+                    </option>
+                  ))}
+                </NativeSelect>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t("removeExpense", { n })}
+                  onClick={() => setExpenses((rows) => rows.filter((r) => r.key !== row.key))}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            );
+          })}
+          <div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setExpenses((rows) => [
+                  ...rows,
+                  { key: newKey(), label: "", monthly: 0, bucket: "needs" },
+                ])
+              }
+            >
+              <Plus className="h-4 w-4" />
+              {t("addExpense")}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-      <fieldset>
-        <legend>{t("expensesTitle")}</legend>
-        <p>{t("expensesHint")}</p>
-        {expenses.map((row, index) => {
-          const n = index + 1;
-          return (
-            <div key={row.key}>
-              <input
-                type="text"
-                aria-label={t("expenseName", { n })}
-                placeholder={t("expenseNamePlaceholder")}
-                value={row.label}
-                onChange={(e) => patchExpense(row.key, { label: e.target.value })}
-              />
-              <MoneyInput
-                id={`expense-${row.key}`}
-                aria-label={t("expenseAmount", { n })}
-                currency={currency}
-                value={row.monthly}
-                onChange={(monthly) => patchExpense(row.key, { monthly })}
-              />
-              <select
-                aria-label={t("expenseType", { n })}
-                value={row.bucket}
-                onChange={(e) => patchExpense(row.key, { bucket: e.target.value as ExpenseBucket })}
-              >
-                {EXPENSE_BUCKETS.map((bucket) => (
-                  <option key={bucket} value={bucket}>
-                    {t(bucket === "needs" ? "typeNeed" : "typeWant")}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => setExpenses((rows) => rows.filter((r) => r.key !== row.key))}
-              >
-                {t("removeExpense", { n })}
-              </button>
-            </div>
-          );
-        })}
-        <button
-          type="button"
-          onClick={() =>
-            setExpenses((rows) => [
-              ...rows,
-              { key: newKey(), label: "", monthly: 0, bucket: "needs" },
-            ])
-          }
-        >
-          {t("addExpense")}
-        </button>
-      </fieldset>
-
-      <div>
-        <label htmlFor="living-expenses">{t("livingExpenses")}</label>
-        <MoneyInput
-          id="living-expenses"
-          currency={currency}
-          value={livingExpenses}
-          onChange={setLivingExpenses}
-        />
-        <p>{t("livingExpensesHint")}</p>
-      </div>
+      <Card>
+        <CardContent className="grid gap-4 pt-6 sm:grid-cols-2">
+          <Field
+            label={t("livingExpenses")}
+            htmlFor="living-expenses"
+            hint={t("livingExpensesHint")}
+          >
+            <MoneyInput
+              id="living-expenses"
+              currency={currency}
+              value={livingExpenses}
+              onChange={setLivingExpenses}
+            />
+          </Field>
+          <Field label={t("currentSavings")} htmlFor="savings">
+            <MoneyInput id="savings" currency={currency} value={savings} onChange={setSavings} />
+          </Field>
+          <Field label={t("emergencyFundMonths")} htmlFor="fund-months">
+            <Input
+              id="fund-months"
+              type="number"
+              min={0}
+              step="any"
+              className="w-40"
+              value={fundMonths}
+              onChange={(e) => setFundMonths(Math.max(0, Number(e.target.value)))}
+            />
+          </Field>
+          <Field label={t("annualInflation")} htmlFor="inflation" hint={t("inflationHint")}>
+            <PercentInput id="inflation" value={inflation} onChange={setInflation} />
+          </Field>
+        </CardContent>
+      </Card>
 
       <div>
-        <label htmlFor="savings">{t("currentSavings")}</label>
-        <MoneyInput id="savings" currency={currency} value={savings} onChange={setSavings} />
+        <Button type="submit">{t("save")}</Button>
       </div>
-
-      <div>
-        <label htmlFor="fund-months">{t("emergencyFundMonths")}</label>
-        <input
-          id="fund-months"
-          type="number"
-          min={0}
-          step="any"
-          value={fundMonths}
-          onChange={(e) => setFundMonths(Math.max(0, Number(e.target.value)))}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="inflation">{t("annualInflation")}</label>
-        <PercentInput id="inflation" value={inflation} onChange={setInflation} />
-        <p>{t("inflationHint")}</p>
-      </div>
-
-      <button type="submit">{t("save")}</button>
     </form>
   );
 }

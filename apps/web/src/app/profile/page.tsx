@@ -9,6 +9,7 @@ import { db } from "@/storage/instance";
 import { removeQueueItem } from "@/storage/queue-repo";
 import { putSingleton } from "@/storage/repo";
 import { useAppStore } from "@/store";
+import { Page } from "@/components/ui/page";
 
 export default function ProfilePage() {
   const setProfile = useAppStore((s) => s.setProfile);
@@ -20,8 +21,7 @@ export default function ProfilePage() {
   const t = useTranslations("profile");
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
+    <Page title={t("title")}>
       <ProfileForm
         initial={profile ?? undefined}
         currency={currency}
@@ -40,6 +40,6 @@ export default function ProfilePage() {
           );
         }}
       />
-    </main>
+    </Page>
   );
 }

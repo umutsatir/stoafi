@@ -20,6 +20,11 @@ import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { monthOf } from "@/lib/clock";
 import { useMoney } from "@/lib/use-money";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Page } from "@/components/ui/page";
 
 export interface DashboardProps {
   profile: Profile | null;
@@ -45,11 +50,16 @@ export function Dashboard({
 
   if (!profile) {
     return (
-      <main>
-        <h1>{t("title")}</h1>
-        <p>{t("welcome")}</p>
-        <Link href="/profile">{t("setUpProfile")}</Link>
-      </main>
+      <Page title={t("title")}>
+        <Card>
+          <CardContent className="flex flex-col items-start gap-4 pt-6">
+            <p className="text-sm text-muted-foreground">{t("welcome")}</p>
+            <Button asChild>
+              <Link href="/profile">{t("setUpProfile")}</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </Page>
     );
   }
 
@@ -82,83 +92,138 @@ export function Dashboard({
     : null;
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
-
+    <Page title={t("title")}>
       {(overspent || fundLow) && (
-        <div role="alert">
+        <div
+          role="alert"
+          className="flex flex-col gap-1 rounded-md border border-destructive/40 bg-destructive/5 p-4 text-sm font-medium text-destructive"
+        >
           {overspent && <p>{t("overspent")}</p>}
           {fundLow && <p>{t("fundLow")}</p>}
         </div>
       )}
 
-      <section aria-label={t("thisMonth")} data-testid="this-month">
-        <h2>{t("thisMonth")}</h2>
-        <dl>
-          <dt>{t("income")}</dt>
-          <dd data-testid="income">{money(income)}</dd>
-          <dt>{t("obligations")}</dt>
-          <dd data-testid="obligations">{money(obligations)}</dd>
-          <dt>{t("living")}</dt>
-          <dd data-testid="living">{money(profile.livingExpenses)}</dd>
-          <dt>{t("installments")}</dt>
-          <dd data-testid="installments">{money(installments)}</dd>
-          <dt>{t("left")}</dt>
-          <dd data-testid="left">{money(left)}</dd>
-        </dl>
-      </section>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card aria-label={t("thisMonth")} data-testid="this-month">
+          <CardHeader>
+            <CardTitle className="text-base">{t("thisMonth")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <dt className="text-muted-foreground">{t("income")}</dt>
+              <dd data-testid="income" className="text-right font-medium">
+                {money(income)}
+              </dd>
+              <dt className="text-muted-foreground">{t("obligations")}</dt>
+              <dd data-testid="obligations" className="text-right font-medium">
+                {money(obligations)}
+              </dd>
+              <dt className="text-muted-foreground">{t("living")}</dt>
+              <dd data-testid="living" className="text-right font-medium">
+                {money(profile.livingExpenses)}
+              </dd>
+              <dt className="text-muted-foreground">{t("installments")}</dt>
+              <dd data-testid="installments" className="text-right font-medium">
+                {money(installments)}
+              </dd>
+              <dt className="border-t border-border pt-2 font-medium">{t("left")}</dt>
+              <dd
+                data-testid="left"
+                className={cn(
+                  "border-t border-border pt-2 text-right text-lg font-semibold",
+                  overspent && "text-destructive",
+                )}
+              >
+                {money(left)}
+              </dd>
+            </dl>
+          </CardContent>
+        </Card>
 
-      <section aria-label={t("emergencyFund")}>
-        <h2>{t("emergencyFund")}</h2>
-        <p data-testid="emergency-fund">
-          {t("emergencyFundLine", {
-            saved: savedMonths.toFixed(1),
-            target: profile.emergencyFundTargetMonths,
-          })}
-        </p>
-      </section>
-
-      {planTitle && allocation && (
-        <section aria-label={t("activePlan")} data-testid="active-plan">
-          <h2>{t("activePlan")}</h2>
-          <p>{planTitle}</p>
-          <dl>
-            <dt>{t("needs")}</dt>
-            <dd data-testid="plan-needs">{money(allocation.needs)}</dd>
-            <dt>{t("wants")}</dt>
-            <dd data-testid="plan-wants">{money(allocation.wants)}</dd>
-            <dt>{t("savings")}</dt>
-            <dd data-testid="plan-savings">{money(allocation.savings)}</dd>
-            <dt>{t("investing")}</dt>
-            <dd data-testid="plan-investing">{money(allocation.investing)}</dd>
-          </dl>
-          <Link href="/plan">{t("changePlan")}</Link>
-        </section>
-      )}
-
-      <section aria-label={t("nextInQueue")}>
-        <h2>{t("nextInQueue")}</h2>
-        {next.length === 0 ? (
-          <Link href="/queue">{t("addToQueue")}</Link>
-        ) : (
-          <>
-            <ul data-testid="next-items">
-              {next.map((item) => {
-                const scheduled = monthByItem.get(item.id);
-                return (
-                  <li key={item.id}>
-                    <span>{item.name}</span>
-                    <span data-testid={`next-month-${item.id}`}>
-                      {scheduled ?? tTimeline("notAffordableYet")}
-                    </span>
-                  </li>
-                );
+        <Card aria-label={t("emergencyFund")}>
+          <CardHeader>
+            <CardTitle className="text-base">{t("emergencyFund")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p data-testid="emergency-fund" className="text-sm">
+              {t("emergencyFundLine", {
+                saved: savedMonths.toFixed(1),
+                target: profile.emergencyFundTargetMonths,
               })}
-            </ul>
-            <Link href="/queue">{t("openQueue")}</Link>
-          </>
+            </p>
+          </CardContent>
+        </Card>
+
+        {planTitle && allocation && (
+          <Card aria-label={t("activePlan")} data-testid="active-plan">
+            <CardHeader>
+              <CardTitle className="text-base">{t("activePlan")}</CardTitle>
+              <CardDescription>{planTitle}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                <dt className="text-muted-foreground">{t("needs")}</dt>
+                <dd data-testid="plan-needs" className="text-right font-medium">
+                  {money(allocation.needs)}
+                </dd>
+                <dt className="text-muted-foreground">{t("wants")}</dt>
+                <dd data-testid="plan-wants" className="text-right font-medium">
+                  {money(allocation.wants)}
+                </dd>
+                <dt className="text-muted-foreground">{t("savings")}</dt>
+                <dd data-testid="plan-savings" className="text-right font-medium">
+                  {money(allocation.savings)}
+                </dd>
+                <dt className="text-muted-foreground">{t("investing")}</dt>
+                <dd data-testid="plan-investing" className="text-right font-medium">
+                  {money(allocation.investing)}
+                </dd>
+              </dl>
+              <Link href="/plan" className="text-sm font-medium text-primary hover:underline">
+                {t("changePlan")}
+              </Link>
+            </CardContent>
+          </Card>
         )}
-      </section>
-    </main>
+
+        <Card aria-label={t("nextInQueue")}>
+          <CardHeader>
+            <CardTitle className="text-base">{t("nextInQueue")}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {next.length === 0 ? (
+              <Link href="/queue" className="text-sm font-medium text-primary hover:underline">
+                {t("addToQueue")}
+              </Link>
+            ) : (
+              <>
+                <ul data-testid="next-items" className="flex flex-col divide-y divide-border">
+                  {next.map((item) => {
+                    const scheduled = monthByItem.get(item.id);
+                    return (
+                      <li
+                        key={item.id}
+                        className="flex items-center justify-between gap-2 py-2 text-sm"
+                      >
+                        <span className="font-medium">{item.name}</span>
+                        <Badge
+                          variant={scheduled ? "secondary" : "destructive"}
+                          data-testid={`next-month-${item.id}`}
+                        >
+                          {scheduled ?? tTimeline("notAffordableYet")}
+                        </Badge>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <Link href="/queue" className="text-sm font-medium text-primary hover:underline">
+                  {t("openQueue")}
+                </Link>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </Page>
   );
 }
