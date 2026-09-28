@@ -530,7 +530,7 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Acceptance: component test with fixture decisions renders the correct total and per-row outcome labels.
   Depends on: T7.1, T5.9
 
-- [ ] **T7.12** Cards screen — statements, due dates, minimum-payment calculator
+- [x] **T7.12** Cards screen — statements, due dates, minimum-payment calculator
   Goal: card CRUD (T5.1) and a minimum-payment trap calculator UI (T5.3) with months-to-payoff/total-interest output.
   Acceptance: component test: entering fixture balance/rate/payment renders correct months/interest matching direct selector output.
   Depends on: T7.1, T5.4
