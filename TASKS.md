@@ -419,10 +419,11 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Depends on: T1.6, T3.3, T3.15, T4.11, T2.7, T2.10, T5.4, T5.9
   Note: `exportAll` takes `exportedAt: string` as an explicit argument (never `Date.now()` internally, per the kernel/module determinism rule) and silently drops any `storeSnapshot` key that isn't a registered module id (forward-compat with stale snapshot data), rather than throwing.
 
-- [ ] **T5.11** Backup import with per-module schema validation
+- [x] **T5.11** Backup import with per-module schema validation
   Goal: `importAll(registry, backupJson: unknown): { data: Record<string, unknown[]> } | { errors: string[] }` — validates the outer `BackupSchema` first, then each module's data against that module's own schema, collecting all errors rather than throwing on the first one.
   Acceptance: unit tests: a valid backup imports cleanly; a backup with one module's data corrupted (e.g. negative money amount) returns an `errors` array naming that module, while a completely valid backup returns `data`; a backup with an unknown module id present is ignored (forward-compat) rather than failing the whole import.
   Depends on: T5.10
+  Note: if any row in any module fails, the whole result is `{ errors }` (no partial `data`) — an all-or-nothing import, matching SPEC's "export → clear data → import restores everything" framing rather than a partial restore.
 
 - [ ] **T5.12** Backup module object
   Goal: `packages/core/modules/backup/module.ts` — `Module` (id `'backup'`).
