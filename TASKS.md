@@ -572,7 +572,7 @@ Goal: full TR/EN coverage, final lesson-card content for the remaining sourced c
   Depends on: T8.2, T7.6, T7.7, T7.9, T7.12
   Note: `apps/web/src/lessons.ts` became locale-aware (`getLessonCard(id, locale)`, both en/tr bundled) rather than en-only. No dedicated sinking-funds screen exists (Phase 7 never built one — SPEC's flows don't require a standalone screen and none of T7.1–T7.14 added it), so its lesson link was placed on the Queue page as the closest existing screen (dated purchase planning), documented inline in the code. Lesson-link `aria-label`s use a template literal (`` `${lesson.id} lesson` ``) rather than a plain string, matching the existing `plan-comparison.tsx` convention and avoiding the T8.1 scanner (a literal string would trip it). `apps/web/src/lessons-linked.test.tsx` verifies all 5 screen/lesson pairings.
 
-- [ ] **T8.4** Lesson-card content review pass (batch 2)
+- [x] **T8.4** Lesson-card content review pass (batch 2)
   Goal: same review discipline as T3.16, applied to the 6 cards from T8.3.
   Acceptance: checklist confirmation in the commit description; no quoted passages beyond a short line.
   Depends on: T8.3
