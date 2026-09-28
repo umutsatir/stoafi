@@ -12,6 +12,8 @@ export default tseslint.config(
       "**/node_modules/**",
       "**/coverage/**",
       "**/next-env.d.ts",
+      "**/public/sw.js",
+      "**/public/swe-worker*.js",
     ],
   },
   js.configs.recommended,

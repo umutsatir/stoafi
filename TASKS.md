@@ -540,10 +540,11 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Acceptance: component test: clicking export calls the mocked `exportToJson` and triggers a download; selecting a corrupted file surfaces the returned error list instead of silently failing; SPEC acceptance "export → clear data → import restores everything" is covered by an integration test reusing T6.4's assertions through the UI action handlers.
   Depends on: T7.1, T6.4
 
-- [ ] **T7.14** PWA — Serwist service worker and manifest
+- [x] **T7.14** PWA — Serwist service worker and manifest
   Goal: `apps/web` Serwist config, `manifest.json` (name, icons, `display: standalone`), offline-capable static export.
   Acceptance: `pnpm --filter @stoafi/web build` produces a service worker in `out/`; a Lighthouse PWA check (manual, documented in the task's commit note) confirms installability, or an automated `workbox`/`serwist` manifest-precache test if available.
   Depends on: T7.1
+  Note: `serwist`'s public API is a `Serwist` class + `.addEventListeners()`, not the `installSerwist()` function the skeleton in `src/app/sw.ts` initially assumed. `defaultCache` runtime caching comes from `@serwist/next/worker`. Generated real PNG icons (192/512) via Python/PIL rather than placeholder 1x1 pixels, since Chrome's install-banner heuristics check actual icon dimensions. `public/sw.js` (and any `swe-worker*.js`) is a build artifact regenerated from `src/app/sw.ts` on every build — added to `.gitignore` and to `eslint.config.js`'s ignores (its minified single-line output was tripping ~210 lint errors as if it were hand-written source). The manual Lighthouse phone/Mac install check itself is T8.6's job, not this task's.
 
 **Stop and report after Phase 7.**
 

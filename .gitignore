@@ -9,3 +9,6 @@ coverage/
 .DS_Store
 .env
 .env.local
+apps/web/public/sw.js
+apps/web/public/sw.js.map
+apps/web/public/swe-worker*.js
