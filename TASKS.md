@@ -189,7 +189,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: registers via kernel registry without error; selectors match T2.8/T2.9 direct exports.
   Depends on: T1.6, T2.9
 
-- [ ] **T2.11** Installments + sinking funds feed `projectSeries`
+- [x] **T2.11** Installments + sinking funds feed `projectSeries`
   Goal: integration test only (no new production code) proving commitments produced by T2.4's offers and T2.9's `toCommitment` flow correctly through `projectSeries` (T1.9) to populate `installmentLoad` and `sinkingSetAside`.
   Acceptance: a test builds one installment commitment and one sinking-fund commitment, runs `projectSeries` over 12 months, and asserts both fields are nonzero in the expected months and zero elsewhere.
   Depends on: T2.7, T2.10, T1.9
