@@ -612,7 +612,7 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T8.5
   Note: the v1->v2 transform lives in core (`profile/migrations.ts`, registered in `profileModule.migrations`, module version 2) so Dexie (T9.2) and any future backup-import path can share it. Backups exported before this change carry the old profile shape and will be rejected by `importAll` until it applies module migrations; noted, not handled here (no released data yet).
 
-- [ ] **T9.2** Dexie v3 migration for the profile row
+- [x] **T9.2** Dexie v3 migration for the profile row
   Goal: v3 upgrade maps an old row: drops `variable` from incomes, sums `avgVariableExpenses` into `livingExpenses`.
   Acceptance: test seeds a v2 row and asserts the migrated shape validates against `ProfileSchema`.
   Depends on: T9.1
