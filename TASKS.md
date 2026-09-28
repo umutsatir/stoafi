@@ -35,7 +35,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm --filter @stoafi/core test` runs and passes the smoke test.
   Depends on: T0.3
 
-- [ ] **T0.6** ESLint + Prettier at root
+- [x] **T0.6** ESLint + Prettier at root
   Goal: root `eslint.config.js` (flat config) with `@typescript-eslint`, a rule banning `any` and non-null assertions without a comment; root `.prettierrc`; `lint`/`format` scripts.
   Acceptance: `pnpm lint` passes on the current tree; introducing an `any` in a test file fails `pnpm lint`.
   Depends on: T0.3

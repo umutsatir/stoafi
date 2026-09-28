@@ -2,12 +2,23 @@
   "name": "stoafi",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
   },
   "packageManager": "pnpm@11.22.0",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:write": "prettier --write ."
+  },
   "devDependencies": {
-    "turbo": "^2.11.4"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.9",
+    "turbo": "^2.11.4",
+    "typescript-eslint": "^8.70.1"
   }
 }
