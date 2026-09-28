@@ -31,3 +31,38 @@ export function pvOfPlan(
     return sum + payment.amount / Math.pow(1 + r, k);
   }, 0);
 }
+
+export interface InstallmentOffer {
+  months: number;
+  payments: number[];
+}
+
+export interface OfferResult {
+  months: number;
+  monthlyPayment: number;
+  pv: number;
+  realSaving: number;
+}
+
+/** Compares installment offers side by side against a cash price. */
+export function compareOffers(
+  cashPrice: number,
+  offers: InstallmentOffer[],
+  annualInflation: number,
+): OfferResult[] {
+  const r = monthlyRate(annualInflation);
+
+  return offers.map((offer) => {
+    const pv = pvOfPlan(
+      offer.payments.map((amount) => ({ amount })),
+      r,
+    );
+    const totalPaid = offer.payments.reduce((sum, p) => sum + p, 0);
+    return {
+      months: offer.months,
+      monthlyPayment: totalPaid / offer.payments.length,
+      pv,
+      realSaving: realSaving(cashPrice, pv),
+    };
+  });
+}

@@ -153,7 +153,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: unit tests: PV < cash → positive saving; PV > cash → negative saving; PV === cash → 0; `cashPrice === 0` returns a defined result (e.g. 0) without throwing, with a comment explaining the choice.
   Depends on: T2.2
 
-- [ ] **T2.4** Installment offer comparison
+- [x] **T2.4** Installment offer comparison
   Goal: `compareOffers(cashPrice: Minor, offers: { months: number; payments: Minor[] }[], annualInflation: number): OfferResult[]` returning, per offer, monthly payment, PV, real saving — matching acceptance criterion "at least 4 offers side by side".
   Acceptance: unit test with 4 synthetic offers (3/6/9/12 months) returns 4 results, each with correct `monthlyPayment`, `pv`, `realSaving`; results are sorted by input order (no implicit reordering).
   Depends on: T2.3

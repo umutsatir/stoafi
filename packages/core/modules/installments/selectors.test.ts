@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { monthlyRate, pvOfPlan, realSaving } from "./selectors";
+import { compareOffers, monthlyRate, pvOfPlan, realSaving } from "./selectors";
 
 describe("monthlyRate", () => {
   it("returns 0 when annual inflation is 0", () => {
@@ -67,5 +67,32 @@ describe("realSaving", () => {
   it("returns 0 without throwing when cashPrice is 0", () => {
     expect(() => realSaving(0, 500)).not.toThrow();
     expect(realSaving(0, 500)).toBe(0);
+  });
+});
+
+describe("compareOffers", () => {
+  const offers = [
+    { months: 3, payments: [400, 400, 400] },
+    { months: 6, payments: [210, 210, 210, 210, 210, 210] },
+    { months: 9, payments: [145, 145, 145, 145, 145, 145, 145, 145, 145] },
+    { months: 12, payments: Array.from({ length: 12 }, () => 110) },
+  ];
+
+  it("returns one result per offer, in input order", () => {
+    const results = compareOffers(1200, offers, 0.3);
+    expect(results).toHaveLength(4);
+    expect(results.map((r) => r.months)).toEqual([3, 6, 9, 12]);
+  });
+
+  it("computes monthlyPayment, pv and realSaving for each offer", () => {
+    const [threeMonth] = compareOffers(1200, offers, 0.3);
+    const r = monthlyRate(0.3);
+    const expectedPv = pvOfPlan(
+      [400, 400, 400].map((amount) => ({ amount })),
+      r,
+    );
+    expect(threeMonth?.monthlyPayment).toBe(400);
+    expect(threeMonth?.pv).toBeCloseTo(expectedPv, 6);
+    expect(threeMonth?.realSaving).toBeCloseTo(realSaving(1200, expectedPv), 6);
   });
 });
