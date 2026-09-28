@@ -88,7 +88,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Acceptance: schema rejects non-integer `amount` and unknown currency codes outside a configurable allow-list; unit tests for valid/invalid parse.
   Depends on: T1.1
 
-- [ ] **T1.3** `Month` type and helpers
+- [x] **T1.3** `Month` type and helpers
   Goal: `packages/core/kernel/month.ts` — `type Month = \`${number}-${number}\``, `parseMonth`, `addMonths(m: Month, n: number): Month`, `compareMonths`, `monthsBetween`. All functions take `Month` values as arguments; no `Date.now()`.
   Acceptance: unit tests for year rollover (e.g. `2026-11` + 3 = `2027-02`), negative offsets, equal months, ordering.
   Depends on: T0.7
