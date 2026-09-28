@@ -207,7 +207,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: unit tests: a minimal valid profile (one income, no expenses) parses; negative `savings` or `monthly` amounts are rejected; `emergencyFundTargetMonths` must be a non-negative number.
   Depends on: T1.1
 
-- [ ] **T3.2** Hourly net income derivation
+- [x] **T3.2** Hourly net income derivation
   Goal: `packages/core/modules/profile/selectors.ts` — `hourlyNetIncome(profile: Profile, hoursPerMonth?: number): Minor`, using `profile.hourlyNetIncome` if present, else `netMonthlyIncome / (hoursPerMonth ?? 160)`.
   Acceptance: unit tests: explicit `hourlyNetIncome` is returned unchanged; derived case matches `netIncome / 160` default; custom `hoursPerMonth` overrides default; zero income returns 0, not `NaN`/`Infinity`.
   Depends on: T3.1
