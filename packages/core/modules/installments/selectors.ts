@@ -11,6 +11,16 @@ export function monthlyRate(annualInflation: number): number {
  * rate `r`. The first payment lands `firstPaymentOffset` months out
  * (default 1), each subsequent payment one month after the last.
  */
+/**
+ * Real saving of installments vs. cash: positive means installments are
+ * cheaper in real terms. `cashPrice === 0` returns 0 rather than dividing
+ * by zero — there is nothing to save relative to a free item.
+ */
+export function realSaving(cashPrice: number, pv: number): number {
+  if (cashPrice === 0) return 0;
+  return (cashPrice - pv) / cashPrice;
+}
+
 export function pvOfPlan(
   payments: { amount: number }[],
   r: number,

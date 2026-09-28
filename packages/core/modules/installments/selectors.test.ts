@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { monthlyRate, pvOfPlan } from "./selectors";
+import { monthlyRate, pvOfPlan, realSaving } from "./selectors";
 
 describe("monthlyRate", () => {
   it("returns 0 when annual inflation is 0", () => {
@@ -48,5 +48,24 @@ describe("pvOfPlan", () => {
     const pvAtK0 = pvOfPlan([{ amount: 1000 }], 0.02, 0);
     expect(pvAtK0).toBeCloseTo(1000, 6);
     expect(pvAtK1).toBeCloseTo(1000 / 1.02, 6);
+  });
+});
+
+describe("realSaving", () => {
+  it("is positive when PV is cheaper than cash", () => {
+    expect(realSaving(1000, 900)).toBeCloseTo(0.1, 6);
+  });
+
+  it("is negative when PV is more expensive than cash", () => {
+    expect(realSaving(1000, 1100)).toBeCloseTo(-0.1, 6);
+  });
+
+  it("is zero when PV equals cash", () => {
+    expect(realSaving(1000, 1000)).toBe(0);
+  });
+
+  it("returns 0 without throwing when cashPrice is 0", () => {
+    expect(() => realSaving(0, 500)).not.toThrow();
+    expect(realSaving(0, 500)).toBe(0);
   });
 });

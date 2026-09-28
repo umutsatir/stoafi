@@ -148,7 +148,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: unit tests: single payment at k=1 matches `P/(1+r)`; `r = 0` → PV equals sum of payments; 12 equal payments against a known r matches a hand/spreadsheet-computed PV within float tolerance; zero-length payments → PV 0.
   Depends on: T2.1
 
-- [ ] **T2.3** Real saving vs. cash
+- [x] **T2.3** Real saving vs. cash
   Goal: `realSaving(cashPrice: Minor, pv: number): number` implementing `saving = (C_cash - PV) / C_cash`; guard divide-by-zero when `cashPrice === 0`.
   Acceptance: unit tests: PV < cash → positive saving; PV > cash → negative saving; PV === cash → 0; `cashPrice === 0` returns a defined result (e.g. 0) without throwing, with a comment explaining the choice.
   Depends on: T2.2
