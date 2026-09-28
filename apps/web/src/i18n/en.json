@@ -5,7 +5,7 @@
   "home": {
     "title": "Home",
     "welcome": "Stoafi turns your salary and regular costs into a monthly plan. Start by telling it what comes in and what goes out.",
-    "setUpProfile": "Set up your profile",
+    "setUpProfile": "Add your income and expenses",
     "thisMonth": "This month",
     "income": "Salaries",
     "obligations": "Recurring expenses",
@@ -29,6 +29,7 @@
   "nav": {
     "ariaLabel": "Main",
     "home": "Home",
+    "incomeExpenses": "Income & Expenses",
     "profile": "Profile",
     "plan": "Plan",
     "queue": "Queue",
@@ -36,6 +37,9 @@
     "health": "Health",
     "decisions": "Decisions",
     "settings": "Settings"
+  },
+  "incomeExpenses": {
+    "title": "Income & Expenses"
   },
   "profile": {
     "title": "Profile",
@@ -79,7 +83,7 @@
   },
   "plan": {
     "title": "Plan",
-    "fillProfileFirst": "Fill in your profile first.",
+    "fillProfileFirst": "Add your income and expenses first.",
     "needs": "Needs",
     "wants": "Wants",
     "savings": "Savings",
@@ -90,7 +94,7 @@
   },
   "queue": {
     "title": "Queue",
-    "fillProfileAndPlanFirst": "Fill in your profile and pick a plan first.",
+    "fillProfileAndPlanFirst": "Add your income and expenses first.",
     "timelineTitle": "12-month timeline",
     "moveUp": "Move {name} up",
     "moveDown": "Move {name} down",
@@ -124,7 +128,7 @@
     "nameRequired": "Enter a name.",
     "priceRequired": "Enter a price above zero.",
     "empty": "Nothing in the queue yet. Add what you want or need above.",
-    "goToProfile": "Go to Profile",
+    "goToProfile": "Add income and expenses",
     "dragHandle": "Drag {name} to reorder"
   },
   "queuePreview": {
@@ -177,7 +181,7 @@
   },
   "health": {
     "title": "Health",
-    "fillProfileFirst": "Fill in your profile first.",
+    "fillProfileFirst": "Add your income and expenses first.",
     "savingsRate": "Savings rate",
     "emergencyFundMonths": "Emergency fund months",
     "installmentRatio": "Installment ratio",

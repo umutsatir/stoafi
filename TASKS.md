@@ -690,9 +690,10 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.10
   Note: the caption is computed live from the form's own state (salaries, active expenses, living costs, savings, target months) minus this month's installment load, so it updates while typing; expenses past their end month do not count. Built together with T9.12 in the same form, so both share one commit.
 
-- [ ] **T9.14** Separate Income & Expenses screen
+- [x] **T9.14** Separate Income & Expenses screen
   Goal: the user's `/income-expenses` route holding salaries and recurring expenses, with the profile screen reduced to savings, emergency-fund target and inflation.
   Depends on: T9.11
+  Note: `ProfileForm` (savings, emergency-fund target, country and inflation) and the new `IncomeExpensesForm` (salaries, recurring expenses, living costs) each save only their own fields; `mergeProfile` lays them over the one stored profile, or over defaults for a brand-new user, so neither screen can wipe the other's data. The installment-purchases list moved to the Income & Expenses screen since it is an expense. The emergency-fund caption now reads income and expenses from the saved profile (it no longer updates while typing salaries, because those are on the other screen). Home, Queue, Plan and Health empty states point to Income & Expenses.
 
 - [ ] **T9.15** Dashboard cash-flow chart
   Goal: a 12-month recharts chart on Home (income vs. commitments vs. what is left).

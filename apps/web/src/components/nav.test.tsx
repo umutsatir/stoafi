@@ -14,6 +14,7 @@ describe("Nav", () => {
 
     for (const label of [
       "Home",
+      "Income & Expenses",
       "Profile",
       "Plan",
       "Queue",

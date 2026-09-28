@@ -56,7 +56,7 @@ export function Dashboard({
           <CardContent className="flex flex-col items-start gap-4 pt-6">
             <p className="text-sm text-muted-foreground">{t("welcome")}</p>
             <Button asChild>
-              <Link href="/profile">{t("setUpProfile")}</Link>
+              <Link href="/income-expenses">{t("setUpProfile")}</Link>
             </Button>
           </CardContent>
         </Card>

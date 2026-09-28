@@ -5,7 +5,7 @@
   "home": {
     "title": "Ana sayfa",
     "welcome": "Stoafi maaşını ve düzenli giderlerini aylık bir plana çevirir. Önce ne girdiğini ve ne çıktığını anlat.",
-    "setUpProfile": "Profilini oluştur",
+    "setUpProfile": "Gelir ve giderlerini ekle",
     "thisMonth": "Bu ay",
     "income": "Maaşlar",
     "obligations": "Düzenli giderler",
@@ -29,6 +29,7 @@
   "nav": {
     "ariaLabel": "Ana",
     "home": "Ana sayfa",
+    "incomeExpenses": "Gelir ve Giderler",
     "profile": "Profil",
     "plan": "Plan",
     "queue": "Kuyruk",
@@ -36,6 +37,9 @@
     "health": "Sağlık",
     "decisions": "Kararlar",
     "settings": "Ayarlar"
+  },
+  "incomeExpenses": {
+    "title": "Gelir ve Giderler"
   },
   "profile": {
     "title": "Profil",
@@ -79,7 +83,7 @@
   },
   "plan": {
     "title": "Plan",
-    "fillProfileFirst": "Önce profilini doldur.",
+    "fillProfileFirst": "Önce gelir ve giderlerini ekle.",
     "needs": "İhtiyaçlar",
     "wants": "İstekler",
     "savings": "Birikim",
@@ -90,7 +94,7 @@
   },
   "queue": {
     "title": "Kuyruk",
-    "fillProfileAndPlanFirst": "Önce profilini doldur ve bir plan seç.",
+    "fillProfileAndPlanFirst": "Önce gelir ve giderlerini ekle.",
     "timelineTitle": "12 aylık zaman çizelgesi",
     "moveUp": "{name} öğesini yukarı taşı",
     "moveDown": "{name} öğesini aşağı taşı",
@@ -124,7 +128,7 @@
     "nameRequired": "Bir ad gir.",
     "priceRequired": "Sıfırdan büyük bir fiyat gir.",
     "empty": "Kuyrukta henüz bir şey yok. İstediğin ya da ihtiyacın olanları yukarıdan ekle.",
-    "goToProfile": "Profile git",
+    "goToProfile": "Gelir ve gider ekle",
     "dragHandle": "{name} öğesini sıralamak için sürükle"
   },
   "queuePreview": {
@@ -177,7 +181,7 @@
   },
   "health": {
     "title": "Sağlık",
-    "fillProfileFirst": "Önce profilini doldur.",
+    "fillProfileFirst": "Önce gelir ve giderlerini ekle.",
     "savingsRate": "Birikim oranı",
     "emergencyFundMonths": "Acil durum fonu ayı",
     "installmentRatio": "Taksit oranı",

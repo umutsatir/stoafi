@@ -57,7 +57,7 @@ export default function QueuePage() {
           <CardContent className="flex flex-col items-start gap-4 pt-6">
             <p className="text-sm text-muted-foreground">{t("fillProfileAndPlanFirst")}</p>
             <Button asChild>
-              <Link href="/profile">{t("goToProfile")}</Link>
+              <Link href="/income-expenses">{t("goToProfile")}</Link>
             </Button>
           </CardContent>
         </Card>

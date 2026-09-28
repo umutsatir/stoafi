@@ -46,11 +46,11 @@ function renderDashboard(overrides: Partial<Parameters<typeof Dashboard>[0]> = {
 }
 
 describe("Dashboard", () => {
-  it("asks a new user to fill in the profile first and shows no numbers", () => {
+  it("points a new user to income and expenses first and shows no numbers", () => {
     renderDashboard({ profile: null });
-    expect(screen.getByRole("link", { name: "Set up your profile" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Add your income and expenses" })).toHaveAttribute(
       "href",
-      "/profile",
+      "/income-expenses",
     );
     expect(screen.queryByTestId("this-month")).not.toBeInTheDocument();
   });
