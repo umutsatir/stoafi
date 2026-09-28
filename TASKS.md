@@ -332,7 +332,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Depends on: T4.6
   Note: signature changed from the originally planned `(rules, before[], after[])` to `(rules, ctx: GuardContext)` — T4.6 already settled on `GuardContext` (not raw `MonthProjection[]`) as what a `GuardRule.check` needs, since the emergency-fund and installment-cap rules require fields (`savingsBalanceAfterDraft`, `emergencyFundTargetMonths`, `projectedInstallmentLoad`, `installmentCapPct`) that aren't derivable from `MonthProjection` alone.
 
-- [ ] **T4.8** Guards module object with `contributes.guards`
+- [x] **T4.8** Guards module object with `contributes.guards`
   Goal: `packages/core/modules/guards/module.ts` — `Module` (id `'guards'`) whose `contributes.guards` exposes `defaultGuardRules`, matching SPEC's cross-module `contributes` mechanism (guards read projection read-only, never write).
   Acceptance: registering the guards module and collecting `contributes.guards` via kernel registry (T1.6) returns the 3 default rules.
   Depends on: T1.6, T4.7

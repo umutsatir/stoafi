@@ -1,5 +1,13 @@
+import { z } from "zod";
 import type { Minor } from "../../kernel/money";
 import type { MonthProjection } from "../../kernel/projection";
+
+/** Editable guard thresholds, e.g. the installment cap percentage. */
+export const GuardThresholdsSchema = z.object({
+  installmentCapPct: z.number().min(0).max(1).default(0.2),
+});
+
+export type GuardThresholds = z.infer<typeof GuardThresholdsSchema>;
 
 /**
  * Everything a guard rule's `check` needs, precomputed by the caller
