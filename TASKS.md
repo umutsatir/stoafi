@@ -202,7 +202,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
 
 Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/content pipeline.
 
-- [ ] **T3.1** `Profile` schema
+- [x] **T3.1** `Profile` schema
   Goal: `packages/core/modules/profile/schema.ts` — Zod schema matching SPEC's `Profile` interface exactly (incomes[], fixedExpenses[], avgVariableExpenses[], savings, emergencyFundTargetMonths, annualInflationExpectation, hourlyNetIncome?).
   Acceptance: unit tests: a minimal valid profile (one income, no expenses) parses; negative `savings` or `monthly` amounts are rejected; `emergencyFundTargetMonths` must be a non-negative number.
   Depends on: T1.1
