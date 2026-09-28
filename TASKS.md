@@ -138,7 +138,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
 
 Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, as standalone modules depending only on kernel.
 
-- [ ] **T2.1** Monthly discount rate from annual inflation
+- [x] **T2.1** Monthly discount rate from annual inflation
   Goal: `packages/core/modules/installments/selectors.ts` — `monthlyRate(annualInflation: number): number` implementing `r = (1+i)^(1/12) - 1`.
   Acceptance: unit tests: `i = 0` → `r = 0`; `i = 0.30` → matches hand-computed value to 6 decimal places; negative `i` (deflation) does not throw.
   Depends on: T1.1
