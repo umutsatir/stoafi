@@ -158,7 +158,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: unit test with 4 synthetic offers (3/6/9/12 months) returns 4 results, each with correct `monthlyPayment`, `pv`, `realSaving`; results are sorted by input order (no implicit reordering).
   Depends on: T2.3
 
-- [ ] **T2.5** Installment capacity and 12-month load timeline
+- [x] **T2.5** Installment capacity and 12-month load timeline
   Goal: `installmentLoadTimeline(commitments: Commitment[], months: Month[]): { month: Month; load: Minor }[]` and `capacityRemaining(netIncome: Minor, capPct: number, currentLoad: Minor): Minor`, where `capPct` is a tunable passed in (not hard-coded — SPEC: "Tunable values are data, not code").
   Acceptance: unit tests: two overlapping installment commitments sum correctly per month across a 12-month window; a commitment outside the window is excluded; `capacityRemaining` returns 0 (not negative) when load already exceeds the cap, with a test asserting no negative capacity is ever returned.
   Depends on: T1.9, T2.4
