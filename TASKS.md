@@ -228,10 +228,11 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: unit test parses one valid card and rejects a card missing `principle`; replace the placeholder schema used ad hoc in T0.10 with this one and re-run T0.10's test.
   Depends on: T1.1
 
-- [ ] **T3.6** 50/30/20 strategy
+- [x] **T3.6** 50/30/20 strategy
   Goal: `packages/core/strategies/fifty-thirty-twenty.ts` — `allocate` splits net income 50% needs / 30% wants / 20% savings+investing (params tunable, not hard-coded ratios baked into logic — ratios live in `params` with these as defaults); `diagnose` flags when actual committed spend in a bucket exceeds its limit.
   Acceptance: unit tests: `allocate` on a known income returns exact 50/30/20 split (integer minor units, rounding half-to-even, verify the three amounts sum to the input to within 1 minor unit); `diagnose` on a projection where `wants.committed > wants.limit` returns at least one insight; params override (e.g. 60/20/20) changes the split.
   Depends on: T3.4
+  Note: the 50/30/20 rule's "20% savings" maps entirely to the `savings` bucket (`investing` is always 0 for this strategy) — SPEC doesn't split that 20% between savings and investing, so this is the simplest reading. `allocate` imports `netMonthlyIncome` from `modules/profile/selectors` (a module), same cross-boundary call already made for the `Profile` type in T3.4 — strategies sit alongside modules and read profile data directly rather than through `contributes`, since SPEC's module table lists `plan` (which strategies serve) as reading `profile`.
 
 - [ ] **T3.7** 50/30/20 lesson card
   Goal: `packages/lessons/en/fifty-thirty-twenty.json` and `packages/lessons/tr/fifty-thirty-twenty.json` — Elizabeth Warren, *All Your Worth*, content in the team's own words (no quoted passages beyond a short line).
