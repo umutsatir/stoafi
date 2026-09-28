@@ -168,7 +168,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: unit tests: a valid offer parses; an offer with a negative payment or zero months is rejected; property test (fast-check) generates random valid offers and asserts they always round-trip through `compareOffers` without throwing.
   Depends on: T2.4
 
-- [ ] **T2.7** Installments module object
+- [x] **T2.7** Installments module object
   Goal: `packages/core/modules/installments/module.ts` exporting a `Module` (id `'installments'`, version 1, schema, empty migrations array, selectors mapping to T2.1–T2.5 functions, no `contributes` yet — added in T4.x when queue exists).
   Acceptance: unit test registers the module via kernel's registry (T1.6) without error; `module.selectors.compareOffers` is callable and matches T2.4's direct export.
   Depends on: T1.6, T2.6
