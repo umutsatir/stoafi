@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { Profile, QueueItem } from "@stoafi/core";
 import { QueuePreview } from "./queue-preview";
@@ -91,5 +91,33 @@ describe("QueuePreview", () => {
     expect(onConfirm).toHaveBeenCalledTimes(1);
     const [commitment] = onConfirm.mock.calls[0] as [{ status: string }];
     expect(commitment.status).toBe("active");
+  });
+});
+
+describe("QueuePreview installment flow", () => {
+  it("opens the calculator, selecting an offer closes it and shows the installment draft state", () => {
+    render(
+      <QueuePreview
+        item={item}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={0.2}
+        onConfirm={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    expect(
+      screen.getByRole("heading", { name: "Calculate with installments" }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("offer-row-6").querySelector("button") as HTMLElement);
+
+    expect(screen.queryByTestId("offer-row-6")).not.toBeInTheDocument();
+    expect(screen.getByTestId("installment-draft-state")).toHaveTextContent("6 months");
   });
 });

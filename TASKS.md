@@ -499,7 +499,7 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Depends on: T7.4, T4.8
   Note: `QueuePreview`'s render path is entirely synchronous `project()` calls (no `await`, no network) — confirmed by reading the component, satisfying the "under 100ms" criterion structurally as planned. Only the "Cash this month" action is implemented here (a single `Confirm` button building a one-off active commitment); "first fitting month" and "with installments" are the T7.6 (installment comparison) and scheduler-suggested-month paths, wired in when those screens land. `Confirm` is `disabled` when any breach has `severity: "block"` — the required "I know" override flow for a blocked confirm is T7.10's job.
 
-- [ ] **T7.6** Flow 2 — calculate with installments
+- [x] **T7.6** Flow 2 — calculate with installments
   Goal: "Calculate with installments" action on a queue card opens the offer-entry form (T2.6's shape) and renders `compareOffers` (T2.4) results side by side (monthly payment, PV, real saving, 12-month cap effect via T2.5); picking an option returns to flow 1 as an installment draft.
   Acceptance: component test: entering 4 offers renders 4 comparison rows with correct computed values from fixture data; selecting one closes the form and the queue card shows an installment draft state.
   Depends on: T7.5, T2.7

@@ -1,0 +1,84 @@
+"use client";
+
+import { useState } from "react";
+import { compareOffers, type OfferResult } from "@stoafi/core";
+
+export interface InstallmentCalculatorProps {
+  cashPrice: number;
+  annualInflation: number;
+  initialOfferMonths?: number[];
+  onSelect: (offer: OfferResult) => void;
+}
+
+export function InstallmentCalculator({
+  cashPrice,
+  annualInflation,
+  initialOfferMonths = [3, 6, 9, 12],
+  onSelect,
+}: InstallmentCalculatorProps) {
+  const [offers, setOffers] = useState(
+    initialOfferMonths.map((months) => ({
+      months,
+      monthlyPayment: Math.round(cashPrice / months),
+    })),
+  );
+
+  const results = compareOffers(
+    cashPrice,
+    offers.map((o) => ({
+      months: o.months,
+      payments: Array.from({ length: o.months }, () => o.monthlyPayment),
+    })),
+    annualInflation,
+  );
+
+  return (
+    <div>
+      <h2>Calculate with installments</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Months</th>
+            <th>Monthly payment</th>
+            <th>PV</th>
+            <th>Real saving</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {results.map((result, index) => (
+            <tr key={result.months} data-testid={`offer-row-${result.months}`}>
+              <td>
+                <input
+                  aria-label={`Months for offer ${index + 1}`}
+                  type="number"
+                  value={offers[index]?.months ?? 0}
+                  onChange={(e) => {
+                    const months = Number(e.target.value);
+                    setOffers((prev) =>
+                      prev.map((o, i) =>
+                        i === index
+                          ? { months, monthlyPayment: Math.round(cashPrice / months) }
+                          : o,
+                      ),
+                    );
+                  }}
+                />
+              </td>
+              <td data-testid={`monthly-payment-${result.months}`}>{result.monthlyPayment}</td>
+              <td data-testid={`pv-${result.months}`}>{result.pv.toFixed(2)}</td>
+              <td data-testid={`real-saving-${result.months}`}>
+                {(result.realSaving * 100).toFixed(1)}%
+              </td>
+              <td>
+                <button type="button" onClick={() => onSelect(result)}>
+                  Select
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

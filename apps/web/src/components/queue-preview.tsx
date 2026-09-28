@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   currentAllocation,
   defaultGuardRules,
@@ -11,10 +11,12 @@ import {
   type Commitment,
   type GuardBreach,
   type Month,
+  type OfferResult,
   type PlanStateInput,
   type Profile,
   type QueueItem,
 } from "@stoafi/core";
+import { InstallmentCalculator } from "./installment-calculator";
 
 export interface QueuePreviewProps {
   item: QueueItem;
@@ -73,10 +75,17 @@ export function QueuePreview({
   );
 
   const blocked = breaches.some((b) => b.severity === "block");
+  const [showInstallments, setShowInstallments] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<OfferResult | null>(null);
 
   return (
     <div>
       <h2>{item.name}</h2>
+      {selectedOffer && (
+        <p data-testid="installment-draft-state">
+          Installment draft: {selectedOffer.months} months
+        </p>
+      )}
       <table>
         <tbody>
           <tr>
@@ -107,6 +116,21 @@ export function QueuePreview({
       >
         Confirm
       </button>
+
+      <button type="button" onClick={() => setShowInstallments(true)}>
+        Calculate with installments
+      </button>
+
+      {showInstallments && (
+        <InstallmentCalculator
+          cashPrice={item.price}
+          annualInflation={profile.annualInflationExpectation}
+          onSelect={(offer) => {
+            setSelectedOffer(offer);
+            setShowInstallments(false);
+          }}
+        />
+      )}
     </div>
   );
 }
