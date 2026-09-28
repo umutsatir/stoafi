@@ -1,0 +1,19 @@
+{
+  "nav": {
+    "profile": "Profil",
+    "plan": "Plan",
+    "queue": "Kuyruk",
+    "cards": "Kartlar",
+    "health": "Sağlık",
+    "decisions": "Kararlar",
+    "settings": "Ayarlar"
+  },
+  "settings": {
+    "currency": "Para birimi",
+    "language": "Dil",
+    "exportBackup": "Yedeği dışa aktar",
+    "importBackup": "Yedeği içe aktar",
+    "sampleAmountLabel": "Örnek tutar",
+    "sampleDateLabel": "Örnek tarih"
+  }
+}

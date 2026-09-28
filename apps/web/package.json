@@ -16,6 +16,7 @@
     "@stoafi/lessons": "workspace:*",
     "dexie": "^4.4.6",
     "next": "^15.1.0",
+    "next-intl": "^4.14.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "serwist": "^9.5.12",

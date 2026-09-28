@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { IntlProvider } from "@/components/intl-provider";
 import { Nav } from "@/components/nav";
 
 export const metadata: Metadata = {
@@ -28,8 +29,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Nav />
-        {children}
+        <IntlProvider>
+          <Nav />
+          {children}
+        </IntlProvider>
       </body>
     </html>
   );

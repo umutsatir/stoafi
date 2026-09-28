@@ -1,0 +1,19 @@
+{
+  "nav": {
+    "profile": "Profile",
+    "plan": "Plan",
+    "queue": "Queue",
+    "cards": "Cards",
+    "health": "Health",
+    "decisions": "Decisions",
+    "settings": "Settings"
+  },
+  "settings": {
+    "currency": "Currency",
+    "language": "Language",
+    "exportBackup": "Export backup",
+    "importBackup": "Import backup",
+    "sampleAmountLabel": "Sample amount",
+    "sampleDateLabel": "Sample date"
+  }
+}

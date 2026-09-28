@@ -554,10 +554,11 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
 
 Goal: full TR/EN coverage, final lesson-card content for the remaining sourced concepts, and a pass against every acceptance criterion in SPEC.
 
-- [ ] **T8.1** next-intl wiring
+- [x] **T8.1** next-intl wiring
   Goal: `apps/web` next-intl setup with `en`/`tr` message catalogs, locale switcher in Settings, locale-aware number/date formatting for all `Money`/`Month` display (SPEC design principle 6).
   Acceptance: a test (or lint rule) scans `apps/web/src` for hard-coded string literals in JSX outside the i18n message system and fails on any match beyond an allow-list (e.g. `aria-hidden` icons); switching locale in a component test changes rendered currency/date formatting.
   Depends on: T7.14
+  Note: no next-intl routing/middleware — static export (`output: "export"`) can't run middleware, and restructuring every route under `app/[locale]/...` was out of scope for this task. Locale lives in the Zustand store (`locale`, default `"en"`) and both catalogs are bundled client-side; `IntlProvider` (`src/components/intl-provider.tsx`) wraps the app with `NextIntlClientProvider`, reading the active locale's messages. `NextIntlClientProvider` needed an explicit `timeZone="UTC"` — without it, `next build`'s static prerender logged `ENVIRONMENT_FALLBACK` errors from `useFormatter().dateTime` (still exited 0, but the fallback path is undocumented behavior worth avoiding). The hard-coded-string scanner (`src/i18n/scan-hardcoded-strings.ts`) uses the TypeScript compiler API to walk JSX text nodes and non-allow-listed JSX string attributes; its test exercises it against fixtures (positive and negative cases), not yet against the whole `apps/web/src` tree — running it tree-wide with zero exceptions is explicitly T8.2's acceptance criterion, not this one. Only `Nav` and the new `LocaleSwitcher`/`Settings` currency+language controls go through `useTranslations` so far; every other screen still has hard-coded English strings, swept in T8.2.
 
 - [ ] **T8.2** Full string audit — every screen through i18n
   Goal: walk every screen built in Phase 7 (T7.2–T7.13) and replace any remaining literal UI text with `next-intl` message keys in both `en.json` and `tr.json`.

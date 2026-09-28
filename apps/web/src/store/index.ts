@@ -11,6 +11,7 @@ import {
   type QueueItem,
   type SinkingFund,
 } from "@stoafi/core";
+import type { Locale } from "@/i18n/messages";
 
 export interface AppState {
   profile: Profile | null;
@@ -20,6 +21,8 @@ export interface AppState {
   cards: Card[];
   decisions: Decision[];
   commitments: Commitment[];
+  locale: Locale;
+  currency: string;
 
   setProfile: (profile: Profile) => void;
   setPlanState: (planState: PlanStateInput) => void;
@@ -28,6 +31,8 @@ export interface AppState {
   setCards: (cards: Card[]) => void;
   setDecisions: (decisions: Decision[]) => void;
   setCommitments: (commitments: Commitment[]) => void;
+  setLocale: (locale: Locale) => void;
+  setCurrency: (currency: string) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -38,6 +43,8 @@ export const useAppStore = create<AppState>((set) => ({
   cards: [],
   decisions: [],
   commitments: [],
+  locale: "en",
+  currency: "TRY",
 
   setProfile: (profile) => set({ profile }),
   setPlanState: (planState) => set({ planState }),
@@ -46,6 +53,8 @@ export const useAppStore = create<AppState>((set) => ({
   setCards: (cards) => set({ cards }),
   setDecisions: (decisions) => set({ decisions }),
   setCommitments: (commitments) => set({ commitments }),
+  setLocale: (locale) => set({ locale }),
+  setCurrency: (currency) => set({ currency }),
 }));
 
 /**
