@@ -244,7 +244,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: unit tests mirroring T3.6's structure: exact allocation on known input, insight triggered when savings shortfall exists, param override changes split.
   Depends on: T3.4
 
-- [ ] **T3.9** Pay Yourself First lesson card
+- [x] **T3.9** Pay Yourself First lesson card
   Goal: `packages/lessons/en/pay-yourself-first.json` + `tr/` — Clason (*Richest Man in Babylon*) and Bach (*Automatic Millionaire*) as `source` (pick primary author per SPEC table; note the secondary source inside `principle` text, own words).
   Acceptance: same as T3.7.
   Depends on: T3.5
