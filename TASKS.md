@@ -114,10 +114,11 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Acceptance: unit test constructs a value satisfying the type and a Zod schema (used for debugging/serialization only, never persisted).
   Depends on: T1.1, T1.3, T1.4
 
-- [ ] **T1.8** `project()` — single month, no bucket limits yet
+- [x] **T1.8** `project()` — single month, no bucket limits yet
   Goal: `packages/core/kernel/project.ts` — `project(profile: Pick<Profile,'incomes'>, commitments: Commitment[], month: Month): MonthProjection` summing income and committed amounts per bucket for one month from a list of commitments (draft or active, per an explicit `includeDrafts` flag), with `byBucket[b].limit` left at 0 (limits are plan's job, wired in T3.x).
   Acceptance: unit tests: empty ledger yields `freeCash === income`; two commitments in the same bucket/month sum correctly; a commitment in a different month is excluded; `includeDrafts: false` excludes draft-status commitments, `true` includes them (this is the "preview" mechanism from SPEC).
   Depends on: T1.5, T1.7
+  Note: `project()`'s first argument is `{ income: Minor }`, not `Profile` — `Profile` is a `modules/profile` type and kernel cannot depend on it (modules never import each other, and kernel sits below all modules). Plan/profile wiring narrows a real `Profile` down to `{ income }` at the call site in later phases. `bucketLimits` defaults to zero for every bucket until T3.15 wires plan's allocation in. `installmentLoad`/`sinkingSetAside` are derived by convention from `commitment.source.module` (`'installments'` / `'sinking-funds'`), since kernel can't import those modules to check some shared type.
 
 - [ ] **T1.9** `project()` — multi-month series
   Goal: extend `project.ts` with `projectSeries(profile, commitments, months: Month[]): MonthProjection[]`, deriving `installmentLoad` and `sinkingSetAside` per month by summing payments whose `source.module` is `'installments'` / `'sinking-funds'` respectively (by convention, since kernel cannot import those modules).
