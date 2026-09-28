@@ -469,10 +469,11 @@ Goal: local persistence in `apps/web`, wired to core schemas, with a real migrat
 
 Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only from `packages/core` and the Phase 6 storage layer.
 
-- [ ] **T7.1** App shell, routing, Zustand store skeleton
+- [x] **T7.1** App shell, routing, Zustand store skeleton
   Goal: `apps/web/src/app/layout.tsx`, route structure for Profile / Plan / Queue / Cards / Health / Decisions / Settings; `apps/web/src/store/` Zustand store holding loaded module data plus derived selectors calling `projectSeries` (never storing the projection itself, per SPEC: "never stored").
   Acceptance: `pnpm --filter @stoafi/web build` succeeds; a component test (React Testing Library) renders the shell and finds all nav routes.
   Depends on: T6.4
+  Note: added `zustand`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`, `@vitejs/plugin-react` to `apps/web`; switched `vitest.config.ts` to `environment: "jsdom"` with the React plugin. `apps/web/tsconfig.json` now includes `vitest.config.ts`/`vitest.setup.ts` in its program — jest-dom's ambient `expect` augmentation (via `import "@testing-library/jest-dom/vitest"` in the setup file) only type-checks for `.test.tsx` files if the setup file itself is part of the same TS program. `@stoafi/core`'s public barrel grew further: `project`/`projectSeries`, `Commitment`, `Minor`, `Money`, `Month`, `MonthProjection`, `Bucket`. The store's `deriveProjection` never persists the projection it computes (SPEC: "never stored").
 
 - [ ] **T7.2** Profile screen
   Goal: form for incomes/expenses/savings/emergency fund/inflation, backed by T3.1's schema and T6.2's repo; editable at any time per SPEC acceptance.
