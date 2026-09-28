@@ -78,7 +78,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
 
 Goal: the pure, dependency-free core types and the `project()` function everything else is built on.
 
-- [ ] **T1.1** `Minor` money type and rounding helpers
+- [x] **T1.1** `Minor` money type and rounding helpers
   Goal: `packages/core/kernel/money.ts` — `type Minor = number`, `roundHalfToEven(value: number): Minor`, `addMinor`, `subMinor`, arithmetic guarded against float leakage into stored values.
   Acceptance: unit tests cover zero, one kuruş, very large amounts (> 2^31), and rounding boundaries (e.g. 0.5, 1.5, 2.5 rounding to even); property test (fast-check) asserts `roundHalfToEven` output is always an integer.
   Depends on: T0.7
