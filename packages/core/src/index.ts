@@ -11,7 +11,14 @@ export {
 } from "../kernel/project";
 export type { Commitment, CommitmentStatus } from "../kernel/commitment";
 export type { Minor, Money, Currency } from "../kernel/money";
-export { addMonths, compareMonths, monthsBetween, parseMonth, type Month } from "../kernel/month";
+export {
+  MonthSchema,
+  addMonths,
+  compareMonths,
+  monthsBetween,
+  parseMonth,
+  type Month,
+} from "../kernel/month";
 export type { MonthProjection } from "../kernel/projection";
 export type { Bucket } from "../kernel/bucket";
 
@@ -27,7 +34,14 @@ export { exportAll, BackupSchema, type Backup } from "../modules/backup/schema";
 export { importAll, type ImportResult } from "../modules/backup/import";
 
 export { ProfileSchema, type Profile } from "../modules/profile/schema";
-export { hourlyNetIncome, monthlyNeeds, netMonthlyIncome } from "../modules/profile/selectors";
+export {
+  dueDayOf,
+  hourlyNetIncome,
+  monthlyNeeds,
+  netMonthlyIncome,
+  payDayOf,
+} from "../modules/profile/selectors";
+export { activeFixedExpenses, isExpenseActiveInMonth } from "../modules/profile/active-expenses";
 export { migrateProfileV1ToV2 } from "../modules/profile/migrations";
 export { PlanStateSchema, type PlanStateInput } from "../modules/plan/schema";
 export { strategies as strategyRegistry } from "../modules/plan/strategies-registry";
@@ -76,3 +90,11 @@ export { installmentLoadTimeline, capacityRemaining } from "../modules/installme
 export { InstallmentOfferSchema, type InstallmentOfferInput } from "../modules/installments/schema";
 export { defaultGuardRules, type GuardContext, type GuardRule } from "../modules/guards/schema";
 export { evaluateGuards, type GuardBreach } from "../modules/guards/selectors";
+export { suggestedEmergencyFundMonth } from "../modules/health/suggested-emergency-fund";
+export {
+  INFLATION_COUNTRY_CODES,
+  INFLATION_DATA_AS_OF,
+  INFLATION_DATA_SOURCE,
+  suggestedAnnualInflation,
+} from "../modules/profile/inflation-by-country";
+export { cashFlowSeries, type CashFlowPoint } from "../modules/profile/cash-flow";

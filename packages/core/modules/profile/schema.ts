@@ -1,11 +1,14 @@
 import { z } from "zod";
 import { BUCKETS } from "../../kernel/bucket";
+import { MonthSchema } from "../../kernel/month";
 
 export const ProfileSchema = z.object({
   incomes: z.array(
     z.object({
       label: z.string(),
       monthly: z.number().int().nonnegative(),
+      /** Day of month the income arrives, 1-31. Omitted reads as the 1st (see `payDayOf`). */
+      payDay: z.number().int().min(1).max(31).optional(),
     }),
   ),
   fixedExpenses: z.array(
@@ -14,6 +17,10 @@ export const ProfileSchema = z.object({
       monthly: z.number().int().nonnegative(),
       bucket: z.enum(BUCKETS),
       isSubscription: z.boolean().optional(),
+      /** Day of month the expense is due, 1-31. Omitted reads as the 1st (see `dueDayOf`). */
+      dueDay: z.number().int().min(1).max(31).optional(),
+      /** Last month this expense recurs in; omitted means it recurs indefinitely. */
+      endMonth: MonthSchema.optional(),
     }),
   ),
   /** One lump monthly line for day-to-day living costs (groceries etc.); counted as needs. */

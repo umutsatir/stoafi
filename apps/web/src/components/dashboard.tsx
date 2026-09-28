@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  activeFixedExpenses,
+  addMonths,
+  cashFlowSeries,
   activeQueueItems,
   currentAllocation,
   emergencyFundMonths,
@@ -25,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Page } from "@/components/ui/page";
+import { CashFlowChart } from "./cash-flow-chart";
 
 export interface DashboardProps {
   profile: Profile | null;
@@ -55,7 +59,7 @@ export function Dashboard({
           <CardContent className="flex flex-col items-start gap-4 pt-6">
             <p className="text-sm text-muted-foreground">{t("welcome")}</p>
             <Button asChild>
-              <Link href="/profile">{t("setUpProfile")}</Link>
+              <Link href="/income-expenses">{t("setUpProfile")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -65,12 +69,17 @@ export function Dashboard({
 
   const month = monthOf(today);
   const income = netMonthlyIncome(profile);
-  const obligations = profile.fixedExpenses.reduce((sum, e) => sum + e.monthly, 0);
+  const obligations = activeFixedExpenses(profile, month).reduce((sum, e) => sum + e.monthly, 0);
   const commitments = installmentCommitments(queueItems);
   const installments = project({ income }, commitments, month).installmentLoad;
   const left = income - obligations - profile.livingExpenses - installments;
 
-  const needs = monthlyNeeds(profile);
+  const cashFlow = cashFlowSeries(
+    profile,
+    commitments,
+    Array.from({ length: 12 }, (_, i) => addMonths(month, i)),
+  );
+  const needs = monthlyNeeds(profile, month);
   const savedMonths = emergencyFundMonths(profile.savings, needs);
   const fundLow = savedMonths < profile.emergencyFundTargetMonths;
   const overspent = left < 0;
@@ -224,6 +233,7 @@ export function Dashboard({
           </CardContent>
         </Card>
       </div>
+      <CashFlowChart series={cashFlow} />
     </Page>
   );
 }

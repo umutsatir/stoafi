@@ -57,7 +57,7 @@ export default function QueuePage() {
           <CardContent className="flex flex-col items-start gap-4 pt-6">
             <p className="text-sm text-muted-foreground">{t("fillProfileAndPlanFirst")}</p>
             <Button asChild>
-              <Link href="/profile">{t("goToProfile")}</Link>
+              <Link href="/income-expenses">{t("goToProfile")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -68,7 +68,7 @@ export default function QueuePage() {
   const waitingItems = activeQueueItems(queueItems);
   const selectedItem = waitingItems.find((i) => i.id === selectedId) ?? null;
   const editingItem = waitingItems.find((i) => i.id === editingId);
-  const needs = monthlyNeeds(profile);
+  const needs = monthlyNeeds(profile, monthOf(today));
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
   const nextOrder = waitingItems.reduce((max, i) => Math.max(max, i.order + 1), 0);
 

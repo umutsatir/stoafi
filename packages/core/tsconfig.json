@@ -1,7 +1,8 @@
 {
   "extends": "@stoafi/tsconfig/base.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "resolveJsonModule": true
   },
-  "include": ["src", "kernel", "modules", "strategies"]
+  "include": ["src", "kernel", "modules", "strategies", "data"]
 }

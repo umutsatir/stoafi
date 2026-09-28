@@ -46,11 +46,11 @@ function renderDashboard(overrides: Partial<Parameters<typeof Dashboard>[0]> = {
 }
 
 describe("Dashboard", () => {
-  it("asks a new user to fill in the profile first and shows no numbers", () => {
+  it("points a new user to income and expenses first and shows no numbers", () => {
     renderDashboard({ profile: null });
-    expect(screen.getByRole("link", { name: "Set up your profile" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Add your income and expenses" })).toHaveAttribute(
       "href",
-      "/profile",
+      "/income-expenses",
     );
     expect(screen.queryByTestId("this-month")).not.toBeInTheDocument();
   });
@@ -131,5 +131,33 @@ describe("Dashboard", () => {
     const plan = within(screen.getByTestId("active-plan"));
     expect(plan.getByText(/50\/30\/20|Warren|Elizabeth/i)).toBeInTheDocument();
     expect(plan.getByTestId("plan-needs")).toHaveTextContent("₺5,000.00");
+  });
+
+  it("draws a 12-month cash-flow chart starting this month", () => {
+    renderDashboard();
+    const chart = screen.getByTestId("cash-flow-chart");
+    expect(chart).toHaveAttribute("data-points", "12");
+    const rows = within(chart).getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("2026-09");
+    expect(rows[12]).toHaveTextContent("2027-08");
+  });
+
+  it("shows the chart's installment months from bought purchases", () => {
+    const bought: QueueItem = {
+      ...waiting("Fridge", 0, 600_000),
+      installmentPurchase: {
+        offer: { months: 3, payments: [200_000, 200_000, 200_000] },
+        firstMonth: "2026-10",
+      },
+    };
+    renderDashboard({ queueItems: [bought] });
+    const rows = within(screen.getByTestId("cash-flow-chart")).getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("₺5,000.00"); // September: nothing due yet
+    expect(rows[2]).toHaveTextContent("₺3,000.00"); // October: 2,000.00 installment
+  });
+
+  it("has no chart before a profile exists", () => {
+    renderDashboard({ profile: null });
+    expect(screen.queryByTestId("cash-flow-chart")).not.toBeInTheDocument();
   });
 });

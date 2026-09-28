@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowLeftRight,
   CreditCard,
   HeartPulse,
   LayoutDashboard,
@@ -17,6 +18,7 @@ import { cn } from "@/lib/utils";
 
 const ROUTES = [
   { href: "/", key: "home", icon: LayoutDashboard },
+  { href: "/income-expenses", key: "incomeExpenses", icon: ArrowLeftRight },
   { href: "/profile", key: "profile", icon: UserRound },
   { href: "/plan", key: "plan", icon: Wallet },
   { href: "/queue", key: "queue", icon: ListChecks },

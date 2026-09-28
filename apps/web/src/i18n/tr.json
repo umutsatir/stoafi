@@ -5,7 +5,7 @@
   "home": {
     "title": "Ana sayfa",
     "welcome": "Stoafi maaşını ve düzenli giderlerini aylık bir plana çevirir. Önce ne girdiğini ve ne çıktığını anlat.",
-    "setUpProfile": "Profilini oluştur",
+    "setUpProfile": "Gelir ve giderlerini ekle",
     "thisMonth": "Bu ay",
     "income": "Maaşlar",
     "obligations": "Düzenli giderler",
@@ -24,11 +24,14 @@
     "changePlan": "Planı değiştir",
     "nextInQueue": "Kuyruktaki sıradakiler",
     "addToQueue": "Kuyruğuna ekle",
-    "openQueue": "Kuyruğu aç"
+    "openQueue": "Kuyruğu aç",
+    "cashFlowTitle": "Önümüzdeki 12 ay",
+    "month": "Ay"
   },
   "nav": {
     "ariaLabel": "Ana",
     "home": "Ana sayfa",
+    "incomeExpenses": "Gelir ve Giderler",
     "profile": "Profil",
     "plan": "Plan",
     "queue": "Kuyruk",
@@ -36,6 +39,9 @@
     "health": "Sağlık",
     "decisions": "Kararlar",
     "settings": "Ayarlar"
+  },
+  "incomeExpenses": {
+    "title": "Gelir ve Giderler"
   },
   "profile": {
     "title": "Profil",
@@ -62,11 +68,24 @@
     "removeExpense": "Gider {n} sil",
     "livingExpenses": "Aylık yaşam giderleri",
     "livingExpensesHint": "Mutfak ve günlük harcamalar tek bir aylık toplam olarak.",
-    "inflationHint": "Yüzde olarak gir, örn. %30 için 30."
+    "inflationHint": "Yüzde olarak gir, örn. %30 için 30.",
+    "payDayLabel": "Yatış günü",
+    "salaryPayDay": "Maaş {n} yatış günü",
+    "dueDayLabel": "Son ödeme günü",
+    "expenseDueDay": "Gider {n} son ödeme günü",
+    "endsLabel": "Biter",
+    "expenseHasEnd": "Gider {n} için bitiş ayı var",
+    "expenseEndMonth": "Gider {n} bitiş ayı",
+    "country": "Ülke",
+    "countryPlaceholder": "Bir ülke seç",
+    "suggestedInflationCaption": "Yaklaşık bir veri kümesinden ({asOf}) önerildi. Güncel rakamları kontrol et, gerekirse düzenle.",
+    "emergencyFundReached": "Acil durum fonu hedefine zaten ulaştın.",
+    "emergencyFundOnTrack": "Şu anki hızınla hedefe {month} ayında ulaşırsın.",
+    "emergencyFundUnreachable": "Aylık artan paran hedefe ulaşmaya henüz yetmiyor."
   },
   "plan": {
     "title": "Plan",
-    "fillProfileFirst": "Önce profilini doldur.",
+    "fillProfileFirst": "Önce gelir ve giderlerini ekle.",
     "needs": "İhtiyaçlar",
     "wants": "İstekler",
     "savings": "Birikim",
@@ -77,7 +96,7 @@
   },
   "queue": {
     "title": "Kuyruk",
-    "fillProfileAndPlanFirst": "Önce profilini doldur ve bir plan seç.",
+    "fillProfileAndPlanFirst": "Önce gelir ve giderlerini ekle.",
     "timelineTitle": "12 aylık zaman çizelgesi",
     "moveUp": "{name} öğesini yukarı taşı",
     "moveDown": "{name} öğesini aşağı taşı",
@@ -111,7 +130,7 @@
     "nameRequired": "Bir ad gir.",
     "priceRequired": "Sıfırdan büyük bir fiyat gir.",
     "empty": "Kuyrukta henüz bir şey yok. İstediğin ya da ihtiyacın olanları yukarıdan ekle.",
-    "goToProfile": "Profile git",
+    "goToProfile": "Gelir ve gider ekle",
     "dragHandle": "{name} öğesini sıralamak için sürükle"
   },
   "queuePreview": {
@@ -164,7 +183,7 @@
   },
   "health": {
     "title": "Sağlık",
-    "fillProfileFirst": "Önce profilini doldur.",
+    "fillProfileFirst": "Önce gelir ve giderlerini ekle.",
     "savingsRate": "Birikim oranı",
     "emergencyFundMonths": "Acil durum fonu ayı",
     "installmentRatio": "Taksit oranı",
