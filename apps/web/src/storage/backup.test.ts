@@ -3,9 +3,9 @@ import { StoafiDb, SINGLETON_ID } from "./db";
 import { exportToJson, importFromJson } from "./backup";
 
 const validProfile = {
-  incomes: [{ label: "Salary", monthly: 10000, variable: false }],
+  incomes: [{ label: "Salary", monthly: 10000 }],
   fixedExpenses: [],
-  avgVariableExpenses: [],
+  livingExpenses: 0,
   savings: 0,
   emergencyFundTargetMonths: 6,
   annualInflationExpectation: 0.3,

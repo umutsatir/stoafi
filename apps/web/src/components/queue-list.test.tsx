@@ -5,9 +5,9 @@ import { renderWithIntl } from "@/test-utils";
 import { QueueList } from "./queue-list";
 
 const profile: Profile = {
-  incomes: [{ label: "Salary", monthly: 10000, variable: false }],
+  incomes: [{ label: "Salary", monthly: 10000 }],
   fixedExpenses: [],
-  avgVariableExpenses: [],
+  livingExpenses: 0,
   savings: 0,
   emergencyFundTargetMonths: 6,
   annualInflationExpectation: 0.3,

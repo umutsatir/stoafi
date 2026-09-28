@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { hourlyNetIncome } from "./selectors";
+import { hourlyNetIncome, monthlyNeeds } from "./selectors";
 import type { Profile } from "./schema";
 
 function makeProfile(overrides: Partial<Profile> = {}): Profile {
   return {
-    incomes: [{ label: "Salary", monthly: 32000, variable: false }],
+    incomes: [{ label: "Salary", monthly: 32000 }],
     fixedExpenses: [],
-    avgVariableExpenses: [],
+    livingExpenses: 0,
     savings: 0,
     emergencyFundTargetMonths: 6,
     annualInflationExpectation: 0.3,
@@ -33,5 +33,22 @@ describe("hourlyNetIncome", () => {
   it("returns 0 for zero income instead of NaN or Infinity", () => {
     const profile = makeProfile({ incomes: [] });
     expect(hourlyNetIncome(profile)).toBe(0);
+  });
+});
+
+describe("monthlyNeeds", () => {
+  it("returns 0 for an empty profile", () => {
+    expect(monthlyNeeds(makeProfile())).toBe(0);
+  });
+
+  it("adds needs-bucket fixed expenses and living expenses, ignoring wants", () => {
+    const profile = makeProfile({
+      fixedExpenses: [
+        { label: "Rent", monthly: 10000, bucket: "needs" },
+        { label: "Streaming", monthly: 300, bucket: "wants" },
+      ],
+      livingExpenses: 7000,
+    });
+    expect(monthlyNeeds(profile)).toBe(17000);
   });
 });

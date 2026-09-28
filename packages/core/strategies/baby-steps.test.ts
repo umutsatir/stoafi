@@ -5,9 +5,9 @@ import type { MonthProjection } from "../kernel/projection";
 
 function makeProfile(overrides: Partial<Profile> = {}): Profile {
   return {
-    incomes: [{ label: "Salary", monthly: 100_000, variable: false }],
+    incomes: [{ label: "Salary", monthly: 100_000 }],
     fixedExpenses: [{ label: "Rent", monthly: 40_000, bucket: "needs" }],
-    avgVariableExpenses: [],
+    livingExpenses: 0,
     savings: 0,
     emergencyFundTargetMonths: 6,
     annualInflationExpectation: 0.3,

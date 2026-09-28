@@ -27,6 +27,8 @@ export { exportAll, BackupSchema, type Backup } from "../modules/backup/schema";
 export { importAll, type ImportResult } from "../modules/backup/import";
 
 export { ProfileSchema, type Profile } from "../modules/profile/schema";
+export { hourlyNetIncome, monthlyNeeds, netMonthlyIncome } from "../modules/profile/selectors";
+export { migrateProfileV1ToV2 } from "../modules/profile/migrations";
 export { PlanStateSchema, type PlanStateInput } from "../modules/plan/schema";
 export { strategies as strategyRegistry } from "../modules/plan/strategies-registry";
 export {

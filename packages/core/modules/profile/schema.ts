@@ -6,7 +6,6 @@ export const ProfileSchema = z.object({
     z.object({
       label: z.string(),
       monthly: z.number().int().nonnegative(),
-      variable: z.boolean(),
     }),
   ),
   fixedExpenses: z.array(
@@ -17,13 +16,8 @@ export const ProfileSchema = z.object({
       isSubscription: z.boolean().optional(),
     }),
   ),
-  avgVariableExpenses: z.array(
-    z.object({
-      label: z.string(),
-      monthly: z.number().int().nonnegative(),
-      bucket: z.enum(BUCKETS),
-    }),
-  ),
+  /** One lump monthly line for day-to-day living costs (groceries etc.); counted as needs. */
+  livingExpenses: z.number().int().nonnegative(),
   savings: z.number().int().nonnegative(),
   emergencyFundTargetMonths: z.number().nonnegative(),
   annualInflationExpectation: z.number(),

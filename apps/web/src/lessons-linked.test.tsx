@@ -10,9 +10,9 @@ import HealthPage from "@/app/health/page";
 import QueuePage from "@/app/queue/page";
 
 const profile: Profile = {
-  incomes: [{ label: "Salary", monthly: 10000, variable: false }],
+  incomes: [{ label: "Salary", monthly: 10000 }],
   fixedExpenses: [{ label: "Rent", monthly: 4000, bucket: "needs" }],
-  avgVariableExpenses: [],
+  livingExpenses: 0,
   savings: 30000,
   emergencyFundTargetMonths: 6,
   annualInflationExpectation: 0.3,

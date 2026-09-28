@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { monthlyNeeds } from "@stoafi/core";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview } from "@/components/queue-preview";
 import { QueueTimeline } from "@/components/queue-timeline";
@@ -34,9 +35,7 @@ export default function QueuePage() {
   }
 
   const selectedItem = queueItems.find((i) => i.id === selectedId) ?? null;
-  const monthlyNeeds = profile.fixedExpenses
-    .filter((e) => e.bucket === "needs")
-    .reduce((sum, e) => sum + e.monthly, 0);
+  const needs = monthlyNeeds(profile);
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
 
   return (
@@ -84,7 +83,7 @@ export default function QueuePage() {
           commitments={commitments}
           month="2026-01"
           income={income}
-          monthlyNeeds={monthlyNeeds}
+          monthlyNeeds={needs}
           installmentCapPct={0.2}
           onConfirm={(activeCommitment, breaches, guardBreachConfirmed) => {
             setCommitments([...commitments, activeCommitment]);

@@ -3,7 +3,7 @@ import { roundHalfToEven } from "../kernel/money";
 import type { Bucket } from "../kernel/bucket";
 import type { Minor } from "../kernel/money";
 import type { MonthProjection } from "../kernel/projection";
-import { netMonthlyIncome } from "../modules/profile/selectors";
+import { monthlyNeeds, netMonthlyIncome } from "../modules/profile/selectors";
 import type { Profile } from "../modules/profile/schema";
 import type { Insight } from "./types";
 
@@ -24,16 +24,6 @@ export const paramsSchema = z.object({
 });
 
 export type BabyStepsParams = z.infer<typeof paramsSchema>;
-
-function monthlyNeeds(profile: Profile): Minor {
-  const fixedNeeds = profile.fixedExpenses
-    .filter((e) => e.bucket === "needs")
-    .reduce((sum, e) => sum + e.monthly, 0);
-  const variableNeeds = profile.avgVariableExpenses
-    .filter((e) => e.bucket === "needs")
-    .reduce((sum, e) => sum + e.monthly, 0);
-  return fixedNeeds + variableNeeds;
-}
 
 function fullEmergencyFundTarget(profile: Profile): Minor {
   return roundHalfToEven(monthlyNeeds(profile) * profile.emergencyFundTargetMonths);

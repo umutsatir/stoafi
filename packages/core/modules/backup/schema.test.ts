@@ -11,7 +11,7 @@ describe("exportAll", () => {
     registry.register(queueModule);
 
     const snapshot = {
-      profile: [{ incomes: [], fixedExpenses: [], avgVariableExpenses: [] }],
+      profile: [{ incomes: [], fixedExpenses: [], livingExpenses: 0 }],
       queue: [],
     };
 

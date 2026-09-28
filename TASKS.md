@@ -597,6 +597,65 @@ Goal: full TR/EN coverage, final lesson-card content for the remaining sourced c
 
 ---
 
+## Phase 9 — Usability pass: inputs, profile model, queue, purchase flow, home
+
+Goal: the app is usable end to end by a real person. Added after user review of the Phase 8 build. Decisions made with the user (recorded here, SPEC updated in T9.1):
+
+- Income is salaries only; one-off money is out of scope. `variable` incomes go away.
+- Expenses are recurring obligations (loans, installments, bills, subscriptions) plus one lump "monthly living costs" line (groceries etc.). `avgVariableExpenses` goes away.
+- A cash purchase is **not** kept as a monthly commitment: confirming it only writes a decision (`bought`). An installment purchase automatically becomes a recurring expense (derived from the queue item, not stored separately).
+- Inflation is user-entered, shown as a percent. The "too low for Turkey" report was the field showing `0.3` for 30%; no country data is invented or fetched.
+
+- [x] **T9.1** Profile schema v2 + SPEC update
+  Goal: `ProfileSchema`: `incomes: { label, monthly }[]` (drop `variable`), keep `fixedExpenses` (now: recurring obligations), replace `avgVariableExpenses` with `livingExpenses: Minor`. Add `monthlyNeeds(profile)` selector (needs-bucket fixed expenses + living expenses); `baby-steps` uses it. Update SPEC's `Profile` interface.
+  Acceptance: tests written first; every existing fixture updated; `pnpm test`, `typecheck`, `lint` pass.
+  Depends on: T8.5
+  Note: the v1->v2 transform lives in core (`profile/migrations.ts`, registered in `profileModule.migrations`, module version 2) so Dexie (T9.2) and any future backup-import path can share it. Backups exported before this change carry the old profile shape and will be rejected by `importAll` until it applies module migrations; noted, not handled here (no released data yet).
+
+- [ ] **T9.2** Dexie v3 migration for the profile row
+  Goal: v3 upgrade maps an old row: drops `variable` from incomes, sums `avgVariableExpenses` into `livingExpenses`.
+  Acceptance: test seeds a v2 row and asserts the migrated shape validates against `ProfileSchema`.
+  Depends on: T9.1
+
+- [ ] **T9.3** Money and percent input components
+  Goal: `MoneyInput` (user types major units like `1.250,50`, component emits integer `Minor`, locale-aware) and `PercentInput` (user types `30`, emits `0.3`).
+  Acceptance: component tests: typing `300` emits 30000; `0,01` emits 1; empty emits 0; negative rejected; percent `30` emits `0.3` and displays `30`.
+  Depends on: T9.1
+
+- [ ] **T9.4** Profile form rebuild
+  Goal: salaries list (add/remove), recurring expenses list (add/remove, label + amount + bucket), one living-costs field, savings, emergency months, inflation percent; all money via `MoneyInput`.
+  Acceptance: component test: adding two salaries and one loan and saving calls `onSave` with the expected `Profile`.
+  Depends on: T9.2, T9.3
+
+- [ ] **T9.5** App bootstrap: hydrate store, default plan, app clock
+  Goal: on start load profile/plan/queue/decisions/cards from Dexie into the store; default `planState` to 50/30/20 when none is saved (so Queue is never blocked on a missing plan); replace hard-coded `2026-01`/`2026-01-01` with a `today` supplied at the app boundary.
+  Acceptance: test: seeded DB rows appear in the store after bootstrap; with an empty DB `planState` is the default strategy.
+  Depends on: T9.4
+
+- [ ] **T9.6** Queue: add, edit, remove, reorder (persisted)
+  Goal: form to add a wish/need (name, price, need/want, urgency, importance, expected uses, optional cash price); edit and delete; up/down reorder writes `order`; everything persists via the repo.
+  Acceptance: component test: adding two items shows both, reordering swaps months, reload (re-hydrate) keeps order.
+  Depends on: T9.5
+
+- [ ] **T9.7** Purchase flow: cash or installment
+  Goal: "Buy" on a queue item asks cash or installment. Cash: writes a `bought` decision, removes the item, no commitment. Installment: pick an offer, the item becomes an installment expense over its months (derived into `commitments` for `project`, never stored as a second copy) and shows in the expenses view.
+  Acceptance: tests: cash purchase adds a decision and leaves projection unchanged; installment purchase raises `installmentLoad` in exactly the offer's months; guard "I know" flow still applies.
+  Depends on: T9.6
+
+- [ ] **T9.8** Home page
+  Goal: dashboard: this month's income, recurring obligations, living costs, installment load, what is left; next queue items with their months; guard/health highlights; empty-state call to action pointing to Profile.
+  Acceptance: component test for both the empty state and a filled state.
+  Depends on: T9.7
+
+- [ ] **T9.9** Styling baseline
+  Goal: wire Tailwind (already in the stack) and restyle forms, buttons, nav and cards consistently.
+  Acceptance: `pnpm build` passes; existing tests pass; forms have labels, focus states and mobile layout.
+  Depends on: T9.8
+
+**Stop and report after Phase 9.**
+
+---
+
 ## Acceptance criteria mapping
 
 Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task(s) that implement and verify it.

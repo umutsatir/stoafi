@@ -10,9 +10,9 @@ export interface ProfileFormProps {
 }
 
 const EMPTY: Profile = {
-  incomes: [{ label: "", monthly: 0, variable: false }],
+  incomes: [{ label: "", monthly: 0 }],
   fixedExpenses: [],
-  avgVariableExpenses: [],
+  livingExpenses: 0,
   savings: 0,
   emergencyFundTargetMonths: 6,
   annualInflationExpectation: 0.3,
@@ -37,7 +37,7 @@ export function ProfileForm({ initial, onSave }: ProfileFormProps) {
         onChange={(e) =>
           setProfile((p) => ({
             ...p,
-            incomes: [{ label: "Salary", monthly: Number(e.target.value), variable: false }],
+            incomes: [{ label: "Salary", monthly: Number(e.target.value) }],
           }))
         }
       />
