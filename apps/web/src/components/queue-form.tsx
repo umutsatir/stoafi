@@ -3,6 +3,11 @@
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import type { QueueItem } from "@stoafi/core";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { MoneyInput } from "./money-input";
 
 export interface QueueFormProps {
@@ -72,84 +77,103 @@ export function QueueForm({
     if (!initial) reset();
   }
 
+  const title = initial ? t("editTitle") : t("addTitle");
+
   return (
-    <form onSubmit={handleSubmit} aria-label={initial ? t("editTitle") : t("addTitle")}>
-      <h2>{initial ? t("editTitle") : t("addTitle")}</h2>
-
-      <label htmlFor="queue-name">{t("name")}</label>
-      <input
-        id="queue-name"
-        type="text"
-        value={name}
-        aria-invalid={error === "name" ? "true" : undefined}
-        onChange={(e) => setName(e.target.value)}
-      />
-      {error === "name" && <p role="alert">{t("nameRequired")}</p>}
-
-      <label htmlFor="queue-price">{t("price")}</label>
-      <MoneyInput id="queue-price" currency={currency} value={price} onChange={setPrice} />
-      {error === "price" && <p role="alert">{t("priceRequired")}</p>}
-
-      <label htmlFor="queue-cash-price">{t("cashPrice")}</label>
-      <MoneyInput
-        id="queue-cash-price"
-        currency={currency}
-        value={cashPrice}
-        onChange={setCashPrice}
-      />
-
-      <label htmlFor="queue-kind">{t("kind")}</label>
-      <select
-        id="queue-kind"
-        value={isNeed ? "need" : "want"}
-        onChange={(e) => setIsNeed(e.target.value === "need")}
-      >
-        <option value="want">{t("kindWant")}</option>
-        <option value="need">{t("kindNeed")}</option>
-      </select>
-
-      <label htmlFor="queue-urgency">{t("urgency")}</label>
-      <select
-        id="queue-urgency"
-        value={urgency}
-        onChange={(e) => setUrgency(Number(e.target.value))}
-      >
-        {LEVELS.map((level) => (
-          <option key={level} value={level}>
-            {t(`level${level}`)}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor="queue-importance">{t("importanceLabel")}</label>
-      <select
-        id="queue-importance"
-        value={importance}
-        onChange={(e) => setImportance(Number(e.target.value))}
-      >
-        {LEVELS.map((level) => (
-          <option key={level} value={level}>
-            {t(`level${level}`)}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor="queue-uses">{t("expectedUses")}</label>
-      <input
-        id="queue-uses"
-        type="number"
-        min={1}
-        step={1}
-        value={expectedUses}
-        onChange={(e) => setExpectedUses(Math.max(1, Math.floor(Number(e.target.value)) || 1))}
-      />
-
-      <button type="submit">{initial ? t("saveChanges") : t("add")}</button>
-      {onCancel && (
-        <button type="button" onClick={onCancel}>
-          {t("cancel")}
-        </button>
-      )}
-    </form>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} aria-label={title} className="flex flex-col gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label={t("name")}
+              htmlFor="queue-name"
+              error={error === "name" ? t("nameRequired") : undefined}
+            >
+              <Input
+                id="queue-name"
+                type="text"
+                value={name}
+                aria-invalid={error === "name" ? "true" : undefined}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Field>
+            <Field label={t("kind")} htmlFor="queue-kind">
+              <NativeSelect
+                id="queue-kind"
+                value={isNeed ? "need" : "want"}
+                onChange={(e) => setIsNeed(e.target.value === "need")}
+              >
+                <option value="want">{t("kindWant")}</option>
+                <option value="need">{t("kindNeed")}</option>
+              </NativeSelect>
+            </Field>
+            <Field
+              label={t("price")}
+              htmlFor="queue-price"
+              error={error === "price" ? t("priceRequired") : undefined}
+            >
+              <MoneyInput id="queue-price" currency={currency} value={price} onChange={setPrice} />
+            </Field>
+            <Field label={t("cashPrice")} htmlFor="queue-cash-price">
+              <MoneyInput
+                id="queue-cash-price"
+                currency={currency}
+                value={cashPrice}
+                onChange={setCashPrice}
+              />
+            </Field>
+            <Field label={t("urgency")} htmlFor="queue-urgency">
+              <NativeSelect
+                id="queue-urgency"
+                value={urgency}
+                onChange={(e) => setUrgency(Number(e.target.value))}
+              >
+                {LEVELS.map((level) => (
+                  <option key={level} value={level}>
+                    {t(`level${level}`)}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Field>
+            <Field label={t("importanceLabel")} htmlFor="queue-importance">
+              <NativeSelect
+                id="queue-importance"
+                value={importance}
+                onChange={(e) => setImportance(Number(e.target.value))}
+              >
+                {LEVELS.map((level) => (
+                  <option key={level} value={level}>
+                    {t(`level${level}`)}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Field>
+            <Field label={t("expectedUses")} htmlFor="queue-uses">
+              <Input
+                id="queue-uses"
+                type="number"
+                min={1}
+                step={1}
+                value={expectedUses}
+                onChange={(e) =>
+                  setExpectedUses(Math.max(1, Math.floor(Number(e.target.value)) || 1))
+                }
+              />
+            </Field>
+          </div>
+          <div className="flex gap-2">
+            <Button type="submit">{initial ? t("saveChanges") : t("add")}</Button>
+            {onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                {t("cancel")}
+              </Button>
+            )}
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

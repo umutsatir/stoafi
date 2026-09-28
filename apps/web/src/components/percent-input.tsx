@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
+import { Input } from "@/components/ui/input";
 import { formatPercentForInput, parsePercent } from "@/lib/amount-text";
 
 export interface PercentInputProps {
@@ -30,8 +31,9 @@ export function PercentInput({ id, value, onChange, "aria-label": ariaLabel }: P
   }, [value, locale]);
 
   return (
-    <span>
-      <input
+    <span className="flex items-center gap-2">
+      <Input
+        className="w-40"
         id={id}
         type="text"
         inputMode="decimal"
@@ -48,7 +50,9 @@ export function PercentInput({ id, value, onChange, "aria-label": ariaLabel }: P
           if (ratio !== null) onChange(ratio);
         }}
       />
-      <span aria-hidden="true">%</span>
+      <span aria-hidden="true" className="text-sm text-muted-foreground">
+        %
+      </span>
     </span>
   );
 }

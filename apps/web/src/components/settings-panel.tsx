@@ -2,7 +2,11 @@
 
 import { useState, type ChangeEvent } from "react";
 import { useTranslations } from "next-intl";
+import { AlertCircle, Download, Upload } from "lucide-react";
 import type { ImportResult } from "@stoafi/core";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 const CURRENCIES = ["TRY", "USD", "EUR"] as const;
 
@@ -49,30 +53,62 @@ export function SettingsPanel({
   }
 
   return (
-    <div>
-      <label htmlFor="currency">{t("currency")}</label>
-      <select id="currency" value={currency} onChange={(e) => onCurrencyChange(e.target.value)}>
-        {CURRENCIES.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
+    <Card>
+      <CardContent className="flex flex-col gap-5 pt-6">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="currency">{t("currency")}</Label>
+          <select
+            id="currency"
+            value={currency}
+            onChange={(e) => onCurrencyChange(e.target.value)}
+            className="h-9 w-40 rounded-md border border-input bg-card px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <button type="button" onClick={() => void handleExport()}>
-        {t("exportBackup")}
-      </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="button" variant="outline" onClick={() => void handleExport()}>
+            <Download className="h-4 w-4" />
+            {t("exportBackup")}
+          </Button>
 
-      <label htmlFor="import-file">{t("importBackup")}</label>
-      <input id="import-file" type="file" accept="application/json" onChange={handleFileChange} />
+          <div className="flex items-center gap-2">
+            <Label
+              htmlFor="import-file"
+              className="flex cursor-pointer items-center gap-2 text-sm font-medium"
+            >
+              <Upload className="h-4 w-4" />
+              {t("importBackup")}
+            </Label>
+            <input
+              id="import-file"
+              type="file"
+              accept="application/json"
+              onChange={handleFileChange}
+              className="text-sm text-muted-foreground file:mr-2 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium"
+            />
+          </div>
+        </div>
 
-      {importErrors && (
-        <ul data-testid="import-errors">
-          {importErrors.map((err) => (
-            <li key={err}>{err}</li>
-          ))}
-        </ul>
-      )}
-    </div>
+        {importErrors && (
+          <ul
+            data-testid="import-errors"
+            className="flex flex-col gap-1 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"
+          >
+            {importErrors.map((err) => (
+              <li key={err} className="flex items-start gap-1.5">
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                {err}
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardContent>
+    </Card>
   );
 }

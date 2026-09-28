@@ -26,6 +26,12 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "autoComplete",
   "aria-hidden",
   "role",
+  "dataKey", // recharts chart config, not display text
+  "stroke",
+  "fill",
+  "variant", // shadcn/ui component variant props (cva), not display text
+  "size",
+  "testId", // custom prop forwarded to data-testid, not display text
 ]);
 
 export interface HardcodedStringViolation {

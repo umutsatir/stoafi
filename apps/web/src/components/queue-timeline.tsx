@@ -1,6 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   cooldownStatus,
   scheduleQueue,
@@ -36,26 +38,38 @@ export function QueueTimeline({
   const t = useTranslations("timeline");
 
   return (
-    <ul>
-      {items.map((item) => {
-        const cooldown = item.isNeed ? null : cooldownStatus(item, today);
-        const month = scheduleByItemId.get(item.id);
+    <Card>
+      <CardContent className="pt-6">
+        <ul className="flex flex-col divide-y divide-border">
+          {items.map((item) => {
+            const cooldown = item.isNeed ? null : cooldownStatus(item, today);
+            const month = scheduleByItemId.get(item.id);
 
-        return (
-          <li key={item.id} data-testid={`timeline-${item.id}`}>
-            <span>{item.name}</span>
-            {cooldown?.active ? (
-              <span data-testid={`cooldown-${item.id}`}>
-                {t("coolingDownUntil", { date: cooldown.endsOn })}
-              </span>
-            ) : month ? (
-              <span data-testid={`scheduled-month-${item.id}`}>{month}</span>
-            ) : (
-              <span data-testid={`not-affordable-${item.id}`}>{t("notAffordableYet")}</span>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+            return (
+              <li
+                key={item.id}
+                data-testid={`timeline-${item.id}`}
+                className="flex items-center justify-between gap-2 py-2 text-sm"
+              >
+                <span className="font-medium">{item.name}</span>
+                {cooldown?.active ? (
+                  <Badge variant="outline" data-testid={`cooldown-${item.id}`}>
+                    {t("coolingDownUntil", { date: cooldown.endsOn })}
+                  </Badge>
+                ) : month ? (
+                  <Badge variant="secondary" data-testid={`scheduled-month-${item.id}`}>
+                    {month}
+                  </Badge>
+                ) : (
+                  <Badge variant="destructive" data-testid={`not-affordable-${item.id}`}>
+                    {t("notAffordableYet")}
+                  </Badge>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }

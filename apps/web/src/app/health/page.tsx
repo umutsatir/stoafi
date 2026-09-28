@@ -7,6 +7,7 @@ import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { monthOf } from "@/lib/clock";
 import { useAppStore, useCommitments } from "@/store";
+import { Page } from "@/components/ui/page";
 
 export default function HealthPage() {
   const profile = useAppStore((s) => s.profile);
@@ -18,10 +19,9 @@ export default function HealthPage() {
 
   if (!profile) {
     return (
-      <main>
-        <h1>{t("title")}</h1>
-        <p>{t("fillProfileFirst")}</p>
-      </main>
+      <Page title={t("title")}>
+        <p className="text-sm text-muted-foreground">{t("fillProfileFirst")}</p>
+      </Page>
     );
   }
 
@@ -30,8 +30,7 @@ export default function HealthPage() {
   const projection = project({ income }, commitments, monthOf(today));
 
   return (
-    <main>
-      <h1>{t("title")}</h1>
+    <Page title={t("title")}>
       <HealthMetrics
         projection={projection}
         savingsBalance={profile.savings}
@@ -42,10 +41,11 @@ export default function HealthPage() {
           href={`#lesson-${roomForErrorLesson.id}`}
           aria-label={`${roomForErrorLesson.id} lesson`}
           data-testid="lesson-link-room-for-error"
+          className="text-sm font-medium text-primary underline-offset-2 hover:underline"
         >
           {roomForErrorLesson.title}
         </a>
       )}
-    </main>
+    </Page>
   );
 }

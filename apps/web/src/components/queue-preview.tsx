@@ -11,7 +11,7 @@ import {
   timingTip,
   toDraftCommitment,
   toInstallmentCommitment,
-  type Card,
+  type Card as PaymentCard,
   type Commitment,
   type GuardBreach,
   type InstallmentOfferInput,
@@ -22,6 +22,9 @@ import {
   type QueueItem,
 } from "@stoafi/core";
 import { useMoney } from "@/lib/use-money";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { InstallmentCalculator } from "./installment-calculator";
 
 /** How the user chose to pay; the page turns this into a decision plus (for installments) a saved purchase. */
@@ -38,7 +41,7 @@ export interface QueuePreviewProps {
   monthlyNeeds: number;
   installmentCapPct: number;
   /** When paying by card: checks today against the statement day for a timing tip. */
-  card?: Card;
+  card?: PaymentCard;
   purchaseDate?: string;
   onConfirm: (
     activeCommitment: Commitment,
@@ -116,89 +119,137 @@ export function QueuePreview({
   const money = useMoney();
 
   return (
-    <div>
-      <h2>{item.name}</h2>
-      {selectedOffer && (
-        <p data-testid="installment-draft-state">
-          {t("installmentDraft", { months: selectedOffer.months })}
-          <button type="button" onClick={() => setSelectedOffer(null)}>
-            {t("payCashInstead")}
-          </button>
-        </p>
-      )}
-      <table>
-        <tbody>
-          <tr>
-            <td>{t("wantsBeforeAfter")}</td>
-            <td data-testid="wants-before">{money(before.byBucket.wants.committed)}</td>
-            <td data-testid="wants-after">{money(after.byBucket.wants.committed)}</td>
-          </tr>
-          <tr>
-            <td>{t("installmentLoadBeforeAfter")}</td>
-            <td data-testid="installment-load-before">{money(before.installmentLoad)}</td>
-            <td data-testid="installment-load-after">{money(after.installmentLoad)}</td>
-          </tr>
-          <tr>
-            <td>{t("freeCashBeforeAfter")}</td>
-            <td data-testid="freecash-before">{money(before.freeCash)}</td>
-            <td data-testid="freecash-after">{money(after.freeCash)}</td>
-          </tr>
-        </tbody>
-      </table>
+    <Card>
+      <CardHeader>
+        <CardTitle>{item.name}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {selectedOffer && (
+          <div
+            data-testid="installment-draft-state"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-secondary p-3 text-sm"
+          >
+            <span>{t("installmentDraft", { months: selectedOffer.months })}</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedOffer(null)}
+            >
+              {t("payCashInstead")}
+            </Button>
+          </div>
+        )}
 
-      {tip && !shiftedMonth && (
-        <p data-testid="card-timing-tip">
-          {t("cardTimingTip", { days: tip.extraFloatDays, month: tip.newDueMonth })}
-          <button type="button" onClick={() => setShiftedMonth(tip.newDueMonth)}>
-            {t("accept")}
-          </button>
-        </p>
-      )}
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell className="text-muted-foreground">{t("wantsBeforeAfter")}</TableCell>
+              <TableCell data-testid="wants-before" className="text-right">
+                {money(before.byBucket.wants.committed)}
+              </TableCell>
+              <TableCell data-testid="wants-after" className="text-right font-medium">
+                {money(after.byBucket.wants.committed)}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="text-muted-foreground">
+                {t("installmentLoadBeforeAfter")}
+              </TableCell>
+              <TableCell data-testid="installment-load-before" className="text-right">
+                {money(before.installmentLoad)}
+              </TableCell>
+              <TableCell data-testid="installment-load-after" className="text-right font-medium">
+                {money(after.installmentLoad)}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="text-muted-foreground">{t("freeCashBeforeAfter")}</TableCell>
+              <TableCell data-testid="freecash-before" className="text-right">
+                {money(before.freeCash)}
+              </TableCell>
+              <TableCell data-testid="freecash-after" className="text-right font-medium">
+                {money(after.freeCash)}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
-      {hasBreach && (
-        <div data-testid="guard-breach-dialog">
-          <ul data-testid="guard-breaches" style={{ color: "red" }}>
-            {breaches.map((b) => (
-              <li key={b.ruleId}>{b.ruleId}</li>
-            ))}
-          </ul>
-          {!acknowledged && (
-            <button type="button" onClick={() => setAcknowledged(true)}>
-              {t("iKnow")}
-            </button>
-          )}
+        {tip && !shiftedMonth && (
+          <div
+            data-testid="card-timing-tip"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm"
+          >
+            <span>{t("cardTimingTip", { days: tip.extraFloatDays, month: tip.newDueMonth })}</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShiftedMonth(tip.newDueMonth)}
+            >
+              {t("accept")}
+            </Button>
+          </div>
+        )}
+
+        {hasBreach && (
+          <div
+            data-testid="guard-breach-dialog"
+            className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 p-3"
+          >
+            <ul data-testid="guard-breaches" className="flex flex-col gap-1">
+              {breaches.map((b) => (
+                <li key={b.ruleId} className="text-sm font-medium text-destructive">
+                  {b.ruleId}
+                </li>
+              ))}
+            </ul>
+            {!acknowledged && (
+              <div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setAcknowledged(true)}
+                >
+                  {t("iKnow")}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            disabled={!canConfirm}
+            onClick={() =>
+              onConfirm(
+                { ...draft, status: "active" },
+                breaches,
+                hasBreach,
+                offer ? { method: "installment", offer, firstMonth } : { method: "cash" },
+              )
+            }
+          >
+            {t("confirm")}
+          </Button>
+          <Button type="button" variant="outline" onClick={() => setShowInstallments(true)}>
+            {t("calculateWithInstallments")}
+          </Button>
         </div>
-      )}
 
-      <button
-        type="button"
-        disabled={!canConfirm}
-        onClick={() =>
-          onConfirm(
-            { ...draft, status: "active" },
-            breaches,
-            hasBreach,
-            offer ? { method: "installment", offer, firstMonth } : { method: "cash" },
-          )
-        }
-      >
-        {t("confirm")}
-      </button>
-
-      <button type="button" onClick={() => setShowInstallments(true)}>
-        {t("calculateWithInstallments")}
-      </button>
-
-      {showInstallments && (
-        <InstallmentCalculator
-          cashPrice={cashPrice}
-          annualInflation={profile.annualInflationExpectation}
-          onSelect={(offer) => {
-            setSelectedOffer(offer);
-            setShowInstallments(false);
-          }}
-        />
-      )}
-    </div>
+        {showInstallments && (
+          <InstallmentCalculator
+            cashPrice={cashPrice}
+            annualInflation={profile.annualInflationExpectation}
+            onSelect={(offer) => {
+              setSelectedOffer(offer);
+              setShowInstallments(false);
+            }}
+          />
+        )}
+      </CardContent>
+    </Card>
   );
 }

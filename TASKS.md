@@ -670,6 +670,33 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.8
   Note: Tailwind v4 (`@tailwindcss/postcss`) with base styles for the semantic elements in `globals.css` (light/dark via CSS variables, sticky nav, card sections, wrapping list rows, scrolling tables) rather than utility classes on every element, so markup and tests stayed untouched. Checked in Chromium at 420px through profile -> queue -> installment purchase -> home with no console errors. shadcn/ui components are still not used.
 
+- [x] **T9.10** Port the shadcn-style UI stack from the user's local branch
+  Goal: the user's own frontend stack (`ui/` primitives, token theme, sidebar nav with icons, dnd-kit queue, recharts plan chart) replaces the plain-HTML/`globals.css` styling from T9.9 on every screen, keeping Phase 9's behavior.
+  Acceptance: `pnpm test`, `typecheck`, `lint` and build pass; the profile -> queue -> installment purchase -> home flow runs in Chromium without console errors.
+  Depends on: T9.9
+  Note: taken from `origin/backup/local-main` (the user's parallel Phase 9): `Button/Card/Input/Label/Select/Table/Badge`, `DayOfMonthSelect`, `globals.css` theme tokens, layout, sidebar `Nav`, `Sidebar`-style shell. Added `Page`, `Field`, `NativeSelect` for consistent screens. Deliberately **not** taken: `CurrencyField`, which emits the typed number as-is (typing 30000 stores 30000 minor units = 300.00), the exact input bug Phase 9 fixed; `MoneyInput` is restyled with the shared `Input` instead. `QueueList` keeps this branch's controlled API and edit/delete/select callbacks but now uses the user's dnd-kit drag handles (up/down buttons stay as the accessible fallback). The user's `layout.tsx` had no `AppBootstrap`, so the store never loaded from Dexie; restored it.
+
+- [ ] **T9.11** Income pay-day, expense due-day and end month (from the user's branch)
+  Goal: `incomes[].payDay`, `fixedExpenses[].dueDay` and `endMonth` as optional fields with `payDayOf`/`dueDayOf` and `isExpenseActiveInMonth` helpers, exposed in the profile form with `DayOfMonthSelect`.
+  Depends on: T9.10
+  Note: the user's branch also kept `variable` incomes and `avgVariableExpenses`; this branch follows the user's later instruction (salaries only, one lump living-costs line), so only the day/end-month fields are ported.
+
+- [ ] **T9.12** Country inflation snapshot with a suggested value
+  Goal: bundle the user's `inflation-by-country.json` (illustrative snapshot, TR 38%, `asOf` shown in the UI) and a country select next to the inflation field that pre-fills a value the user can overwrite. No network.
+  Depends on: T9.10
+
+- [ ] **T9.13** Suggested emergency-fund completion month
+  Goal: port `suggestedEmergencyFundMonth` and show the caption under the emergency-fund target.
+  Depends on: T9.10
+
+- [ ] **T9.14** Separate Income & Expenses screen
+  Goal: the user's `/income-expenses` route holding salaries and recurring expenses, with the profile screen reduced to savings, emergency-fund target and inflation.
+  Depends on: T9.11
+
+- [ ] **T9.15** Dashboard cash-flow chart
+  Goal: a 12-month recharts chart on Home (income vs. commitments vs. what is left).
+  Depends on: T9.10
+
 **Stop and report after Phase 9.**
 
 ---

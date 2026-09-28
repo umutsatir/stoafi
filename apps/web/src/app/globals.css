@@ -1,286 +1,48 @@
 @import "tailwindcss";
 
-/*
- * Semantic-element styling: the screens are plain HTML (forms, tables, lists),
- * so styling them here keeps markup and tests untouched while every screen
- * looks the same. Tailwind utilities stay available for new markup.
- */
 :root {
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --text: #0f172a;
-  --muted: #475569;
-  --border: #cbd5e1;
-  --accent: #0f766e;
-  --accent-text: #ffffff;
-  --danger: #b91c1c;
-  --danger-bg: #fee2e2;
-  --focus: #0ea5e9;
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --primary: #0f172a;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #dc2626;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #94a3b8;
+  --radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b1220;
-    --surface: #111a2e;
-    --text: #e2e8f0;
-    --muted: #94a3b8;
-    --border: #334155;
-    --accent: #2dd4bf;
-    --accent-text: #042f2e;
-    --danger: #fca5a5;
-    --danger-bg: #450a0a;
-    --focus: #38bdf8;
-  }
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
 }
 
-@layer base {
-  html {
-    color-scheme: light dark;
-  }
-
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family:
-      system-ui,
-      -apple-system,
-      "Segoe UI",
-      Roboto,
-      sans-serif;
-    line-height: 1.5;
-  }
-
-  /* App shell: nav on top, content in a centered column with a 16px gutter. */
-  body > nav {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-  }
-
-  body > nav ul {
-    display: flex;
-    gap: 0.25rem;
-    margin: 0;
-    padding: 0.5rem 1rem;
-    list-style: none;
-    max-width: 60rem;
-    margin-inline: auto;
-  }
-
-  body > nav a {
-    display: block;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    color: var(--muted);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  body > nav a:hover {
-    background: var(--bg);
-    color: var(--text);
-  }
-
-  main {
-    max-width: 60rem;
-    margin: 0 auto;
-    padding: 1.5rem 1rem 4rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: 1.75rem;
-    line-height: 1.2;
-  }
-
-  h2 {
-    margin: 0 0 0.5rem;
-    font-size: 1.15rem;
-  }
-
-  a {
-    color: var(--accent);
-  }
-
-  /* Cards: sections, fieldsets and forms sit on a raised surface. */
-  main > section,
-  main > form,
-  main > div > form,
-  main > div > section,
-  fieldset {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 1rem;
-    margin: 0;
-  }
-
-  legend {
-    padding: 0 0.25rem;
-    font-weight: 600;
-  }
-
-  label {
-    display: block;
-    margin-top: 0.75rem;
-    margin-bottom: 0.25rem;
-    font-weight: 500;
-  }
-
-  input,
-  select {
-    box-sizing: border-box;
-    min-height: 2.5rem;
-    max-width: 100%;
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--bg);
-    color: var(--text);
-    font: inherit;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  select {
-    width: min(100%, 20rem);
-  }
-
-  input[aria-invalid="true"] {
-    border-color: var(--danger);
-  }
-
-  input[type="file"] {
-    min-height: 0;
-    border: 0;
-    padding: 0;
-    background: none;
-  }
-
-  /* Money and percent inputs sit next to their unit symbol. */
-  span:has(> input[inputmode="decimal"]) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  span:has(> input[inputmode="decimal"]) > input {
-    width: 10rem;
-  }
-
-  button {
-    min-height: 2.5rem;
-    padding: 0.4rem 1rem;
-    border: 1px solid var(--accent);
-    border-radius: 0.5rem;
-    background: var(--accent);
-    color: var(--accent-text);
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  button[type="button"] {
-    background: transparent;
-    color: var(--accent);
-  }
-
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  button:hover:not(:disabled) {
-    filter: brightness(0.95);
-  }
-
-  :focus-visible {
-    outline: 3px solid var(--focus);
-    outline-offset: 2px;
-  }
-
-  /* Rows of add/remove controls wrap on narrow screens. */
-  fieldset > div {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    margin-block: 0.5rem;
-  }
-
-  dl {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.25rem 1rem;
-    margin: 0;
-  }
-
-  dt {
-    color: var(--muted);
-  }
-
-  dd {
-    margin: 0;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-
-  main ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  /* List rows (queue items, installments, timeline): fields and buttons wrap with gaps. */
-  main li {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 0.75rem;
-    margin-block: 0.5rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  main a {
-    display: inline-block;
-    margin-right: 0.75rem;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-variant-numeric: tabular-nums;
-  }
-
-  th,
-  td {
-    padding: 0.5rem;
-    border-bottom: 1px solid var(--border);
-    text-align: left;
-  }
-
-  /* Wide tables (installment offers) scroll instead of breaking the page. */
-  div:has(> table) {
-    overflow-x: auto;
-  }
-
-  [role="alert"] {
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    background: var(--danger-bg);
-    color: var(--danger);
-    font-weight: 600;
-  }
-
-  [role="alert"] p {
-    margin: 0;
-  }
+body {
+  background: var(--background);
+  color: var(--foreground);
 }

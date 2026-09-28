@@ -1,6 +1,15 @@
 import { useTranslations } from "next-intl";
 import { savingsSummary, type Decision } from "@stoafi/core";
 import { useMoney } from "@/lib/use-money";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+
+const OUTCOME_VARIANT: Record<Decision["outcome"], "default" | "secondary" | "outline"> = {
+  bought: "default",
+  postponed: "secondary",
+  skipped: "outline",
+};
 
 export function DecisionLog({ decisions }: { decisions: Decision[] }) {
   const summary = savingsSummary(decisions);
@@ -8,17 +17,34 @@ export function DecisionLog({ decisions }: { decisions: Decision[] }) {
   const money = useMoney();
 
   return (
-    <div>
-      <p data-testid="total-saved">{t("totalSaved", { amount: money(summary.totalSaved) })}</p>
-      <ul>
-        {decisions.map((d) => (
-          <li key={d.id} data-testid={`decision-${d.id}`}>
-            <span>{d.queueItemRef}</span>
-            <span data-testid={`outcome-${d.id}`}>{t(`outcome.${d.outcome}`)}</span>
-            <span>{money(d.amount)}</span>
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-col gap-4">
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-lg font-semibold tracking-tight" data-testid="total-saved">
+            {t("totalSaved", { amount: money(summary.totalSaved) })}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <Table>
+            <TableBody>
+              {decisions.map((d) => (
+                <TableRow key={d.id} data-testid={`decision-${d.id}`}>
+                  <TableCell>{d.queueItemRef}</TableCell>
+                  <TableCell>
+                    <Badge variant={OUTCOME_VARIANT[d.outcome]} data-testid={`outcome-${d.id}`}>
+                      {t(`outcome.${d.outcome}`)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">{money(d.amount)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

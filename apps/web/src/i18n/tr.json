@@ -1,4 +1,7 @@
 {
+  "app": {
+    "name": "Stoafi"
+  },
   "home": {
     "title": "Ana sayfa",
     "welcome": "Stoafi maaşını ve düzenli giderlerini aylık bir plana çevirir. Önce ne girdiğini ve ne çıktığını anlat.",
@@ -69,7 +72,8 @@
     "savings": "Birikim",
     "investing": "Yatırım",
     "usePlan": "Bu planı kullan",
-    "activePlan": "Aktif plan"
+    "activePlan": "Aktif plan",
+    "chartTitle": "Stratejiye göre aylık dağılım"
   },
   "queue": {
     "title": "Kuyruk",
@@ -107,7 +111,8 @@
     "nameRequired": "Bir ad gir.",
     "priceRequired": "Sıfırdan büyük bir fiyat gir.",
     "empty": "Kuyrukta henüz bir şey yok. İstediğin ya da ihtiyacın olanları yukarıdan ekle.",
-    "goToProfile": "Profile git"
+    "goToProfile": "Profile git",
+    "dragHandle": "{name} öğesini sıralamak için sürükle"
   },
   "queuePreview": {
     "wantsBeforeAfter": "İstekler önce / sonra",

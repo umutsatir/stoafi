@@ -1,4 +1,7 @@
 {
+  "app": {
+    "name": "Stoafi"
+  },
   "home": {
     "title": "Home",
     "welcome": "Stoafi turns your salary and regular costs into a monthly plan. Start by telling it what comes in and what goes out.",
@@ -69,7 +72,8 @@
     "savings": "Savings",
     "investing": "Investing",
     "usePlan": "Use this plan",
-    "activePlan": "Active plan"
+    "activePlan": "Active plan",
+    "chartTitle": "Monthly allocation by strategy"
   },
   "queue": {
     "title": "Queue",
@@ -107,7 +111,8 @@
     "nameRequired": "Enter a name.",
     "priceRequired": "Enter a price above zero.",
     "empty": "Nothing in the queue yet. Add what you want or need above.",
-    "goToProfile": "Go to Profile"
+    "goToProfile": "Go to Profile",
+    "dragHandle": "Drag {name} to reorder"
   },
   "queuePreview": {
     "wantsBeforeAfter": "Wants before / after",

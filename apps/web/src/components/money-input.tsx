@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
+import { Input } from "@/components/ui/input";
 import { formatMinorForInput, parseMinor } from "@/lib/amount-text";
 
 export interface MoneyInputProps {
@@ -53,8 +54,9 @@ export function MoneyInput({
   }, [value, locale]);
 
   return (
-    <span>
-      <input
+    <span className="flex items-center gap-2">
+      <Input
+        className="w-40"
         id={id}
         type="text"
         inputMode="decimal"
@@ -72,7 +74,9 @@ export function MoneyInput({
           if (minor !== null) onChange(minor);
         }}
       />
-      <span aria-hidden="true">{currencySymbol(locale, currency)}</span>
+      <span aria-hidden="true" className="text-sm text-muted-foreground">
+        {currencySymbol(locale, currency)}
+      </span>
     </span>
   );
 }
