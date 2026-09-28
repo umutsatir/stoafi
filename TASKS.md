@@ -408,7 +408,7 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Acceptance: unit test: a mixed list of bought/postponed/skipped decisions returns `totalSaved` equal to the sum of only the skipped ones' amounts.
   Depends on: T5.7
 
-- [ ] **T5.9** Decisions module object
+- [x] **T5.9** Decisions module object
   Goal: `packages/core/modules/decisions/module.ts` — `Module` (id `'decisions'`).
   Acceptance: registers via kernel registry without error.
   Depends on: T5.8
