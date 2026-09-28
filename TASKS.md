@@ -509,7 +509,7 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Acceptance: component test: a fixture item with `month: null` renders the "not affordable yet" label; a want inside cooldown renders a countdown and is excluded from the schedulable list until `endsOn`.
   Depends on: T7.4
 
-- [ ] **T7.8** Flow 4 — card timing tip
+- [x] **T7.8** Flow 4 — card timing tip
   Goal: when a draft is paid by card, show T5.2's `timingTip` result inline in the preview panel (T7.5) with the extra float days; accepting shifts the commitment's payment month.
   Acceptance: component test: a fixture draft + card combination that triggers a shift renders the tip text with the correct day count; accepting updates the draft's payment month in the store.
   Depends on: T7.5, T5.4

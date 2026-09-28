@@ -121,3 +121,52 @@ describe("QueuePreview installment flow", () => {
     expect(screen.getByTestId("installment-draft-state")).toHaveTextContent("6 months");
   });
 });
+
+describe("QueuePreview card timing tip", () => {
+  it("shows the tip with the correct extra float days when buying after the statement day", () => {
+    render(
+      <QueuePreview
+        item={item}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={0.2}
+        card={{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }}
+        purchaseDate="2026-09-20"
+        onConfirm={vi.fn()}
+      />,
+    );
+
+    const tip = screen.getByTestId("card-timing-tip");
+    expect(tip).toHaveTextContent("31 extra float days");
+    expect(tip).toHaveTextContent("2026-11");
+  });
+
+  it("accepting the tip shifts the confirmed commitment's payment month", () => {
+    const onConfirm = vi.fn();
+    render(
+      <QueuePreview
+        item={item}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={0.2}
+        card={{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }}
+        purchaseDate="2026-09-20"
+        onConfirm={onConfirm}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+
+    const [commitment] = onConfirm.mock.calls[0] as [{ payments: { month: string }[] }];
+    expect(commitment.payments[0]?.month).toBe("2026-11");
+  });
+});

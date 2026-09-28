@@ -7,7 +7,9 @@ import {
   evaluateGuards,
   project,
   strategyRegistry,
+  timingTip,
   toDraftCommitment,
+  type Card,
   type Commitment,
   type GuardBreach,
   type Month,
@@ -27,6 +29,9 @@ export interface QueuePreviewProps {
   income: number;
   monthlyNeeds: number;
   installmentCapPct: number;
+  /** When paying by card: checks today against the statement day for a timing tip. */
+  card?: Card;
+  purchaseDate?: string;
   onConfirm: (activeCommitment: Commitment, breaches: GuardBreach[]) => void;
 }
 
@@ -39,10 +44,14 @@ export function QueuePreview({
   income,
   monthlyNeeds,
   installmentCapPct,
+  card,
+  purchaseDate,
   onConfirm,
 }: QueuePreviewProps) {
   const bucketLimits = currentAllocation(profile, planState, strategyRegistry);
-  const draft = toDraftCommitment(item, month);
+  const [shiftedMonth, setShiftedMonth] = useState<Month | null>(null);
+  const draft = toDraftCommitment(item, shiftedMonth ?? month);
+  const tip = card && purchaseDate ? timingTip(card, purchaseDate) : null;
 
   const before = project({ income }, commitments, month, { bucketLimits });
   const after = project({ income }, [...commitments, draft], month, {
@@ -100,6 +109,16 @@ export function QueuePreview({
           </tr>
         </tbody>
       </table>
+
+      {tip && !shiftedMonth && (
+        <p data-testid="card-timing-tip">
+          Buying after the statement day adds {tip.extraFloatDays} extra float days; due{" "}
+          {tip.newDueMonth}.
+          <button type="button" onClick={() => setShiftedMonth(tip.newDueMonth)}>
+            Accept
+          </button>
+        </p>
+      )}
 
       {breaches.length > 0 && (
         <ul data-testid="guard-breaches" style={{ color: "red" }}>

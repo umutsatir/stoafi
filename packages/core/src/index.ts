@@ -11,7 +11,7 @@ export {
 } from "../kernel/project";
 export type { Commitment, CommitmentStatus } from "../kernel/commitment";
 export type { Minor, Money, Currency } from "../kernel/money";
-export type { Month } from "../kernel/month";
+export { addMonths, compareMonths, monthsBetween, parseMonth, type Month } from "../kernel/month";
 export type { MonthProjection } from "../kernel/projection";
 export type { Bucket } from "../kernel/bucket";
 
