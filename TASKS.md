@@ -337,10 +337,11 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Acceptance: registering the guards module and collecting `contributes.guards` via kernel registry (T1.6) returns the 3 default rules.
   Depends on: T1.6, T4.7
 
-- [ ] **T4.9** Scheduler — earliest-fit placement
-  Goal: `packages/core/modules/queue/scheduler.ts` — `scheduleQueue(items: QueueItem[], profile, planState, existingCommitments, guardRules, startMonth: Month, horizonMonths?: number): { itemId: string; month: Month | null }[]`, walking items in queue order and placing each in the earliest month (within `horizonMonths`, default 12) where its bucket limit and guards allow it; `month: null` means "not affordable yet" per SPEC.
+- [x] **T4.9** Scheduler — earliest-fit placement
+  Goal: `packages/core/modules/queue/scheduler.ts` — `scheduleQueue(items: QueueItem[], profile, planState, existingCommitments, today, startMonth: Month, horizonMonths?: number): { itemId: string; month: Month | null }[]`, walking items in queue order and placing each in the earliest month (within `horizonMonths`, default 12) where its bucket has room under the plan's allocation and the cooldown (for wants) has lifted; `month: null` means "not affordable yet" per SPEC.
   Acceptance: unit tests: a single affordable item schedules into the start month; an item that never fits within 12 months returns `month: null`; a want inside its 30-day cooldown (T4.4) is not scheduled before `cooldownStatus.endsOn`'s month; two items competing for the same bucket's limited room schedule into different months in queue order.
   Depends on: T4.5, T4.7, T4.4, T3.15
+  Note: dropped the planned `guardRules` param — the scheduler only enforces the bucket-limit constraint (equivalent to the `wants-limit` default guard) and the cooldown. `emergency-fund-floor` and `installment-cap` need a savings balance and a 12-month installment projection that a pure scheduling pass over a queue doesn't have as inputs; those still run via `evaluateGuards` when a specific draft is presented for confirmation (SPEC flow 1), just not during auto-scheduling. Added a `today: string` param instead — cooldown needs a date, not just a `Month`.
 
 - [ ] **T4.10** Reordering re-runs the scheduler
   Goal: ensure `scheduleQueue` is a pure function of `items` order (no hidden state) so that calling it again with a reordered `items` array changes the returned schedule — SPEC acceptance: "Reordering the queue re-runs the scheduler and updates the month for every item."
