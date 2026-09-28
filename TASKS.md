@@ -309,7 +309,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Acceptance: unit tests for all 4 combinations at the boundary values (1 and 2).
   Depends on: T4.1
 
-- [ ] **T4.4** 30-day cooldown state machine
+- [x] **T4.4** 30-day cooldown state machine
   Goal: `packages/core/modules/queue/selectors.ts` — `cooldownStatus(item: { isNeed: boolean; addedDate: string /* ISO, passed in */ }, today: Month | string, cooldownDays?: number): { active: boolean; endsOn: string }`. `today` is always a function argument, never computed internally (kernel purity rule extends to modules).
   Acceptance: unit tests: a need is never subject to cooldown; a want dated 29 days before `today` is still active; 30 days before is inactive; `cooldownDays` is a tunable parameter (default 30), not hard-coded in a way that can't be overridden — test passes a custom value and confirms it changes the boundary.
   Depends on: T4.1
