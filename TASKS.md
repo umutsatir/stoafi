@@ -221,7 +221,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Goal: `packages/core/strategies/types.ts` — the `Strategy` interface from SPEC (id, lesson, params, allocate, diagnose) and a generic `ParamSchema` constraint using Zod.
   Acceptance: unit test constructs a minimal fake strategy object satisfying the type.
   Depends on: T1.4, T1.7, T3.1
-  Note: `Strategy.lesson` is typed as `{ id: string }` for now since it precedes T3.5's real `LessonCard` schema in build order; tighten to the real type once T3.5 lands.
+  Note: `Strategy.lesson` was initially typed as `{ id: string }` since it preceded T3.5's real `LessonCard` schema in build order; tightened to `LessonCard` right after T3.5 landed.
 
 - [x] **T3.5** `LessonCard` schema
   Goal: `packages/core/kernel/lesson.ts` — Zod schema matching SPEC's `LessonCard` interface (id, title, source{author, work}, principle, formula?, fitsWhen, critique).
