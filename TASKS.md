@@ -98,10 +98,11 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Acceptance: unit test rejects an invalid bucket string.
   Depends on: T0.7
 
-- [ ] **T1.5** `Commitment` type and schema
+- [x] **T1.5** `Commitment` type and schema
   Goal: `packages/core/kernel/commitment.ts` — interface and Zod schema matching SPEC's domain model exactly (id, source, bucket, payments[], status, cardId?).
   Acceptance: unit tests: a one-off commitment (1 payment) and an installment commitment (N payments) both parse; a commitment with zero payments is rejected; `status` only accepts the four listed values.
   Depends on: T1.1, T1.2, T1.3, T1.4
+  Note: added `MonthSchema` to `kernel/month.ts` (regex + range refine, cast to `z.ZodType<Month>` since zod infers plain `string` for a refined string schema) so `Commitment.payments[].month` validates real `YYYY-MM` values, not just any string.
 
 - [ ] **T1.6** Module registry
   Goal: `packages/core/kernel/registry.ts` — `createRegistry()`, `register(module: Module)`, `getModule(id)`, `listModules()`; enforce unique module ids and that `contributes.guards`/`insights`/`itemActions` from all registered modules can be collected.

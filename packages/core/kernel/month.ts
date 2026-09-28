@@ -1,7 +1,20 @@
+import { z } from "zod";
+
 /** 'YYYY-MM', always zero-padded. */
 export type Month = `${number}-${number}`;
 
 const MONTH_PATTERN = /^(\d{4})-(\d{2})$/;
+
+export const MonthSchema = z
+  .string()
+  .regex(MONTH_PATTERN)
+  .refine(
+    (value) => {
+      const monthNumber = Number(value.slice(5, 7));
+      return monthNumber >= 1 && monthNumber <= 12;
+    },
+    { message: "Month must be between 01 and 12" },
+  ) as unknown as z.ZodType<Month>; // zod infers `string`; Month is a template-literal refinement of it
 
 export function parseMonth(month: string): { year: number; month: number } {
   const match = MONTH_PATTERN.exec(month);
