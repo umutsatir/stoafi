@@ -109,7 +109,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Acceptance: unit tests: registering two modules with the same id throws; `listModules()` returns them in registration order; collecting `contributes.guards` across 2 fake modules returns the union.
   Depends on: T0.7, T1.5
 
-- [ ] **T1.7** `MonthProjection` type
+- [x] **T1.7** `MonthProjection` type
   Goal: `packages/core/kernel/projection.ts` — interface matching SPEC exactly (month, income, byBucket, installmentLoad, sinkingSetAside, freeCash).
   Acceptance: unit test constructs a value satisfying the type and a Zod schema (used for debugging/serialization only, never persisted).
   Depends on: T1.1, T1.3, T1.4
