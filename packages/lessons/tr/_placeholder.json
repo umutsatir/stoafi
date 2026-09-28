@@ -1,0 +1,11 @@
+{
+  "id": "_placeholder",
+  "title": "Yer tutucu ders kartı",
+  "source": {
+    "author": "Yer Tutucu Yazar",
+    "work": "Yer Tutucu Eser"
+  },
+  "principle": "Bu, yalnızca ders kartı JSON hattının kendi şemasına göre ayrıştığını kanıtlamak için kullanılan bir yer tutucudur. Gerçek strateji ve kural kartları Faz 3 ve Faz 8'de yazılır.",
+  "fitsWhen": "Asla — gerçek kartlar geldiğinde kaldırılacak.",
+  "critique": "Yok, yer tutucu içerik."
+}

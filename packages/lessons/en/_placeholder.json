@@ -1,0 +1,11 @@
+{
+  "id": "_placeholder",
+  "title": "Placeholder lesson card",
+  "source": {
+    "author": "Placeholder Author",
+    "work": "Placeholder Work"
+  },
+  "principle": "This is a placeholder card used only to prove the lesson-card JSON pipeline parses against its schema. Real strategy and rule cards are written in Phase 3 and Phase 8.",
+  "fitsWhen": "Never — remove once real cards exist.",
+  "critique": "N/A, placeholder content."
+}

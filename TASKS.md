@@ -56,10 +56,11 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm --filter @stoafi/web build` succeeds importing from `@stoafi/core`.
   Depends on: T0.7, T0.8
 
-- [ ] **T0.10** Scaffold `packages/lessons`
+- [x] **T0.10** Scaffold `packages/lessons`
   Goal: create `packages/lessons` with `en/` and `tr/` subfolders and a placeholder `LessonCard` JSON validated by a Zod schema re-exported from core's lesson type (added later in T3.x — for now define a minimal local schema).
   Acceptance: a test in `packages/lessons` (or core, pointed at the folder) parses every JSON file in `en/` and `tr/` against the schema with zero errors.
   Depends on: T0.7
+  Note: kept `en/_placeholder.json` / `tr/_placeholder.json` deliberately fake (not real 50/30/20 content) so T3.7 still owns writing the real, source-reviewed card. Also: `apps/web`'s `test` script was dropped (no tests exist yet, and an unbuilt `vitest run` script broke `turbo run test` for the whole workspace); it comes back in T7.1 once RTL is wired up.
 
 - [ ] **T0.11** Root scripts and CI
   Goal: root `package.json` scripts `dev`, `test`, `typecheck`, `lint` delegate to `turbo run ...`; add GitHub Actions workflow `.github/workflows/ci.yml` running install, typecheck, lint, test on push/PR.
