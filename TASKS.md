@@ -62,7 +62,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Depends on: T0.7
   Note: kept `en/_placeholder.json` / `tr/_placeholder.json` deliberately fake (not real 50/30/20 content) so T3.7 still owns writing the real, source-reviewed card. Also: `apps/web`'s `test` script was dropped (no tests exist yet, and an unbuilt `vitest run` script broke `turbo run test` for the whole workspace); it comes back in T7.1 once RTL is wired up.
 
-- [ ] **T0.11** Root scripts and CI
+- [x] **T0.11** Root scripts and CI
   Goal: root `package.json` scripts `dev`, `test`, `typecheck`, `lint` delegate to `turbo run ...`; add GitHub Actions workflow `.github/workflows/ci.yml` running install, typecheck, lint, test on push/PR.
   Acceptance: `pnpm test`, `pnpm typecheck`, `pnpm lint` each exit 0 from repo root; CI workflow file validates with `actionlint` or a YAML lint if available, otherwise visual review.
   Depends on: T0.5, T0.6, T0.9, T0.10

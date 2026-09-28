@@ -9,7 +9,11 @@
   },
   "packageManager": "pnpm@11.22.0",
   "scripts": {
-    "lint": "eslint .",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
     "format": "prettier --check .",
     "format:write": "prettier --write ."
   },
