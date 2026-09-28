@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Profile } from "@stoafi/core";
+import { renderWithIntl } from "@/test-utils";
 import { PlanComparison } from "./plan-comparison";
 
 const profile: Profile = {
@@ -14,7 +15,7 @@ const profile: Profile = {
 
 describe("PlanComparison", () => {
   it("renders all 4 strategy cards with correct bucket amounts", () => {
-    render(<PlanComparison profile={profile} />);
+    renderWithIntl(<PlanComparison profile={profile} />);
 
     for (const strategyId of [
       "fifty-thirty-twenty",
@@ -32,7 +33,7 @@ describe("PlanComparison", () => {
   });
 
   it("links each strategy to its lesson card content", () => {
-    render(<PlanComparison profile={profile} />);
+    renderWithIntl(<PlanComparison profile={profile} />);
     expect(screen.getByLabelText("fifty-thirty-twenty lesson")).toBeInTheDocument();
     expect(screen.getByText(/Elizabeth Warren/)).toBeInTheDocument();
   });

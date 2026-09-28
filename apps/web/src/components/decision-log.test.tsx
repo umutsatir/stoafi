@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Decision } from "@stoafi/core";
+import { renderWithIntl } from "@/test-utils";
 import { DecisionLog } from "./decision-log";
 
 const decisions: Decision[] = [
@@ -12,12 +13,12 @@ const decisions: Decision[] = [
 
 describe("DecisionLog", () => {
   it("renders the correct total saved from skipped decisions", () => {
-    render(<DecisionLog decisions={decisions} />);
+    renderWithIntl(<DecisionLog decisions={decisions} />);
     expect(screen.getByTestId("total-saved")).toHaveTextContent("800");
   });
 
   it("renders the correct per-row outcome label for each decision", () => {
-    render(<DecisionLog decisions={decisions} />);
+    renderWithIntl(<DecisionLog decisions={decisions} />);
     expect(screen.getByTestId("outcome-d1")).toHaveTextContent("bought");
     expect(screen.getByTestId("outcome-d2")).toHaveTextContent("postponed");
     expect(screen.getByTestId("outcome-d3")).toHaveTextContent("skipped");

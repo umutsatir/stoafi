@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
+import { useTranslations } from "next-intl";
 import type { ImportResult } from "@stoafi/core";
 
 const CURRENCIES = ["TRY", "USD", "EUR"] as const;
@@ -32,6 +33,7 @@ export function SettingsPanel({
   downloadJson = defaultDownload,
 }: SettingsPanelProps) {
   const [importErrors, setImportErrors] = useState<string[] | null>(null);
+  const t = useTranslations("settings");
 
   async function handleExport() {
     const json = await onExport();
@@ -48,7 +50,7 @@ export function SettingsPanel({
 
   return (
     <div>
-      <label htmlFor="currency">Currency</label>
+      <label htmlFor="currency">{t("currency")}</label>
       <select id="currency" value={currency} onChange={(e) => onCurrencyChange(e.target.value)}>
         {CURRENCIES.map((c) => (
           <option key={c} value={c}>
@@ -58,10 +60,10 @@ export function SettingsPanel({
       </select>
 
       <button type="button" onClick={() => void handleExport()}>
-        Export backup
+        {t("exportBackup")}
       </button>
 
-      <label htmlFor="import-file">Import backup</label>
+      <label htmlFor="import-file">{t("importBackup")}</label>
       <input id="import-file" type="file" accept="application/json" onChange={handleFileChange} />
 
       {importErrors && (

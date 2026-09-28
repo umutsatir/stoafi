@@ -1,5 +1,6 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { renderWithIntl } from "@/test-utils";
 import { SettingsPanel } from "./settings-panel";
 
 describe("SettingsPanel", () => {
@@ -7,7 +8,7 @@ describe("SettingsPanel", () => {
     const onExport = vi.fn().mockResolvedValue('{"version":1}');
     const downloadJson = vi.fn();
 
-    render(
+    renderWithIntl(
       <SettingsPanel
         currency="TRY"
         onCurrencyChange={vi.fn()}
@@ -25,7 +26,7 @@ describe("SettingsPanel", () => {
   it("selecting a corrupted file surfaces the returned error list instead of failing silently", async () => {
     const onImport = vi.fn().mockResolvedValue({ errors: ["profile[0]: invalid"] });
 
-    render(
+    renderWithIntl(
       <SettingsPanel
         currency="TRY"
         onCurrencyChange={vi.fn()}

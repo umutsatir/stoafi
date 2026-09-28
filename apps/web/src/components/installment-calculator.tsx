@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { compareOffers, type OfferResult } from "@stoafi/core";
 
 export interface InstallmentCalculatorProps {
@@ -31,17 +32,18 @@ export function InstallmentCalculator({
     })),
     annualInflation,
   );
+  const t = useTranslations("installments");
 
   return (
     <div>
-      <h2>Calculate with installments</h2>
+      <h2>{t("title")}</h2>
       <table>
         <thead>
           <tr>
-            <th>Months</th>
-            <th>Monthly payment</th>
-            <th>PV</th>
-            <th>Real saving</th>
+            <th>{t("months")}</th>
+            <th>{t("monthlyPayment")}</th>
+            <th>{t("pv")}</th>
+            <th>{t("realSaving")}</th>
             <th></th>
           </tr>
         </thead>
@@ -50,7 +52,7 @@ export function InstallmentCalculator({
             <tr key={result.months} data-testid={`offer-row-${result.months}`}>
               <td>
                 <input
-                  aria-label={`Months for offer ${index + 1}`}
+                  aria-label={t("monthsAriaLabel", { index: index + 1 })}
                   type="number"
                   value={offers[index]?.months ?? 0}
                   onChange={(e) => {
@@ -72,7 +74,7 @@ export function InstallmentCalculator({
               </td>
               <td>
                 <button type="button" onClick={() => onSelect(result)}>
-                  Select
+                  {t("select")}
                 </button>
               </td>
             </tr>

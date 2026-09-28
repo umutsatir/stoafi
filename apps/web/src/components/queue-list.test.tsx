@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Profile, QueueItem } from "@stoafi/core";
+import { renderWithIntl } from "@/test-utils";
 import { QueueList } from "./queue-list";
 
 const profile: Profile = {
@@ -32,7 +33,7 @@ function item(id: string, order: number): QueueItem {
 describe("QueueList", () => {
   it("reordering via the move buttons re-runs the scheduler and updates displayed months", () => {
     const items = [item("first", 0), item("second", 1)];
-    render(
+    renderWithIntl(
       <QueueList
         items={items}
         profile={profile}

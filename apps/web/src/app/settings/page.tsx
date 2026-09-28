@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SettingsPanel } from "@/components/settings-panel";
 import { StoafiDb } from "@/storage/db";
@@ -11,10 +12,11 @@ const db = new StoafiDb();
 export default function SettingsPage() {
   const currency = useAppStore((s) => s.currency);
   const setCurrency = useAppStore((s) => s.setCurrency);
+  const t = useTranslations("settings");
 
   return (
     <main>
-      <h1>Settings</h1>
+      <h1>{t("title")}</h1>
       <SettingsPanel
         currency={currency}
         onCurrencyChange={setCurrency}

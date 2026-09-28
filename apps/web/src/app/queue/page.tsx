@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview } from "@/components/queue-preview";
 import { QueueTimeline } from "@/components/queue-timeline";
@@ -15,12 +16,13 @@ export default function QueuePage() {
   const decisions = useAppStore((s) => s.decisions);
   const setDecisions = useAppStore((s) => s.setDecisions);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const t = useTranslations("queue");
 
   if (!profile || !planState) {
     return (
       <main>
-        <h1>Queue</h1>
-        <p>Fill in your profile and pick a plan first.</p>
+        <h1>{t("title")}</h1>
+        <p>{t("fillProfileAndPlanFirst")}</p>
       </main>
     );
   }
@@ -33,7 +35,7 @@ export default function QueuePage() {
 
   return (
     <main>
-      <h1>Queue</h1>
+      <h1>{t("title")}</h1>
       <ul>
         {queueItems.map((item) => (
           <li key={item.id}>
@@ -51,7 +53,7 @@ export default function QueuePage() {
         startMonth="2026-01"
         hourlyNetIncome={200}
       />
-      <h2>12-month timeline</h2>
+      <h2>{t("timelineTitle")}</h2>
       <QueueTimeline
         items={queueItems}
         profile={profile}

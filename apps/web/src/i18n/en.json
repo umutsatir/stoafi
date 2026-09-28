@@ -1,5 +1,9 @@
 {
+  "app": {
+    "coreVersion": "stoafi core v{version}"
+  },
   "nav": {
+    "ariaLabel": "Main",
     "profile": "Profile",
     "plan": "Plan",
     "queue": "Queue",
@@ -8,7 +12,91 @@
     "decisions": "Decisions",
     "settings": "Settings"
   },
+  "profile": {
+    "title": "Profile",
+    "monthlyIncome": "Monthly income",
+    "currentSavings": "Current savings",
+    "emergencyFundMonths": "Emergency fund target (months)",
+    "annualInflation": "Annual inflation expectation",
+    "save": "Save profile"
+  },
+  "plan": {
+    "title": "Plan",
+    "fillProfileFirst": "Fill in your profile first.",
+    "needs": "Needs",
+    "wants": "Wants",
+    "savings": "Savings",
+    "investing": "Investing"
+  },
+  "queue": {
+    "title": "Queue",
+    "fillProfileAndPlanFirst": "Fill in your profile and pick a plan first.",
+    "timelineTitle": "12-month timeline",
+    "moveUp": "Move {name} up",
+    "moveDown": "Move {name} down",
+    "hoursSuffix": "{hours}h",
+    "perUseSuffix": "{amount}/use",
+    "urgent": "urgent",
+    "notUrgent": "not urgent",
+    "important": "important",
+    "notImportant": "not important",
+    "moveUpLabel": "Move up",
+    "moveDownLabel": "Move down"
+  },
+  "queuePreview": {
+    "wantsBeforeAfter": "Wants before / after",
+    "freeCashBeforeAfter": "Free cash before / after",
+    "installmentDraft": "Installment draft: {months} months",
+    "cardTimingTip": "Buying after the statement day adds {days} extra float days; due {month}.",
+    "accept": "Accept",
+    "iKnow": "I know",
+    "confirm": "Confirm",
+    "calculateWithInstallments": "Calculate with installments"
+  },
+  "installments": {
+    "title": "Calculate with installments",
+    "months": "Months",
+    "monthlyPayment": "Monthly payment",
+    "pv": "PV",
+    "realSaving": "Real saving",
+    "select": "Select",
+    "monthsAriaLabel": "Months for offer {index}"
+  },
+  "timeline": {
+    "coolingDownUntil": "cooling down until {date}",
+    "notAffordableYet": "not affordable yet"
+  },
+  "cards": {
+    "title": "Cards",
+    "summary": "{label}: statement {statementDay}, due {dueDay}",
+    "label": "Label",
+    "statementDay": "Statement day",
+    "dueDay": "Due day",
+    "add": "Add card"
+  },
+  "minimumPayment": {
+    "title": "Minimum-payment trap calculator",
+    "balance": "Balance",
+    "monthlyRate": "Monthly rate",
+    "minPct": "Minimum payment %",
+    "minFloor": "Minimum payment floor",
+    "monthsToPayoff": "Months to payoff: {months}",
+    "totalInterest": "Total interest: {interest}"
+  },
+  "health": {
+    "title": "Health",
+    "fillProfileFirst": "Fill in your profile first.",
+    "savingsRate": "Savings rate",
+    "emergencyFundMonths": "Emergency fund months",
+    "installmentRatio": "Installment ratio",
+    "runway": "Runway"
+  },
+  "decisions": {
+    "title": "Decisions",
+    "totalSaved": "Total saved by skipped purchases: {amount}"
+  },
   "settings": {
+    "title": "Settings",
     "currency": "Currency",
     "language": "Language",
     "exportBackup": "Export backup",

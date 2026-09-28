@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   costInWorkHours,
   costPerUse,
@@ -43,6 +44,8 @@ export function QueueList({
   hourlyNetIncome,
 }: QueueListProps) {
   const [items, setItems] = useState(initialItems);
+  const t = useTranslations("queue");
+  const tTimeline = useTranslations("timeline");
 
   const schedule = useMemo(
     () => scheduleQueue(items, profile, planState, [], today, startMonth),
@@ -58,25 +61,31 @@ export function QueueList({
           <li key={item.id} data-testid={`queue-item-${item.id}`}>
             <span>{item.name}</span>
             <span data-testid={`month-${item.id}`}>
-              {scheduleByItemId.get(item.id) ?? "not affordable yet"}
+              {scheduleByItemId.get(item.id) ?? tTimeline("notAffordableYet")}
             </span>
-            <span>{quadrant.urgent ? "urgent" : "not urgent"}</span>
-            <span>{quadrant.important ? "important" : "not important"}</span>
-            <span>{costInWorkHours(item.price, hourlyNetIncome).toFixed(1)}h</span>
-            <span>{costPerUse(item.price, item.expectedUses).toFixed(2)}/use</span>
+            <span>{quadrant.urgent ? t("urgent") : t("notUrgent")}</span>
+            <span>{quadrant.important ? t("important") : t("notImportant")}</span>
+            <span>
+              {t("hoursSuffix", { hours: costInWorkHours(item.price, hourlyNetIncome).toFixed(1) })}
+            </span>
+            <span>
+              {t("perUseSuffix", {
+                amount: costPerUse(item.price, item.expectedUses).toFixed(2),
+              })}
+            </span>
             <button
               type="button"
-              aria-label={`Move ${item.name} up`}
+              aria-label={t("moveUp", { name: item.name })}
               onClick={() => setItems((prev) => reorder(prev, index, -1))}
             >
-              Move up
+              {t("moveUpLabel")}
             </button>
             <button
               type="button"
-              aria-label={`Move ${item.name} down`}
+              aria-label={t("moveDown", { name: item.name })}
               onClick={() => setItems((prev) => reorder(prev, index, 1))}
             >
-              Move down
+              {t("moveDownLabel")}
             </button>
           </li>
         );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   cooldownStatus,
   scheduleQueue,
@@ -26,6 +27,7 @@ export function QueueTimeline({
 }: QueueTimelineProps) {
   const schedule = scheduleQueue(items, profile, planState, [], today, startMonth);
   const scheduleByItemId = new Map(schedule.map((s) => [s.itemId, s.month]));
+  const t = useTranslations("timeline");
 
   return (
     <ul>
@@ -37,11 +39,13 @@ export function QueueTimeline({
           <li key={item.id} data-testid={`timeline-${item.id}`}>
             <span>{item.name}</span>
             {cooldown?.active ? (
-              <span data-testid={`cooldown-${item.id}`}>cooling down until {cooldown.endsOn}</span>
+              <span data-testid={`cooldown-${item.id}`}>
+                {t("coolingDownUntil", { date: cooldown.endsOn })}
+              </span>
             ) : month ? (
               <span data-testid={`scheduled-month-${item.id}`}>{month}</span>
             ) : (
-              <span data-testid={`not-affordable-${item.id}`}>not affordable yet</span>
+              <span data-testid={`not-affordable-${item.id}`}>{t("notAffordableYet")}</span>
             )}
           </li>
         );

@@ -1,11 +1,12 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { renderWithIntl } from "@/test-utils";
 import { ProfileForm } from "./profile-form";
 
 describe("ProfileForm", () => {
   it("persists via onSave and re-renders with saved values on submit", () => {
     const onSave = vi.fn();
-    render(<ProfileForm onSave={onSave} />);
+    renderWithIntl(<ProfileForm onSave={onSave} />);
 
     fireEvent.change(screen.getByLabelText("Monthly income"), { target: { value: "50000" } });
     fireEvent.change(screen.getByLabelText("Current savings"), { target: { value: "10000" } });
@@ -23,7 +24,7 @@ describe("ProfileForm", () => {
 
   it("requires no field beyond the schema's required set (no multi-step wizard)", () => {
     const onSave = vi.fn();
-    render(<ProfileForm onSave={onSave} />);
+    renderWithIntl(<ProfileForm onSave={onSave} />);
     fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
     expect(onSave).toHaveBeenCalledTimes(1);
   });

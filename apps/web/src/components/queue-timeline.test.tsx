@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Profile, QueueItem } from "@stoafi/core";
+import { renderWithIntl } from "@/test-utils";
 import { QueueTimeline } from "./queue-timeline";
 
 const profile: Profile = {
@@ -29,7 +30,7 @@ describe("QueueTimeline", () => {
       order: 0,
     };
 
-    render(
+    renderWithIntl(
       <QueueTimeline
         items={[tooExpensive]}
         profile={profile}
@@ -58,7 +59,7 @@ describe("QueueTimeline", () => {
       order: 0,
     };
 
-    render(
+    renderWithIntl(
       <QueueTimeline
         items={[cooling]}
         profile={profile}

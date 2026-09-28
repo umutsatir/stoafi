@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 import type { Profile } from "@stoafi/core";
 
 export interface ProfileFormProps {
@@ -19,6 +20,7 @@ const EMPTY: Profile = {
 
 export function ProfileForm({ initial, onSave }: ProfileFormProps) {
   const [profile, setProfile] = useState<Profile>(initial ?? EMPTY);
+  const t = useTranslations("profile");
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -27,7 +29,7 @@ export function ProfileForm({ initial, onSave }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="income-monthly">Monthly income</label>
+      <label htmlFor="income-monthly">{t("monthlyIncome")}</label>
       <input
         id="income-monthly"
         type="number"
@@ -40,7 +42,7 @@ export function ProfileForm({ initial, onSave }: ProfileFormProps) {
         }
       />
 
-      <label htmlFor="savings">Current savings</label>
+      <label htmlFor="savings">{t("currentSavings")}</label>
       <input
         id="savings"
         type="number"
@@ -48,7 +50,7 @@ export function ProfileForm({ initial, onSave }: ProfileFormProps) {
         onChange={(e) => setProfile((p) => ({ ...p, savings: Number(e.target.value) }))}
       />
 
-      <label htmlFor="fund-months">Emergency fund target (months)</label>
+      <label htmlFor="fund-months">{t("emergencyFundMonths")}</label>
       <input
         id="fund-months"
         type="number"
@@ -58,7 +60,7 @@ export function ProfileForm({ initial, onSave }: ProfileFormProps) {
         }
       />
 
-      <label htmlFor="inflation">Annual inflation expectation</label>
+      <label htmlFor="inflation">{t("annualInflation")}</label>
       <input
         id="inflation"
         type="number"
@@ -69,7 +71,7 @@ export function ProfileForm({ initial, onSave }: ProfileFormProps) {
         }
       />
 
-      <button type="submit">Save profile</button>
+      <button type="submit">{t("save")}</button>
     </form>
   );
 }

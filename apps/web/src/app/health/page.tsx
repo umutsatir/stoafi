@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { project } from "@stoafi/core";
 import { HealthMetrics } from "@/components/health-metrics";
 import { useAppStore } from "@/store";
@@ -7,12 +8,13 @@ import { useAppStore } from "@/store";
 export default function HealthPage() {
   const profile = useAppStore((s) => s.profile);
   const commitments = useAppStore((s) => s.commitments);
+  const t = useTranslations("health");
 
   if (!profile) {
     return (
       <main>
-        <h1>Health</h1>
-        <p>Fill in your profile first.</p>
+        <h1>{t("title")}</h1>
+        <p>{t("fillProfileFirst")}</p>
       </main>
     );
   }
@@ -25,7 +27,7 @@ export default function HealthPage() {
 
   return (
     <main>
-      <h1>Health</h1>
+      <h1>{t("title")}</h1>
       <HealthMetrics
         projection={projection}
         savingsBalance={profile.savings}

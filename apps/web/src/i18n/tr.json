@@ -1,5 +1,9 @@
 {
+  "app": {
+    "coreVersion": "stoafi core v{version}"
+  },
   "nav": {
+    "ariaLabel": "Ana",
     "profile": "Profil",
     "plan": "Plan",
     "queue": "Kuyruk",
@@ -8,7 +12,91 @@
     "decisions": "Kararlar",
     "settings": "Ayarlar"
   },
+  "profile": {
+    "title": "Profil",
+    "monthlyIncome": "Aylık gelir",
+    "currentSavings": "Mevcut birikim",
+    "emergencyFundMonths": "Acil durum fonu hedefi (ay)",
+    "annualInflation": "Yıllık enflasyon beklentisi",
+    "save": "Profili kaydet"
+  },
+  "plan": {
+    "title": "Plan",
+    "fillProfileFirst": "Önce profilini doldur.",
+    "needs": "İhtiyaçlar",
+    "wants": "İstekler",
+    "savings": "Birikim",
+    "investing": "Yatırım"
+  },
+  "queue": {
+    "title": "Kuyruk",
+    "fillProfileAndPlanFirst": "Önce profilini doldur ve bir plan seç.",
+    "timelineTitle": "12 aylık zaman çizelgesi",
+    "moveUp": "{name} öğesini yukarı taşı",
+    "moveDown": "{name} öğesini aşağı taşı",
+    "hoursSuffix": "{hours} saat",
+    "perUseSuffix": "{amount}/kullanım",
+    "urgent": "acil",
+    "notUrgent": "acil değil",
+    "important": "önemli",
+    "notImportant": "önemli değil",
+    "moveUpLabel": "Yukarı taşı",
+    "moveDownLabel": "Aşağı taşı"
+  },
+  "queuePreview": {
+    "wantsBeforeAfter": "İstekler önce / sonra",
+    "freeCashBeforeAfter": "Serbest nakit önce / sonra",
+    "installmentDraft": "Taksit taslağı: {months} ay",
+    "cardTimingTip": "Hesap kesim tarihinden sonra almak {days} ekstra float günü ekler; son ödeme {month}.",
+    "accept": "Kabul et",
+    "iKnow": "Biliyorum",
+    "confirm": "Onayla",
+    "calculateWithInstallments": "Taksitle hesapla"
+  },
+  "installments": {
+    "title": "Taksitle hesapla",
+    "months": "Ay",
+    "monthlyPayment": "Aylık ödeme",
+    "pv": "Bugünkü değer",
+    "realSaving": "Reel tasarruf",
+    "select": "Seç",
+    "monthsAriaLabel": "{index}. teklif için ay sayısı"
+  },
+  "timeline": {
+    "coolingDownUntil": "{date} tarihine kadar bekleme süresinde",
+    "notAffordableYet": "henüz karşılanabilir değil"
+  },
+  "cards": {
+    "title": "Kartlar",
+    "summary": "{label}: hesap kesim {statementDay}, son ödeme {dueDay}",
+    "label": "Etiket",
+    "statementDay": "Hesap kesim günü",
+    "dueDay": "Son ödeme günü",
+    "add": "Kart ekle"
+  },
+  "minimumPayment": {
+    "title": "Asgari ödeme tuzağı hesaplayıcısı",
+    "balance": "Bakiye",
+    "monthlyRate": "Aylık faiz oranı",
+    "minPct": "Asgari ödeme %",
+    "minFloor": "Asgari ödeme tabanı",
+    "monthsToPayoff": "Kapanma süresi: {months} ay",
+    "totalInterest": "Toplam faiz: {interest}"
+  },
+  "health": {
+    "title": "Sağlık",
+    "fillProfileFirst": "Önce profilini doldur.",
+    "savingsRate": "Birikim oranı",
+    "emergencyFundMonths": "Acil durum fonu ayı",
+    "installmentRatio": "Taksit oranı",
+    "runway": "Dayanma süresi"
+  },
+  "decisions": {
+    "title": "Kararlar",
+    "totalSaved": "Vazgeçilen alımlarla biriken toplam: {amount}"
+  },
   "settings": {
+    "title": "Ayarlar",
     "currency": "Para birimi",
     "language": "Dil",
     "exportBackup": "Yedeği dışa aktar",

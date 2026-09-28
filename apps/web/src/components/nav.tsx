@@ -17,7 +17,7 @@ export function Nav() {
   const t = useTranslations("nav");
 
   return (
-    <nav aria-label="Main">
+    <nav aria-label={t("ariaLabel")}>
       <ul>
         {ROUTES.map((route) => (
           <li key={route.href}>

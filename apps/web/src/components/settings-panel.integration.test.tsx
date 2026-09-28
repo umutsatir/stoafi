@@ -1,7 +1,8 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { StoafiDb, SINGLETON_ID } from "@/storage/db";
 import { exportToJson, importFromJson } from "@/storage/backup";
+import { renderWithIntl } from "@/test-utils";
 import { SettingsPanel } from "./settings-panel";
 
 const validProfile = {
@@ -21,7 +22,7 @@ describe("SettingsPanel wired to the real db (export -> clear -> import)", () =>
 
     let capturedJson = "";
 
-    render(
+    renderWithIntl(
       <SettingsPanel
         currency="TRY"
         onCurrencyChange={vi.fn()}

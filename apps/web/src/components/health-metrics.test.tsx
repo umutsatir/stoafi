@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { MonthProjection } from "@stoafi/core";
+import { renderWithIntl } from "@/test-utils";
 import { HealthMetrics } from "./health-metrics";
 
 const projection: MonthProjection = {
@@ -19,7 +20,9 @@ const projection: MonthProjection = {
 
 describe("HealthMetrics", () => {
   it("renders all four metrics matching direct selector output", () => {
-    render(<HealthMetrics projection={projection} savingsBalance={30000} monthlyNeeds={5000} />);
+    renderWithIntl(
+      <HealthMetrics projection={projection} savingsBalance={30000} monthlyNeeds={5000} />,
+    );
 
     // savingsRate = (1500+500)/10000 = 0.2 -> 20.0%
     expect(screen.getByTestId("savings-rate")).toHaveTextContent("20.0%");

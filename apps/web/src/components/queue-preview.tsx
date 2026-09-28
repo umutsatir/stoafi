@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   currentAllocation,
   defaultGuardRules,
@@ -92,24 +93,25 @@ export function QueuePreview({
   const [acknowledged, setAcknowledged] = useState(false);
   const hasBreach = breaches.length > 0;
   const canConfirm = !hasBreach || acknowledged;
+  const t = useTranslations("queuePreview");
 
   return (
     <div>
       <h2>{item.name}</h2>
       {selectedOffer && (
         <p data-testid="installment-draft-state">
-          Installment draft: {selectedOffer.months} months
+          {t("installmentDraft", { months: selectedOffer.months })}
         </p>
       )}
       <table>
         <tbody>
           <tr>
-            <td>Wants before / after</td>
+            <td>{t("wantsBeforeAfter")}</td>
             <td data-testid="wants-before">{before.byBucket.wants.committed}</td>
             <td data-testid="wants-after">{after.byBucket.wants.committed}</td>
           </tr>
           <tr>
-            <td>Free cash before / after</td>
+            <td>{t("freeCashBeforeAfter")}</td>
             <td data-testid="freecash-before">{before.freeCash}</td>
             <td data-testid="freecash-after">{after.freeCash}</td>
           </tr>
@@ -118,10 +120,9 @@ export function QueuePreview({
 
       {tip && !shiftedMonth && (
         <p data-testid="card-timing-tip">
-          Buying after the statement day adds {tip.extraFloatDays} extra float days; due{" "}
-          {tip.newDueMonth}.
+          {t("cardTimingTip", { days: tip.extraFloatDays, month: tip.newDueMonth })}
           <button type="button" onClick={() => setShiftedMonth(tip.newDueMonth)}>
-            Accept
+            {t("accept")}
           </button>
         </p>
       )}
@@ -135,7 +136,7 @@ export function QueuePreview({
           </ul>
           {!acknowledged && (
             <button type="button" onClick={() => setAcknowledged(true)}>
-              I know
+              {t("iKnow")}
             </button>
           )}
         </div>
@@ -146,11 +147,11 @@ export function QueuePreview({
         disabled={!canConfirm}
         onClick={() => onConfirm({ ...draft, status: "active" }, breaches, hasBreach)}
       >
-        Confirm
+        {t("confirm")}
       </button>
 
       <button type="button" onClick={() => setShowInstallments(true)}>
-        Calculate with installments
+        {t("calculateWithInstallments")}
       </button>
 
       {showInstallments && (

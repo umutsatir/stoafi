@@ -20,6 +20,8 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "lang",
   "content",
   "download",
+  "timeZone",
+  "locale",
 ]);
 
 export interface HardcodedStringViolation {

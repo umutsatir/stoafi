@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { Profile, QueueItem } from "@stoafi/core";
+import { renderWithIntl } from "@/test-utils";
 import { QueuePreview } from "./queue-preview";
 
 const profile: Profile = {
@@ -29,7 +30,7 @@ const item: QueueItem = {
 
 describe("QueuePreview", () => {
   it("shows before/after effects on the wants bucket and free cash synchronously", () => {
-    render(
+    renderWithIntl(
       <QueuePreview
         item={item}
         profile={profile}
@@ -53,7 +54,7 @@ describe("QueuePreview", () => {
     // savings 30000, monthlyNeeds 4000, target 6 months = 24000 floor.
     // an expensive item pushes savingsBalanceAfterDraft below that.
     const expensiveItem: QueueItem = { ...item, price: 10000 };
-    render(
+    renderWithIntl(
       <QueuePreview
         item={expensiveItem}
         profile={profile}
@@ -73,7 +74,7 @@ describe("QueuePreview", () => {
 
   it("calls onConfirm with an active commitment when confirmed", () => {
     const onConfirm = vi.fn();
-    render(
+    renderWithIntl(
       <QueuePreview
         item={item}
         profile={profile}
@@ -96,7 +97,7 @@ describe("QueuePreview", () => {
 
 describe("QueuePreview installment flow", () => {
   it("opens the calculator, selecting an offer closes it and shows the installment draft state", () => {
-    render(
+    renderWithIntl(
       <QueuePreview
         item={item}
         profile={profile}
@@ -124,7 +125,7 @@ describe("QueuePreview installment flow", () => {
 
 describe("QueuePreview card timing tip", () => {
   it("shows the tip with the correct extra float days when buying after the statement day", () => {
-    render(
+    renderWithIntl(
       <QueuePreview
         item={item}
         profile={profile}
@@ -147,7 +148,7 @@ describe("QueuePreview card timing tip", () => {
 
   it("accepting the tip shifts the confirmed commitment's payment month", () => {
     const onConfirm = vi.fn();
-    render(
+    renderWithIntl(
       <QueuePreview
         item={item}
         profile={profile}
@@ -175,7 +176,7 @@ describe("QueuePreview guard breach confirmation", () => {
   it("blocks confirm behind an explicit 'I know' action when there is a breach", () => {
     const onConfirm = vi.fn();
     const expensiveItem = { ...item, price: 10000 };
-    render(
+    renderWithIntl(
       <QueuePreview
         item={expensiveItem}
         profile={profile}
@@ -208,7 +209,7 @@ describe("QueuePreview guard breach confirmation", () => {
 
   it("does not require confirmation when there is no breach", () => {
     const onConfirm = vi.fn();
-    render(
+    renderWithIntl(
       <QueuePreview
         item={item}
         profile={profile}

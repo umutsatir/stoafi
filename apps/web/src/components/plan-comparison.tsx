@@ -1,8 +1,10 @@
+import { useTranslations } from "next-intl";
 import { compareStrategies, strategyRegistry, type Profile } from "@stoafi/core";
 import { getLessonCard } from "@/lessons";
 
 export function PlanComparison({ profile }: { profile: Profile }) {
   const results = compareStrategies(profile, strategyRegistry);
+  const t = useTranslations("plan");
 
   return (
     <div>
@@ -14,13 +16,13 @@ export function PlanComparison({ profile }: { profile: Profile }) {
           <section key={strategyId} aria-label={strategyId} data-testid={`strategy-${strategyId}`}>
             <h2>{lesson?.title ?? strategyId}</h2>
             <dl>
-              <dt>Needs</dt>
+              <dt>{t("needs")}</dt>
               <dd>{allocation.needs}</dd>
-              <dt>Wants</dt>
+              <dt>{t("wants")}</dt>
               <dd>{allocation.wants}</dd>
-              <dt>Savings</dt>
+              <dt>{t("savings")}</dt>
               <dd>{allocation.savings}</dd>
-              <dt>Investing</dt>
+              <dt>{t("investing")}</dt>
               <dd>{allocation.investing}</dd>
             </dl>
             {lesson && (

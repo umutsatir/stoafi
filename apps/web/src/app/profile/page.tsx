@@ -1,6 +1,7 @@
 "use client";
 
 import { ProfileSchema } from "@stoafi/core";
+import { useTranslations } from "next-intl";
 import { ProfileForm } from "@/components/profile-form";
 import { StoafiDb } from "@/storage/db";
 import { putSingleton } from "@/storage/repo";
@@ -11,10 +12,11 @@ const db = new StoafiDb();
 export default function ProfilePage() {
   const setProfile = useAppStore((s) => s.setProfile);
   const profile = useAppStore((s) => s.profile);
+  const t = useTranslations("profile");
 
   return (
     <main>
-      <h1>Profile</h1>
+      <h1>{t("title")}</h1>
       <ProfileForm
         initial={profile ?? undefined}
         onSave={async (value) => {
