@@ -173,7 +173,7 @@ Goal: installment math (PV, real saving, capacity) and sinking-fund set-asides, 
   Acceptance: unit test registers the module via kernel's registry (T1.6) without error; `module.selectors.compareOffers` is callable and matches T2.4's direct export.
   Depends on: T1.6, T2.6
 
-- [ ] **T2.8** Sinking fund set-aside formula
+- [x] **T2.8** Sinking fund set-aside formula
   Goal: `packages/core/modules/sinking-funds/selectors.ts` — `monthlySetAside(target: Minor, saved: Minor, monthsRemaining: number): Minor` implementing `monthly = max(T - B, 0) / m`, rounded half-to-even at the end.
   Acceptance: unit tests: `saved >= target` → 0; `monthsRemaining <= 0` throws or returns a defined sentinel (pick one, document why in a comment) — test asserts that behavior; a normal case matches hand-computed value; rounding boundary case (e.g. remainder splits non-evenly) rounds half-to-even.
   Depends on: T1.1
@@ -601,7 +601,7 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 - [ ] Legal installment limits by category: keep as an editable data file, and who updates it? (SPEC backlog) — no MVP task currently owns "legal limits by category"; if this is in scope for guards (T4.6), it needs its own task added before Phase 4 starts. Currently treated as out of MVP scope pending confirmation.
 - [ ] Product name and domain (SPEC backlog) — affects T0.12 (README), T7.14 (PWA manifest name/icons). Using "Stoafi" as a working name per CLAUDE.md; needs confirmation before Phase 7 UI copy is finalized.
 - [ ] License for the public repo, MIT vs. AGPL (SPEC backlog) — blocks T0.12's `LICENSE` file content; placeholder only until decided.
-- [ ] Sinking-fund `monthlySetAside` behavior when `monthsRemaining <= 0` (i.e. goal date already passed or due this month) — SPEC's formula doesn't define this edge case. T2.8 picks a documented default (return the full remaining amount as due immediately) but this is an invented behavior, not spec'd — flag for confirmation.
+- [ ] Sinking-fund `monthlySetAside` behavior when `monthsRemaining <= 0` (i.e. goal date already passed or due this month) — SPEC's formula doesn't define this edge case. Implemented in T2.8 as a thrown error (forces the caller to decide how to surface an overdue fund, rather than this pure formula inventing a "due immediately" amount) — this is still an invented decision, not spec'd; flag for confirmation.
 - [ ] Decision log `savingsSummary` — SPEC acceptance says "total amount saved by skipped purchases" but the domain model implies `postponed` items aren't yet decided either way. T5.8 sums only `skipped`; confirm whether `postponed` should also count toward some other displayed figure.
 - [ ] Baby Steps strategy step thresholds/order — SPEC names the strategy and its source but doesn't enumerate exact step amounts/order (unlike Dave Ramsey's actual 7 baby steps, which SPEC doesn't fully restate). T3.12 implements a params-driven approximation; confirm the exact step definitions wanted for MVP before Phase 3 starts, or accept the approximation.
 - [ ] Cost-per-use / cost-in-work-hours behavior at `expectedUses === 0` / `hourlyNetIncome === 0` — SPEC gives the formula only; T4.2 picks a sentinel (documented in code) pending confirmation this matches intended UX (e.g. show "—" vs. 0 vs. infinity in the UI).
