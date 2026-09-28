@@ -387,7 +387,7 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Acceptance: registers via kernel registry without error.
   Depends on: T5.2, T5.3
 
-- [ ] **T5.5** Health metric selectors
+- [x] **T5.5** Health metric selectors
   Goal: `packages/core/modules/health/selectors.ts` — `savingsRate`, `installmentRatio`, `emergencyFundMonths`, `runway`, each implementing SPEC's "Simple ratios" table exactly.
   Acceptance: unit tests per formula matching the table, including a zero-denominator case for each (e.g. zero net income) returning a defined sentinel without throwing.
   Depends on: T1.7, T3.1
