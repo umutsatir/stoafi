@@ -40,3 +40,31 @@ export { QueueItemSchema, type QueueItem } from "../modules/queue/schema";
 export { SinkingFundSchema, type SinkingFund } from "../modules/sinking-funds/schema";
 export { CardSchema, type Card } from "../modules/cards/schema";
 export { DecisionSchema, type Decision } from "../modules/decisions/schema";
+
+export { costInWorkHours, costPerUse, eisenhowerQuadrant } from "../modules/queue/selectors";
+export { cooldownStatus, type CooldownStatus } from "../modules/queue/cooldown";
+export { toDraftCommitment } from "../modules/queue/to-commitment";
+export { scheduleQueue, type ScheduleResult } from "../modules/queue/scheduler";
+
+export {
+  savingsRate,
+  installmentRatio,
+  emergencyFundMonths,
+  runway,
+} from "../modules/health/selectors";
+export { savingsSummary, type SavingsSummary } from "../modules/decisions/selectors";
+export { timingTip, type TimingTip } from "../modules/cards/timing";
+export { minimumPaymentPayoff, type MinPaymentRule } from "../modules/cards/minimum-payment";
+export { toCommitment } from "../modules/sinking-funds/schema";
+export {
+  compareOffers,
+  monthlyRate,
+  pvOfPlan,
+  realSaving,
+  type InstallmentOffer,
+  type OfferResult,
+} from "../modules/installments/selectors";
+export { installmentLoadTimeline, capacityRemaining } from "../modules/installments/capacity";
+export { InstallmentOfferSchema } from "../modules/installments/schema";
+export { defaultGuardRules, type GuardContext, type GuardRule } from "../modules/guards/schema";
+export { evaluateGuards, type GuardBreach } from "../modules/guards/selectors";

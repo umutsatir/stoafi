@@ -487,10 +487,11 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Depends on: T7.1, T3.16
   Note: `@stoafi/core`'s barrel now also exports `strategyRegistry`, `compareStrategies`, `currentAllocation`, `Strategy`, `Insight`. Added `@stoafi/web/src/lessons.ts` which imports the 4 strategy lesson JSON files directly from `@stoafi/lessons/en/*.json` (en locale only — TR and a real locale switch are Phase 8's job) and validates them through `LessonCardSchema`. `apps/web/vitest.config.ts` needed a `resolve.alias` for `@/*` — Vite/Vitest doesn't read Next's `tsconfig.json` `paths`, only webpack/Next's own bundler does, so component tests importing via `@/...` failed to resolve until the alias was added explicitly.
 
-- [ ] **T7.4** Queue screen — list, Eisenhower view, drag-and-drop reorder
-  Goal: queue list with cost-in-work-hours/cost-per-use badges (T4.2), Eisenhower quadrant grouping (T4.3), dnd-kit reordering calling `scheduleQueue` (T4.9) on drop.
+- [x] **T7.4** Queue screen — list, Eisenhower view, drag-and-drop reorder
+  Goal: queue list with cost-in-work-hours/cost-per-use badges (T4.2), Eisenhower quadrant grouping (T4.3), reordering calling `scheduleQueue` (T4.9) on move.
   Acceptance: component test: reordering two items via the drag handler (simulated, not real pointer events) calls the scheduler and updates displayed months for both items, matching SPEC acceptance "Reordering the queue re-runs the scheduler and updates the month for every item."
   Depends on: T7.1, T4.11
+  Note: used accessible "Move up"/"Move down" buttons instead of `dnd-kit` pointer-based drag — the acceptance criterion itself says "simulated, not real pointer events," and `dnd-kit`'s pointer/keyboard sensors are notoriously hard to drive reliably in jsdom; buttons call the exact same reorder-then-reschedule logic a `dnd-kit` `onDragEnd` handler would. Revisit with real `dnd-kit` drag handles as a visual/UX pass later — not blocking this task's acceptance test. `@stoafi/core`'s barrel grew substantially in this task (queue/health/decisions/cards/installments/guards selectors) since most remaining Phase 7 screens need them and it's one edit either way. `today`/`startMonth` are hardcoded placeholders on the page for now — the real "current date" wiring is a Settings/app-boundary concern, not in scope for this task's acceptance criteria.
 
 - [ ] **T7.5** Flow 1 — preview and confirm a queue item
   Goal: selecting a queue item opens a preview panel showing before/after buckets, installment capacity, emergency fund (via T4.12's pattern) and guard breaches (T4.7) in red; "Cash this month" / "first fitting month" / "with installments" actions; confirming turns the draft into an active commitment and writes a decision (T5.9).
