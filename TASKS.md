@@ -348,7 +348,7 @@ Goal: purchase queue with Eisenhower/cost metrics, auto-scheduler, 30-day cooldo
   Acceptance: unit test: given the same items in two different orders, at least one item's assigned month differs, and the result is fully determined by input order (call twice with the same order, get identical output — determinism check).
   Depends on: T4.9
 
-- [ ] **T4.11** Queue module object
+- [x] **T4.11** Queue module object
   Goal: `packages/core/modules/queue/module.ts` — `Module` (id `'queue'`, schema from T4.1, selectors from T4.2–T4.5/T4.9).
   Acceptance: registers via kernel registry without error.
   Depends on: T4.9
