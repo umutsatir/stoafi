@@ -104,7 +104,7 @@ Goal: the pure, dependency-free core types and the `project()` function everythi
   Depends on: T1.1, T1.2, T1.3, T1.4
   Note: added `MonthSchema` to `kernel/month.ts` (regex + range refine, cast to `z.ZodType<Month>` since zod infers plain `string` for a refined string schema) so `Commitment.payments[].month` validates real `YYYY-MM` values, not just any string.
 
-- [ ] **T1.6** Module registry
+- [x] **T1.6** Module registry
   Goal: `packages/core/kernel/registry.ts` — `createRegistry()`, `register(module: Module)`, `getModule(id)`, `listModules()`; enforce unique module ids and that `contributes.guards`/`insights`/`itemActions` from all registered modules can be collected.
   Acceptance: unit tests: registering two modules with the same id throws; `listModules()` returns them in registration order; collecting `contributes.guards` across 2 fake modules returns the union.
   Depends on: T0.7, T1.5
