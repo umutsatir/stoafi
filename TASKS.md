@@ -51,7 +51,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm --filter @stoafi/web build` produces a static `out/` directory.
   Depends on: T0.2
 
-- [ ] **T0.9** Wire `apps/web` to `@stoafi/core`
+- [x] **T0.9** Wire `apps/web` to `@stoafi/core`
   Goal: add `@stoafi/core` as a workspace dependency of `@stoafi/web`; import one symbol from core in a placeholder page to prove resolution.
   Acceptance: `pnpm --filter @stoafi/web build` succeeds importing from `@stoafi/core`.
   Depends on: T0.7, T0.8
