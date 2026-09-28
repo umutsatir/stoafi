@@ -475,10 +475,11 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Depends on: T6.4
   Note: added `zustand`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`, `@vitejs/plugin-react` to `apps/web`; switched `vitest.config.ts` to `environment: "jsdom"` with the React plugin. `apps/web/tsconfig.json` now includes `vitest.config.ts`/`vitest.setup.ts` in its program — jest-dom's ambient `expect` augmentation (via `import "@testing-library/jest-dom/vitest"` in the setup file) only type-checks for `.test.tsx` files if the setup file itself is part of the same TS program. `@stoafi/core`'s public barrel grew further: `project`/`projectSeries`, `Commitment`, `Minor`, `Money`, `Month`, `MonthProjection`, `Bucket`. The store's `deriveProjection` never persists the projection it computes (SPEC: "never stored").
 
-- [ ] **T7.2** Profile screen
+- [x] **T7.2** Profile screen
   Goal: form for incomes/expenses/savings/emergency fund/inflation, backed by T3.1's schema and T6.2's repo; editable at any time per SPEC acceptance.
   Acceptance: component test: filling the minimum required fields and submitting persists via the repo mock and re-renders with saved values; SPEC acceptance "under 5 minutes" is validated structurally (no required field beyond the schema's required set, no multi-step wizard) rather than timed.
   Depends on: T7.1, T3.3
+  Note: `ProfileForm` takes `onSave` as a prop (dependency injection) so the component test passes a `vi.fn()` instead of touching Dexie; the page wires it to the real repo. Had to add `test: { globals: true }` to `apps/web/vitest.config.ts` — without it, `@testing-library/react`'s automatic `afterEach(cleanup)` registration silently no-ops (it needs a global `afterEach`), so multiple tests in one file leaked DOM into each other. Styling is plain semantic HTML for now — Tailwind/shadcn from CLAUDE.md's stack aren't wired in yet; no acceptance criterion in Phase 7 currently depends on visual styling, so this is deferred rather than blocking.
 
 - [ ] **T7.3** Plan screen — 4 strategies side by side with lesson cards
   Goal: renders `compareStrategies` (T3.14) output for all 4 strategies, each with its lesson card (T3.5–T3.13) rendered inline/expandable.
