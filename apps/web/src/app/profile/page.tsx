@@ -12,6 +12,7 @@ const db = new StoafiDb();
 export default function ProfilePage() {
   const setProfile = useAppStore((s) => s.setProfile);
   const profile = useAppStore((s) => s.profile);
+  const currency = useAppStore((s) => s.currency);
   const t = useTranslations("profile");
 
   return (
@@ -19,6 +20,7 @@ export default function ProfilePage() {
       <h1>{t("title")}</h1>
       <ProfileForm
         initial={profile ?? undefined}
+        currency={currency}
         onSave={async (value) => {
           const saved = await putSingleton(db, "profile", ProfileSchema, value);
           setProfile(saved);

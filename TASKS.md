@@ -623,10 +623,11 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.1
   Note: text is parsed with string arithmetic (no float), so `0,01` is exactly 1. The locale's group separator counts as grouping only between 3-digit groups (`1.250` in tr is 1250); otherwise `,` and `.` both act as a decimal point, so a dot typed on a Turkish keypad still works. Invalid text stays on screen flagged `aria-invalid` but is never emitted. Added `inputMode`, `autoComplete`, `aria-hidden` to the hard-coded-string scanner's attribute allow-list (technical tokens, not UI text).
 
-- [ ] **T9.4** Profile form rebuild
+- [x] **T9.4** Profile form rebuild
   Goal: salaries list (add/remove), recurring expenses list (add/remove, label + amount + bucket), one living-costs field, savings, emergency months, inflation percent; all money via `MoneyInput`.
   Acceptance: component test: adding two salaries and one loan and saving calls `onSave` with the expected `Profile`.
   Depends on: T9.2, T9.3
+  Note: blank rows (no name, zero amount) are dropped on save, so an untouched form still saves (an empty `incomes` list is valid). Recurring expenses offer need/want only; savings/investing are plan buckets, not expenses. Emergency-fund months stays a plain number input (a count, not money).
 
 - [ ] **T9.5** App bootstrap: hydrate store, default plan, app clock
   Goal: on start load profile/plan/queue/decisions/cards from Dexie into the store; default `planState` to 50/30/20 when none is saved (so Queue is never blocked on a missing plan); replace hard-coded `2026-01`/`2026-01-01` with a `today` supplied at the app boundary.
