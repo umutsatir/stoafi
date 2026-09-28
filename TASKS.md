@@ -239,7 +239,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: both files parse against `LessonCardSchema` (T3.5); a test asserts the `en` and `tr` files share the same `id` and both have all required fields non-empty.
   Depends on: T3.5
 
-- [ ] **T3.8** Pay Yourself First strategy
+- [x] **T3.8** Pay Yourself First strategy
   Goal: `packages/core/strategies/pay-yourself-first.ts` — `allocate` reserves a configurable savings percentage first, then splits the remainder between needs/wants by params; `diagnose` flags when savings-first amount isn't actually set aside (i.e. committed savings < allocated savings).
   Acceptance: unit tests mirroring T3.6's structure: exact allocation on known input, insight triggered when savings shortfall exists, param override changes split.
   Depends on: T3.4
