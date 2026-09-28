@@ -265,7 +265,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Depends on: T3.4
   Note: `allocate(profile, params)` has no access to commitments/installment load (not in its signature per the `Strategy` interface), so "debt priority" (step 2) can only be surfaced by `diagnose`, which does receive `MonthProjection[]` and checks `installmentLoad > 0`. `allocate` itself only has 3 behavior tiers: step 1 (below starter fund), step 3 (starter fund met, below full fund), step 4+ (full fund met) — it can't distinguish step 2 from step 3. Also: `starterFundTarget` default (100,000 minor units) must stay below a realistic `monthlyNeeds * emergencyFundTargetMonths`, or a profile never leaves step 1 — test fixtures were sized accordingly (rent 40,000, income 100,000) after an initial mismatch.
 
-- [ ] **T3.13** Baby Steps lesson card
+- [x] **T3.13** Baby Steps lesson card
   Goal: `packages/lessons/en/baby-steps.json` + `tr/` — Dave Ramsey, *The Total Money Makeover*.
   Acceptance: same as T3.7.
   Depends on: T3.5

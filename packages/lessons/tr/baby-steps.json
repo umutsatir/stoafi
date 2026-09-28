@@ -1,0 +1,12 @@
+{
+  "id": "baby-steps",
+  "title": "Bebek adımları",
+  "source": {
+    "author": "Dave Ramsey",
+    "work": "The Total Money Makeover"
+  },
+  "principle": "Para hedeflerini aynı anda hepsine bölünmek yerine katı bir sırayla, tek tek ele al: önce küçük bir başlangıç acil durum fonu, sonra agresif borç ödemesi, sonra tam bir acil durum fonu ve ancak ondan sonra yatırım ve diğer hedefler. Buradaki önemli nokta sıralamanın kendisi — aynı anda biriktirmeye, borç ödemeye ve yatırım yapmaya çalışmanın yarattığı felci ortadan kaldırır.",
+  "formula": "Başlangıç fonu hedefinin altındayken serbest nakdin neredeyse tamamı birikime gider; borç varken fazla nakit önce borç ödemesine öncelik verir; tam acil durum fonuna ulaşıldığında serbest nakit yatırıma kayar.",
+  "fitsWhen": "Birbiriyle yarışan para hedefleri karşısında bunalmış hissediyorsan ve birkaç yüzdeyi aynı anda dengelemek yerine katı, motive edici bir sıra izlemek istiyorsan.",
+  "critique": "Katı sıralama matematiksel olarak en uygun olmayabilir — örneğin düşük faizli borcu yatırımdan önce kapatmak, tasarruf edilen faizden daha fazla kaçırılmış getiriye mal olabilir — ancak yaklaşım bir miktar optimalliği davranışsal ivme ve basitlik karşılığında feda eder."
+}

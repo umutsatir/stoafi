@@ -1,0 +1,12 @@
+{
+  "id": "baby-steps",
+  "title": "The baby steps",
+  "source": {
+    "author": "Dave Ramsey",
+    "work": "The Total Money Makeover"
+  },
+  "principle": "Work through money goals in a strict order, one at a time, instead of splitting attention across all of them at once: a small starter emergency fund first, then aggressive debt payoff, then a full emergency fund, and only after that, investing and other goals. The sequencing is the point — it removes the paralysis of trying to save, pay off debt, and invest simultaneously.",
+  "formula": "Below a starter fund target, nearly all free cash goes to savings; with debt outstanding, extra cash prioritizes payoff; once a full emergency fund is reached, free cash shifts toward investing.",
+  "fitsWhen": "You feel overwhelmed by competing money goals and want a strict, motivating order to follow rather than juggling several percentages.",
+  "critique": "The strict sequencing can be mathematically suboptimal — paying off low-interest debt before investing, for instance, can cost more in forgone returns than it saves in interest — but the approach trades some optimality for behavioral momentum and simplicity."
+}
