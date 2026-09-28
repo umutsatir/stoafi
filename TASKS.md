@@ -67,7 +67,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm test`, `pnpm typecheck`, `pnpm lint` each exit 0 from repo root; CI workflow file validates with `actionlint` or a YAML lint if available, otherwise visual review.
   Depends on: T0.5, T0.6, T0.9, T0.10
 
-- [ ] **T0.12** Editor and formatting baseline
+- [x] **T0.12** Editor and formatting baseline
   Goal: add `.editorconfig`, root `README.md` stub (name, one-line description, dev commands), `LICENSE` placeholder (decision pending — see Open questions).
   Acceptance: files exist; `pnpm lint`/`pnpm format --check` still pass.
   Depends on: T0.11
