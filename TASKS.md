@@ -40,10 +40,11 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: `pnpm lint` passes on the current tree; introducing an `any` in a test file fails `pnpm lint`.
   Depends on: T0.3
 
-- [ ] **T0.7** Zod dependency + module contract types
+- [x] **T0.7** Zod dependency + module contract types
   Goal: add `zod` to `@stoafi/core`; create `packages/core/kernel/module.ts` with the `Module` interface from SPEC's Architecture section (id, version, schema, migrations, selectors, contributes).
   Acceptance: `pnpm --filter @stoafi/core typecheck` passes; a unit test imports the type and constructs a minimal conforming object.
   Depends on: T0.4, T0.5
+  Note: `Module.selectors` is typed as `Record<string, (...args: never[]) => unknown>` so it accepts any function shape; this erases per-selector call signatures at the `Module` interface level. Concrete modules that need type-safe calls should narrow via their own generic `Selectors` type param rather than calling through `Module['selectors']` directly.
 
 - [ ] **T0.8** Scaffold `apps/web` (Next.js static export)
   Goal: create `apps/web` with Next.js, TypeScript, static export config (`output: 'export'`); `package.json` name `@stoafi/web`; empty placeholder page.
