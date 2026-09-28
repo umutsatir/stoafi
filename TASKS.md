@@ -30,7 +30,7 @@ Goal: a working monorepo skeleton with tooling wired up, nothing product-specifi
   Acceptance: root `pnpm typecheck` (turbo) runs the core package's typecheck via the shared config; changing a core file to break strictness fails the command.
   Depends on: T0.3
 
-- [ ] **T0.5** Vitest setup in core
+- [x] **T0.5** Vitest setup in core
   Goal: add `vitest` + `fast-check` as devDependencies to `@stoafi/core`; add a `vitest.config.ts`; add one smoke test.
   Acceptance: `pnpm --filter @stoafi/core test` runs and passes the smoke test.
   Depends on: T0.3
