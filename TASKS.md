@@ -275,10 +275,11 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Acceptance: unit test: `compareStrategies` with all 4 registered strategies returns 4 results for one profile, each internally consistent with that strategy's direct `allocate` output.
   Depends on: T3.6, T3.8, T3.10, T3.12
 
-- [ ] **T3.15** Plan module object and `project()` bucket limits wiring
+- [x] **T3.15** Plan module object and `project()` bucket limits wiring
   Goal: `packages/core/modules/plan/module.ts` — `Module` (id `'plan'`); extend kernel's `project()` (T1.8/T1.9, modify `packages/core/kernel/project.ts`) to accept a `bucketLimits: Record<Bucket, Minor>` argument and populate `MonthProjection.byBucket[b].limit` from it, instead of leaving it at 0.
   Acceptance: existing T1.8/T1.9 tests updated to pass explicit limits and still pass; new test: a projection built with plan's `currentAllocation` output as limits shows correct `limit` per bucket.
   Depends on: T3.14, T1.9
+  Note: `project()`'s `bucketLimits` option was already added in T1.8 (kept the kernel API forward-compatible ahead of plan existing), so no kernel change was needed here — this task just adds the plan module object and the integration test proving `currentAllocation` output flows into it.
 
 - [ ] **T3.16** Lesson-card content review pass
   Goal: read every card written in T3.7/T3.9/T3.11/T3.13 against the source book/letters and confirm no passage is quoted beyond a short line, per SPEC's "Lesson cards and sources" rules.
