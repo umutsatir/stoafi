@@ -45,7 +45,9 @@
     "needs": "Needs",
     "wants": "Wants",
     "savings": "Savings",
-    "investing": "Investing"
+    "investing": "Investing",
+    "usePlan": "Use this plan",
+    "activePlan": "Active plan"
   },
   "queue": {
     "title": "Queue",

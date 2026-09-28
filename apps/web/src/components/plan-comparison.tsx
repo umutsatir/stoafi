@@ -3,7 +3,15 @@ import { compareStrategies, strategyRegistry, type Profile } from "@stoafi/core"
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 
-export function PlanComparison({ profile }: { profile: Profile }) {
+export interface PlanComparisonProps {
+  profile: Profile;
+  /** The saved plan's strategy id; its card shows as active. */
+  activeStrategyId?: string;
+  /** When given, each non-active card offers "Use this plan". */
+  onSelect?: (strategyId: string) => void;
+}
+
+export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComparisonProps) {
   const results = compareStrategies(profile, strategyRegistry);
   const t = useTranslations("plan");
   const locale = useLocale() as Locale;
@@ -28,6 +36,16 @@ export function PlanComparison({ profile }: { profile: Profile }) {
               <dt>{t("investing")}</dt>
               <dd>{allocation.investing}</dd>
             </dl>
+            {onSelect &&
+              (strategyId === activeStrategyId ? (
+                <button type="button" disabled aria-pressed={true}>
+                  {t("activePlan")}
+                </button>
+              ) : (
+                <button type="button" onClick={() => onSelect(strategyId)}>
+                  {t("usePlan")}
+                </button>
+              ))}
             {lesson && (
               <article aria-label={`${strategyId} lesson`}>
                 <p>{lesson.principle}</p>

@@ -635,10 +635,15 @@ Goal: the app is usable end to end by a real person. Added after user review of 
   Depends on: T9.4
   Note: the shell renders nothing until the first load finishes (`hydrated`), so pages never flash an empty state or compute with the placeholder date. A stored row that no longer validates is logged with `console.error` and skipped rather than crashing startup (it will be overwritten on the next save; a visible warning is not built). Default plan is `defaultPlanState()` in core (50/30/20). Added a shared `storage/instance.ts` db so pages stop each creating a `StoafiDb`. Decisions written by the queue page are still not persisted; T9.7 owns that.
 
-- [ ] **T9.5b** Plan: choose the active strategy
+- [x] **T9.5b** Plan: choose the active strategy
   Goal: each strategy card on the Plan screen gets a "Use this plan" action that saves `planState` (via the repo) and marks the active one; the queue scheduler and guards use it.
   Acceptance: component test: clicking "Use this plan" on Pay Yourself First persists `{ strategyId: "pay-yourself-first" }` and marks that card active.
   Depends on: T9.5
+
+- [ ] **T9.5c** Show money formatted everywhere
+  Goal: screens currently print raw minor units (`5000` for 50.00). Add a `useMoney()` hook (minor units -> locale/currency string via next-intl) and use it in plan, queue list/preview, health, decisions, cards.
+  Acceptance: component tests updated: 500000 minor renders as the formatted currency string in both `en` and `tr`; no screen renders a raw minor amount.
+  Depends on: T9.5b
 
 - [ ] **T9.6** Queue: add, edit, remove, reorder (persisted)
   Goal: form to add a wish/need (name, price, need/want, urgency, importance, expected uses, optional cash price); edit and delete; up/down reorder writes `order`; everything persists via the repo.

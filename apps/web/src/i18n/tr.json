@@ -45,7 +45,9 @@
     "needs": "İhtiyaçlar",
     "wants": "İstekler",
     "savings": "Birikim",
-    "investing": "Yatırım"
+    "investing": "Yatırım",
+    "usePlan": "Bu planı kullan",
+    "activePlan": "Aktif plan"
   },
   "queue": {
     "title": "Kuyruk",
