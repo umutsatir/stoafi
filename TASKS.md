@@ -397,10 +397,11 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Acceptance: registers via kernel registry without error; selectors match T5.5 direct exports.
   Depends on: T5.5
 
-- [ ] **T5.7** Decision log schema
+- [x] **T5.7** Decision log schema
   Goal: `packages/core/modules/decisions/schema.ts` — `DecisionSchema` (id, queueItemRef, outcome: `'bought' | 'postponed' | 'skipped'`, timestamp (passed in, not generated internally), amount, guardBreachConfirmed?: boolean).
   Acceptance: unit tests: each of the 3 outcomes parses; a `guardBreachConfirmed: true` entry is required whenever the decision is linked to a logged guard breach (test constructs one such case and asserts schema/selector-level validation, per SPEC: "Breaking a rule requires an explicit 'I know' confirmation, which is written to the decision log").
   Depends on: T1.1
+  Note: added `breachedRuleIds?: string[]` to express "linked to a breach" — the schema's `.refine` requires `guardBreachConfirmed === true` whenever `breachedRuleIds` is non-empty, enforced at parse time rather than by a separate selector.
 
 - [ ] **T5.8** Savings summary selector
   Goal: `packages/core/modules/decisions/selectors.ts` — `savingsSummary(decisions: Decision[]): { totalSaved: Minor; count: number }` summing `amount` for `outcome === 'skipped'` (and, per product intent, `postponed` counted separately) — SPEC acceptance: "Decision log shows total amount saved by skipped purchases."
