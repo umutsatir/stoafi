@@ -1,0 +1,12 @@
+{
+  "id": "fifty-thirty-twenty",
+  "title": "The 50/30/20 rule",
+  "source": {
+    "author": "Elizabeth Warren",
+    "work": "All Your Worth"
+  },
+  "principle": "Split take-home pay into three broad buckets: essentials you can't skip, wants that make life enjoyable, and money set aside for the future. Keeping the split roughly fixed makes the plan easy to hold in your head and easy to stick to, without tracking every purchase.",
+  "formula": "50% of net income to needs, 30% to wants, 20% to savings.",
+  "fitsWhen": "You want one simple, memorable rule and your income is stable enough that fixed percentages make sense.",
+  "critique": "The fixed split ignores how needs and cost of living vary a lot by city and life stage; someone with high fixed costs may find 50% too tight, while someone with low fixed costs is leaving savings on the table."
+}

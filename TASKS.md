@@ -234,7 +234,7 @@ Goal: profile input, strategy allocation/diagnosis, and the lesson card schema/c
   Depends on: T3.4
   Note: the 50/30/20 rule's "20% savings" maps entirely to the `savings` bucket (`investing` is always 0 for this strategy) — SPEC doesn't split that 20% between savings and investing, so this is the simplest reading. `allocate` imports `netMonthlyIncome` from `modules/profile/selectors` (a module), same cross-boundary call already made for the `Profile` type in T3.4 — strategies sit alongside modules and read profile data directly rather than through `contributes`, since SPEC's module table lists `plan` (which strategies serve) as reading `profile`.
 
-- [ ] **T3.7** 50/30/20 lesson card
+- [x] **T3.7** 50/30/20 lesson card
   Goal: `packages/lessons/en/fifty-thirty-twenty.json` and `packages/lessons/tr/fifty-thirty-twenty.json` — Elizabeth Warren, *All Your Worth*, content in the team's own words (no quoted passages beyond a short line).
   Acceptance: both files parse against `LessonCardSchema` (T3.5); a test asserts the `en` and `tr` files share the same `id` and both have all required fields non-empty.
   Depends on: T3.5
