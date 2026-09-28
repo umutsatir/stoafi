@@ -371,10 +371,11 @@ Goal: remaining core modules — statement/due-date timing, ratio-based health m
   Acceptance: unit tests: valid card parses; `statementDay`/`dueDay` outside 1–31 rejected.
   Depends on: T1.1
 
-- [ ] **T5.2** Purchase timing suggestion
-  Goal: `packages/core/modules/cards/selectors.ts` — `timingTip(card, purchaseDate: string, todayMonth: Month): { shifted: boolean; extraFloatDays: number; newDueMonth: Month } | null` implementing SPEC flow 4: if buying after the statement day moves payment a full month later, return the tip.
+- [x] **T5.2** Purchase timing suggestion
+  Goal: `packages/core/modules/cards/timing.ts` — `timingTip(card, purchaseDate: string): { shifted: true; extraFloatDays: number; newDueMonth: Month } | null` implementing SPEC flow 4: if buying after the statement day moves payment a full month later, return the tip.
   Acceptance: unit tests: a purchase before the statement day returns `null` (no shift); a purchase after the statement day returns `shifted: true` with correct `extraFloatDays` and `newDueMonth`, verified against a hand-computed example.
   Depends on: T5.1, T1.3
+  Note: dropped the planned `todayMonth` param — the shift is fully determined by `purchaseDate` and the card's `statementDay`/`dueDay`, not by "today"; file placed at `timing.ts` (not `selectors.ts`) since the module has more than one selector file (see `capacity.ts`/`selectors.ts` split in `installments`).
 
 - [ ] **T5.3** Minimum-payment trap calculator
   Goal: `packages/core/modules/cards/selectors.ts` — `minimumPaymentPayoff(balance: Minor, monthlyRate: number, minPaymentRule: { pct: number; floor: Minor }): { months: number; totalInterest: Minor }` implementing SPEC's `b_{t+1} = b_t*(1+c) - max(p*b_t, floor)`, iterating to zero balance with a safety cap (e.g. 600 months) to guarantee termination.
