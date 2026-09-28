@@ -535,7 +535,7 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Acceptance: component test: entering fixture balance/rate/payment renders correct months/interest matching direct selector output.
   Depends on: T7.1, T5.4
 
-- [ ] **T7.13** Settings screen — currency, backup export/import
+- [x] **T7.13** Settings screen — currency, backup export/import
   Goal: currency selector (feeds `Money.currency`), export button (T6.4's `exportToJson`) triggering a file download, import via file picker calling `importFromJson` with per-row error surfacing (T5.11's `errors`).
   Acceptance: component test: clicking export calls the mocked `exportToJson` and triggers a download; selecting a corrupted file surfaces the returned error list instead of silently failing; SPEC acceptance "export → clear data → import restores everything" is covered by an integration test reusing T6.4's assertions through the UI action handlers.
   Depends on: T7.1, T6.4
