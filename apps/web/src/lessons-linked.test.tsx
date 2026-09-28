@@ -39,7 +39,6 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
       profile: null,
       planState: null,
       queueItems: [],
-      commitments: [],
       decisions: [],
     });
   });
@@ -61,7 +60,7 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
   });
 
   it("guards/health -> room-for-error", () => {
-    useAppStore.setState({ profile, commitments: [] });
+    useAppStore.setState({ profile });
     renderWithIntl(<HealthPage />);
     expect(screen.getByTestId("lesson-link-room-for-error")).toBeInTheDocument();
   });
@@ -72,7 +71,7 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
   });
 
   it("sinking-funds -> sinking-funds card (linked from queue, its closest existing screen)", () => {
-    useAppStore.setState({ profile, planState, queueItems: [], commitments: [], decisions: [] });
+    useAppStore.setState({ profile, planState, queueItems: [], decisions: [] });
     renderWithIntl(<QueuePage />);
     expect(screen.getByTestId("lesson-link-sinking-funds")).toBeInTheDocument();
   });

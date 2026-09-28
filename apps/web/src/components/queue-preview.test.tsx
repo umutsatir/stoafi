@@ -227,3 +227,103 @@ describe("QueuePreview guard breach confirmation", () => {
     expect(screen.queryByTestId("guard-breach-dialog")).not.toBeInTheDocument();
   });
 });
+
+describe("QueuePreview purchase method", () => {
+  function renderPreview(overrides: Partial<Parameters<typeof QueuePreview>[0]> = {}) {
+    const onConfirm = vi.fn();
+    renderWithIntl(
+      <QueuePreview
+        item={{ ...item, price: 12_000 }}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={0.2}
+        onConfirm={onConfirm}
+        {...overrides}
+      />,
+    );
+    return onConfirm;
+  }
+
+  function pickOffer(months: number, monthlyPayment: string) {
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    const row = screen.getByTestId(`offer-row-${months}`);
+    const input = row.querySelector('input[inputmode="decimal"]') as HTMLElement;
+    fireEvent.change(input, { target: { value: monthlyPayment } });
+    fireEvent.click(row.querySelector("button") as HTMLElement);
+  }
+
+  it("confirms a cash purchase with the cash method", () => {
+    const onConfirm = renderPreview({ item: { ...item, price: 1000 } });
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    const args = onConfirm.mock.calls[0] as unknown[];
+    expect(args[3]).toEqual({ method: "cash" });
+  });
+
+  it("previews the installment payment as load in the first month and does not spend savings", () => {
+    renderPreview();
+    // cash: 120.00 taken from 300.00 savings drops below the 6-month floor -> breach
+    expect(screen.getByTestId("guard-breaches")).toHaveTextContent("emergency-fund-floor");
+
+    pickOffer(6, "20");
+    expect(screen.getByTestId("installment-load-before")).toHaveTextContent("₺0.00");
+    expect(screen.getByTestId("installment-load-after")).toHaveTextContent("₺20.00");
+    // installments leave savings untouched, so the emergency-fund breach is gone
+    expect(screen.queryByText("emergency-fund-floor")).not.toBeInTheDocument();
+  });
+
+  it("confirms an installment purchase with the chosen offer and first payment month", () => {
+    const onConfirm = renderPreview();
+    pickOffer(6, "20");
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+
+    const [commitment, , , purchase] = onConfirm.mock.calls[0] as [
+      { source: { module: string }; status: string; payments: { month: string; amount: number }[] },
+      unknown,
+      unknown,
+      unknown,
+    ];
+    expect(purchase).toEqual({
+      method: "installment",
+      offer: { months: 6, payments: [2000, 2000, 2000, 2000, 2000, 2000] },
+      firstMonth: "2026-09",
+    });
+    expect(commitment.source.module).toBe("installments");
+    expect(commitment.status).toBe("active");
+    expect(commitment.payments.map((p) => p.month)).toEqual([
+      "2026-09",
+      "2026-10",
+      "2026-11",
+      "2026-12",
+      "2027-01",
+      "2027-02",
+    ]);
+  });
+
+  it("can go back to paying cash after choosing an offer", () => {
+    const onConfirm = renderPreview({ item: { ...item, price: 1000 } });
+    pickOffer(3, "5");
+    expect(screen.getByTestId("installment-draft-state")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Pay cash instead" }));
+    expect(screen.queryByTestId("installment-draft-state")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    expect((onConfirm.mock.calls[0] as unknown[])[3]).toEqual({ method: "cash" });
+  });
+
+  it("starts installments in the shifted month when the card timing tip is accepted", () => {
+    const onConfirm = renderPreview({
+      item: { ...item, price: 1000 },
+      card: { id: "c1", label: "Visa", statementDay: 15, dueDay: 5 },
+      purchaseDate: "2026-09-20",
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+    pickOffer(3, "5");
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
+    expect(purchase.firstMonth).toBe("2026-11");
+  });
+});

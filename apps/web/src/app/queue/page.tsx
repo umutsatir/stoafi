@@ -3,17 +3,27 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { hourlyNetIncome, monthlyNeeds, type QueueItem } from "@stoafi/core";
+import {
+  DecisionSchema,
+  activeQueueItems,
+  hourlyNetIncome,
+  monthlyNeeds,
+  type Commitment,
+  type Decision,
+  type GuardBreach,
+  type QueueItem,
+} from "@stoafi/core";
 import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
-import { QueuePreview } from "@/components/queue-preview";
+import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
 import { QueueTimeline } from "@/components/queue-timeline";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem, saveQueueOrder } from "@/storage/queue-repo";
-import { useAppStore } from "@/store";
+import { putListItem } from "@/storage/repo";
+import { useAppStore, useCommitments } from "@/store";
 
 function logFailure(what: string) {
   return (error: unknown) => console.error(`Could not ${what}`, error);
@@ -25,8 +35,7 @@ export default function QueuePage() {
   const queueItems = useAppStore((s) => s.queueItems);
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const currency = useAppStore((s) => s.currency);
-  const commitments = useAppStore((s) => s.commitments);
-  const setCommitments = useAppStore((s) => s.setCommitments);
+  const commitments = useCommitments();
   const today = useAppStore((s) => s.today);
   const decisions = useAppStore((s) => s.decisions);
   const setDecisions = useAppStore((s) => s.setDecisions);
@@ -48,11 +57,12 @@ export default function QueuePage() {
     );
   }
 
-  const selectedItem = queueItems.find((i) => i.id === selectedId) ?? null;
-  const editingItem = queueItems.find((i) => i.id === editingId);
+  const waitingItems = activeQueueItems(queueItems);
+  const selectedItem = waitingItems.find((i) => i.id === selectedId) ?? null;
+  const editingItem = waitingItems.find((i) => i.id === editingId);
   const needs = monthlyNeeds(profile);
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
-  const nextOrder = queueItems.reduce((max, i) => Math.max(max, i.order + 1), 0);
+  const nextOrder = waitingItems.reduce((max, i) => Math.max(max, i.order + 1), 0);
 
   function handleSave(item: QueueItem) {
     const exists = queueItems.some((i) => i.id === item.id);
@@ -71,8 +81,45 @@ export default function QueuePage() {
   }
 
   function handleReorder(next: QueueItem[]) {
-    setQueueItems(next);
+    // `next` holds only the waiting items; bought-in-installments items keep their place in the store.
+    setQueueItems([...next, ...queueItems.filter((i) => i.installmentPurchase)]);
     void saveQueueOrder(db, next).catch(logFailure("save the queue order"));
+  }
+
+  function handleConfirm(
+    commitment: Commitment,
+    breaches: GuardBreach[],
+    guardBreachConfirmed: boolean,
+    purchase: PurchaseChoice,
+  ) {
+    if (!selectedItem) return;
+    const decision: Decision = {
+      id: commitment.id,
+      queueItemRef: selectedItem.id,
+      outcome: "bought",
+      timestamp: new Date().toISOString(),
+      amount: commitment.payments.reduce((sum, p) => sum + p.amount, 0),
+      breachedRuleIds: breaches.map((b) => b.ruleId),
+      guardBreachConfirmed,
+    };
+    setDecisions([...decisions, decision]);
+    void putListItem(db, "decisions", DecisionSchema, decision).catch(
+      logFailure("save the decision"),
+    );
+
+    if (purchase.method === "cash") {
+      // Cash is paid from the account by the user: it is a decision only, not a monthly commitment.
+      handleDelete(selectedItem);
+    } else {
+      // Installments become an expense: the item stays, flagged, and its payments are derived from it.
+      const bought: QueueItem = {
+        ...selectedItem,
+        installmentPurchase: { offer: purchase.offer, firstMonth: purchase.firstMonth },
+      };
+      setQueueItems(queueItems.map((i) => (i.id === bought.id ? bought : i)));
+      void saveQueueItem(db, bought).catch(logFailure("save the installment purchase"));
+    }
+    setSelectedId(null);
   }
 
   return (
@@ -89,7 +136,8 @@ export default function QueuePage() {
         onCancel={editingItem ? () => setEditingId(null) : undefined}
       />
       <QueueList
-        items={queueItems}
+        items={waitingItems}
+        commitments={commitments}
         onItemsChange={handleReorder}
         onSelect={(item) => setSelectedId(item.id)}
         onEdit={(item) => setEditingId(item.id)}
@@ -111,7 +159,8 @@ export default function QueuePage() {
       )}
       <h2>{t("timelineTitle")}</h2>
       <QueueTimeline
-        items={queueItems}
+        items={waitingItems}
+        commitments={commitments}
         profile={profile}
         planState={planState}
         today={today}
@@ -127,22 +176,7 @@ export default function QueuePage() {
           income={income}
           monthlyNeeds={needs}
           installmentCapPct={0.2}
-          onConfirm={(activeCommitment, breaches, guardBreachConfirmed) => {
-            setCommitments([...commitments, activeCommitment]);
-            setDecisions([
-              ...decisions,
-              {
-                id: activeCommitment.id,
-                queueItemRef: activeCommitment.source.refId,
-                outcome: "bought",
-                timestamp: new Date().toISOString(),
-                amount: activeCommitment.payments[0]?.amount ?? 0,
-                breachedRuleIds: breaches.map((b) => b.ruleId),
-                guardBreachConfirmed,
-              },
-            ]);
-            setSelectedId(null);
-          }}
+          onConfirm={handleConfirm}
         />
       )}
     </main>

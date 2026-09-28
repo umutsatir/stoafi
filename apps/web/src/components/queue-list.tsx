@@ -7,6 +7,7 @@ import {
   costPerUse,
   eisenhowerQuadrant,
   scheduleQueue,
+  type Commitment,
   type Month,
   type PlanStateInput,
   type Profile,
@@ -15,6 +16,8 @@ import {
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { useMoney } from "@/lib/use-money";
+
+const NO_COMMITMENTS: Commitment[] = [];
 
 export interface QueueListProps {
   /** Controlled: the parent owns the items and persists changes. */
@@ -27,6 +30,8 @@ export interface QueueListProps {
   planState: PlanStateInput;
   today: string;
   startMonth: Month;
+  /** Existing commitments (e.g. installments already taken); they use up bucket room. */
+  commitments?: Commitment[];
   hourlyNetIncome: number;
 }
 
@@ -53,6 +58,7 @@ export function QueueList({
   planState,
   today,
   startMonth,
+  commitments = NO_COMMITMENTS,
   hourlyNetIncome,
 }: QueueListProps) {
   const t = useTranslations("queue");
@@ -63,8 +69,8 @@ export function QueueList({
   const eisenhowerLesson = getLessonCard("eisenhower-matrix", locale);
 
   const schedule = useMemo(
-    () => scheduleQueue(items, profile, planState, [], today, startMonth),
-    [items, profile, planState, today, startMonth],
+    () => scheduleQueue(items, profile, planState, commitments, today, startMonth),
+    [items, profile, planState, commitments, today, startMonth],
   );
   const scheduleByItemId = new Map(schedule.map((s) => [s.itemId, s.month]));
 

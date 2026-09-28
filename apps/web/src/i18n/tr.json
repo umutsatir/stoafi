@@ -95,7 +95,9 @@
     "accept": "Kabul et",
     "iKnow": "Biliyorum",
     "confirm": "Onayla",
-    "calculateWithInstallments": "Taksitle hesapla"
+    "calculateWithInstallments": "Taksitle hesapla",
+    "installmentLoadBeforeAfter": "Taksit yükü önce / sonra",
+    "payCashInstead": "Peşin öde"
   },
   "installments": {
     "title": "Taksitle hesapla",
@@ -104,7 +106,13 @@
     "pv": "Bugünkü değer",
     "realSaving": "Reel tasarruf",
     "select": "Seç",
-    "monthsAriaLabel": "{index}. teklif için ay sayısı"
+    "monthsAriaLabel": "Teklif {index} ay sayısı",
+    "paymentAriaLabel": "Teklif {index} aylık ödeme",
+    "hint": "Her teklifin aylık ödemesini banka ya da mağazanın verdiği tutarla gir.",
+    "totalPaid": "Toplam ödeme",
+    "incomplete": "—",
+    "addOffer": "Teklif ekle",
+    "removeOffer": "Teklif {index} sil"
   },
   "timeline": {
     "coolingDownUntil": "{date} tarihine kadar bekleme süresinde",
@@ -152,5 +160,13 @@
     "importBackup": "Yedeği içe aktar",
     "sampleAmountLabel": "Örnek tutar",
     "sampleDateLabel": "Örnek tarih"
+  },
+  "installmentExpenses": {
+    "title": "Satın alımlardan taksitler",
+    "hint": "Kuyruktan taksitle bir şey aldığında otomatik eklenir.",
+    "empty": "Henüz taksitli alım yok.",
+    "row": "{month} ayına kadar ayda {amount}",
+    "thisMonth": "Bu ayki taksitler: {amount}",
+    "remove": "{name} sil"
   }
 }

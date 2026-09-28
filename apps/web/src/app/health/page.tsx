@@ -6,11 +6,11 @@ import { HealthMetrics } from "@/components/health-metrics";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { monthOf } from "@/lib/clock";
-import { useAppStore } from "@/store";
+import { useAppStore, useCommitments } from "@/store";
 
 export default function HealthPage() {
   const profile = useAppStore((s) => s.profile);
-  const commitments = useAppStore((s) => s.commitments);
+  const commitments = useCommitments();
   const today = useAppStore((s) => s.today);
   const t = useTranslations("health");
   const locale = useLocale() as Locale;

@@ -95,7 +95,9 @@
     "accept": "Accept",
     "iKnow": "I know",
     "confirm": "Confirm",
-    "calculateWithInstallments": "Calculate with installments"
+    "calculateWithInstallments": "Calculate with installments",
+    "installmentLoadBeforeAfter": "Installment load before / after",
+    "payCashInstead": "Pay cash instead"
   },
   "installments": {
     "title": "Calculate with installments",
@@ -104,7 +106,13 @@
     "pv": "PV",
     "realSaving": "Real saving",
     "select": "Select",
-    "monthsAriaLabel": "Months for offer {index}"
+    "monthsAriaLabel": "Offer {index} months",
+    "paymentAriaLabel": "Offer {index} monthly payment",
+    "hint": "Enter each offer's monthly payment as quoted by the bank or store.",
+    "totalPaid": "Total paid",
+    "incomplete": "—",
+    "addOffer": "Add offer",
+    "removeOffer": "Remove offer {index}"
   },
   "timeline": {
     "coolingDownUntil": "cooling down until {date}",
@@ -152,5 +160,13 @@
     "importBackup": "Import backup",
     "sampleAmountLabel": "Sample amount",
     "sampleDateLabel": "Sample date"
+  },
+  "installmentExpenses": {
+    "title": "Installments from purchases",
+    "hint": "Added automatically when you buy something from the queue in installments.",
+    "empty": "No installment purchases yet.",
+    "row": "{amount} a month until {month}",
+    "thisMonth": "Installments this month: {amount}",
+    "remove": "Remove {name}"
   }
 }

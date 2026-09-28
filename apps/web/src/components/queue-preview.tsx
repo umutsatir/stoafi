@@ -10,9 +10,11 @@ import {
   strategyRegistry,
   timingTip,
   toDraftCommitment,
+  toInstallmentCommitment,
   type Card,
   type Commitment,
   type GuardBreach,
+  type InstallmentOfferInput,
   type Month,
   type OfferResult,
   type PlanStateInput,
@@ -21,6 +23,10 @@ import {
 } from "@stoafi/core";
 import { useMoney } from "@/lib/use-money";
 import { InstallmentCalculator } from "./installment-calculator";
+
+/** How the user chose to pay; the page turns this into a decision plus (for installments) a saved purchase. */
+export type PurchaseChoice =
+  { method: "cash" } | { method: "installment"; offer: InstallmentOfferInput; firstMonth: Month };
 
 export interface QueuePreviewProps {
   item: QueueItem;
@@ -38,6 +44,7 @@ export interface QueuePreviewProps {
     activeCommitment: Commitment,
     breaches: GuardBreach[],
     guardBreachConfirmed: boolean,
+    purchase: PurchaseChoice,
   ) => void;
 }
 
@@ -56,7 +63,18 @@ export function QueuePreview({
 }: QueuePreviewProps) {
   const bucketLimits = currentAllocation(profile, planState, strategyRegistry);
   const [shiftedMonth, setShiftedMonth] = useState<Month | null>(null);
-  const draft = toDraftCommitment(item, shiftedMonth ?? month);
+  const [selectedOffer, setSelectedOffer] = useState<OfferResult | null>(null);
+  const firstMonth = shiftedMonth ?? month;
+  const cashPrice = item.discountedCashPrice ?? item.price;
+  const offer: InstallmentOfferInput | null = selectedOffer
+    ? {
+        months: selectedOffer.months,
+        payments: Array.from({ length: selectedOffer.months }, () => selectedOffer.monthlyPayment),
+      }
+    : null;
+  const draft = offer
+    ? toInstallmentCommitment(item, offer, firstMonth, "draft")
+    : toDraftCommitment(item, firstMonth);
   const tip = card && purchaseDate ? timingTip(card, purchaseDate) : null;
 
   const before = project({ income }, commitments, month, { bucketLimits });
@@ -65,8 +83,9 @@ export function QueuePreview({
     bucketLimits,
   });
 
-  const draftAmount = draft.payments[0]?.amount ?? 0;
-  const savingsBalanceAfterDraft = profile.savings - draftAmount;
+  // Paying cash takes the price out of savings now; installments leave savings
+  // untouched and show up as monthly load instead.
+  const savingsBalanceAfterDraft = offer ? profile.savings : profile.savings - cashPrice;
 
   const breaches = useMemo(
     () =>
@@ -90,7 +109,6 @@ export function QueuePreview({
   );
 
   const [showInstallments, setShowInstallments] = useState(false);
-  const [selectedOffer, setSelectedOffer] = useState<OfferResult | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
   const hasBreach = breaches.length > 0;
   const canConfirm = !hasBreach || acknowledged;
@@ -103,6 +121,9 @@ export function QueuePreview({
       {selectedOffer && (
         <p data-testid="installment-draft-state">
           {t("installmentDraft", { months: selectedOffer.months })}
+          <button type="button" onClick={() => setSelectedOffer(null)}>
+            {t("payCashInstead")}
+          </button>
         </p>
       )}
       <table>
@@ -111,6 +132,11 @@ export function QueuePreview({
             <td>{t("wantsBeforeAfter")}</td>
             <td data-testid="wants-before">{money(before.byBucket.wants.committed)}</td>
             <td data-testid="wants-after">{money(after.byBucket.wants.committed)}</td>
+          </tr>
+          <tr>
+            <td>{t("installmentLoadBeforeAfter")}</td>
+            <td data-testid="installment-load-before">{money(before.installmentLoad)}</td>
+            <td data-testid="installment-load-after">{money(after.installmentLoad)}</td>
           </tr>
           <tr>
             <td>{t("freeCashBeforeAfter")}</td>
@@ -147,7 +173,14 @@ export function QueuePreview({
       <button
         type="button"
         disabled={!canConfirm}
-        onClick={() => onConfirm({ ...draft, status: "active" }, breaches, hasBreach)}
+        onClick={() =>
+          onConfirm(
+            { ...draft, status: "active" },
+            breaches,
+            hasBreach,
+            offer ? { method: "installment", offer, firstMonth } : { method: "cash" },
+          )
+        }
       >
         {t("confirm")}
       </button>
@@ -158,7 +191,7 @@ export function QueuePreview({
 
       {showInstallments && (
         <InstallmentCalculator
-          cashPrice={item.price}
+          cashPrice={cashPrice}
           annualInflation={profile.annualInflationExpectation}
           onSelect={(offer) => {
             setSelectedOffer(offer);

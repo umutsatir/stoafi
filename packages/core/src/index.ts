@@ -47,6 +47,11 @@ export { DecisionSchema, type Decision } from "../modules/decisions/schema";
 export { costInWorkHours, costPerUse, eisenhowerQuadrant } from "../modules/queue/selectors";
 export { cooldownStatus, type CooldownStatus } from "../modules/queue/cooldown";
 export { toDraftCommitment } from "../modules/queue/to-commitment";
+export {
+  activeQueueItems,
+  installmentCommitments,
+  toInstallmentCommitment,
+} from "../modules/queue/installment-purchase";
 export { scheduleQueue, type ScheduleResult } from "../modules/queue/scheduler";
 
 export {
@@ -68,6 +73,6 @@ export {
   type OfferResult,
 } from "../modules/installments/selectors";
 export { installmentLoadTimeline, capacityRemaining } from "../modules/installments/capacity";
-export { InstallmentOfferSchema } from "../modules/installments/schema";
+export { InstallmentOfferSchema, type InstallmentOfferInput } from "../modules/installments/schema";
 export { defaultGuardRules, type GuardContext, type GuardRule } from "../modules/guards/schema";
 export { evaluateGuards, type GuardBreach } from "../modules/guards/selectors";

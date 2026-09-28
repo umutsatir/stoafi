@@ -4,11 +4,14 @@ import { useTranslations } from "next-intl";
 import {
   cooldownStatus,
   scheduleQueue,
+  type Commitment,
   type Month,
   type PlanStateInput,
   type Profile,
   type QueueItem,
 } from "@stoafi/core";
+
+const NO_COMMITMENTS: Commitment[] = [];
 
 export interface QueueTimelineProps {
   items: QueueItem[];
@@ -16,6 +19,8 @@ export interface QueueTimelineProps {
   planState: PlanStateInput;
   today: string;
   startMonth: Month;
+  /** Existing commitments (e.g. installments already taken); they use up bucket room. */
+  commitments?: Commitment[];
 }
 
 export function QueueTimeline({
@@ -24,8 +29,9 @@ export function QueueTimeline({
   planState,
   today,
   startMonth,
+  commitments = NO_COMMITMENTS,
 }: QueueTimelineProps) {
-  const schedule = scheduleQueue(items, profile, planState, [], today, startMonth);
+  const schedule = scheduleQueue(items, profile, planState, commitments, today, startMonth);
   const scheduleByItemId = new Map(schedule.map((s) => [s.itemId, s.month]));
   const t = useTranslations("timeline");
 
