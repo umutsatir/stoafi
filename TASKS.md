@@ -10,7 +10,7 @@ Task id format: `T<phase>.<n>`.
 
 Goal: a working monorepo skeleton with tooling wired up, nothing product-specific yet.
 
-- [ ] **T0.1** Init pnpm workspace
+- [x] **T0.1** Init pnpm workspace
   Goal: create `pnpm-workspace.yaml`, root `package.json` (private, `@stoafi` scope), `.gitignore`, `.nvmrc`/engines field.
   Acceptance: `pnpm install` succeeds at root with zero packages; `pnpm -v` and `node -v` match declared engines.
   Depends on: –

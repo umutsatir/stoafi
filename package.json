@@ -1,0 +1,10 @@
+{
+  "name": "stoafi",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@11.22.0"
+}
