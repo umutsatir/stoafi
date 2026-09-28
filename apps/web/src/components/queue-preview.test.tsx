@@ -170,3 +170,59 @@ describe("QueuePreview card timing tip", () => {
     expect(commitment.payments[0]?.month).toBe("2026-11");
   });
 });
+
+describe("QueuePreview guard breach confirmation", () => {
+  it("blocks confirm behind an explicit 'I know' action when there is a breach", () => {
+    const onConfirm = vi.fn();
+    const expensiveItem = { ...item, price: 10000 };
+    render(
+      <QueuePreview
+        item={expensiveItem}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={0.2}
+        onConfirm={onConfirm}
+      />,
+    );
+
+    const confirmButton = screen.getByRole("button", { name: "Confirm" });
+    expect(confirmButton).toBeDisabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "I know" }));
+    expect(confirmButton).not.toBeDisabled();
+
+    fireEvent.click(confirmButton);
+    expect(onConfirm).toHaveBeenCalledTimes(1);
+    const [, breaches, guardBreachConfirmed] = onConfirm.mock.calls[0] as [
+      unknown,
+      unknown[],
+      boolean,
+    ];
+    expect(breaches.length).toBeGreaterThan(0);
+    expect(guardBreachConfirmed).toBe(true);
+  });
+
+  it("does not require confirmation when there is no breach", () => {
+    const onConfirm = vi.fn();
+    render(
+      <QueuePreview
+        item={item}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={0.2}
+        onConfirm={onConfirm}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Confirm" })).not.toBeDisabled();
+    expect(screen.queryByTestId("guard-breach-dialog")).not.toBeInTheDocument();
+  });
+});

@@ -12,6 +12,8 @@ export default function QueuePage() {
   const queueItems = useAppStore((s) => s.queueItems);
   const commitments = useAppStore((s) => s.commitments);
   const setCommitments = useAppStore((s) => s.setCommitments);
+  const decisions = useAppStore((s) => s.decisions);
+  const setDecisions = useAppStore((s) => s.setDecisions);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   if (!profile || !planState) {
@@ -67,8 +69,20 @@ export default function QueuePage() {
           income={income}
           monthlyNeeds={monthlyNeeds}
           installmentCapPct={0.2}
-          onConfirm={(activeCommitment) => {
+          onConfirm={(activeCommitment, breaches, guardBreachConfirmed) => {
             setCommitments([...commitments, activeCommitment]);
+            setDecisions([
+              ...decisions,
+              {
+                id: activeCommitment.id,
+                queueItemRef: activeCommitment.source.refId,
+                outcome: "bought",
+                timestamp: "2026-01-01T00:00:00.000Z",
+                amount: activeCommitment.payments[0]?.amount ?? 0,
+                breachedRuleIds: breaches.map((b) => b.ruleId),
+                guardBreachConfirmed,
+              },
+            ]);
             setSelectedId(null);
           }}
         />

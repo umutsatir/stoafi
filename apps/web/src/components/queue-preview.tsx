@@ -32,7 +32,11 @@ export interface QueuePreviewProps {
   /** When paying by card: checks today against the statement day for a timing tip. */
   card?: Card;
   purchaseDate?: string;
-  onConfirm: (activeCommitment: Commitment, breaches: GuardBreach[]) => void;
+  onConfirm: (
+    activeCommitment: Commitment,
+    breaches: GuardBreach[],
+    guardBreachConfirmed: boolean,
+  ) => void;
 }
 
 export function QueuePreview({
@@ -83,9 +87,11 @@ export function QueuePreview({
     ],
   );
 
-  const blocked = breaches.some((b) => b.severity === "block");
   const [showInstallments, setShowInstallments] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState<OfferResult | null>(null);
+  const [acknowledged, setAcknowledged] = useState(false);
+  const hasBreach = breaches.length > 0;
+  const canConfirm = !hasBreach || acknowledged;
 
   return (
     <div>
@@ -120,18 +126,25 @@ export function QueuePreview({
         </p>
       )}
 
-      {breaches.length > 0 && (
-        <ul data-testid="guard-breaches" style={{ color: "red" }}>
-          {breaches.map((b) => (
-            <li key={b.ruleId}>{b.ruleId}</li>
-          ))}
-        </ul>
+      {hasBreach && (
+        <div data-testid="guard-breach-dialog">
+          <ul data-testid="guard-breaches" style={{ color: "red" }}>
+            {breaches.map((b) => (
+              <li key={b.ruleId}>{b.ruleId}</li>
+            ))}
+          </ul>
+          {!acknowledged && (
+            <button type="button" onClick={() => setAcknowledged(true)}>
+              I know
+            </button>
+          )}
+        </div>
       )}
 
       <button
         type="button"
-        disabled={blocked}
-        onClick={() => onConfirm({ ...draft, status: "active" }, breaches)}
+        disabled={!canConfirm}
+        onClick={() => onConfirm({ ...draft, status: "active" }, breaches, hasBreach)}
       >
         Confirm
       </button>

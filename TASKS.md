@@ -519,10 +519,11 @@ Goal: the Next.js PWA surface implementing SPEC's four user flows, reading only 
   Acceptance: component test with a fixture profile/ledger renders all four metrics matching direct selector output.
   Depends on: T7.1, T5.6
 
-- [ ] **T7.10** Guard breach confirmation UI
+- [x] **T7.10** Guard breach confirmation UI
   Goal: when a draft breaches a guard rule, block the "confirm" action in flow 1 (T7.5) behind an explicit "I know" dialog; accepting writes `guardBreachConfirmed: true` to the decision log (T5.7).
   Acceptance: component test: a fixture draft with a guard breach shows the confirmation dialog and cannot be confirmed without the explicit action; accepting produces a decision entry with `guardBreachConfirmed: true`.
   Depends on: T7.5, T5.9
+  Note: `QueuePreview.onConfirm`'s signature grew a third arg, `guardBreachConfirmed: boolean` (true whenever any breach exists and was acknowledged) — the page builds the full `Decision` object (with `breachedRuleIds`/`guardBreachConfirmed`) from that and pushes it to the store's `decisions`. Any breach (not just `severity: "block"` ones) now gates confirm behind "I know" — previously (T7.5) only `block`-severity breaches disabled Confirm; this task's "explicit confirmation" requirement applies to every breach per SPEC ("Breaking a rule requires an explicit 'I know' confirmation").
 
 - [ ] **T7.11** Decision log screen
   Goal: lists decisions with outcome and renders `savingsSummary` (T5.8) total.
