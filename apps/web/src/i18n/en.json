@@ -308,7 +308,8 @@
       "emergency-fund-floor": "This purchase would drop your emergency fund below its target.",
       "installment-cap": "Your monthly installments would go above the cap you set.",
       "wants-limit": "This purchase would push your wants above their limit for the month.",
-      "unknown": "This purchase breaks one of your safety rules."
+      "unknown": "This purchase breaks one of your safety rules.",
+      "card-limit": "These installments would take the card past its limit."
     }
   },
   "installments": {

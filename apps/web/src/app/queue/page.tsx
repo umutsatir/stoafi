@@ -8,6 +8,7 @@ import {
   activeQueueItems,
   hourlyNetIncome,
   monthlyNeeds,
+  remainingInstallmentsByCard,
   type Commitment,
   type Decision,
   type Month,
@@ -74,6 +75,7 @@ export default function QueuePage() {
     );
   }
 
+  const remainingByCard = remainingInstallmentsByCard(queueItems, monthOf(today));
   const waitingItems = activeQueueItems(queueItems);
   const selectedItem = waitingItems.find((i) => i.id === selectedId) ?? null;
   const editingItem = waitingItems.find((i) => i.id === editingId);
@@ -318,6 +320,7 @@ export default function QueuePage() {
               monthlyNeeds={needs}
               installmentCapPct={guardThresholds.installmentCapPct}
               cards={cards}
+              remainingInstallments={remainingByCard}
               purchaseDate={today}
               suggestedMonth={suggestedMonth}
               onDecide={handleDecide}

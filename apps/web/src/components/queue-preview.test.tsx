@@ -1,6 +1,6 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import type { Profile, QueueItem } from "@stoafi/core";
+import type { Card, Profile, QueueItem } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { QueuePreview } from "./queue-preview";
 
@@ -422,5 +422,88 @@ describe("QueuePreview skip, postpone, first fitting month and card choice", () 
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
     expect(purchase.firstMonth).toBe("2026-09");
+  });
+});
+
+describe("QueuePreview card limit", () => {
+  const main: Card = {
+    id: "m",
+    label: "Bonus",
+    statementDay: 15,
+    dueDay: 5,
+    kind: "main",
+    limit: 100_00,
+  };
+  const spouse: Card = {
+    id: "s",
+    label: "Spouse",
+    statementDay: 20,
+    dueDay: 10,
+    kind: "supplementary",
+    parentId: "m",
+  };
+
+  function renderWith(cards: Card[], remaining: Record<string, number> = {}) {
+    renderWithIntl(
+      <QueuePreview
+        item={item}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={1}
+        cards={cards}
+        remainingInstallments={remaining}
+        purchaseDate="2026-09-10"
+        onConfirm={vi.fn()}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Pay with card"), {
+      target: { value: cards[cards.length - 1]?.id },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+  }
+
+  it("is fine right up to the limit, and warns one unit beyond it", () => {
+    renderWith([main], { m: 90_00 });
+    expect(screen.queryByText(/past its limit/i)).not.toBeInTheDocument();
+  });
+
+  it("warns when the installments would take the card past its limit", () => {
+    renderWith([main], { m: 95_00 });
+    expect(screen.getByTestId("guard-breaches")).toHaveTextContent(/past its limit/i);
+  });
+
+  it("counts a supplementary card against its main card's shared limit", () => {
+    renderWith([main, spouse], { m: 95_00 });
+    expect(screen.getByTestId("guard-breaches")).toHaveTextContent(/past its limit/i);
+  });
+
+  it("does not warn when there is room, or when the card has no limit entered", () => {
+    renderWith([main], {});
+    expect(screen.queryByText(/past its limit/i)).not.toBeInTheDocument();
+  });
+
+  it("does not warn about a limit for a cash purchase", () => {
+    renderWithIntl(
+      <QueuePreview
+        item={item}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={1}
+        cards={[main]}
+        remainingInstallments={{ m: 99_99 }}
+        onConfirm={vi.fn()}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "m" } });
+    expect(screen.queryByText(/past its limit/i)).not.toBeInTheDocument();
   });
 });

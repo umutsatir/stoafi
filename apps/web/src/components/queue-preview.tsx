@@ -6,6 +6,7 @@ import {
   currentAllocation,
   defaultGuardRules,
   evaluateGuards,
+  limitUsage,
   project,
   strategyRegistry,
   timingTip,
@@ -45,6 +46,8 @@ export interface QueuePreviewProps {
   /** Cards to pay with; choosing one checks the purchase date against its statement day for a timing tip. */
   cards?: PaymentCard[];
   purchaseDate?: string;
+  /** What is still to be paid on installment purchases, per card id, for the shared-limit check. */
+  remainingInstallments?: Record<string, number>;
   /**
    * The first month the scheduler finds room for this item: a month, `null` when it fits in none
    * of the horizon, or undefined when the caller has no suggestion.
@@ -71,6 +74,7 @@ export function QueuePreview({
   installmentCapPct,
   cards = [],
   purchaseDate,
+  remainingInstallments = {},
   suggestedMonth,
   onDecide,
   onConfirm,
@@ -104,6 +108,12 @@ export function QueuePreview({
   // untouched and show up as monthly load instead.
   const savingsBalanceAfterDraft = offer ? profile.savings : profile.savings - cashPrice;
 
+  // An installment bought on a card uses that card's shared limit (with its supplementary cards).
+  const mainCardId = card ? (card.kind === "supplementary" ? card.parentId : card.id) : undefined;
+  const usage = mainCardId ? limitUsage(cards, mainCardId, remainingInstallments) : null;
+  const draftOnCard = offer ? offer.payments.reduce((sum, p) => sum + p, 0) : 0;
+  const cardLimitOverBy = usage ? Math.max(0, usage.used + draftOnCard - usage.limit) : 0;
+
   const breaches = useMemo(
     () =>
       evaluateGuards(defaultGuardRules, {
@@ -114,6 +124,7 @@ export function QueuePreview({
         projectedInstallmentLoad: after.installmentLoad,
         netIncome: income,
         installmentCapPct,
+        cardLimitOverBy,
       }),
     [
       after,
@@ -122,6 +133,7 @@ export function QueuePreview({
       profile.emergencyFundTargetMonths,
       income,
       installmentCapPct,
+      cardLimitOverBy,
     ],
   );
 

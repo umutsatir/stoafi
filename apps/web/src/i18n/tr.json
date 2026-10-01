@@ -308,7 +308,8 @@
       "emergency-fund-floor": "Bu alım acil durum fonunu hedefinin altına düşürür.",
       "installment-cap": "Aylık taksitlerin belirlediğin üst sınırı aşar.",
       "wants-limit": "Bu alım bu ayki istekler limitini aşar.",
-      "unknown": "Bu alım güvenlik kurallarından birini aşıyor."
+      "unknown": "Bu alım güvenlik kurallarından birini aşıyor.",
+      "card-limit": "Bu taksitler kartı limitinin üstüne çıkarır."
     }
   },
   "installments": {
