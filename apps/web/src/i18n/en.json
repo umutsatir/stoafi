@@ -12,7 +12,7 @@
     "obligations": "Recurring expenses",
     "living": "Living costs",
     "installments": "Installments",
-    "left": "Left after all of these",
+    "left": "Left this month",
     "overspent": "Your monthly costs are above your income.",
     "fundLow": "Your emergency fund is below your target.",
     "emergencyFund": "Emergency fund",
@@ -28,7 +28,37 @@
     "openQueue": "Open the queue",
     "cashFlowTitle": "Next 12 months",
     "month": "Month",
-    "setAside": "Savings goals"
+    "setAside": "Savings goals",
+    "greeting": "Here is how {month} looks.",
+    "overspentAction": "Review income and expenses",
+    "fundLowAction": "Add to the fund",
+    "monthProgress": "How far into the month you are",
+    "upcoming": "Coming up in 14 days",
+    "upcomingNone": "Nothing due in the next two weeks.",
+    "openCalendar": "Open the calendar",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "savingTitle": "Saving this month",
+    "savingBar": "Share of this month's saving already set aside",
+    "savingMore": "Set aside {more} more. You have put in {added} so far.",
+    "savingDone": "You have set aside {added}. Your plan is met.",
+    "openSavings": "Open savings",
+    "fundRing": "Emergency fund progress",
+    "editTarget": "Edit the target",
+    "healthTitle": "Financial health",
+    "openHealth": "See the details",
+    "health": {
+      "good": "Good",
+      "watch": "Watch",
+      "risk": "At risk"
+    },
+    "healthAllGood": "Everything is on track.",
+    "healthWhy": {
+      "build-emergency-fund": "Your emergency fund is below target.",
+      "reduce-installments": "Installments take too much of your income.",
+      "start-saving": "Little of your income is being saved.",
+      "extend-runway": "Your savings would not last many months."
+    }
   },
   "nav": {
     "ariaLabel": "Main",
@@ -54,7 +84,8 @@
       "status": "Status",
       "learn": "Learn",
       "you": "You"
-    }
+    },
+    "calendar": "Calendar"
   },
   "incomeExpenses": {
     "title": "Income & Expenses",
@@ -876,6 +907,26 @@
       "deleteShort": "Delete",
       "deleteHolding": "Delete {name}",
       "deleteHoldingShort": "Delete this investment"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "previous": "Previous month",
+    "next": "Next month",
+    "moneyIn": "Money in this month",
+    "moneyOut": "Bills and expenses this month",
+    "grid": "Days of the month",
+    "list": "This month, day by day",
+    "none": "Nothing is due this month.",
+    "kind": {
+      "income": "Pay day",
+      "expense": "Due",
+      "card": "Card due"
+    },
+    "empty": {
+      "title": "See your month on a calendar",
+      "text": "Add your salary, bills and cards with their days and they appear here.",
+      "action": "Add income and expenses"
     }
   }
 }

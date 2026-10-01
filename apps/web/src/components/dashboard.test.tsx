@@ -1,6 +1,6 @@
 import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { Profile, QueueItem, SinkingFund } from "@stoafi/core";
+import type { Card, Profile, QueueItem, SinkingFund } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { Dashboard } from "./dashboard";
 
@@ -188,5 +188,67 @@ describe("Dashboard", () => {
     const rows = within(screen.getByTestId("cash-flow-chart")).getAllByRole("row");
     expect(rows[1]).toHaveTextContent("₺5,000.00"); // September: nothing set aside yet
     expect(rows[2]).toHaveTextContent("₺4,000.00"); // October: 1,000.00 set aside
+  });
+
+  describe("what is coming up", () => {
+    const withDays: Profile = {
+      ...profile,
+      incomes: [{ label: "Job", monthly: 800_000, payDay: 17 }],
+      fixedExpenses: [
+        { label: "Rent", monthly: 200_000, bucket: "needs", dueDay: 20 },
+        { label: "Far bill", monthly: 5_000, bucket: "needs", dueDay: 3 },
+      ],
+    };
+    const bonus: Card = { id: "c", label: "Bonus", statementDay: 1, dueDay: 16 };
+
+    it("lists pay days, bills and card due dates in the next two weeks, soonest first", () => {
+      renderDashboard({ profile: withDays, cards: [bonus] });
+      const list = within(screen.getByTestId("upcoming"));
+      const items = list.getAllByRole("listitem").map((li) => li.textContent ?? "");
+      expect(items).toHaveLength(3);
+      expect(items[0]).toContain("Bonus");
+      expect(items[1]).toContain("Job");
+      expect(items[1]).toContain("+₺8,000.00");
+      expect(items[2]).toContain("Rent");
+      expect(list.queryByText("Far bill")).not.toBeInTheDocument();
+    });
+
+    it("says tomorrow and today instead of a date", () => {
+      renderDashboard({ profile: withDays, cards: [bonus], today: "2026-09-16" });
+      expect(within(screen.getByTestId("event-card-c")).getByText("Today")).toBeInTheDocument();
+      expect(
+        within(screen.getByTestId("event-income-0")).getByText("Tomorrow"),
+      ).toBeInTheDocument();
+    });
+
+    it("says so when nothing is due", () => {
+      renderDashboard({ profile: { ...profile, fixedExpenses: [], incomes: [] } });
+      expect(screen.getByText("Nothing due in the next two weeks.")).toBeInTheDocument();
+    });
+  });
+
+  it("shows what is still to set aside this month and links to the savings page", () => {
+    renderDashboard();
+    expect(screen.getByTestId("saving-sentence")).toHaveTextContent(/Set aside .* more/);
+    expect(
+      within(screen.getByTestId("saving-widget")).getByRole("link", { name: "Open savings" }),
+    ).toHaveAttribute("href", "/sinking-funds");
+  });
+
+  it("gives the overall health in a word, with the reason", () => {
+    renderDashboard();
+    expect(screen.getByTestId("home-health")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "See the details" })).toHaveAttribute(
+      "href",
+      "/health",
+    );
+  });
+
+  it("offers a fix right in each warning", () => {
+    renderDashboard({ profile: { ...profile, savings: 0 } });
+    expect(screen.getByRole("link", { name: "Add to the fund" })).toHaveAttribute(
+      "href",
+      "/sinking-funds",
+    );
   });
 });

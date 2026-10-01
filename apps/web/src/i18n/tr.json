@@ -12,7 +12,7 @@
     "obligations": "Düzenli giderler",
     "living": "Yaşam giderleri",
     "installments": "Taksitler",
-    "left": "Hepsinden sonra kalan",
+    "left": "Bu ay kalan",
     "overspent": "Aylık giderlerin gelirinin üstünde.",
     "fundLow": "Acil durum fonun hedefinin altında.",
     "emergencyFund": "Acil durum fonu",
@@ -28,7 +28,37 @@
     "openQueue": "Kuyruğu aç",
     "cashFlowTitle": "Önümüzdeki 12 ay",
     "month": "Ay",
-    "setAside": "Birikim hedefleri"
+    "setAside": "Birikim hedefleri",
+    "greeting": "{month} nasıl görünüyor, bir bak.",
+    "overspentAction": "Gelir ve giderleri gözden geçir",
+    "fundLowAction": "Fona ekle",
+    "monthProgress": "Ayın ne kadarı geçti",
+    "upcoming": "14 gün içinde gelenler",
+    "upcomingNone": "Önümüzdeki iki hafta vadesi gelen bir şey yok.",
+    "openCalendar": "Takvimi aç",
+    "today": "Bugün",
+    "tomorrow": "Yarın",
+    "savingTitle": "Bu ayki birikim",
+    "savingBar": "Bu ayki birikimin ayrılan kısmı",
+    "savingMore": "{more} daha ayır. Şimdiye kadar {added} koydun.",
+    "savingDone": "{added} ayırdın. Planın tamam.",
+    "openSavings": "Birikimi aç",
+    "fundRing": "Acil durum fonu ilerlemesi",
+    "editTarget": "Hedefi düzenle",
+    "healthTitle": "Mali sağlık",
+    "openHealth": "Ayrıntıları gör",
+    "health": {
+      "good": "İyi",
+      "watch": "Dikkat",
+      "risk": "Risk"
+    },
+    "healthAllGood": "Her şey yolunda.",
+    "healthWhy": {
+      "build-emergency-fund": "Acil durum fonun hedefin altında.",
+      "reduce-installments": "Taksitler gelirinden çok fazla pay alıyor.",
+      "start-saving": "Gelirinin az bir kısmı birikiyor.",
+      "extend-runway": "Birikimin birkaç ay dayanmaz."
+    }
   },
   "nav": {
     "ariaLabel": "Ana",
@@ -54,7 +84,8 @@
       "status": "Durum",
       "learn": "Öğren",
       "you": "Sen"
-    }
+    },
+    "calendar": "Takvim"
   },
   "incomeExpenses": {
     "title": "Gelir ve Giderler",
@@ -876,6 +907,26 @@
       "deleteShort": "Sil",
       "deleteHolding": "{name} yatırımını sil",
       "deleteHoldingShort": "Bu yatırımı sil"
+    }
+  },
+  "calendar": {
+    "title": "Takvim",
+    "previous": "Önceki ay",
+    "next": "Sonraki ay",
+    "moneyIn": "Bu ay gelen para",
+    "moneyOut": "Bu ayki fatura ve giderler",
+    "grid": "Ayın günleri",
+    "list": "Bu ay, gün gün",
+    "none": "Bu ay vadesi gelen bir şey yok.",
+    "kind": {
+      "income": "Maaş günü",
+      "expense": "Vade",
+      "card": "Kart son ödeme"
+    },
+    "empty": {
+      "title": "Ayını takvimde gör",
+      "text": "Maaşını, faturalarını ve kartlarını günleriyle ekle, burada görünsünler.",
+      "action": "Gelir ve gider ekle"
     }
   }
 }

@@ -3,6 +3,7 @@
 import {
   ArrowLeftRight,
   BookOpen,
+  CalendarDays,
   CreditCard,
   Ellipsis,
   HeartPulse,
@@ -30,7 +31,13 @@ interface Route {
 
 /** Sidebar order and grouping (desktop). */
 const GROUPS: { key: string; routes: Route[] }[] = [
-  { key: "overview", routes: [{ href: "/", key: "home", icon: LayoutDashboard }] },
+  {
+    key: "overview",
+    routes: [
+      { href: "/", key: "home", icon: LayoutDashboard },
+      { href: "/calendar", key: "calendar", icon: CalendarDays },
+    ],
+  },
   {
     key: "money",
     routes: [

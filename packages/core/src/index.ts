@@ -208,3 +208,12 @@ export {
   type PortfolioTotals,
   type TradeResult,
 } from "../modules/investments/selectors";
+
+export {
+  dueDateInMonth,
+  eventsInMonth,
+  upcomingEvents,
+  type CalendarEvent,
+  type CalendarKind,
+  type DayRule,
+} from "../kernel/calendar";
