@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cardColors, supplementariesOf, type Card } from "@stoafi/core";
 import { BankCard } from "./bank-card";
@@ -37,10 +38,16 @@ export function CardStack({ main, cards, onOpen }: CardStackProps) {
               color: colors.text,
               zIndex: 20 - index,
             }}
-            className="-mt-8 flex h-16 items-end justify-between rounded-b-2xl px-5 pb-2 text-left text-sm font-medium shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group -mt-8 flex h-16 cursor-pointer items-end justify-between rounded-b-2xl px-5 pb-2 text-left text-sm font-medium shadow-sm transition-all duration-200 hover:translate-y-1.5 hover:shadow-lg hover:brightness-110 focus-visible:translate-y-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            <span className="truncate">{extra.label}</span>
-            <span className="text-xs opacity-90">{t("supplementaryBadge")}</span>
+            <span className="truncate group-hover:underline">{extra.label}</span>
+            <span className="flex items-center gap-1 text-xs opacity-90">
+              {t("supplementaryBadge")}
+              <ChevronRight
+                className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </span>
           </button>
         );
       })}

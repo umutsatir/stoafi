@@ -66,7 +66,7 @@ export function BankCard({ card, onClick, ariaLabel, selected = false, className
   const classes = cn(
     "relative flex aspect-[1.586] w-full max-w-sm flex-col rounded-2xl p-5 text-left shadow-md transition-transform",
     onClick &&
-      "hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
     selected && "ring-2 ring-ring ring-offset-2",
     className,
   );

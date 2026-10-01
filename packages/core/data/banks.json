@@ -99,6 +99,78 @@
       "text": "#ffffff"
     },
     {
+      "id": "chase",
+      "name": "Chase",
+      "country": "US",
+      "from": "#117aca",
+      "to": "#0a4a7a",
+      "text": "#ffffff"
+    },
+    {
+      "id": "bank-of-america",
+      "name": "Bank of America",
+      "country": "US",
+      "from": "#e31837",
+      "to": "#a1001a",
+      "text": "#ffffff"
+    },
+    {
+      "id": "wells-fargo",
+      "name": "Wells Fargo",
+      "country": "US",
+      "from": "#d71e28",
+      "to": "#8f1018",
+      "text": "#ffffff"
+    },
+    {
+      "id": "citi",
+      "name": "Citi",
+      "country": "US",
+      "from": "#056dae",
+      "to": "#03406a",
+      "text": "#ffffff"
+    },
+    {
+      "id": "capital-one",
+      "name": "Capital One",
+      "country": "US",
+      "from": "#004977",
+      "to": "#002a47",
+      "text": "#ffffff"
+    },
+    {
+      "id": "american-express",
+      "name": "American Express",
+      "country": "US",
+      "from": "#016fd0",
+      "to": "#0a3f7a",
+      "text": "#ffffff"
+    },
+    {
+      "id": "discover",
+      "name": "Discover",
+      "country": "US",
+      "from": "#ff8a2a",
+      "to": "#f26a10",
+      "text": "#1a0c00"
+    },
+    {
+      "id": "us-bank",
+      "name": "U.S. Bank",
+      "country": "US",
+      "from": "#0c2074",
+      "to": "#06133f",
+      "text": "#ffffff"
+    },
+    {
+      "id": "apple-card",
+      "name": "Apple Card",
+      "country": "US",
+      "from": "#f5f5f7",
+      "to": "#d1d1d6",
+      "text": "#1d1d1f"
+    },
+    {
       "id": "other",
       "name": "Other",
       "country": "ANY",
