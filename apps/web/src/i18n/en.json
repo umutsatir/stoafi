@@ -296,5 +296,10 @@
     "installmentCap": "Installment cap (% of net income)",
     "installmentCapHint": "When your monthly installments add up to more than this share of your income, Stoafi warns you and asks you to confirm before you commit.",
     "outOfRange": "Enter a percent between 0 and 100."
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "undo": "Undo"
   }
 }
