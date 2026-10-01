@@ -1,8 +1,10 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { toast } from "sonner";
 import { beforeEach, describe, expect, it } from "vitest";
 import { installmentCommitments, savingsSummary, type Profile, type QueueItem } from "@stoafi/core";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
+import { Toaster } from "@/components/ui/toaster";
 import { renderWithIntl } from "@/test-utils";
 import QueuePage from "./page";
 
@@ -29,6 +31,7 @@ const item: QueueItem = {
 };
 
 beforeEach(async () => {
+  toast.dismiss();
   await db.queue.clear();
   await db.decisions.clear();
   useAppStore.setState({
@@ -196,5 +199,63 @@ describe("QueuePage purchase flow", () => {
         /installments would go above the cap/i,
       );
     });
+  });
+});
+
+describe("QueuePage undo", () => {
+  it("takes back a skip: the item returns and the decision disappears", async () => {
+    renderWithIntl(
+      <>
+        <QueuePage />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+    expect(useAppStore.getState().queueItems).toEqual([]);
+    expect(useAppStore.getState().decisions).toHaveLength(1);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["headphones"]);
+    expect(useAppStore.getState().decisions).toEqual([]);
+    await waitFor(async () => expect(await db.decisions.count()).toBe(0));
+    await waitFor(async () => expect(await db.queue.count()).toBe(1));
+  });
+
+  it("takes back an installment purchase: the item is a waiting item again", async () => {
+    renderWithIntl(
+      <>
+        <QueuePage />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(useAppStore.getState().queueItems[0]?.installmentPurchase).toBeDefined();
+
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().queueItems[0]?.installmentPurchase).toBeUndefined();
+    expect(useAppStore.getState().decisions).toEqual([]);
+    await waitFor(async () => {
+      const row = (await db.queue.get("headphones")) as QueueItem | undefined;
+      expect(row?.installmentPurchase).toBeUndefined();
+    });
+  });
+
+  it("takes back a postponement: the decision goes, the item stays", async () => {
+    renderWithIntl(
+      <>
+        <QueuePage />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Postpone" }));
+    expect(useAppStore.getState().decisions).toHaveLength(1);
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().decisions).toEqual([]);
+    expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["headphones"]);
   });
 });

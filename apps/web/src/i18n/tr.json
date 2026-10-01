@@ -719,7 +719,13 @@
     "cancel": "Vazgeç",
     "undo": "Geri al",
     "saved": "Kaydedildi",
-    "deletedItem": "“{name}” silindi"
+    "deletedItem": "“{name}” silindi",
+    "decisionRecorded": "“{name}”: {outcome}",
+    "outcome": {
+      "bought": "alındı olarak işaretlendi",
+      "postponed": "ertelendi",
+      "skipped": "vazgeçildi"
+    }
   },
   "savings": {
     "title": "Birikim",

@@ -719,7 +719,13 @@
     "cancel": "Cancel",
     "undo": "Undo",
     "saved": "Saved",
-    "deletedItem": "Deleted “{name}”"
+    "deletedItem": "Deleted “{name}”",
+    "decisionRecorded": "“{name}”: {outcome}",
+    "outcome": {
+      "bought": "marked as bought",
+      "postponed": "postponed",
+      "skipped": "skipped"
+    }
   },
   "savings": {
     "title": "Savings",

@@ -137,6 +137,18 @@ export default function QueuePage() {
     });
   }
 
+  /** Takes back a decision: removes it from the log and puts the item back as it was. */
+  function undoDecision(decision: Decision, original: QueueItem, wasRemoved: boolean) {
+    const current = useAppStore.getState();
+    current.setDecisions(current.decisions.filter((d) => d.id !== decision.id));
+    void db.decisions.delete(decision.id).catch(logFailure("remove the decision"));
+    const items = wasRemoved
+      ? [...current.queueItems, original]
+      : current.queueItems.map((i) => (i.id === original.id ? original : i));
+    current.setQueueItems(items);
+    void saveQueueItem(db, original).catch(logFailure("restore the queue item"));
+  }
+
   function handleReorder(next: QueueItem[]) {
     // `next` holds only the waiting items; bought-in-installments items keep their place in the store.
     setQueueItems([...next, ...queueItems.filter((i) => i.installmentPurchase)]);
@@ -168,6 +180,11 @@ export default function QueuePage() {
     if (purchase.method === "cash") {
       // Cash is paid from the account by the user: it is a decision only, not a monthly commitment.
       removeItem(selectedItem);
+      notifyUndo(
+        tc("decisionRecorded", { name: selectedItem.name, outcome: tc("outcome.bought") }),
+        tc("undo"),
+        () => undoDecision(decision, selectedItem, true),
+      );
     } else {
       // Installments become an expense: the item stays, flagged, and its payments are derived from it.
       const bought: QueueItem = {
@@ -180,6 +197,11 @@ export default function QueuePage() {
       };
       setQueueItems(queueItems.map((i) => (i.id === bought.id ? bought : i)));
       void saveQueueItem(db, bought).catch(logFailure("save the installment purchase"));
+      notifyUndo(
+        tc("decisionRecorded", { name: selectedItem.name, outcome: tc("outcome.bought") }),
+        tc("undo"),
+        () => undoDecision(decision, selectedItem, false),
+      );
     }
     setSelectedId(null);
   }
@@ -200,6 +222,11 @@ export default function QueuePage() {
       logFailure("save the decision"),
     );
     if (outcome === "skipped") removeItem(selectedItem);
+    notifyUndo(
+      tc("decisionRecorded", { name: selectedItem.name, outcome: tc(`outcome.${outcome}`) }),
+      tc("undo"),
+      () => undoDecision(decision, selectedItem, outcome === "skipped"),
+    );
     setSelectedId(null);
   }
 
