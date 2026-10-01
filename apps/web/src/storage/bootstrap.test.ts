@@ -88,4 +88,26 @@ describe("loadAppState", () => {
     expect(state.settings).toEqual({ locale: "tr", currency: "TRY" });
     db.close();
   });
+
+  it("uses a 20% installment cap until the user changes it", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    expect((await loadAppState(db)).guardThresholds).toEqual({ installmentCapPct: 0.2 });
+    db.close();
+  });
+
+  it("loads a saved installment cap", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    await db.open();
+    await db.guards.put({ id: "singleton", data: { installmentCapPct: 0.1 } });
+    expect((await loadAppState(db)).guardThresholds).toEqual({ installmentCapPct: 0.1 });
+    db.close();
+  });
+
+  it("falls back to the default cap when the stored one is out of range", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    await db.open();
+    await db.guards.put({ id: "singleton", data: { installmentCapPct: 7 } });
+    expect((await loadAppState(db)).guardThresholds).toEqual({ installmentCapPct: 0.2 });
+    db.close();
+  });
 });

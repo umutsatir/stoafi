@@ -1,6 +1,7 @@
 import {
   CardSchema,
   DecisionSchema,
+  GuardThresholdsSchema,
   PlanStateSchema,
   ProfileSchema,
   QueueItemSchema,
@@ -10,6 +11,7 @@ import {
   defaultSettings,
   type Card,
   type Decision,
+  type GuardThresholds,
   type PlanStateInput,
   type Profile,
   type QueueItem,
@@ -27,6 +29,7 @@ export interface LoadedState {
   cards: Card[];
   decisions: Decision[];
   settings: Settings;
+  guardThresholds: GuardThresholds;
 }
 
 /** Runs one loader; a row that no longer validates is reported and skipped, not fatal. */
@@ -45,7 +48,7 @@ export async function loadAppState(
   /** The browser's language (`navigator.language`), used only when nothing is saved yet. */
   language?: string,
 ): Promise<LoadedState> {
-  const [profile, planState, queueItems, sinkingFunds, cards, decisions, settings] =
+  const [profile, planState, queueItems, sinkingFunds, cards, decisions, settings, thresholds] =
     await Promise.all([
       safely("profile", () => getSingleton(db, "profile", ProfileSchema), undefined),
       safely("plan", () => getSingleton(db, "plan", PlanStateSchema), undefined),
@@ -54,6 +57,11 @@ export async function loadAppState(
       safely("cards", () => listItems(db, "cards", CardSchema), []),
       safely("decisions", () => listItems(db, "decisions", DecisionSchema), []),
       safely("settings", () => getSingleton(db, "settings", SettingsSchema), undefined),
+      safely(
+        "guard thresholds",
+        () => getSingleton(db, "guards", GuardThresholdsSchema),
+        undefined,
+      ),
     ]);
 
   return {
@@ -64,5 +72,6 @@ export async function loadAppState(
     cards,
     decisions,
     settings: settings ?? defaultSettings(language),
+    guardThresholds: thresholds ?? GuardThresholdsSchema.parse({}),
   };
 }

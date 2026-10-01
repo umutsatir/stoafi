@@ -38,6 +38,7 @@ export default function QueuePage() {
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const currency = useAppStore((s) => s.currency);
   const cards = useAppStore((s) => s.cards);
+  const guardThresholds = useAppStore((s) => s.guardThresholds);
   const commitments = useLedger();
   const today = useAppStore((s) => s.today);
   const decisions = useAppStore((s) => s.decisions);
@@ -198,7 +199,7 @@ export default function QueuePage() {
           month={monthOf(today)}
           income={income}
           monthlyNeeds={needs}
-          installmentCapPct={0.2}
+          installmentCapPct={guardThresholds.installmentCapPct}
           cards={cards}
           purchaseDate={today}
           suggestedMonth={suggestedMonth}

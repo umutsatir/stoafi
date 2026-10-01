@@ -272,5 +272,10 @@
     "overdue": "{month} ayından beri gecikmiş. {amount} eksik.",
     "edit": "{name} düzenle",
     "delete": "{name} sil"
+  },
+  "guardSettings": {
+    "installmentCap": "Taksit üst sınırı (net gelirin %'si)",
+    "installmentCapHint": "Aylık taksitlerin toplamı gelirinin bu oranını aşınca Stoafi seni uyarır ve devam etmeden önce onay ister.",
+    "outOfRange": "0 ile 100 arasında bir yüzde gir."
   }
 }

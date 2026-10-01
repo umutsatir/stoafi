@@ -52,7 +52,7 @@ export {
   type StrategyComparison,
 } from "../modules/plan/selectors";
 export type { Strategy, Insight } from "../strategies/types";
-export { GuardThresholdsSchema } from "../modules/guards/schema";
+export { GuardThresholdsSchema, type GuardThresholds } from "../modules/guards/schema";
 export { QueueItemSchema, type QueueItem } from "../modules/queue/schema";
 export { SinkingFundSchema, type SinkingFund } from "../modules/sinking-funds/schema";
 export { CardSchema, type Card } from "../modules/cards/schema";

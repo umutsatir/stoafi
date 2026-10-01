@@ -37,6 +37,7 @@ beforeEach(async () => {
     queueItems: [item],
     decisions: [],
     cards: [],
+    guardThresholds: { installmentCapPct: 0.2 },
     today: "2026-09-15",
     hydrated: true,
   });
@@ -169,5 +170,27 @@ describe("QueuePage purchase flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     expect(screen.getByLabelText("Pay with card")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Visa" })).toBeInTheDocument();
+  });
+
+  describe("installment cap from settings", () => {
+    function pickThreeMonthOffer() {
+      fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+      fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+      fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    }
+
+    it("does not flag a small installment under the default 20% cap", () => {
+      renderWithIntl(<QueuePage />);
+      pickThreeMonthOffer();
+      expect(screen.queryByText("installment-cap")).not.toBeInTheDocument();
+    });
+
+    it("flags the same installment once the cap is lowered in settings", () => {
+      // 1,000.00 a month against an income of 100,000.00: about 1%
+      useAppStore.setState({ guardThresholds: { installmentCapPct: 0.005 } });
+      renderWithIntl(<QueuePage />);
+      pickThreeMonthOffer();
+      expect(screen.getByTestId("guard-breaches")).toHaveTextContent("installment-cap");
+    });
   });
 });

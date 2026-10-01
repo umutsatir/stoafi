@@ -762,10 +762,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T10.5
   Note: cards are saved and deleted through `storage/card-repo.ts` (validated against `CardSchema`); the add form now trims the name and refuses an empty one with a message, and the id comes from an injectable `createId` so tests are deterministic. Deleting a card does not touch past decisions (they never referenced one).
 
-- [ ] **T10.8** Editable installment cap
+- [x] **T10.8** Editable installment cap
   Goal: the installment cap is read from `GuardThresholds` (saved in Dexie) and editable in Settings; the queue page uses it instead of the literal 0.2.
   Acceptance: tests: changing the cap to 10% makes an installment that breached nothing at 20% raise the `installment-cap` breach; the value survives reload.
   Depends on: T10.2
+  Note: the cap is stored in the `guards` table (already in backups) as `GuardThresholds`; a missing or out-of-range stored value falls back to the 20% default instead of crashing startup. The Settings field accepts 0 to 100% and refuses more with a message rather than saving it. This does not settle the open question about the default value; 20% stays the default and is now one setting away from changing.
 
 - [ ] **T10.9** Release hygiene
   Goal: core branch coverage back above 90% with a coverage threshold enforced in `vitest.config.ts`; CI also builds the web app; README rewritten (what it is, features, run, test, deploy, data stays on device); `today` refreshes when the app becomes visible on a new day.

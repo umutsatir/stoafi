@@ -6,6 +6,7 @@ import {
   type Commitment,
   type Card,
   type Decision,
+  type GuardThresholds,
   type Minor,
   type Month,
   type PlanStateInput,
@@ -27,6 +28,7 @@ export interface AppState {
   decisions: Decision[];
   locale: Locale;
   currency: string;
+  guardThresholds: GuardThresholds;
   /** Local date (YYYY-MM-DD) set at the app boundary; core never reads the clock. */
   today: string;
   /** False until the first load from Dexie has finished. */
@@ -41,6 +43,7 @@ export interface AppState {
   setDecisions: (decisions: Decision[]) => void;
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: string) => void;
+  setGuardThresholds: (thresholds: GuardThresholds) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -52,6 +55,7 @@ export const useAppStore = create<AppState>((set) => ({
   decisions: [],
   locale: "en",
   currency: "TRY",
+  guardThresholds: { installmentCapPct: 0.2 },
   today: "1970-01-01",
   hydrated: false,
 
@@ -65,6 +69,7 @@ export const useAppStore = create<AppState>((set) => ({
       decisions: loaded.decisions,
       locale: loaded.settings.locale,
       currency: loaded.settings.currency,
+      guardThresholds: loaded.guardThresholds,
       today,
       hydrated: true,
     }),
@@ -76,6 +81,7 @@ export const useAppStore = create<AppState>((set) => ({
   setDecisions: (decisions) => set({ decisions }),
   setLocale: (locale) => set({ locale }),
   setCurrency: (currency) => set({ currency }),
+  setGuardThresholds: (guardThresholds) => set({ guardThresholds }),
 }));
 
 /**
