@@ -7,6 +7,7 @@ import { localIsoDate } from "@/lib/clock";
 import { loadAppState } from "@/storage/bootstrap";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
+import { LockGate } from "@/components/lock-gate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { applyTheme } from "@/lib/theme";
 import { useSnapshotRecorder } from "@/lib/use-snapshot-recorder";
@@ -24,6 +25,9 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
   const theme = useAppStore((s) => s.theme);
   const readLessons = useAppStore((s) => s.readLessons);
   const demo = useAppStore((s) => s.demo);
+  const hideAmounts = useAppStore((s) => s.hideAmounts);
+  const lock = useAppStore((s) => s.lock);
+  const lastBackup = useAppStore((s) => s.lastBackup);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,8 +49,11 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
       theme,
       readLessons,
       ...(demo ? { demo } : {}),
+      ...(hideAmounts ? { hideAmounts } : {}),
+      ...(lock ? { lock } : {}),
+      ...(lastBackup ? { lastBackup } : {}),
     }).catch((error) => console.error("Could not save settings", error));
-  }, [hydrated, locale, currency, theme, readLessons, demo]);
+  }, [hydrated, locale, currency, theme, readLessons, demo, hideAmounts, lock, lastBackup]);
 
   // Follow the saved theme, and the system's while the user has not picked one.
   useEffect(() => {
@@ -71,7 +78,7 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
     };
   }, [hydrated, setToday]);
 
-  if (hydrated) return <>{children}</>;
+  if (hydrated) return <LockGate>{children}</LockGate>;
   return (
     <div role="status" aria-label={t("loading")} className="flex flex-col gap-4">
       <Skeleton className="h-9 w-56" />

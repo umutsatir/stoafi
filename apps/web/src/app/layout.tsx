@@ -5,6 +5,7 @@ import { IntlProvider } from "@/components/intl-provider";
 import { Nav } from "@/components/nav";
 import { PageTransition } from "@/components/page-transition";
 import { Toaster } from "@/components/ui/toaster";
+import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
@@ -37,6 +38,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {process.env.NODE_ENV === "production" && (
+          <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
+        )}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">

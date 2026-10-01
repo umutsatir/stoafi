@@ -8,8 +8,12 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { daysSinceBackup } from "@/lib/backup-reminder";
 
 export interface SettingsPanelProps {
+  /** YYYY-MM-DD of the last backup, if any, and today, to say how long ago it was. */
+  lastBackup?: string | null;
+  today?: string;
   onExport: () => Promise<string>;
   onImport: (json: string) => Promise<ImportResult>;
   /** Injected for testability; defaults to a real file download. */
@@ -27,6 +31,8 @@ function defaultDownload(json: string) {
 }
 
 export function SettingsPanel({
+  lastBackup = null,
+  today,
   onExport,
   onImport,
   downloadJson = defaultDownload,
@@ -35,6 +41,7 @@ export function SettingsPanel({
   /** A chosen backup file waits here until the user confirms replacing their data. */
   const [pendingImport, setPendingImport] = useState<string | null>(null);
   const t = useTranslations("settings");
+  const since = today ? daysSinceBackup(lastBackup, today) : null;
 
   async function handleExport() {
     const json = await onExport();
@@ -58,6 +65,14 @@ export function SettingsPanel({
   return (
     <Card>
       <CardContent className="flex flex-col gap-5 pt-6">
+        <p className="text-sm text-muted-foreground" data-testid="last-backup">
+          {since === null
+            ? t("lastBackupNever")
+            : since === 0
+              ? t("lastBackupToday")
+              : t("lastBackupDays", { days: since })}
+        </p>
+
         <div className="flex flex-wrap items-center gap-3">
           <Button type="button" variant="outline" onClick={() => void handleExport()}>
             <Download className="h-4 w-4" />

@@ -1,11 +1,12 @@
 "use client";
 
-import { Database, Info, Settings2, ShieldCheck, Sparkles } from "lucide-react";
+import { Database, EyeOff, Info, Settings2, ShieldCheck, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GuardThresholdsSchema } from "@stoafi/core";
 import { AiExportPanel } from "@/components/ai-export-panel";
 import { GuardSettings } from "@/components/guard-settings";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { PrivacySettings } from "@/components/privacy-settings";
 import { SettingsPanel } from "@/components/settings-panel";
 import { SettingsSection } from "@/components/settings-section";
 import { Page } from "@/components/ui/page";
@@ -32,6 +33,8 @@ export default function SettingsPage() {
   const cards = useAppStore((s) => s.cards);
   const decisions = useAppStore((s) => s.decisions);
   const today = useAppStore((s) => s.today);
+  const lastBackup = useAppStore((s) => s.lastBackup);
+  const setLastBackup = useAppStore((s) => s.setLastBackup);
   const locale = useAppStore((s) => s.locale) as Locale;
   const ledger = useLedger();
   const t = useTranslations("settings");
@@ -66,13 +69,29 @@ export default function SettingsPage() {
       </SettingsSection>
 
       <SettingsSection
+        title={t("sections.privacy")}
+        description={t("sections.privacyHint")}
+        icon={EyeOff}
+        index={2}
+        testId="privacy-section"
+      >
+        <PrivacySettings />
+      </SettingsSection>
+
+      <SettingsSection
         title={t("sections.data")}
         description={t("sections.dataHint")}
         icon={Database}
         index={2}
       >
         <SettingsPanel
-          onExport={() => exportToJson(db, new Date().toISOString())}
+          lastBackup={lastBackup}
+          today={today}
+          onExport={async () => {
+            const json = await exportToJson(db, new Date().toISOString());
+            setLastBackup(today);
+            return json;
+          }}
           onImport={async (json) => {
             const result = await importFromJson(db, json);
             // The store mirrors Dexie, so an imported backup must be loaded back in.

@@ -6,6 +6,8 @@ import {
   CalendarDays,
   CreditCard,
   Ellipsis,
+  Eye,
+  EyeOff,
   Search,
   HeartPulse,
   LayoutDashboard,
@@ -23,6 +25,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/command-palette";
+import { useAppStore } from "@/store";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 /** The key combination that opens the palette, shown as a hint; Ctrl works too. */
@@ -90,9 +93,12 @@ export function Nav() {
   const t = useTranslations("nav");
   const tApp = useTranslations("app");
   const tPalette = useTranslations("palette");
+  const tPrivacy = useTranslations("privacy");
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const hideAmounts = useAppStore((s) => s.hideAmounts);
+  const setHideAmounts = useAppStore((s) => s.setHideAmounts);
   const moreActive = MORE_ROUTES.some((r) => isActive(pathname, r.href));
 
   useEffect(() => {
@@ -112,7 +118,23 @@ export function Nav() {
         aria-label={t("ariaLabel")}
         className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border bg-card px-3 py-5 md:flex"
       >
-        <div className="px-3 text-lg font-semibold tracking-tight">{tApp("name")}</div>
+        <div className="flex items-center justify-between px-3">
+          <span className="text-lg font-semibold tracking-tight">{tApp("name")}</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={hideAmounts}
+            aria-label={tPrivacy("hideToggle")}
+            onClick={() => setHideAmounts(!hideAmounts)}
+            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {hideAmounts ? (
+              <EyeOff className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Eye className="h-4 w-4" aria-hidden="true" />
+            )}
+          </button>
+        </div>
         <button
           type="button"
           onClick={() => setPaletteOpen(true)}

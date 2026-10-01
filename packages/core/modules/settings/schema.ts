@@ -15,6 +15,15 @@ export const SettingsSchema = z.object({
   readLessons: z.array(z.string()).optional(),
   /** True while the app holds sample data from the demo, so a banner can offer to clear it. */
   demo: z.boolean().optional(),
+  /** Show "••••" instead of amounts, for using the app where others can see the screen. */
+  hideAmounts: z.boolean().optional(),
+  /** YYYY-MM-DD of the last time a backup file was downloaded. */
+  lastBackup: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  /** A PIN that covers the app: a random salt and the PBKDF2 hash of the PIN, never the PIN itself. */
+  lock: z.object({ salt: z.string(), hash: z.string() }).optional(),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

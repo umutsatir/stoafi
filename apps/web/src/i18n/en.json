@@ -61,7 +61,9 @@
     },
     "demoBanner": "You are looking at sample data.",
     "demoClear": "Start with my own data",
-    "demoCleared": "Sample data removed"
+    "demoCleared": "Sample data removed",
+    "backupNudge": "You have not saved a backup in a while. Your data lives only on this device, so a copy keeps it safe.",
+    "backupNudgeAction": "Back up now"
   },
   "nav": {
     "ariaLabel": "Main",
@@ -597,7 +599,9 @@
       "dataHint": "Everything stays on this device. Back it up so you never lose it.",
       "ai": "Ask an AI",
       "aiHint": "Take your own situation to an AI chat, on your terms.",
-      "about": "About"
+      "about": "About",
+      "privacy": "Privacy",
+      "privacyHint": "Keep your money out of sight."
     },
     "about": {
       "privacy": "Your data never leaves this device. Stoafi has no account and no server, and it never sends your figures anywhere.",
@@ -638,7 +642,10 @@
       "copied": "Prompt copied",
       "copiedPaste": "Prompt copied. Paste it in the chat that just opened.",
       "copyFailed": "Could not copy. Select the text and copy it yourself."
-    }
+    },
+    "lastBackupNever": "No backup downloaded yet.",
+    "lastBackupToday": "Last backup: today.",
+    "lastBackupDays": "Last backup: {days} days ago."
   },
   "installmentExpenses": {
     "title": "Installments from purchases",
@@ -1127,5 +1134,37 @@
     "saveData": "Save a backup of my data",
     "saveReport": "Save an error report",
     "reportNote": "The error report holds technical details only: no amounts and no names. Nothing is sent anywhere; you decide whether to share it."
+  },
+  "lock": {
+    "title": "Stoafi is locked",
+    "pin": "PIN",
+    "wrong": "That PIN is not right.",
+    "wait": "Too many tries. Wait half a minute and try again.",
+    "unlock": "Unlock"
+  },
+  "privacy": {
+    "hideTitle": "Hide amounts",
+    "hideText": "Shows \"••••\" instead of money on every screen, for when others can see your screen.",
+    "hideOn": "Amounts hidden",
+    "hideOff": "Amounts shown",
+    "hideToggle": "Hide or show amounts",
+    "pinTitle": "PIN lock",
+    "pinOn": "A PIN covers the app when you open it and after five minutes away.",
+    "pinOff": "No PIN is set. Anyone who opens the app on this device can see your data.",
+    "pinNote": "The PIN keeps the app out of sight; it does not encrypt your data. If you forget it, clearing the browser data for this site removes it, along with everything stored, so keep a backup.",
+    "set": "Set a PIN",
+    "change": "Change the PIN",
+    "remove": "Remove the PIN",
+    "currentPin": "Current PIN",
+    "currentWrong": "That is not your current PIN.",
+    "newPin": "New PIN",
+    "pinFormat": "4 to 8 digits.",
+    "formatError": "Use 4 to 8 digits.",
+    "confirmPin": "Type it again",
+    "mismatchError": "The two PINs are different.",
+    "save": "Save PIN",
+    "cancel": "Cancel",
+    "saved": "PIN saved",
+    "removed": "PIN removed"
   }
 }

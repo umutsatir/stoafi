@@ -20,6 +20,7 @@ import {
 import type { Locale } from "@/i18n/messages";
 import { monthOf } from "@/lib/clock";
 import type { LoadedState } from "@/storage/bootstrap";
+import type { PinLock } from "@/lib/pin";
 import { buildLedger } from "./ledger";
 
 /** Something the command palette asked the page it opens to start doing. */
@@ -42,6 +43,13 @@ export interface AppState {
   /** True while sample data from the demo is loaded. */
   demo: boolean;
   quickAction: QuickAction;
+  hideAmounts: boolean;
+  /** YYYY-MM-DD of the last downloaded backup, if any. */
+  lastBackup: string | null;
+  /** The PIN lock, when one is set. */
+  lock: PinLock | null;
+  /** True while the lock screen covers the app. */
+  locked: boolean;
   guardThresholds: GuardThresholds;
   /** Local date (YYYY-MM-DD) set at the app boundary; core never reads the clock. */
   today: string;
@@ -63,6 +71,10 @@ export interface AppState {
   toggleLessonRead: (id: string) => void;
   setDemo: (demo: boolean) => void;
   setQuickAction: (action: QuickAction) => void;
+  setHideAmounts: (hide: boolean) => void;
+  setLastBackup: (date: string) => void;
+  setLock: (lock: PinLock | null) => void;
+  setLocked: (locked: boolean) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
   setToday: (today: string) => void;
 }
@@ -82,6 +94,10 @@ export const useAppStore = create<AppState>((set) => ({
   readLessons: [],
   demo: false,
   quickAction: null,
+  hideAmounts: false,
+  lastBackup: null,
+  lock: null,
+  locked: false,
   guardThresholds: { installmentCapPct: 0.2 },
   today: "1970-01-01",
   hydrated: false,
@@ -101,6 +117,11 @@ export const useAppStore = create<AppState>((set) => ({
       theme: loaded.settings.theme ?? "system",
       readLessons: loaded.settings.readLessons ?? [],
       demo: loaded.settings.demo ?? false,
+      hideAmounts: loaded.settings.hideAmounts ?? false,
+      lastBackup: loaded.settings.lastBackup ?? null,
+      lock: loaded.settings.lock ?? null,
+      // A saved PIN covers the app from the first moment.
+      locked: loaded.settings.lock !== undefined,
       guardThresholds: loaded.guardThresholds,
       today,
       hydrated: true,
@@ -118,6 +139,10 @@ export const useAppStore = create<AppState>((set) => ({
   setTheme: (theme) => set({ theme }),
   setDemo: (demo) => set({ demo }),
   setQuickAction: (quickAction) => set({ quickAction }),
+  setHideAmounts: (hideAmounts) => set({ hideAmounts }),
+  setLastBackup: (lastBackup) => set({ lastBackup }),
+  setLock: (lock) => set({ lock }),
+  setLocked: (locked) => set({ locked }),
   toggleLessonRead: (id) =>
     set((state) => ({
       readLessons: state.readLessons.includes(id)

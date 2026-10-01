@@ -16,6 +16,7 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "src",
   "alt", // icons only, per project convention; content strings still flagged as text
   "rel",
+  "httpEquiv",
   "target",
   "lang",
   "content",

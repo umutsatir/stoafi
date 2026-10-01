@@ -25,6 +25,7 @@ beforeEach(async () => {
     decisions: [],
     holdings: [],
     demo: false,
+    lastBackup: null,
     today: "2026-10-15",
     hydrated: true,
   });
@@ -57,5 +58,39 @@ describe("Home first run and demo", () => {
     expect(await db.profile.count()).toBe(0);
     expect(await db.queue.count()).toBe(0);
     expect(await screen.findByTestId("onboarding-welcome")).toBeInTheDocument();
+  });
+});
+
+describe("Home backup nudge", () => {
+  const profile = {
+    incomes: [{ label: "Job", monthly: 10_000_000 }],
+    fixedExpenses: [],
+    livingExpenses: 0,
+    savings: 0,
+    emergencyFundTargetMonths: 1,
+    annualInflationExpectation: 0.3,
+  };
+
+  it("asks for a backup when the last one is over a month old", () => {
+    useAppStore.setState({ profile, lastBackup: "2026-08-01" });
+    renderWithIntl(<Home />);
+    expect(screen.getByTestId("backup-nudge")).toHaveTextContent("backup");
+    expect(screen.getByRole("link", { name: "Back up now" })).toHaveAttribute("href", "/settings");
+  });
+
+  it("stays quiet after a recent backup, with nothing saved, or in the sample", () => {
+    useAppStore.setState({ profile, lastBackup: "2026-10-10" });
+    const { unmount } = renderWithIntl(<Home />);
+    expect(screen.queryByTestId("backup-nudge")).not.toBeInTheDocument();
+    unmount();
+
+    useAppStore.setState({ profile: null, lastBackup: null });
+    const second = renderWithIntl(<Home />);
+    expect(screen.queryByTestId("backup-nudge")).not.toBeInTheDocument();
+    second.unmount();
+
+    useAppStore.setState({ profile, lastBackup: "2026-01-01", demo: true });
+    renderWithIntl(<Home />);
+    expect(screen.queryByTestId("backup-nudge")).not.toBeInTheDocument();
   });
 });

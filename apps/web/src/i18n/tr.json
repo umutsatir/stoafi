@@ -61,7 +61,9 @@
     },
     "demoBanner": "Örnek verilere bakıyorsun.",
     "demoClear": "Kendi verilerimle başla",
-    "demoCleared": "Örnek veriler silindi"
+    "demoCleared": "Örnek veriler silindi",
+    "backupNudge": "Bir süredir yedek almadın. Verilerin yalnızca bu cihazda duruyor; bir kopya onları güvende tutar.",
+    "backupNudgeAction": "Şimdi yedekle"
   },
   "nav": {
     "ariaLabel": "Ana",
@@ -597,7 +599,9 @@
       "dataHint": "Her şey bu cihazda kalır. Kaybetmemek için yedekle.",
       "ai": "Yapay zekâya sor",
       "aiHint": "Kendi durumunu, kendi şartlarınla bir yapay zekâ sohbetine götür.",
-      "about": "Hakkında"
+      "about": "Hakkında",
+      "privacy": "Gizlilik",
+      "privacyHint": "Paranı gözden uzak tut."
     },
     "about": {
       "privacy": "Verilerin bu cihazdan çıkmaz. Stoafi'nin hesabı ve sunucusu yoktur, rakamlarını hiçbir yere göndermez.",
@@ -638,7 +642,10 @@
       "copied": "Metin kopyalandı",
       "copiedPaste": "Metin kopyalandı. Az önce açılan sohbete yapıştır.",
       "copyFailed": "Kopyalanamadı. Metni seçip kendin kopyala."
-    }
+    },
+    "lastBackupNever": "Henüz yedek indirilmedi.",
+    "lastBackupToday": "Son yedek: bugün.",
+    "lastBackupDays": "Son yedek: {days} gün önce."
   },
   "installmentExpenses": {
     "title": "Satın alımlardan taksitler",
@@ -1127,5 +1134,37 @@
     "saveData": "Verilerimin yedeğini al",
     "saveReport": "Hata raporunu kaydet",
     "reportNote": "Hata raporu yalnızca teknik ayrıntı içerir: tutar ve ad yok. Hiçbir yere gönderilmez; paylaşıp paylaşmamak sana kalmış."
+  },
+  "lock": {
+    "title": "Stoafi kilitli",
+    "pin": "PIN",
+    "wrong": "Bu PIN doğru değil.",
+    "wait": "Çok fazla deneme. Yarım dakika bekleyip tekrar dene.",
+    "unlock": "Kilidi aç"
+  },
+  "privacy": {
+    "hideTitle": "Tutarları gizle",
+    "hideText": "Ekranı başkaları görebilirken, her ekranda paranın yerine \"••••\" gösterir.",
+    "hideOn": "Tutarlar gizli",
+    "hideOff": "Tutarlar görünür",
+    "hideToggle": "Tutarları gizle ya da göster",
+    "pinTitle": "PIN kilidi",
+    "pinOn": "Uygulamayı açtığında ve beş dakika uzak kaldıktan sonra bir PIN onu örter.",
+    "pinOff": "PIN yok. Bu cihazda uygulamayı açan herkes verilerini görebilir.",
+    "pinNote": "PIN uygulamayı gözden uzak tutar; verilerini şifrelemez. Unutursan bu site için tarayıcı verilerini silmek onu kaldırır, ama saklanan her şeyle birlikte, bu yüzden yedek tut.",
+    "set": "PIN belirle",
+    "change": "PIN'i değiştir",
+    "remove": "PIN'i kaldır",
+    "currentPin": "Şimdiki PIN",
+    "currentWrong": "Bu şimdiki PIN'in değil.",
+    "newPin": "Yeni PIN",
+    "pinFormat": "4 ila 8 rakam.",
+    "formatError": "4 ila 8 rakam kullan.",
+    "confirmPin": "Tekrar yaz",
+    "mismatchError": "İki PIN farklı.",
+    "save": "PIN'i kaydet",
+    "cancel": "Vazgeç",
+    "saved": "PIN kaydedildi",
+    "removed": "PIN kaldırıldı"
   }
 }

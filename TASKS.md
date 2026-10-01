@@ -825,44 +825,45 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
 
 Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, Plan, Health, Decisions, Savings goals, Lessons, Settings with "Ask AI", Onboarding with demo mode. Section 5 of the plan lists every control for each page.
 
-- [ ] **T12.1** Home (5.1)
+- [x] **T12.1** Home (5.1)
 - [x] **T12.2** Cards with supplementary cards, bank presets and card widgets; minimum-payment tool collapsed (5.7, 6.1, 6.2)
   Note: core has `limitUsage`, `removeCardFromSet`, `validateCardSet`, bank presets (`data/banks.json`, colours approximate and flagged, no logos) and `remainingInstallmentsByCard`; purchases remember their `cardId`, so remaining installments count against the shared limit. A limit of 0 in the form means "not tracked". Not done from the plan: the card-limit guard rule in the queue preview and the upcoming-payments calendar (T13.x), and the best-day-to-buy hint per card stays where it already was (queue preview).
 - [x] **T12.3** Queue: side panel preview, Eisenhower and time views (5.5)
   Note: done: add and edit in a side panel, summary strip, list/Eisenhower/time views with a needs/wants filter, priority as one chip, month names, Buy button, preview in a side panel, empty state; the duplicate 12-month timeline is gone. Not done yet: dragging between Eisenhower quadrants (change priority with Edit for now), the ⋯ menu (edit and delete stay as icon buttons), before/after progress bars, Peşin/Taksit segment and card widget picker inside the preview, the stale-price reminder, and the card-limit warning. These belong to a second queue pass.
-- [ ] **T12.4** Income & Expenses and Profile, with a recurring savings/investing type (5.2, 5.3)
-- [ ] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)
-- [ ] **T12.6** Health: status, units, thresholds, next steps (5.8)
+- [x] **T12.4** Income & Expenses and Profile, with a recurring savings/investing type (5.2, 5.3)
+- [x] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)
+- [x] **T12.6** Health: status, units, thresholds, next steps (5.8)
 - [x] **T12.7** Decisions: feed, filters, stats (5.9)
   Note: stats (saved, with work days from the hourly income; bought; postponed), outcome filter, month-grouped feed with item names, risk-accepted badge, add back to queue (rebuilt from name and amount with default priority) and delete with undo, teaching empty state. Not done: changing a decision's outcome, the monthly picker and the gentle insight sentence. A work day is 8 hours (`WORK_HOURS_PER_DAY`).
-- [ ] **T12.8** Savings pots (5.6, 6.4)
+- [x] **T12.8** Savings pots (5.6, 6.4)
   Goal: the owner adds money as they save; each pot shows a filling piggy bank with an animation (off under reduced motion); deposit and withdraw with history and undo; a monthly summary shows what is left, what must be set aside, what was set aside and what is free afterwards, with a suggested split; the emergency fund is the first, undeletable pot sharing one balance with `Profile.savings`.
   Core first (tests before code): `addDeposit`/`removeDeposit`/`editDeposit` (no negative balance), `requiredThisMonth`, `depositedInMonth`, `monthlySavingsAdvice`, savings rate from deposits, emergency pot and `Profile.savings` never diverging. `SinkingFund` gains optional `icon`, `color`, `kind`, `deposits` (additive, no migration).
   Acceptance: depositing is two taps; the monthly numbers equal Home's; all edge cases in 6.4 are tested.
-- [ ] **T12.8b** Investments (5.6b)
+- [x] **T12.8b** Investments (5.6b)
   Goal: second tab on the savings page. New versioned `investments` module: holdings with buy/sell trades, user-entered current price with date, weighted-average cost, realized/unrealized P&L, allocation by type, real return, price staleness; user-editable investment types as data; animated per-type visuals (gold bars, share certificates, banknotes, coins; off under reduced motion); "what you should know" cards per type in our own words with source labels and a not-advice note; regular monthly investing shares the recurring savings/investing expense type; health and AI export use it. No fetched prices.
   Core first: formulas and edge cases in the plan (sell more than held rejected, decimal quantity, single rounding, no price entered).
   Acceptance: a buy is two taps; totals match tested formulas; SPEC updated with the module before code.
   Depends on: T12.8, T12.4
 
-- [ ] **T12.9** Lessons reading experience (5.10)
-- [ ] **T12.10** Settings and "Ask AI" export with privacy levels (5.11, 6.3)
-- [ ] **T12.11** Onboarding and demo mode (5.0)
+- [x] **T12.9** Lessons reading experience (5.10)
+- [x] **T12.10** Settings and "Ask AI" export with privacy levels (5.11, 6.3)
+- [x] **T12.11** Onboarding and demo mode (5.0)
   Each: tests first for any logic, a screenshot for review, empty/loading/error states, phone layout, acceptance as written in the plan.
   Depends on: Phase 11
 
 ### Phase 13 — Connections between modules
 
-- [ ] **T13.1** Calendar of upcoming payments (S1)
-- [ ] **T13.2** Installments linked to a card, card limit and a card-limit guard rule (S4)
-- [ ] **T13.3** Monthly snapshots and trends (S3)
-- [ ] **T13.4** Price-age reminder (S8), undo everywhere (S7), command palette (S6)
+- [x] **T13.1** Calendar of upcoming payments (S1)
+- [x] **T13.2** Installments linked to a card, card limit and a card-limit guard rule (S4)
+- [x] **T13.3** Monthly snapshots and trends (S3)
+- [x] **T13.4** Price-age reminder (S8), undo everywhere (S7), command palette (S6)
   Depends on: the matching Phase 12 pages.
 
 ### Phase 14 — Ready for customers
 
-- [ ] **T14.1** Privacy and security: app lock and hide amounts (S9), security headers, backup warnings and reminders (S15)
-- [ ] **T14.2** Error boundary and local error report; migration fixtures for every stored version; import of old backups
+- [x] **T14.1** Privacy and security: app lock and hide amounts (S9), security headers, backup warnings and reminders (S15)
+  Note: PIN is hashed with PBKDF2 (Web Crypto, per-install salt), never stored in clear; 5 wrong tries wait 30 s; auto-lock after 5 min hidden. A PIN is a screen lock, not encryption: the data in IndexedDB is not encrypted (said so in Settings). CSP is a meta tag in production plus `public/_headers` for hosts that read it; a test keeps both in sync. Backup reminder: settings remember `lastBackup`; Home asks after 30 days (or 30 days after the first data if never).
+- [x] **T14.2** Error boundary and local error report; migration fixtures for every stored version; import of old backups
 - [ ] **T14.3** Accessibility and performance pass against a written budget
 - [ ] **T14.4** Native Turkish copy review; legal text (not financial advice, privacy)
 - [ ] **T14.5** PWA check on real devices (T8.6), deployment, product name, domain and license decisions

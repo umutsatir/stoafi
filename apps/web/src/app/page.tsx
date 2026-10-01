@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Dashboard } from "@/components/dashboard";
 import { Onboarding } from "@/components/onboarding";
 import { Button } from "@/components/ui/button";
 import { notify } from "@/components/ui/toaster";
+import { backupDue } from "@/lib/backup-reminder";
 import { localIsoDate } from "@/lib/clock";
 import { buildDemoData, type DemoLabels } from "@/lib/demo-data";
 import { loadAppState } from "@/storage/bootstrap";
@@ -40,10 +42,16 @@ export default function Home() {
   const guardThresholds = useAppStore((s) => s.guardThresholds);
   const today = useAppStore((s) => s.today);
   const demo = useAppStore((s) => s.demo);
+  const lastBackup = useAppStore((s) => s.lastBackup);
+  const snapshots = useAppStore((s) => s.snapshots);
   const hydrate = useAppStore((s) => s.hydrate);
   const setDemo = useAppStore((s) => s.setDemo);
   const t = useTranslations("home");
   const tLabels = useTranslations("demoLabels");
+
+  const firstMonth = snapshots[0]?.month;
+  const showBackupNudge =
+    !demo && backupDue(lastBackup, today, profile !== null, firstMonth ? `${firstMonth}-01` : null);
 
   async function startDemo() {
     const labels = Object.fromEntries(
@@ -72,7 +80,18 @@ export default function Home() {
       today={today}
       onboarding={<Onboarding onDemo={() => void startDemo()} />}
       banner={
-        demo ? (
+        showBackupNudge ? (
+          <div
+            role="status"
+            data-testid="backup-nudge"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3 text-sm"
+          >
+            <span>{t("backupNudge")}</span>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/settings">{t("backupNudgeAction")}</Link>
+            </Button>
+          </div>
+        ) : demo ? (
           <div
             role="status"
             data-testid="demo-banner"
