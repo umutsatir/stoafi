@@ -7,6 +7,7 @@ import { BANKS, limitUsage, mainCards, type Card, type SupplementaryChoice } fro
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useQuickAction } from "@/lib/use-quick-action";
 import { cn } from "@/lib/utils";
 import { CardDeleteDialog } from "./card-delete-dialog";
 import { CardDetail } from "./card-detail";
@@ -58,6 +59,10 @@ export function CardWallet({
   const [toolsOpen, setToolsOpen] = useState(false);
   const [calculatorBalance, setCalculatorBalance] = useState<number | undefined>(undefined);
   const [presetBank, setPresetBank] = useState<string | undefined>(undefined);
+  useQuickAction("addCard", () => {
+    setPresetBank(undefined);
+    setPanel({ kind: "form" });
+  });
 
   const detailCard =
     panel?.kind === "detail" ? cards.find((c) => c.id === panel.cardId) : undefined;

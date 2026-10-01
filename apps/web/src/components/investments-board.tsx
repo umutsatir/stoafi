@@ -19,6 +19,7 @@ import { Money } from "@/components/ui/money";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { StatCard } from "@/components/ui/stat-card";
 import { useMoney } from "@/lib/use-money";
+import { useQuickAction } from "@/lib/use-quick-action";
 import { cn, stagger } from "@/lib/utils";
 import { HoldingForm, PriceForm, TradeForm } from "./holding-forms";
 import { HoldingCard } from "./holding-card";
@@ -57,6 +58,7 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
   const [priceId, setPriceId] = useState<string | null>(null);
   const [historyId, setHistoryId] = useState<string | null>(null);
   const [drops, setDrops] = useState<Record<string, number>>({});
+  useQuickAction("addInvestment", () => setAdding(true));
 
   const totals = portfolioTotals(holdings);
   const split = allocationByType(holdings);

@@ -6,6 +6,7 @@ import {
   CalendarDays,
   CreditCard,
   Ellipsis,
+  Search,
   HeartPulse,
   LayoutDashboard,
   LayoutList,
@@ -19,9 +20,13 @@ import {
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { CommandPalette } from "@/components/command-palette";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+
+/** The key combination that opens the palette, shown as a hint; Ctrl works too. */
+const SHORTCUT_HINT = "⌘K";
 
 interface Route {
   href: string;
@@ -84,9 +89,22 @@ function isActive(pathname: string, href: string): boolean {
 export function Nav() {
   const t = useTranslations("nav");
   const tApp = useTranslations("app");
+  const tPalette = useTranslations("palette");
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const moreActive = MORE_ROUTES.some((r) => isActive(pathname, r.href));
+
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setPaletteOpen((open) => !open);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <>
@@ -95,6 +113,16 @@ export function Nav() {
         className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border bg-card px-3 py-5 md:flex"
       >
         <div className="px-3 text-lg font-semibold tracking-tight">{tApp("name")}</div>
+        <button
+          type="button"
+          onClick={() => setPaletteOpen(true)}
+          aria-label={tPalette("open")}
+          className="mx-1 flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Search className="h-4 w-4" aria-hidden="true" />
+          <span className="flex-1 text-left">{t("search")}</span>
+          <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs">{SHORTCUT_HINT}</kbd>
+        </button>
         {GROUPS.map((group) => (
           <div key={group.key} className="flex flex-col gap-1">
             <p className="px-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -166,6 +194,8 @@ export function Nav() {
           </li>
         </ul>
       </nav>
+
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
         <SheetContent title={t("moreTitle")}>

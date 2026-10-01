@@ -88,7 +88,8 @@
       "learn": "Öğren",
       "you": "Sen"
     },
-    "calendar": "Takvim"
+    "calendar": "Takvim",
+    "search": "Ara"
   },
   "incomeExpenses": {
     "title": "Gelir ve Giderler",
@@ -1083,5 +1084,34 @@
     "spouse": "Eşim",
     "jacket": "Mont",
     "watch": "Saat"
+  },
+  "palette": {
+    "title": "Git ya da yap",
+    "hint": "Bir sayfa ya da eylem bulmak için yaz. Açmak için Enter'a bas.",
+    "search": "Sayfalarda ve eylemlerde ara",
+    "none": "Eşleşen bir şey yok.",
+    "group": {
+      "go": "Git",
+      "do": "Yap"
+    },
+    "open": "Ara ve kısayollar",
+    "commands": {
+      "home": "Ana sayfa",
+      "calendar": "Takvim",
+      "incomeExpenses": "Gelir ve Giderler",
+      "sinkingFunds": "Birikim",
+      "cards": "Kartlar",
+      "plan": "Plan",
+      "queue": "Kuyruk",
+      "decisions": "Kararlar",
+      "health": "Sağlık",
+      "lessons": "Dersler",
+      "profile": "Profil",
+      "settings": "Ayarlar",
+      "addQueueItem": "Kuyruğa bir şey ekle",
+      "addCard": "Kart ekle",
+      "addPot": "Kumbara ekle",
+      "addInvestment": "Yatırım ekle"
+    }
   }
 }

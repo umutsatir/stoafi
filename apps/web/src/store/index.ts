@@ -22,6 +22,9 @@ import { monthOf } from "@/lib/clock";
 import type { LoadedState } from "@/storage/bootstrap";
 import { buildLedger } from "./ledger";
 
+/** Something the command palette asked the page it opens to start doing. */
+export type QuickAction = "addQueueItem" | "addCard" | "addPot" | "addInvestment" | null;
+
 export interface AppState {
   profile: Profile | null;
   planState: PlanStateInput | null;
@@ -38,6 +41,7 @@ export interface AppState {
   readLessons: string[];
   /** True while sample data from the demo is loaded. */
   demo: boolean;
+  quickAction: QuickAction;
   guardThresholds: GuardThresholds;
   /** Local date (YYYY-MM-DD) set at the app boundary; core never reads the clock. */
   today: string;
@@ -58,6 +62,7 @@ export interface AppState {
   setTheme: (theme: ThemePreference) => void;
   toggleLessonRead: (id: string) => void;
   setDemo: (demo: boolean) => void;
+  setQuickAction: (action: QuickAction) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
   setToday: (today: string) => void;
 }
@@ -76,6 +81,7 @@ export const useAppStore = create<AppState>((set) => ({
   theme: "system",
   readLessons: [],
   demo: false,
+  quickAction: null,
   guardThresholds: { installmentCapPct: 0.2 },
   today: "1970-01-01",
   hydrated: false,
@@ -111,6 +117,7 @@ export const useAppStore = create<AppState>((set) => ({
   setCurrency: (currency) => set({ currency }),
   setTheme: (theme) => set({ theme }),
   setDemo: (demo) => set({ demo }),
+  setQuickAction: (quickAction) => set({ quickAction }),
   toggleLessonRead: (id) =>
     set((state) => ({
       readLessons: state.readLessons.includes(id)

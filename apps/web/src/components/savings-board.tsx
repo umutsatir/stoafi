@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useQuickAction } from "@/lib/use-quick-action";
 import { DepositForm } from "./deposit-form";
 import { PotCard, type PotView } from "./pot-card";
 import { PotHistory } from "./pot-history";
@@ -50,6 +51,7 @@ export function SavingsBoard(props: SavingsBoardProps) {
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [drops, setDrops] = useState<Record<string, number>>({});
+  useQuickAction("addPot", () => setAdding(true));
 
   const gap = emergencyGap(profile.savings, props.monthlyNeeds, profile.emergencyFundTargetMonths);
   const emergencyDeposited = depositedInMonth(profile.deposits, month);

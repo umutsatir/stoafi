@@ -4,7 +4,8 @@ import { describe, expect, it, vi } from "vitest";
 import en from "@/i18n/en.json";
 import { Nav } from "./nav";
 
-vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ usePathname: () => "/", useRouter: () => ({ push }) }));
 
 function renderNav() {
   return render(

@@ -179,3 +179,12 @@ describe("Queue price age", () => {
     expect(screen.queryByTestId("stale-h")).not.toBeInTheDocument();
   });
 });
+
+describe("Queue quick action", () => {
+  it("opens the add panel when the command palette asked for it, once", async () => {
+    useAppStore.setState({ quickAction: "addQueueItem" });
+    renderWithIntl(<QueuePage />);
+    expect(await screen.findByRole("dialog", { name: "Add to queue" })).toBeInTheDocument();
+    expect(useAppStore.getState().quickAction).toBeNull();
+  });
+});

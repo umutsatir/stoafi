@@ -34,6 +34,7 @@ import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem, saveQueueOrder } from "@/storage/queue-repo";
 import { putListItem } from "@/storage/repo";
+import { useQuickAction } from "@/lib/use-quick-action";
 import { useAppStore, useLedger } from "@/store";
 
 function logFailure(what: string) {
@@ -57,6 +58,7 @@ export default function QueuePage() {
   const [adding, setAdding] = useState(false);
   const [view, setView] = useState<"list" | "eisenhower" | "time">("list");
   const [filter, setFilter] = useState<"all" | "need" | "want">("all");
+  useQuickAction("addQueueItem", () => setAdding(true));
   const t = useTranslations("queue");
   const tc = useTranslations("common");
 

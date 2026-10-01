@@ -88,7 +88,8 @@
       "learn": "Learn",
       "you": "You"
     },
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "search": "Search"
   },
   "incomeExpenses": {
     "title": "Income & Expenses",
@@ -1083,5 +1084,34 @@
     "spouse": "Partner",
     "jacket": "Jacket",
     "watch": "Watch"
+  },
+  "palette": {
+    "title": "Go to or do",
+    "hint": "Type to find a page or an action. Press Enter to open it.",
+    "search": "Search pages and actions",
+    "none": "Nothing matches.",
+    "group": {
+      "go": "Go to",
+      "do": "Do"
+    },
+    "open": "Search and shortcuts",
+    "commands": {
+      "home": "Home",
+      "calendar": "Calendar",
+      "incomeExpenses": "Income & Expenses",
+      "sinkingFunds": "Savings",
+      "cards": "Cards",
+      "plan": "Plan",
+      "queue": "Queue",
+      "decisions": "Decisions",
+      "health": "Health",
+      "lessons": "Lessons",
+      "profile": "Profile",
+      "settings": "Settings",
+      "addQueueItem": "Add something to the queue",
+      "addCard": "Add a card",
+      "addPot": "Add a savings pot",
+      "addInvestment": "Add an investment"
+    }
   }
 }

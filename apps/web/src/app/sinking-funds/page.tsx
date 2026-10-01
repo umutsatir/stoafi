@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import {
@@ -46,6 +47,13 @@ export default function SavingsPage() {
   const currency = useAppStore((s) => s.currency);
   const today = useAppStore((s) => s.today);
   const ledger = useLedger();
+  const [tab, setTab] = useState("pots");
+  const quickAction = useAppStore((s) => s.quickAction);
+  // The palette can ask for an action on either tab; show that tab so its board can pick the request up.
+  useEffect(() => {
+    if (quickAction === "addInvestment") setTab("investments");
+    else if (quickAction === "addPot") setTab("pots");
+  }, [quickAction]);
   const t = useTranslations("savings");
   const tc = useTranslations("common");
 
@@ -186,7 +194,7 @@ export default function SavingsPage() {
   return (
     <Page title={t("title")}>
       <p className="max-w-prose text-sm text-muted-foreground">{t("intro")}</p>
-      <Tabs defaultValue="pots">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="pots">{t("tabs.pots")}</TabsTrigger>
           <TabsTrigger value="investments">{t("tabs.investments")}</TabsTrigger>
