@@ -300,3 +300,4 @@ export {
   type CategoryItem,
   type CostCategory,
 } from "../modules/profile/category-breakdown";
+export { freeSpending, type FreeSpending, type FreeSpendingInput } from "../kernel/spending";

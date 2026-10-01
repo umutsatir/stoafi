@@ -21,6 +21,55 @@ function projection(by: Record<"needs" | "wants" | "savings" | "investing", [num
   } satisfies MonthProjection;
 }
 
+describe("LimitsPanel free spending and installments", () => {
+  const wants = projection({
+    needs: [0, 0],
+    wants: [1_800_000, 825_000],
+    savings: [0, 0],
+    investing: [0, 0],
+  });
+
+  it("shows the free spending, and how it spreads over weeks and days", () => {
+    renderWithIntl(
+      <LimitsPanel
+        projection={wants}
+        queueFits={0}
+        spending={{ monthly: 975_000, weekly: 227_500, daily: 32_500, fixed: false }}
+      />,
+    );
+    expect(screen.getByTestId("free-spending-monthly")).toHaveTextContent("₺9,750.00");
+    expect(screen.getByTestId("free-spending-spread")).toHaveTextContent(
+      "₺2,275.00 a week, or ₺325.00 a day",
+    );
+    expect(screen.getByTestId("free-spending")).toHaveTextContent("What is left of your wants");
+  });
+
+  it("says when the amount is one the user set", () => {
+    renderWithIntl(
+      <LimitsPanel
+        projection={wants}
+        queueFits={0}
+        spending={{ monthly: 1_500_000, weekly: 350_000, daily: 50_000, fixed: true }}
+      />,
+    );
+    expect(screen.getByTestId("free-spending")).toHaveTextContent("The amount you set");
+  });
+
+  it("shows the installment cap inside the wants bucket", () => {
+    renderWithIntl(
+      <LimitsPanel
+        projection={wants}
+        queueFits={0}
+        installmentUsed={800_000}
+        installmentCap={1_200_000}
+      />,
+    );
+    expect(screen.getByTestId("wants-installments")).toHaveTextContent(
+      "Installments are part of this: ₺8,000.00 of your ₺12,000.00 installment cap.",
+    );
+  });
+});
+
 describe("LimitsPanel", () => {
   it("shows what is left in each bucket and the plan limit it comes from", () => {
     renderWithIntl(

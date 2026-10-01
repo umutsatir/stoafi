@@ -140,6 +140,12 @@ describe("Dashboard", () => {
     expect(screen.getByTestId("limit-needs")).toBeInTheDocument();
   });
 
+  it("shows the money for everyday fun, from what is left of the wants", () => {
+    renderDashboard();
+    expect(screen.getByTestId("free-spending-monthly")).toBeInTheDocument();
+    expect(screen.getByTestId("free-spending-spread")).toHaveTextContent("a week");
+  });
+
   it("draws a 12-month cash-flow chart starting this month", () => {
     renderDashboard();
     const chart = screen.getByTestId("cash-flow-chart");

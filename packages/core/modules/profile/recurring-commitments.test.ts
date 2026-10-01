@@ -173,3 +173,18 @@ describe("installments and loans entered as expenses", () => {
     expect(month.byBucket.needs.committed).toBe(200_000 + 50_000 + 80_000 + 300_000);
   });
 });
+
+describe("personal spending", () => {
+  const withPersonal: Profile = { ...profile, personalSpending: 150_000 };
+
+  it("counts as wants every month", () => {
+    const month = project({ income }, recurringCommitments(withPersonal, "2026-10", 6), "2026-10");
+    const without = project({ income }, recurringCommitments(profile, "2026-10", 6), "2026-10");
+    expect(month.byBucket.wants.committed - without.byBucket.wants.committed).toBe(150_000);
+  });
+
+  it("adds nothing when it is not set", () => {
+    const ids = recurringCommitments(profile, "2026-10", 3).map((c) => c.id);
+    expect(ids).not.toContain("recurring-personal");
+  });
+});

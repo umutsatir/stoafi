@@ -333,6 +333,7 @@ These extend the modules above; the rules in "Design principles" still hold (int
 - **Category breakdown and installment room.** Committed money is cut by what it is for inside each bucket; installment room is the installment cap (share of income) minus this month's installment and loan payments.
 - **Living costs check** (`modules/profile/living-costs.ts`). Share of income against rule-of-thumb bands, a year of expected inflation, and the user's own rise against it when they give last year's figure.
 - **Basket log.** A tick per slice and month; may also record one purchase at the holding's current price.
+- **Free spending** (`kernel/spending.ts`). The amount for going out and shopping: the user's personal spending amount (counted as wants) or what is left of the wants limit; spread over weeks and days for a sense of scale.
 - **Quality budget** in `docs/QUALITY-BUDGET.md`.
 
 ## Acceptance criteria

@@ -104,7 +104,16 @@
         "installments": "Taksitler",
         "loans": "Krediler",
         "pots": "Birikim kumbaraları",
-        "saving": "Birikim ve yatırım"
+        "saving": "Birikim ve yatırım",
+        "personal": "Kişisel harcama"
+      },
+      "installmentBar": "Taksitler, taksit sınırına karşı",
+      "installmentsInside": "Taksitler bunun içinde: {cap} taksit sınırının {used} kadarı.",
+      "spending": {
+        "title": "Serbest harcama payı",
+        "spread": "Eşit dağıtırsan haftada yaklaşık {weekly}, günde {daily}.",
+        "fixed": "Kişisel harcama için senin belirlediğin tutar.",
+        "auto": "Aboneliklerden ve taksitlerden sonra isteklerinde kalan."
       }
     },
     "installmentRoom": {
@@ -328,6 +337,12 @@
         "below": "Giderlerin bir yılda {rise} arttı, beklediğin {expected} oranından yavaş. Aferin."
       },
       "note": "Bantlar bizim pratik kuralımız, resmî istatistik değil. Kendi durumun, hane büyüklüğün ve yaşadığın şehir fark yaratır."
+    },
+    "personal": {
+      "title": "Kişisel harcama",
+      "hint": "Dışarı çıkma, arkadaşlar, kahve, alışveriş: sadece sana ayrılan para.",
+      "amount": "Aylık kişisel harcama (isteğe bağlı)",
+      "amountHint": "Boş bırakırsan Stoafi, aboneliklerden ve taksitlerden sonra isteklerinde kalanı kullanır."
     }
   },
   "plan": {

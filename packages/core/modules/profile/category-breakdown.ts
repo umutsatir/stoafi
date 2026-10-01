@@ -6,7 +6,8 @@ import { expenseKind } from "./active-expenses";
 import type { Profile } from "./schema";
 
 /** What a committed amount is for, a finer cut than the four plan buckets. */
-export type CostCategory = "bills" | "living" | "installments" | "loans" | "pots" | "saving";
+export type CostCategory =
+  "bills" | "living" | "personal" | "installments" | "loans" | "pots" | "saving";
 
 export interface CategoryItem {
   /** Id of the line; for things the profile does not own (queue purchases, pots) the source id. */
@@ -46,6 +47,7 @@ export function committedByCategory(
     let category: CostCategory;
     let label: string | null = null;
     if (refId === "living") category = "living";
+    else if (refId === "personal") category = "personal";
     else if (module === "sinking-funds") category = "pots";
     else if (refId.startsWith("fixed-")) {
       const expense = profile.fixedExpenses[Number(refId.slice("fixed-".length))];

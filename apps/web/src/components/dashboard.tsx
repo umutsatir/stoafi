@@ -21,6 +21,7 @@ import {
   depositedInMonth,
   emergencyFundMonths,
   emergencyGap,
+  freeSpending,
   healthSummary,
   installmentCommitments,
   monthlyNeeds,
@@ -179,6 +180,15 @@ export function Dashboard({
   const overspent = left < 0;
 
   const categories = committedByCategory(profile, ledger, month);
+  const daysInThisMonth = new Date(
+    Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0),
+  ).getUTCDate();
+  const spending = freeSpending({
+    wantsLimit: thisMonth.byBucket.wants.limit,
+    wantsCommitted: thisMonth.byBucket.wants.committed,
+    daysInMonth: daysInThisMonth,
+    ...(profile.personalSpending !== undefined ? { personal: profile.personalSpending } : {}),
+  });
   const names = {
     ...Object.fromEntries(queueItems.map((i) => [i.id, i.name])),
     ...Object.fromEntries(sinkingFunds.map((f) => [f.id, f.label])),
@@ -456,6 +466,9 @@ export function Dashboard({
               projection={thisMonth}
               queueFits={queueFitsNow}
               categories={categories}
+              spending={spending}
+              installmentUsed={installments}
+              installmentCap={Math.round(income * installmentCapPct)}
               names={names}
             />
           </Panel>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   limitAdvice,
+  type FreeSpending,
   limitStatuses,
   type CategoryAmount,
   type LimitAdvice,
@@ -38,11 +39,24 @@ export interface LimitsPanelProps {
   queueFits: number;
   /** What each bucket's committed money is for; shown as one short line under the bar. */
   categories?: CategoryAmount[];
+  /** Money for everyday fun, shown between the bars and the advice. */
+  spending?: FreeSpending;
+  /** Installments are part of the wants bucket (or needs); their own cap is shown under wants. */
+  installmentUsed?: number;
+  installmentCap?: number;
   names?: Record<string, string>;
 }
 
 /** Each bucket's plan limit against what is already committed this month, and what to do about it. */
-export function LimitsPanel({ projection, queueFits, categories = [], names }: LimitsPanelProps) {
+export function LimitsPanel({
+  projection,
+  queueFits,
+  categories = [],
+  spending,
+  installmentUsed,
+  installmentCap,
+  names,
+}: LimitsPanelProps) {
   const t = useTranslations("home.limits");
   const money = useMoney();
   const statuses = limitStatuses(projection);
@@ -71,6 +85,23 @@ export function LimitsPanel({ projection, queueFits, categories = [], names }: L
               tone={TONE[s.state]}
             />
             <CategoryLines rows={categories} bucket={s.bucket} {...(names ? { names } : {})} />
+            {s.bucket === "wants" && installmentUsed !== undefined && installmentCap ? (
+              <div className="flex flex-col gap-1" data-testid="wants-installments">
+                <ProgressBar
+                  value={installmentUsed}
+                  max={installmentCap}
+                  label={t("installmentBar")}
+                  tone={installmentUsed > installmentCap ? "danger" : "info"}
+                  className="h-1"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t("installmentsInside", {
+                    used: money(installmentUsed),
+                    cap: money(installmentCap),
+                  })}
+                </p>
+              </div>
+            ) : null}
             <p className="flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
               <span
                 data-testid={`left-${s.bucket}`}
@@ -87,6 +118,21 @@ export function LimitsPanel({ projection, queueFits, categories = [], names }: L
           </li>
         ))}
       </ul>
+
+      {spending && (
+        <div className="flex flex-col gap-1 rounded-xl bg-muted/60 p-4" data-testid="free-spending">
+          <h3 className="text-sm font-semibold">{t("spending.title")}</h3>
+          <p className="text-2xl font-semibold" data-testid="free-spending-monthly">
+            {money(spending.monthly)}
+          </p>
+          <p className="text-sm text-muted-foreground" data-testid="free-spending-spread">
+            {t("spending.spread", { weekly: money(spending.weekly), daily: money(spending.daily) })}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {spending.fixed ? t("spending.fixed") : t("spending.auto")}
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2 border-t border-border pt-3" data-testid="limit-advice">
         <h3 className="text-sm font-semibold">{t("whatToDo")}</h3>

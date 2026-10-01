@@ -14,6 +14,7 @@ const profile: Profile = {
     { label: "Gold", monthly: 200_000, bucket: "investing" },
   ],
   livingExpenses: 1_200_000,
+  personalSpending: 700_000,
   savings: 0,
   emergencyFundTargetMonths: 6,
   annualInflationExpectation: 0.3,
@@ -61,6 +62,10 @@ describe("committedByCategory", () => {
   it("puts regular saving and investing lines under saving, and pots under pots", () => {
     expect(find(rows, "investing", "saving")?.amount).toBe(200_000);
     expect(find(rows, "savings", "pots")?.amount).toBe(100_000);
+  });
+
+  it("shows personal spending apart from bills in the wants bucket", () => {
+    expect(find(rows, "wants", "personal")?.amount).toBe(700_000);
   });
 
   it("puts a want line under bills in the wants bucket", () => {

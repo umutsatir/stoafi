@@ -308,6 +308,21 @@ describe("adding an expense", () => {
   });
 });
 
+describe("personal spending", () => {
+  it("is optional, and saved when given", () => {
+    const onSave = vi.fn();
+    renderWithIntl(<IncomeExpensesForm initial={base} onSave={onSave} />);
+    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    expect(onSave.mock.calls[0]?.[0]).not.toHaveProperty("personalSpending");
+    type("Monthly personal spending (optional)", "15000");
+    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    expect(onSave.mock.calls[1]?.[0].personalSpending).toBe(1_500_000);
+    type("Monthly personal spending (optional)", "0");
+    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    expect(onSave.mock.calls[2]?.[0]).not.toHaveProperty("personalSpending");
+  });
+});
+
 describe("installments on a card", () => {
   const cards = [
     { id: "c1", label: "Bonus", kind: "main" as const, limit: 5_000_000 },

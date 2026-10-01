@@ -11,12 +11,14 @@ import { localIsoDate, monthOf } from "@/lib/clock";
 import { ExpenseEditor, type ExpenseValue } from "./expense-editor";
 import { ExpenseList } from "./expense-list";
 import { LivingCostsCard } from "./living-costs-card";
+import { PersonalSpendingCard } from "./personal-spending-card";
 import { SalaryEditor, type SalaryValue } from "./salary-editor";
 import { SalaryList } from "./salary-list";
 
 /** The recurring cash-flow part of the profile: what comes in and what goes out every month. */
 export type IncomeExpensesValue = Pick<Profile, "incomes" | "fixedExpenses" | "livingExpenses"> & {
   livingExpensesYearAgo?: number;
+  personalSpending?: number;
 };
 
 export interface IncomeExpensesFormProps {
@@ -50,6 +52,7 @@ export function IncomeExpensesForm({
   const [expenses, setExpenses] = useState<ExpenseValue[]>(() => initial?.fixedExpenses ?? []);
   const [livingExpenses, setLivingExpenses] = useState(initial?.livingExpenses ?? 0);
   const [yearAgo, setYearAgo] = useState<number | undefined>(initial?.livingExpensesYearAgo);
+  const [personal, setPersonal] = useState<number | undefined>(initial?.personalSpending);
   const [open, setOpen] = useState<Open>(null);
 
   function buildValue(
@@ -60,6 +63,7 @@ export function IncomeExpensesForm({
       fixedExpenses: next.fixedExpenses ?? expenses,
       livingExpenses,
       ...(yearAgo !== undefined ? { livingExpensesYearAgo: yearAgo } : {}),
+      ...(personal !== undefined ? { personalSpending: personal } : {}),
     };
   }
 
@@ -145,6 +149,8 @@ export function IncomeExpensesForm({
           onLiving={setLivingExpenses}
           onYearAgo={setYearAgo}
         />
+
+        <PersonalSpendingCard currency={currency} value={personal} onChange={setPersonal} />
 
         <div>
           <Button type="submit">{t("save")}</Button>

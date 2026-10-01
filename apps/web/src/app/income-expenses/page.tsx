@@ -48,6 +48,7 @@ export default function IncomeExpensesPage() {
           const merged = mergeProfile(profile, value);
           // Clearing last year's figure must remove it, not leave the old one behind.
           if (value.livingExpensesYearAgo === undefined) delete merged.livingExpensesYearAgo;
+          if (value.personalSpending === undefined) delete merged.personalSpending;
           const saved = await putSingleton(db, "profile", ProfileSchema, merged);
           setProfile(saved);
           notify(tc("saved"));

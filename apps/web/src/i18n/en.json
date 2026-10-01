@@ -104,7 +104,16 @@
         "installments": "Installments",
         "loans": "Loans",
         "pots": "Savings pots",
-        "saving": "Saving and investing"
+        "saving": "Saving and investing",
+        "personal": "Personal spending"
+      },
+      "installmentBar": "Installments against your installment cap",
+      "installmentsInside": "Installments are part of this: {used} of your {cap} installment cap.",
+      "spending": {
+        "title": "Free spending",
+        "spread": "About {weekly} a week, or {daily} a day, if you spread it evenly.",
+        "fixed": "The amount you set for personal spending.",
+        "auto": "What is left of your wants after subscriptions and installments."
       }
     },
     "installmentRoom": {
@@ -328,6 +337,12 @@
         "below": "Your costs rose {rise} in a year, slower than the {expected} you expect. Well done."
       },
       "note": "The bands are rules of thumb of ours, not official statistics. Your own situation, family size and city matter."
+    },
+    "personal": {
+      "title": "Personal spending",
+      "hint": "Going out, friends, coffee, shopping: the money that is just for you.",
+      "amount": "Monthly personal spending (optional)",
+      "amountHint": "Leave it empty and Stoafi uses what is left of your wants after subscriptions and installments."
     }
   },
   "plan": {

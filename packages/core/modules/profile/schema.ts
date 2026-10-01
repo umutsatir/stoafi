@@ -34,6 +34,8 @@ export const ProfileSchema = z.object({
   ),
   /** One lump monthly line for day-to-day living costs (groceries etc.); counted as needs. */
   livingExpenses: z.number().int().nonnegative(),
+  /** A monthly amount the user sets for going out, friends and shopping; counted as wants. Omitted: the app uses what is left of the wants limit. */
+  personalSpending: z.number().int().positive().optional(),
   /** What living costs were about a year ago, to compare the user's own price rise with expected inflation. */
   livingExpensesYearAgo: z.number().int().positive().optional(),
   savings: z.number().int().nonnegative(),
