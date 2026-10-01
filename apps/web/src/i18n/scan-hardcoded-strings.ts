@@ -33,6 +33,8 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "fill",
   "variant", // shadcn/ui component variant props (cva), not display text
   "size",
+  "strokeLinecap", // SVG drawing option, not display text
+  "position", // toast placement, not display text
   "testId", // custom prop forwarded to data-testid, not display text
 ]);
 
