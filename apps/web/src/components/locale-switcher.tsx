@@ -1,13 +1,13 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { THEMES, type ThemePreference } from "@stoafi/core";
+import { THEMES } from "@stoafi/core";
 import { LOCALES, type Locale } from "@/i18n/messages";
 import { useAppStore } from "@/store";
 import { useMoney } from "@/lib/use-money";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { NativeSelect } from "@/components/ui/native-select";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 export function LocaleSwitcher() {
   const locale = useAppStore((s) => s.locale);
@@ -41,19 +41,16 @@ export function LocaleSwitcher() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="theme">{t("theme")}</Label>
-          <NativeSelect
-            id="theme"
+          <Label>{t("theme")}</Label>
+          <SegmentedControl
+            label={t("theme")}
             value={theme}
-            onChange={(e) => setTheme(e.target.value as ThemePreference)}
-            className="w-52"
-          >
-            {THEMES.map((option) => (
-              <option key={option} value={option}>
-                {t(`themeOptions.${option}`)}
-              </option>
-            ))}
-          </NativeSelect>
+            onChange={setTheme}
+            options={THEMES.map((option) => ({
+              value: option,
+              label: t(`themeOptions.${option}`),
+            }))}
+          />
         </div>
 
         <div className="flex flex-col gap-1 text-sm text-muted-foreground">

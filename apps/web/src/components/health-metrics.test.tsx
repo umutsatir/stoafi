@@ -33,4 +33,47 @@ describe("HealthMetrics", () => {
     // runway = 30000/(5000+1000) = 5
     expect(screen.getByTestId("runway")).toHaveTextContent("5.0 months");
   });
+
+  it("explains each metric in an (i) popover", () => {
+    renderWithIntl(
+      <HealthMetrics projection={projection} savingsBalance={30000} monthlyNeeds={5000} />,
+    );
+    for (const name of [
+      "What is the savings rate?",
+      "What are emergency fund months?",
+      "What is the installment ratio?",
+      "What is the runway?",
+    ]) {
+      expect(screen.getByRole("button", { name })).toBeInTheDocument();
+    }
+  });
+
+  it("shows how far the emergency fund is toward its target, capped at 100 percent", () => {
+    renderWithIntl(
+      <HealthMetrics
+        projection={projection}
+        savingsBalance={15000}
+        monthlyNeeds={5000}
+        emergencyFundTargetMonths={6}
+      />,
+    );
+    // 3 of 6 months
+    expect(screen.getByRole("progressbar", { name: "Emergency fund progress" })).toHaveTextContent(
+      "50%",
+    );
+  });
+
+  it("caps the ring at a full circle when the fund is above target", () => {
+    renderWithIntl(
+      <HealthMetrics
+        projection={projection}
+        savingsBalance={90000}
+        monthlyNeeds={5000}
+        emergencyFundTargetMonths={6}
+      />,
+    );
+    expect(screen.getByRole("progressbar", { name: "Emergency fund progress" })).toHaveTextContent(
+      "100%",
+    );
+  });
 });

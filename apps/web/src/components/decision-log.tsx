@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { savingsSummary, type Decision } from "@stoafi/core";
 import { useMoney } from "@/lib/use-money";
+import { Money } from "@/components/ui/money";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -38,7 +39,9 @@ export function DecisionLog({ decisions }: { decisions: Decision[] }) {
                       {t(`outcome.${d.outcome}`)}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">{money(d.amount)}</TableCell>
+                  <TableCell className="text-right">
+                    <Money value={d.amount} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { AlertCircle, Download, Upload } from "lucide-react";
 import type { ImportResult } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
@@ -37,6 +38,8 @@ export function SettingsPanel({
   downloadJson = defaultDownload,
 }: SettingsPanelProps) {
   const [importErrors, setImportErrors] = useState<string[] | null>(null);
+  /** A chosen backup file waits here until the user confirms replacing their data. */
+  const [pendingImport, setPendingImport] = useState<string | null>(null);
   const t = useTranslations("settings");
 
   async function handleExport() {
@@ -47,8 +50,14 @@ export function SettingsPanel({
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const text = await file.text();
-    const result = await onImport(text);
+    setPendingImport(await file.text());
+    e.target.value = "";
+  }
+
+  async function confirmImport() {
+    if (pendingImport === null) return;
+    const result = await onImport(pendingImport);
+    setPendingImport(null);
     setImportErrors("errors" in result ? result.errors : null);
   }
 
@@ -109,6 +118,17 @@ export function SettingsPanel({
           </ul>
         )}
       </CardContent>
+      <ConfirmDialog
+        open={pendingImport !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingImport(null);
+        }}
+        title={t("importConfirmTitle")}
+        description={t("importConfirmText")}
+        confirmLabel={t("importConfirm")}
+        destructive
+        onConfirm={() => void confirmImport()}
+      />
     </Card>
   );
 }

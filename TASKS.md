@@ -796,20 +796,23 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
   Depends on: T11.1
   Note: brand is deep teal with an amber highlight; `tokens.test.ts` reads `globals.css` and checks contrast in both themes and forbids hard-coded colours. The theme is saved in settings (optional field, no migration) and mirrored in localStorage only so the first paint has no flash. Fonts are still the system stack: self-hosted fonts come with T11.3 (next/font needs network at build time, not available in the sandbox).
 
-- [ ] **T11.3** Shared component library and motion
+- [x] **T11.3** Shared component library and motion
   Goal: motion foundation (`motion`, respects reduced-motion), a decision on community components (own code vs copied from a registry such as 21st.dev, license checked per component and recorded in `docs/THIRD-PARTY.md`), and `Money`, `StatCard`, `ProgressBar`, `ProgressRing`, `Sheet`, `Dialog`/`ConfirmDialog`, `Toast` with undo, `Tabs`/`SegmentedControl`, `EmptyState`, `Skeleton`, `InfoPopover`, `StatusChip`, `MonthTrack`.
   Acceptance: each component has a test and is used by at least one screen before the phase ends.
   Depends on: T11.2
+  Note: built on `motion`, Radix dialog/tabs/popover and sonner; components written in our own code (no 21st.dev code copied yet, so nothing to record in `docs/THIRD-PARTY.md`). Already used on screens: Money (decision log), StatCard, InfoPopover and ProgressRing (health), ProgressBar and EmptyState (savings goals, decisions), Skeleton (loading), ConfirmDialog and Dialog (backup import), Sheet (phone More menu), SegmentedControl (appearance), toasts with undo. Not yet on a screen: `Tabs` (first needed by the savings and investments page, T12.8b), `MonthTrack` and `StatusChip` outside StatCard (queue, T12.3), `AnimatedNumber` with `Money animated` (home hero, T12.1). Self-hosted fonts deferred: next/font needs network at build time.
 
-- [ ] **T11.4** App shell
+- [x] **T11.4** App shell
   Goal: grouped sidebar, mobile bottom tab bar (5 items plus More), page header bar, skip link.
   Acceptance: on a 390 px screen every route is reachable without horizontal scrolling.
   Depends on: T11.3
+  Note: grouped sidebar (desktop) and a bottom bar with Home, Money, Queue, Plan and a More sheet (phone); Health, Savings, Cards, Decisions, Lessons, Profile and Settings sit under More. The plan listed Health as a tab; Queue replaced it because it is the main daily screen. Easy to swap.
 
-- [ ] **T11.5** Feedback patterns
+- [x] **T11.5** Feedback patterns
   Goal: "Saved" feedback, undo on delete, confirmation for destructive bulk actions, autosave on small forms, unsaved-changes guard on long forms.
   Acceptance: no save or delete happens silently.
   Depends on: T11.3
+  Note: saving shows a toast on profile, income and expenses, savings goals, cards and queue; deleting a card, savings goal, queue item or installment purchase shows a toast with Undo that restores and saves it again. Buying or skipping from the queue still removes the item without an undo toast (the decision log is the record). Backup import asks for confirmation first.
 
 - [ ] **T11.6** Small browser smoke tests in the repo
   Goal: one Playwright smoke test per page (opens, no console error, no horizontal scroll on a phone, main action works) plus an axe accessibility scan, run in CI. Kept deliberately small (about 15 short tests); no long scenarios.

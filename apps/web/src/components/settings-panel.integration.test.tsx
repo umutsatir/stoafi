@@ -43,6 +43,7 @@ describe("SettingsPanel wired to the real db (export -> clear -> import)", () =>
     const file = new File([capturedJson], "backup.json", { type: "application/json" });
     const input = screen.getByLabelText("Import backup") as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.click(await screen.findByRole("button", { name: "Replace my data" }));
 
     await waitFor(async () => {
       expect(await db.profile.get(SINGLETON_ID)).toBeDefined();

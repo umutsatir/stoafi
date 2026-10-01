@@ -1,9 +1,11 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { toast } from "sonner";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { SinkingFund } from "@stoafi/core";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
 import { renderWithIntl } from "@/test-utils";
+import { Toaster } from "@/components/ui/toaster";
 import SinkingFundsPage from "./page";
 
 const fund: SinkingFund = {
@@ -19,6 +21,7 @@ function type(label: string, value: string) {
 }
 
 beforeEach(async () => {
+  toast.dismiss();
   await db.sinkingFunds.clear();
   useAppStore.setState({ sinkingFunds: [], today: "2026-10-15", hydrated: true });
 });
@@ -75,5 +78,37 @@ describe("Sinking funds screen", () => {
       "href",
       "/lessons#sinking-funds",
     );
+  });
+
+  it("deletes a fund with an undo toast that brings it back, saved again", async () => {
+    await db.sinkingFunds.put({ id: fund.id, data: fund } as never);
+    useAppStore.setState({ sinkingFunds: [fund] });
+    renderWithIntl(
+      <>
+        <SinkingFundsPage />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Delete Car insurance" }));
+    expect(useAppStore.getState().sinkingFunds).toEqual([]);
+    expect(await screen.findByText("Deleted “Car insurance”")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().sinkingFunds).toEqual([fund]);
+    await waitFor(async () => expect(await db.sinkingFunds.count()).toBe(1));
+  });
+
+  it("confirms a save with a toast", async () => {
+    renderWithIntl(
+      <>
+        <SinkingFundsPage />
+        <Toaster />
+      </>,
+    );
+    type("Name", "Tax");
+    type("Target amount", "1200");
+    type("Due month", "2027-04");
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    expect(await screen.findByText("Saved")).toBeInTheDocument();
   });
 });

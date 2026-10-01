@@ -6,6 +6,8 @@ import { sinkingFundStatus, type Month, type SinkingFund } from "@stoafi/core";
 import { useMoney } from "@/lib/use-money";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
 export interface SinkingFundListProps {
   funds: SinkingFund[];
@@ -20,7 +22,7 @@ export function SinkingFundList({ funds, month, onEdit, onDelete }: SinkingFundL
   const money = useMoney();
 
   if (funds.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t("empty")}</p>;
+    return <EmptyState title={t("empty")} />;
   }
 
   return (
@@ -69,16 +71,12 @@ export function SinkingFundList({ funds, month, onEdit, onDelete }: SinkingFundL
                   </div>
                 </div>
 
-                <div
-                  role="progressbar"
-                  aria-label={t("progressLabel", { name: fund.label })}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={percent}
-                  className="h-2 w-full overflow-hidden rounded-full bg-secondary"
-                >
-                  <div className="h-full bg-primary" style={{ width: `${percent}%` }} />
-                </div>
+                <ProgressBar
+                  value={percent}
+                  max={100}
+                  label={t("progressLabel", { name: fund.label })}
+                  tone={status.state === "overdue" ? "danger" : "primary"}
+                />
 
                 <p
                   data-testid={`sinking-status-${fund.id}`}

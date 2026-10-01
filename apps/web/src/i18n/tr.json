@@ -1,6 +1,7 @@
 {
   "app": {
-    "name": "Stoafi"
+    "name": "Stoafi",
+    "loading": "Verilerin yükleniyor"
   },
   "home": {
     "title": "Ana sayfa",
@@ -41,7 +42,19 @@
     "health": "Sağlık",
     "decisions": "Kararlar",
     "settings": "Ayarlar",
-    "lessons": "Dersler"
+    "lessons": "Dersler",
+    "mobileAriaLabel": "Ana menü, alt çubuk",
+    "money": "Para",
+    "more": "Daha fazla",
+    "moreTitle": "Diğer sayfalar",
+    "groups": {
+      "overview": "Genel bakış",
+      "money": "Para",
+      "plan": "Plan",
+      "status": "Durum",
+      "learn": "Öğren",
+      "you": "Sen"
+    }
   },
   "incomeExpenses": {
     "title": "Gelir ve Giderler"
@@ -208,7 +221,26 @@
     "emergencyFundMonths": "Acil durum fonu ayı",
     "installmentRatio": "Taksit oranı",
     "runway": "Dayanma süresi",
-    "monthsValue": "{value} ay"
+    "monthsValue": "{value} ay",
+    "info": {
+      "savingsRate": {
+        "label": "Birikim oranı nedir?",
+        "text": "Gelirinin her ay birikime ve yatırıma ayırdığın payı."
+      },
+      "emergencyFundMonths": {
+        "label": "Acil durum fonu ayı nedir?",
+        "text": "Birikimin kaç aylık ihtiyacını karşılar. Çoğu kaynak 3 ila 6 ay önerir."
+      },
+      "installmentRatio": {
+        "label": "Taksit oranı nedir?",
+        "text": "Gelirinin her ay taksitlere giden payı. Düşük olması nefes alacak yer demektir."
+      },
+      "runway": {
+        "label": "Dayanma süresi nedir?",
+        "text": "Gelirin kesilirse ihtiyaçlarını ve taksitlerini birikiminle kaç ay ödeyebileceğin."
+      }
+    },
+    "fundRingLabel": "Acil durum fonu ilerlemesi"
   },
   "decisions": {
     "title": "Kararlar",
@@ -218,7 +250,10 @@
       "postponed": "ertelendi",
       "skipped": "vazgeçildi"
     },
-    "unknownItem": "Silinmiş ürün"
+    "unknownItem": "Silinmiş ürün",
+    "emptyTitle": "Henüz karar yok",
+    "emptyText": "Kuyruğundan bir şeyi alınca, ertelediğinde ya da vazgeçtiğinde burada, kazandığın parayla birlikte kayıtlanır.",
+    "emptyAction": "Kuyruğa git"
   },
   "settings": {
     "title": "Ayarlar",
@@ -237,7 +272,10 @@
       "system": "Cihazımı izle",
       "light": "Açık",
       "dark": "Koyu"
-    }
+    },
+    "importConfirmTitle": "Verilerin bu yedekle değiştirilsin mi?",
+    "importConfirmText": "İçe aktarmak bu uygulamadaki her şeyin yerine geçer. Emin değilsen önce yedek al.",
+    "importConfirm": "Verilerimi değiştir"
   },
   "installmentExpenses": {
     "title": "Satın alımlardan taksitler",
@@ -300,6 +338,8 @@
   "common": {
     "close": "Kapat",
     "cancel": "Vazgeç",
-    "undo": "Geri al"
+    "undo": "Geri al",
+    "saved": "Kaydedildi",
+    "deletedItem": "“{name}” silindi"
   }
 }

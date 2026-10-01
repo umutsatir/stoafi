@@ -4,6 +4,7 @@ import { ProfileSchema, project } from "@stoafi/core";
 import { useTranslations } from "next-intl";
 import { ProfileForm } from "@/components/profile-form";
 import { Page } from "@/components/ui/page";
+import { notify } from "@/components/ui/toaster";
 import { monthOf } from "@/lib/clock";
 import { mergeProfile } from "@/lib/profile-merge";
 import { db } from "@/storage/instance";
@@ -17,6 +18,7 @@ export default function ProfilePage() {
   const today = useAppStore((s) => s.today);
   const commitments = useInstallmentCommitments();
   const t = useTranslations("profile");
+  const tc = useTranslations("common");
 
   return (
     <Page title={t("title")}>
@@ -33,6 +35,7 @@ export default function ProfilePage() {
             mergeProfile(profile, settings),
           );
           setProfile(saved);
+          notify(tc("saved"));
         }}
       />
     </Page>

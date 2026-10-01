@@ -1,6 +1,7 @@
 {
   "app": {
-    "name": "Stoafi"
+    "name": "Stoafi",
+    "loading": "Loading your data"
   },
   "home": {
     "title": "Home",
@@ -41,7 +42,19 @@
     "health": "Health",
     "decisions": "Decisions",
     "settings": "Settings",
-    "lessons": "Lessons"
+    "lessons": "Lessons",
+    "mobileAriaLabel": "Main, bottom bar",
+    "money": "Money",
+    "more": "More",
+    "moreTitle": "More pages",
+    "groups": {
+      "overview": "Overview",
+      "money": "Money",
+      "plan": "Plan",
+      "status": "Status",
+      "learn": "Learn",
+      "you": "You"
+    }
   },
   "incomeExpenses": {
     "title": "Income & Expenses"
@@ -208,7 +221,26 @@
     "emergencyFundMonths": "Emergency fund months",
     "installmentRatio": "Installment ratio",
     "runway": "Runway",
-    "monthsValue": "{value} months"
+    "monthsValue": "{value} months",
+    "info": {
+      "savingsRate": {
+        "label": "What is the savings rate?",
+        "text": "The share of your income you put into savings and investing each month."
+      },
+      "emergencyFundMonths": {
+        "label": "What are emergency fund months?",
+        "text": "How many months of your needs your savings would cover. Most guides suggest 3 to 6 months."
+      },
+      "installmentRatio": {
+        "label": "What is the installment ratio?",
+        "text": "The share of your income that goes to installment payments each month. Lower means more room to breathe."
+      },
+      "runway": {
+        "label": "What is the runway?",
+        "text": "How many months you could pay your needs and installments from savings if your income stopped."
+      }
+    },
+    "fundRingLabel": "Emergency fund progress"
   },
   "decisions": {
     "title": "Decisions",
@@ -218,7 +250,10 @@
       "postponed": "postponed",
       "skipped": "skipped"
     },
-    "unknownItem": "Deleted item"
+    "unknownItem": "Deleted item",
+    "emptyTitle": "No decisions yet",
+    "emptyText": "When you buy, postpone or skip something from your queue, it is recorded here with the money you saved.",
+    "emptyAction": "Go to the queue"
   },
   "settings": {
     "title": "Settings",
@@ -237,7 +272,10 @@
       "system": "Follow my device",
       "light": "Light",
       "dark": "Dark"
-    }
+    },
+    "importConfirmTitle": "Replace your data with this backup?",
+    "importConfirmText": "Importing replaces everything stored in this app. Export a backup first if you are not sure.",
+    "importConfirm": "Replace my data"
   },
   "installmentExpenses": {
     "title": "Installments from purchases",
@@ -300,6 +338,8 @@
   "common": {
     "close": "Close",
     "cancel": "Cancel",
-    "undo": "Undo"
+    "undo": "Undo",
+    "saved": "Saved",
+    "deletedItem": "Deleted “{name}”"
   }
 }

@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Page } from "@/components/ui/page";
+import { notify, notifyUndo } from "@/components/ui/toaster";
 import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
@@ -46,6 +47,7 @@ export default function QueuePage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const t = useTranslations("queue");
+  const tc = useTranslations("common");
 
   if (!profile || !planState) {
     return (
@@ -87,13 +89,24 @@ export default function QueuePage() {
     );
     setEditingId(null);
     void saveQueueItem(db, item).catch(logFailure("save the queue item"));
+    notify(tc("saved"));
   }
 
-  function handleDelete(item: QueueItem) {
+  function removeItem(item: QueueItem) {
     setQueueItems(queueItems.filter((i) => i.id !== item.id));
     if (selectedId === item.id) setSelectedId(null);
     if (editingId === item.id) setEditingId(null);
     void removeQueueItem(db, item.id).catch(logFailure("delete the queue item"));
+  }
+
+  /** The delete button: removes the item and offers to bring it back. */
+  function handleDelete(item: QueueItem) {
+    removeItem(item);
+    notifyUndo(tc("deletedItem", { name: item.name }), tc("undo"), () => {
+      const current = useAppStore.getState();
+      current.setQueueItems([...current.queueItems, item]);
+      void saveQueueItem(db, item).catch(logFailure("restore the queue item"));
+    });
   }
 
   function handleReorder(next: QueueItem[]) {
@@ -126,7 +139,7 @@ export default function QueuePage() {
 
     if (purchase.method === "cash") {
       // Cash is paid from the account by the user: it is a decision only, not a monthly commitment.
-      handleDelete(selectedItem);
+      removeItem(selectedItem);
     } else {
       // Installments become an expense: the item stays, flagged, and its payments are derived from it.
       const bought: QueueItem = {
@@ -154,7 +167,7 @@ export default function QueuePage() {
     void putListItem(db, "decisions", DecisionSchema, decision).catch(
       logFailure("save the decision"),
     );
-    if (outcome === "skipped") handleDelete(selectedItem);
+    if (outcome === "skipped") removeItem(selectedItem);
     setSelectedId(null);
   }
 

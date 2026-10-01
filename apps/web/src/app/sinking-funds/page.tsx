@@ -7,6 +7,7 @@ import { LessonLink } from "@/components/lesson-link";
 import { SinkingFundForm } from "@/components/sinking-fund-form";
 import { SinkingFundList } from "@/components/sinking-fund-list";
 import { Page } from "@/components/ui/page";
+import { notify, notifyUndo } from "@/components/ui/toaster";
 import { monthOf } from "@/lib/clock";
 import { removeSinkingFund, saveSinkingFund } from "@/storage/sinking-repo";
 import { db } from "@/storage/instance";
@@ -23,6 +24,7 @@ export default function SinkingFundsPage() {
   const today = useAppStore((s) => s.today);
   const [editingId, setEditingId] = useState<string | null>(null);
   const t = useTranslations("sinkingFunds");
+  const tc = useTranslations("common");
 
   const month = monthOf(today);
   const editing = funds.find((f) => f.id === editingId);
@@ -32,12 +34,18 @@ export default function SinkingFundsPage() {
     setFunds(exists ? funds.map((f) => (f.id === fund.id ? fund : f)) : [...funds, fund]);
     setEditingId(null);
     void saveSinkingFund(db, fund).catch(logFailure("save the savings goal"));
+    notify(tc("saved"));
   }
 
   function handleDelete(fund: SinkingFund) {
     setFunds(funds.filter((f) => f.id !== fund.id));
     if (editingId === fund.id) setEditingId(null);
     void removeSinkingFund(db, fund.id).catch(logFailure("delete the savings goal"));
+    notifyUndo(tc("deletedItem", { name: fund.label }), tc("undo"), () => {
+      const current = useAppStore.getState();
+      current.setSinkingFunds([...current.sinkingFunds, fund]);
+      void saveSinkingFund(db, fund).catch(logFailure("restore the savings goal"));
+    });
   }
 
   return (

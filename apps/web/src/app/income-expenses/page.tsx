@@ -5,10 +5,11 @@ import { useTranslations } from "next-intl";
 import { IncomeExpensesForm } from "@/components/income-expenses-form";
 import { InstallmentExpenses } from "@/components/installment-expenses";
 import { Page } from "@/components/ui/page";
+import { notify, notifyUndo } from "@/components/ui/toaster";
 import { monthOf } from "@/lib/clock";
 import { mergeProfile } from "@/lib/profile-merge";
 import { db } from "@/storage/instance";
-import { removeQueueItem } from "@/storage/queue-repo";
+import { removeQueueItem, saveQueueItem } from "@/storage/queue-repo";
 import { putSingleton } from "@/storage/repo";
 import { useAppStore } from "@/store";
 
@@ -20,6 +21,7 @@ export default function IncomeExpensesPage() {
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const today = useAppStore((s) => s.today);
   const t = useTranslations("incomeExpenses");
+  const tc = useTranslations("common");
 
   return (
     <Page title={t("title")}>
@@ -35,6 +37,7 @@ export default function IncomeExpensesPage() {
             mergeProfile(profile, value),
           );
           setProfile(saved);
+          notify(tc("saved"));
         }}
       />
       <InstallmentExpenses
@@ -45,6 +48,13 @@ export default function IncomeExpensesPage() {
           void removeQueueItem(db, item.id).catch((error: unknown) =>
             console.error("Could not remove the installment purchase", error),
           );
+          notifyUndo(tc("deletedItem", { name: item.name }), tc("undo"), () => {
+            const current = useAppStore.getState();
+            current.setQueueItems([...current.queueItems, item]);
+            void saveQueueItem(db, item).catch((error: unknown) =>
+              console.error("Could not restore the installment purchase", error),
+            );
+          });
         }}
       />
     </Page>

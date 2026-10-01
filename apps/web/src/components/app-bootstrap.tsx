@@ -1,16 +1,19 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, type ReactNode } from "react";
 import { SettingsSchema } from "@stoafi/core";
 import { localIsoDate } from "@/lib/clock";
 import { loadAppState } from "@/storage/bootstrap";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
+import { Skeleton } from "@/components/ui/skeleton";
 import { applyTheme } from "@/lib/theme";
 import { useAppStore } from "@/store";
 
 /** Loads saved data into the store once, keeps language and currency saved, then renders the app. */
 export function AppBootstrap({ children }: { children: ReactNode }) {
+  const t = useTranslations("app");
   const hydrated = useAppStore((s) => s.hydrated);
   const hydrate = useAppStore((s) => s.hydrate);
   const setToday = useAppStore((s) => s.setToday);
@@ -60,5 +63,12 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
     };
   }, [hydrated, setToday]);
 
-  return hydrated ? <>{children}</> : null;
+  if (hydrated) return <>{children}</>;
+  return (
+    <div role="status" aria-label={t("loading")} className="flex flex-col gap-4">
+      <Skeleton className="h-9 w-56" />
+      <Skeleton className="h-32 w-full" />
+      <Skeleton className="h-32 w-full" />
+    </div>
+  );
 }

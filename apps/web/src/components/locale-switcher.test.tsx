@@ -45,8 +45,8 @@ describe("LocaleSwitcher", () => {
   it("changes the saved appearance with the selector", () => {
     useAppStore.setState({ theme: "system" });
     renderWithLocale("en");
-    fireEvent.change(screen.getByLabelText("Appearance"), { target: { value: "dark" } });
+    expect(screen.getByRole("radio", { name: "Follow my device" })).toBeChecked();
+    fireEvent.click(screen.getByRole("radio", { name: "Dark" }));
     expect(useAppStore.getState().theme).toBe("dark");
-    expect(screen.getByRole("option", { name: "Follow my device" })).toBeInTheDocument();
   });
 });

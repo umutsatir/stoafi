@@ -32,6 +32,7 @@ export default function HealthPage() {
         projection={projection}
         savingsBalance={profile.savings}
         monthlyNeeds={needs}
+        emergencyFundTargetMonths={profile.emergencyFundTargetMonths}
       />
       <LessonLink lessonId="room-for-error" testId="lesson-link-room-for-error" />
     </Page>
