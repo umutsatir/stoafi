@@ -11,7 +11,8 @@ export const Dialog = DialogPrimitive.Root;
 export const DialogTrigger = DialogPrimitive.Trigger;
 export const DialogClose = DialogPrimitive.Close;
 
-const OVERLAY = "fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm";
+const OVERLAY =
+  "fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm data-[state=closed]:animate-[overlay-out_160ms_ease-in_forwards] data-[state=open]:animate-[overlay-in_200ms_ease-out]";
 
 function CloseButton() {
   const t = useTranslations("common");
@@ -39,7 +40,7 @@ export function DialogContent({ title, description, children, className }: Dialo
       <DialogPrimitive.Content
         {...(description ? {} : { "aria-describedby": undefined })}
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-lg",
+          "data-[state=open]:animate-[dialog-in_220ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[dialog-out_160ms_ease-in_forwards] fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-lg",
           className,
         )}
       >

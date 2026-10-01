@@ -252,33 +252,35 @@ export default function QueuePage() {
               ]}
             />
           </div>
-          {view === "list" && (
-            <QueueList
-              items={visibleItems}
-              commitments={commitments}
-              reorderable={filter === "all"}
-              onItemsChange={handleReorder}
-              onSelect={(item) => setSelectedId(item.id)}
-              onEdit={(item) => setEditingId(item.id)}
-              onDelete={handleDelete}
-              profile={profile}
-              planState={planState}
-              today={today}
-              startMonth={currentMonth}
-              hourlyNetIncome={hourlyNetIncome(profile)}
-            />
-          )}
-          {view === "eisenhower" && (
-            <QueueEisenhower items={visibleItems} onSelect={(item) => setSelectedId(item.id)} />
-          )}
-          {view === "time" && (
-            <QueueTimeView
-              items={visibleItems}
-              monthByItemId={monthByItemId}
-              today={today}
-              onSelect={(item) => setSelectedId(item.id)}
-            />
-          )}
+          <div key={view} className="fade-in">
+            {view === "list" && (
+              <QueueList
+                items={visibleItems}
+                commitments={commitments}
+                reorderable={filter === "all"}
+                onItemsChange={handleReorder}
+                onSelect={(item) => setSelectedId(item.id)}
+                onEdit={(item) => setEditingId(item.id)}
+                onDelete={handleDelete}
+                profile={profile}
+                planState={planState}
+                today={today}
+                startMonth={currentMonth}
+                hourlyNetIncome={hourlyNetIncome(profile)}
+              />
+            )}
+            {view === "eisenhower" && (
+              <QueueEisenhower items={visibleItems} onSelect={(item) => setSelectedId(item.id)} />
+            )}
+            {view === "time" && (
+              <QueueTimeView
+                items={visibleItems}
+                monthByItemId={monthByItemId}
+                today={today}
+                onSelect={(item) => setSelectedId(item.id)}
+              />
+            )}
+          </div>
         </>
       )}
 

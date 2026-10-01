@@ -5,6 +5,7 @@ import { cooldownStatus, type Month, type QueueItem } from "@stoafi/core";
 import { Money } from "@/components/ui/money";
 import { StatusChip } from "@/components/ui/status-chip";
 import { formatMonth } from "@/lib/format-month";
+import { stagger } from "@/lib/utils";
 
 export interface QueueTimeViewProps {
   items: QueueItem[];
@@ -46,13 +47,14 @@ export function QueueTimeView({ items, monthByItemId, today, onSelect }: QueueTi
 
   return (
     <div className="flex flex-col gap-4" data-testid="time-view">
-      {months.map((month) => {
+      {months.map((month, monthIndex) => {
         const group = byMonth.get(month) ?? [];
         return (
           <section
             key={month}
             data-testid={`time-month-${month}`}
-            className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4"
+            style={stagger(monthIndex)}
+            className="rise-in flex flex-col gap-2 rounded-xl border border-border bg-card p-4"
           >
             <h3 className="flex items-center gap-2 font-semibold">
               {formatMonth(month, locale)}

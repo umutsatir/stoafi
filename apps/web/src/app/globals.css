@@ -57,9 +57,9 @@
   color-scheme: dark;
 
   --background: #0a1412;
-  --foreground: #e6f1ee;
+  --foreground: #dfeae6;
   --card: #101d1a;
-  --card-foreground: #e6f1ee;
+  --card-foreground: #dfeae6;
   --muted: #162622;
   --muted-foreground: #9db3ad;
   --secondary: #1a2d29;
@@ -68,31 +68,33 @@
   --accent-foreground: #e6f1ee;
   --border: #243832;
   --input: #2f4740;
-  --ring: #2dd4bf;
+  --ring: #4fc2b1;
 
-  --primary: #2dd4bf;
-  --primary-foreground: #04231f;
-  --highlight: #fbbf24;
+  --primary: #34b3a0;
+  --primary-foreground: #031a17;
+  --highlight: #e0b44a;
   --highlight-foreground: #2a1a02;
 
-  --destructive: #f87171;
+  --destructive: #ec7c7c;
   --destructive-foreground: #2a0606;
-  --success: #4ade80;
+  --success: #62c184;
   --success-foreground: #04200d;
-  --warning: #fbbf24;
+  --warning: #deb04e;
   --warning-foreground: #2a1a02;
-  --info: #38bdf8;
+  --info: #62aedd;
   --info-foreground: #04202e;
 
-  --chart-needs: #2dd4bf;
-  --chart-wants: #b8a99a;
-  --chart-savings: #38bdf8;
-  --chart-investing: #4ade80;
-  --chart-installments: #fb923c;
-  --chart-setaside: #c084fc;
-  --chart-income: #4ade80;
-  --chart-left: #fbbf24;
+  --chart-needs: #3aa596;
+  --chart-wants: #a89a8c;
+  --chart-savings: #5aa5d6;
+  --chart-investing: #5fb97f;
+  --chart-installments: #e0915a;
+  --chart-setaside: #a98bd6;
+  --chart-income: #5fb97f;
+  --chart-left: #d9ad4a;
 }
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   --color-background: var(--background);
@@ -149,4 +151,118 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Motion. Everything below is switched off by the reduced-motion rule above. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-right-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes sheet-right-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes sheet-up-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes sheet-up-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes dialog-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Things that arrive: rise and fade in, one after another via --i (set inline). */
+.rise-in {
+  animation: rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+.fade-in {
+  animation: fade 0.3s ease-out backwards;
+}
+.pop-in {
+  animation: pop 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms);
 }

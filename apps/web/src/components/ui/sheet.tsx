@@ -23,11 +23,13 @@ export function SheetContent({ title, description, children, className }: SheetC
   const t = useTranslations("common");
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm data-[state=closed]:animate-[overlay-out_160ms_ease-in_forwards] data-[state=open]:animate-[overlay-in_200ms_ease-out]" />
       <DialogPrimitive.Content
         {...(description ? {} : { "aria-describedby": undefined })}
         className={cn(
           "fixed z-50 flex flex-col gap-4 overflow-y-auto border-border bg-card p-6 shadow-lg",
+          "data-[state=open]:animate-[sheet-up-in_280ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[sheet-up-out_200ms_ease-in_forwards]",
+          "md:data-[state=open]:animate-[sheet-right-in_280ms_cubic-bezier(0.16,1,0.3,1)] md:data-[state=closed]:animate-[sheet-right-out_200ms_ease-in_forwards]",
           "inset-x-0 bottom-0 max-h-[85vh] rounded-t-xl border-t",
           "md:inset-y-0 md:left-auto md:right-0 md:max-h-none md:w-full md:max-w-md md:rounded-none md:border-l md:border-t-0",
           className,

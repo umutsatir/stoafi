@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "./card";
 import { StatusChip, type ChipTone } from "./status-chip";
@@ -17,6 +17,7 @@ export interface StatCardProps {
   footer?: ReactNode;
   testId?: string;
   className?: string;
+  style?: CSSProperties;
 }
 
 export function StatCard({
@@ -28,9 +29,10 @@ export function StatCard({
   footer,
   testId,
   className,
+  style,
 }: StatCardProps) {
   return (
-    <Card className={cn("h-full", className)}>
+    <Card className={cn("h-full", className)} style={style}>
       <CardContent className="flex h-full flex-col gap-2 pt-6">
         <div className="flex items-center justify-between gap-2">
           <p className="flex items-center gap-1 text-sm text-muted-foreground">

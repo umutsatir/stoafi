@@ -10,6 +10,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { StatCard } from "@/components/ui/stat-card";
 import { StatusChip, type ChipTone } from "@/components/ui/status-chip";
 import { formatMonth } from "@/lib/format-month";
+import { stagger } from "@/lib/utils";
 import { LessonLink } from "./lesson-link";
 
 const OUTCOME_TONE: Record<Decision["outcome"], ChipTone> = {
@@ -85,14 +86,15 @@ export function DecisionLog({ decisions, hourlyNetIncome, onDelete, onAddBack }:
             {formatMonth(group.month, locale)}
           </h2>
           <ul className="flex flex-col gap-2">
-            {group.decisions.map((d) => {
+            {group.decisions.map((d, rowIndex) => {
               const name = d.itemName ?? t("unknownItem");
               const acceptedRisk = (d.breachedRuleIds?.length ?? 0) > 0 && d.guardBreachConfirmed;
               return (
                 <li
                   key={d.id}
                   data-testid={`decision-${d.id}`}
-                  className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
+                  style={stagger(rowIndex)}
+                  className="rise-in flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{name}</p>

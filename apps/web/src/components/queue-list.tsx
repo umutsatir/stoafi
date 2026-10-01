@@ -36,6 +36,7 @@ import { useMoney } from "@/lib/use-money";
 import { Button } from "@/components/ui/button";
 import { StatusChip, type ChipTone } from "@/components/ui/status-chip";
 import { formatMonth } from "@/lib/format-month";
+import { stagger } from "@/lib/utils";
 
 const NO_COMMITMENTS: Commitment[] = [];
 
@@ -128,6 +129,7 @@ function QueueRow({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    ...stagger(index),
   };
 
   return (
@@ -135,7 +137,7 @@ function QueueRow({
       ref={setNodeRef}
       style={style}
       data-testid={`queue-item-${item.id}`}
-      className={`flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md ${
+      className={`rise-in flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md ${
         isDragging ? "opacity-60 shadow-lg" : ""
       }`}
     >

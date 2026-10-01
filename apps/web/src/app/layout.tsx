@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AppBootstrap } from "@/components/app-bootstrap";
 import { IntlProvider } from "@/components/intl-provider";
 import { Nav } from "@/components/nav";
+import { PageTransition } from "@/components/page-transition";
 import { Toaster } from "@/components/ui/toaster";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
@@ -44,7 +45,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Nav />
             <div className="min-w-0 flex-1 px-4 pb-24 pt-6 md:px-8 md:pb-10">
               <div className="mx-auto max-w-5xl">
-                <AppBootstrap>{children}</AppBootstrap>
+                <AppBootstrap>
+                  <PageTransition>{children}</PageTransition>
+                </AppBootstrap>
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { eisenhowerQuadrant, type QueueItem } from "@stoafi/core";
-import { cn } from "@/lib/utils";
+import { cn, stagger } from "@/lib/utils";
 import { Money } from "@/components/ui/money";
 
 const QUADRANTS = [
@@ -22,7 +22,7 @@ export function QueueEisenhower({ items, onSelect }: QueueEisenhowerProps) {
   const t = useTranslations("queue");
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {QUADRANTS.map((q) => {
+      {QUADRANTS.map((q, quadrantIndex) => {
         const inQuadrant = items.filter((item) => {
           const position = eisenhowerQuadrant(item);
           return position.urgent === q.urgent && position.important === q.important;
@@ -32,7 +32,11 @@ export function QueueEisenhower({ items, onSelect }: QueueEisenhowerProps) {
             key={q.key}
             aria-label={t(`eisenhower.${q.key}.title`)}
             data-testid={`quadrant-${q.key}`}
-            className={cn("flex min-h-32 flex-col gap-2 rounded-xl border-2 bg-card p-4", q.tone)}
+            style={stagger(quadrantIndex)}
+            className={cn(
+              "rise-in flex min-h-32 flex-col gap-2 rounded-xl border-2 bg-card p-4",
+              q.tone,
+            )}
           >
             <header>
               <h3 className="font-semibold">{t(`eisenhower.${q.key}.title`)}</h3>

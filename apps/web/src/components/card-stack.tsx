@@ -17,7 +17,7 @@ export function CardStack({ main, cards, onOpen }: CardStackProps) {
   const extras = supplementariesOf(cards, main.id);
 
   return (
-    <div data-testid={`card-${main.id}`} className="flex w-full max-w-sm flex-col">
+    <div data-testid={`card-${main.id}`} className="pop-in flex w-full max-w-sm flex-col">
       <BankCard
         card={main}
         onClick={() => onOpen(main)}

@@ -105,7 +105,7 @@ export function Nav() {
                       className={cn(
                         "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         active
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-primary text-primary-foreground dark:bg-primary/15 dark:text-primary"
                           : "text-muted-foreground hover:bg-secondary hover:text-foreground",
                       )}
                     >
