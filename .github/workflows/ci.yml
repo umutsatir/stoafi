@@ -32,3 +32,8 @@ jobs:
       - run: pnpm --filter @stoafi/core test:coverage
 
       - run: pnpm --filter @stoafi/web build
+
+      # Browser smoke tests run against the static export built above.
+      - run: pnpm --filter @stoafi/web exec playwright install --with-deps chromium
+
+      - run: pnpm --filter @stoafi/web test:e2e

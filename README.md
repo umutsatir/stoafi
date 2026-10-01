@@ -37,6 +37,7 @@ pnpm dev          # web app on http://localhost:3000
 pnpm test         # all tests
 pnpm typecheck
 pnpm lint
+pnpm --filter @stoafi/web test:e2e   # browser smoke tests; run `pnpm --filter @stoafi/web build` first
 pnpm --filter @stoafi/core test:coverage   # fails below 90% lines or branches
 pnpm --filter @stoafi/web build            # static export to apps/web/out
 ```

@@ -814,10 +814,11 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
   Depends on: T11.3
   Note: saving shows a toast on profile, income and expenses, savings goals, cards and queue; deleting a card, savings goal, queue item or installment purchase shows a toast with Undo that restores and saves it again. Buying or skipping from the queue still removes the item without an undo toast (the decision log is the record). Backup import asks for confirmation first.
 
-- [ ] **T11.6** Small browser smoke tests in the repo
+- [x] **T11.6** Small browser smoke tests in the repo
   Goal: one Playwright smoke test per page (opens, no console error, no horizontal scroll on a phone, main action works) plus an axe accessibility scan, run in CI. Kept deliberately small (about 15 short tests); no long scenarios.
   Acceptance: CI fails on a console error, a horizontal scroll on a phone, or a serious axe violation.
   Depends on: T11.4
+  Note: 24 tests (per page: opens, no console error, no sideways scroll on a phone, no serious or critical axe problem in light and dark; plus saving income and delete-with-undo). They run against the static export; `PLAYWRIGHT_CHROMIUM_PATH` points at an existing Chromium where Playwright's own download is not available. New devDependencies: `@playwright/test` (pinned to the sandbox's browser build) and `@axe-core/playwright`. The pages are mostly empty in these runs; each page task in Phase 12 adds a filled-state scan for its own page.
   Note: preview deployments were dropped (the owner runs branches locally).
 
 ### Phase 12 — Page by page (each page needs its own approval before the next starts)
