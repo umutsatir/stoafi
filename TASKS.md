@@ -926,7 +926,7 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 
 ## Open questions
 
-- [ ] T14.5 (owner): install and offline check on a real phone and Mac, where to deploy (host, domain), final product name, licence (MIT or AGPL). Nothing in code blocks on these; `public/_headers` assumes a host that reads it (Cloudflare Pages, Netlify).
+- [ ] T14.5 (owner): install and offline check on a real phone and Mac, domain, final product name, licence (MIT or AGPL). Hosting is Vercel with `stable` as the production branch (`vercel.json`, `docs/DEPLOY.md`); not yet deployed. Nothing in code blocks on these; `public/_headers` assumes a host that reads it (Cloudflare Pages, Netlify).
 - [ ] Not built from the plan, decide whether wanted: Eisenhower drag between quadrants, a `⋯` menu on queue rows, before/after bars and a cash/installment toggle with card picker in the queue preview, decision outcome change, a month picker and an insight sentence in Decisions, `MonthTrack` is unused, self-hosted fonts (system fonts today).
 - [ ] Suggested pot split gives pots due soonest priority before the emergency fund. Confirm that order.
 

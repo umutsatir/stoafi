@@ -43,3 +43,21 @@ describe("the _headers file for static hosts", () => {
     expect(file.trimStart().startsWith("/*")).toBe(true);
   });
 });
+
+describe("vercel.json", () => {
+  const config = JSON.parse(readFileSync(join(__dirname, "../../../../vercel.json"), "utf8")) as {
+    headers: { source: string; headers: { key: string; value: string }[] }[];
+  };
+  const all = config.headers.find((h) => h.source === "/(.*)")?.headers ?? [];
+
+  it("sets every header in SECURITY_HEADERS to exactly the same value, on every path", () => {
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+      expect(all.find((h) => h.key === name)?.value, name).toBe(value);
+    }
+  });
+
+  it("keeps the service worker file from being cached, so updates reach people", () => {
+    const sw = config.headers.find((h) => h.source === "/sw.js")?.headers ?? [];
+    expect(sw).toContainEqual({ key: "Cache-Control", value: "no-cache" });
+  });
+});
