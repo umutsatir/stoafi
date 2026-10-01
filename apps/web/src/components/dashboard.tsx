@@ -65,6 +65,10 @@ export interface DashboardProps {
   today: string;
   /** How many upcoming queue items to list. */
   nextCount?: number;
+  /** Shown instead of the empty welcome when nothing is set up yet (the first-run wizard). */
+  onboarding?: React.ReactNode;
+  /** Shown above everything, e.g. the sample-data banner. */
+  banner?: React.ReactNode;
 }
 
 const EVENT_ICON = { income: ArrowDownLeft, expense: ArrowUpRight, card: CreditCard } as const;
@@ -118,6 +122,8 @@ export function Dashboard({
   installmentCapPct = 0.2,
   today,
   nextCount = 3,
+  onboarding,
+  banner,
 }: DashboardProps) {
   const t = useTranslations("home");
   const tTimeline = useTranslations("timeline");
@@ -127,10 +133,11 @@ export function Dashboard({
   if (!profile) {
     return (
       <Page title={t("title")}>
+        {onboarding}
         <Card>
           <CardContent className="flex flex-col items-start gap-4 pt-6">
             <p className="text-sm text-muted-foreground">{t("welcome")}</p>
-            <Button asChild>
+            <Button asChild variant={onboarding ? "outline" : "default"}>
               <Link href="/income-expenses">{t("setUpProfile")}</Link>
             </Button>
           </CardContent>
@@ -218,6 +225,7 @@ export function Dashboard({
 
   return (
     <Page title={t("title")}>
+      {banner}
       <p className="-mt-3 text-sm text-muted-foreground">
         {t("greeting", { month: formatMonth(month, locale) })}
       </p>

@@ -13,6 +13,8 @@ export const SettingsSchema = z.object({
   theme: z.enum(THEMES).optional(),
   /** Ids of lesson cards the user marked as read. Optional so older settings stay valid. */
   readLessons: z.array(z.string()).optional(),
+  /** True while the app holds sample data from the demo, so a banner can offer to clear it. */
+  demo: z.boolean().optional(),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

@@ -43,7 +43,8 @@ for (const path of PAGES) {
 
   test(`${path} has no serious accessibility problems in light and dark`, async ({ browser }) => {
     for (const colorScheme of ["light", "dark"] as const) {
-      const context = await browser.newContext({ colorScheme });
+      // Animations are switched off so the scan reads final colours, not a half-faded entrance.
+      const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
       const page = await context.newPage();
       await page.goto(path);
       await expect(page.locator("h1")).toBeVisible();
@@ -68,18 +69,32 @@ test("saving income shows a confirmation and survives a reload", async ({ page }
   await expect(page.getByLabel("Salary 1 amount")).toHaveValue("30000");
 });
 
-test("deleting a saved goal can be undone", async ({ page }) => {
-  await page.goto("/sinking-funds");
-  await page.getByLabel("Name").fill("Car insurance");
-  await page.getByLabel("Target amount").fill("6000");
-  await page.getByLabel("Due month").fill("2027-04");
-  await page.getByRole("button", { name: "Add", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Delete Car insurance" })).toBeVisible();
+test("deleting a pot can be undone", async ({ page }) => {
+  await page.goto("/income-expenses");
+  await page.getByLabel("Salary 1 amount").fill("30000");
+  await page.getByRole("button", { name: /^save/i }).first().click();
+  await expect(page.getByText("Saved", { exact: true })).toBeVisible();
 
+  await page.goto("/sinking-funds");
+  await page.getByRole("button", { name: "Add a pot" }).first().click();
+  const panel = page.getByRole("dialog");
+  await panel.getByLabel("Name").fill("Car insurance");
+  await panel.getByLabel("Target amount").fill("6000");
+  await panel.getByLabel("Due month").fill("2027-04");
+  await panel.getByRole("button", { name: "Add", exact: true }).click();
+  await page.getByRole("button", { name: /History.*Car insurance/ }).click();
   await page.getByRole("button", { name: "Delete Car insurance" }).click();
   await expect(page.getByText("Deleted “Car insurance”")).toBeVisible();
   await page.getByRole("button", { name: "Undo" }).click();
-  await expect(page.getByRole("button", { name: "Delete Car insurance" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /History.*Car insurance/ })).toBeVisible();
+});
+
+test("the sample data loads in one click and can be cleared", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Look around with sample data" }).click();
+  await expect(page.getByTestId("demo-banner")).toBeVisible();
+  await page.getByRole("button", { name: "Start with my own data" }).click();
+  await expect(page.getByTestId("onboarding-welcome")).toBeVisible();
 });
 
 test("a card added from a bank shows as a card and passes the accessibility scan", async ({
@@ -98,4 +113,32 @@ test("a card added from a bank shows as a card and passes the accessibility scan
       .filter((v) => v.impact === "serious" || v.impact === "critical")
       .map((v) => `${v.id}: ${v.help}`),
   ).toEqual([]);
+});
+
+test("every page passes the accessibility scan with sample data, in light and dark", async ({
+  browser,
+}) => {
+  test.setTimeout(120_000);
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto("/");
+    await page.getByRole("button", { name: "Look around with sample data" }).click();
+    await expect(page.getByTestId("demo-banner")).toBeVisible();
+    const problems: string[] = [];
+    for (const path of [...PAGES, "/calendar"]) {
+      await page.goto(path);
+      await expect(page.locator("h1")).toBeVisible();
+      const { violations } = await new AxeBuilder({ page }).analyze();
+      for (const v of violations) {
+        if (v.impact === "serious" || v.impact === "critical") {
+          problems.push(
+            `${colorScheme} ${path}: ${v.id} (${v.nodes.length}) ${v.nodes[0]?.html.slice(0, 90)}`,
+          );
+        }
+      }
+    }
+    await context.close();
+    expect(problems).toEqual([]);
+  }
 });

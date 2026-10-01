@@ -58,7 +58,10 @@
       "reduce-installments": "Installments take too much of your income.",
       "start-saving": "Little of your income is being saved.",
       "extend-runway": "Your savings would not last many months."
-    }
+    },
+    "demoBanner": "You are looking at sample data.",
+    "demoClear": "Start with my own data",
+    "demoCleared": "Sample data removed"
   },
   "nav": {
     "ariaLabel": "Main",
@@ -994,5 +997,76 @@
       "text": "Add your salary, bills and cards with their days and they appear here.",
       "action": "Add income and expenses"
     }
+  },
+  "onboarding": {
+    "title": "Set up Stoafi",
+    "welcomeTitle": "Turn your salary into a plan",
+    "welcomeText": "Tell Stoafi what comes in and what goes out, and it shows what is left, what to set aside and when you can afford what you want. It takes about five minutes.",
+    "start": "Get started",
+    "demo": "Look around with sample data",
+    "privacy": "Everything stays on this device. No account, no server.",
+    "step": "Step {n} of {total}",
+    "progress": "Setup progress",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "finish": "Finish",
+    "remove": "Remove",
+    "done": "Your plan is ready",
+    "steps": {
+      "income": {
+        "title": "What comes in?",
+        "hint": "Your regular monthly pay, after tax. One-off money is not counted."
+      },
+      "expenses": {
+        "title": "What goes out every month?",
+        "hint": "Tap what applies and enter the amount. Skip anything you do not have."
+      },
+      "savings": {
+        "title": "What have you saved?",
+        "hint": "Your safety net and what prices are doing where you live."
+      },
+      "plan": {
+        "title": "Pick how to split your money",
+        "hint": "You can change this any time on the Plan page."
+      }
+    },
+    "salaryName": "Name",
+    "defaultSalary": "Salary",
+    "salaryAmount": "Monthly amount",
+    "salaryRequired": "Enter your monthly pay to continue.",
+    "payDay": "Paid on day",
+    "chips": {
+      "rent": "Rent",
+      "bills": "Bills",
+      "loan": "Loan",
+      "subscription": "Subscription",
+      "school": "School"
+    },
+    "living": "Living costs",
+    "livingHint": "Groceries and everyday spending, roughly, per month.",
+    "monthsHint": "Many guides suggest 3 to 6 months of needs.",
+    "leftOver": "After your regular costs you have {amount} left each month.",
+    "overspent": "Your regular costs are {amount} above your income. You can still continue and fix it later.",
+    "planChoice": "Plan",
+    "split": "Needs {needs} · Wants {wants} · Saving {savings}"
+  },
+  "demoLabels": {
+    "salary": "Salary",
+    "rent": "Rent",
+    "car": "Car loan",
+    "streaming": "Streaming",
+    "headphones": "Headphones",
+    "washer": "Washing machine",
+    "laptop": "Laptop",
+    "phone": "Phone",
+    "insurance": "Car insurance",
+    "holiday": "Holiday",
+    "gold": "Gram gold",
+    "fund": "Global index fund",
+    "card": "Everyday card",
+    "spouse": "Partner",
+    "jacket": "Jacket",
+    "watch": "Watch"
   }
 }

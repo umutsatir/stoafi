@@ -21,6 +21,7 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
   const currency = useAppStore((s) => s.currency);
   const theme = useAppStore((s) => s.theme);
   const readLessons = useAppStore((s) => s.readLessons);
+  const demo = useAppStore((s) => s.demo);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,8 +42,9 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
       currency,
       theme,
       readLessons,
+      ...(demo ? { demo } : {}),
     }).catch((error) => console.error("Could not save settings", error));
-  }, [hydrated, locale, currency, theme, readLessons]);
+  }, [hydrated, locale, currency, theme, readLessons, demo]);
 
   // Follow the saved theme, and the system's while the user has not picked one.
   useEffect(() => {

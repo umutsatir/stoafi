@@ -58,7 +58,10 @@
       "reduce-installments": "Taksitler gelirinden çok fazla pay alıyor.",
       "start-saving": "Gelirinin az bir kısmı birikiyor.",
       "extend-runway": "Birikimin birkaç ay dayanmaz."
-    }
+    },
+    "demoBanner": "Örnek verilere bakıyorsun.",
+    "demoClear": "Kendi verilerimle başla",
+    "demoCleared": "Örnek veriler silindi"
   },
   "nav": {
     "ariaLabel": "Ana",
@@ -994,5 +997,76 @@
       "text": "Maaşını, faturalarını ve kartlarını günleriyle ekle, burada görünsünler.",
       "action": "Gelir ve gider ekle"
     }
+  },
+  "onboarding": {
+    "title": "Stoafi'yi kur",
+    "welcomeTitle": "Maaşını bir plana çevir",
+    "welcomeText": "Stoafi'ye ne girdiğini ve ne çıktığını söyle; geriye ne kaldığını, ne kadar ayırman gerektiğini ve istediğin şeyleri ne zaman alabileceğini göstersin. Yaklaşık beş dakika sürer.",
+    "start": "Başlayalım",
+    "demo": "Örnek verilerle gez",
+    "privacy": "Her şey bu cihazda kalır. Hesap yok, sunucu yok.",
+    "step": "Adım {n} / {total}",
+    "progress": "Kurulum ilerlemesi",
+    "back": "Geri",
+    "next": "İleri",
+    "skip": "Atla",
+    "finish": "Bitir",
+    "remove": "Kaldır",
+    "done": "Planın hazır",
+    "steps": {
+      "income": {
+        "title": "Ne giriyor?",
+        "hint": "Düzenli aylık maaşın, vergi sonrası. Tek seferlik paralar sayılmaz."
+      },
+      "expenses": {
+        "title": "Her ay ne çıkıyor?",
+        "hint": "Geçerli olanlara dokun ve tutarı gir. Olmayanı atla."
+      },
+      "savings": {
+        "title": "Ne biriktirdin?",
+        "hint": "Güvenlik ağın ve yaşadığın yerde fiyatların gidişatı."
+      },
+      "plan": {
+        "title": "Paranı nasıl böleceğini seç",
+        "hint": "Bunu istediğin zaman Plan sayfasından değiştirebilirsin."
+      }
+    },
+    "salaryName": "Ad",
+    "defaultSalary": "Maaş",
+    "salaryAmount": "Aylık tutar",
+    "salaryRequired": "Devam etmek için aylık maaşını gir.",
+    "payDay": "Yattığı gün",
+    "chips": {
+      "rent": "Kira",
+      "bills": "Faturalar",
+      "loan": "Kredi",
+      "subscription": "Abonelik",
+      "school": "Okul"
+    },
+    "living": "Yaşam giderleri",
+    "livingHint": "Market ve günlük harcamalar, aylık yaklaşık.",
+    "monthsHint": "Birçok kaynak 3 ila 6 aylık ihtiyaç önerir.",
+    "leftOver": "Düzenli giderlerinden sonra her ay {amount} kalıyor.",
+    "overspent": "Düzenli giderlerin gelirinden {amount} fazla. Yine de devam edip sonra düzeltebilirsin.",
+    "planChoice": "Plan",
+    "split": "İhtiyaç {needs} · İstek {wants} · Birikim {savings}"
+  },
+  "demoLabels": {
+    "salary": "Maaş",
+    "rent": "Kira",
+    "car": "Araba kredisi",
+    "streaming": "Dijital platform",
+    "headphones": "Kulaklık",
+    "washer": "Çamaşır makinesi",
+    "laptop": "Dizüstü bilgisayar",
+    "phone": "Telefon",
+    "insurance": "Araba sigortası",
+    "holiday": "Tatil",
+    "gold": "Gram altın",
+    "fund": "Küresel endeks fonu",
+    "card": "Günlük kart",
+    "spouse": "Eşim",
+    "jacket": "Mont",
+    "watch": "Saat"
   }
 }

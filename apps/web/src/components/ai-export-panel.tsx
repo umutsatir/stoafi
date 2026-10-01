@@ -194,10 +194,10 @@ export function AiExportPanel({
       </Field>
 
       <p
-        className="flex items-start gap-2 rounded-lg bg-warning/10 p-3 text-sm text-warning"
+        className="flex items-start gap-2 rounded-lg bg-warning/10 p-3 text-sm"
         role="note"
       >
-        <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
         {t("warning")}
       </p>
 
