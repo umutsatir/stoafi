@@ -704,6 +704,71 @@ Goal: the app is usable end to end by a real person. Added after user review of 
 
 ---
 
+## Phase 10 — Completion pass: ledger correctness, missing screens, release hygiene
+
+Goal: close the gaps found in a full read of the repo against `docs/SPEC.md` after Phase 9. Findings (verified in code, 2026-10-01):
+
+- `project()` only sees queue/installment commitments, so recurring expenses and living costs never count against bucket limits: free cash and the scheduler's room are overstated (a need "fits" even when rent already fills the needs bucket).
+- Sinking funds have a core module but no screen, so the acceptance criterion cannot be met by a user.
+- `Strategy.diagnose` is never shown: the Plan screen has no insights.
+- Lesson links point at `#lesson-<id>` anchors that exist nowhere: there is no lessons screen, so "every recommendation cites its source" is not met.
+- The card timing tip (flow 4) is unreachable: no card is ever passed to the preview. Cards are not persisted either.
+- Skip and postpone cannot be recorded, so the decision log can only ever show "bought". Flow 1's "cash in the first month it fits" is missing.
+- Language and currency are not persisted (a reload resets to English/TRY) and `<html lang>` is fixed to `en`.
+- The installment cap (20%) is hard-coded in the queue page; `GuardThresholdsSchema` exists but nothing reads or saves it.
+- Core branch coverage is 89.74%, under the 90% acceptance bar; CI does not build or check coverage; README is a stub.
+
+Not in this phase, needs a product decision first (recorded under Open questions): what "prompts again when the cooldown ends" should look like.
+
+- [ ] **T10.1** Recurring obligations as derived commitments
+  Goal: `recurringCommitments(profile, fromMonth, horizon)` in core turns each recurring expense (respecting `endMonth`) and the living-costs line into active commitments (`source.module: "profile"`, needs/wants bucket) so `project()` counts them in bucket usage and `freeCash`. A `useLedger()` hook assembles recurring + installment (+ later sinking-fund) commitments; the queue list, timeline, preview, guards and dashboard use it.
+  Acceptance: tests: projection of a profile with rent and living costs reduces `freeCash` and fills the needs bucket; an expense stops after its `endMonth`; the scheduler places a need later (or `null`) when recurring costs already fill the needs limit; dashboard "left" equals `project().freeCash`.
+  Depends on: T9.15
+
+- [ ] **T10.2** Persist language and currency; correct `<html lang>`
+  Goal: a `settings` module (Zod schema, version 1, registered, in backups) stored in Dexie; first run picks the browser's language (`tr`/`en`); changing language or currency saves it; `document.documentElement.lang` follows the locale.
+  Acceptance: tests: saved settings load into the store on bootstrap; changing locale persists; invalid stored settings fall back to defaults; export/import round-trips settings.
+  Depends on: T10.1
+
+- [ ] **T10.3** Lessons screen and working source links
+  Goal: `/lessons` lists every card for the active locale with source, principle, formula, fits-when and critique; every existing lesson link goes to `/lessons#<id>` and the target scrolls into view; nav entry added.
+  Acceptance: tests: all 10 cards render with all fields in `en` and `tr`; each linked screen's link `href` matches an element id on the page.
+  Depends on: T10.1
+
+- [ ] **T10.4** Plan insights
+  Goal: the Plan screen shows the active strategy's `diagnose` insights over the next 12 months of the ledger, each with its lesson link.
+  Acceptance: tests: an overspent wants bucket under 50/30/20 shows its insight; no insights shows an "all clear" line.
+  Depends on: T10.1, T10.3
+
+- [ ] **T10.5** Finish the purchase flow: skip, postpone, first fitting month, card tip
+  Goal: the preview offers Skip and Postpone (writing `skipped`/`postponed` decisions; skip removes the item), shows and can preview "first month that fits", and lets the user pick a card and purchase date so `timingTip` can appear and shift the first payment.
+  Acceptance: tests: skipping adds a `skipped` decision and the decision log's total saved rises by the price; postponing keeps the item; the suggested month equals the scheduler's; selecting a card bought after its statement day shows the tip with the right day count.
+  Depends on: T10.1
+
+- [ ] **T10.6** Sinking funds screen
+  Goal: add, edit and delete sinking funds (label, target, due month, saved so far); show each one's monthly set-aside; their commitments join the ledger; overdue or due-this-month funds are handled instead of throwing; the sinking-funds lesson link moves here from the Queue page.
+  Acceptance: tests: a fund due in 6 months shows the expected set-aside and appears in the home chart's savings usage; a fund due this month shows a clear state, not an error; funds persist across reload.
+  Depends on: T10.1, T10.3
+
+- [ ] **T10.7** Persist cards
+  Goal: cards are saved to Dexie and can be deleted.
+  Acceptance: tests: adding a card writes it and a reload restores it; deleting removes it.
+  Depends on: T10.5
+
+- [ ] **T10.8** Editable installment cap
+  Goal: the installment cap is read from `GuardThresholds` (saved in Dexie) and editable in Settings; the queue page uses it instead of the literal 0.2.
+  Acceptance: tests: changing the cap to 10% makes an installment that breached nothing at 20% raise the `installment-cap` breach; the value survives reload.
+  Depends on: T10.2
+
+- [ ] **T10.9** Release hygiene
+  Goal: core branch coverage back above 90% with a coverage threshold enforced in `vitest.config.ts`; CI also builds the web app; README rewritten (what it is, features, run, test, deploy, data stays on device); `today` refreshes when the app becomes visible on a new day.
+  Acceptance: `pnpm --filter @stoafi/core test:coverage` reports >= 90% lines and branches and fails below that; CI runs `pnpm build`; a test shows `today` updates after a date change.
+  Depends on: T10.1–T10.8
+
+**Stop and report after Phase 10.**
+
+---
+
 ## Acceptance criteria mapping
 
 Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task(s) that implement and verify it.
@@ -731,6 +796,7 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 
 ## Open questions
 
+- [ ] Cooldown re-prompt: SPEC says a want's 30-day cooldown "prompts again when it ends". Today the timeline only shows the countdown. Proposed: once the cooldown has ended, the queue card asks "Still want it?" with Keep / Skip, remembering the answer on the item. Needs confirmation before it is built (adds an optional field to the queue item).
 - [ ] Default installment cap: 20% of net income, or lower? (SPEC backlog) — blocks final default value in T4.6's `defaultGuardRules`; task can proceed with 20% as a placeholder default since it's data, not code, but the number needs confirmation before Phase 8's acceptance pass.
 - [ ] Legal installment limits by category: keep as an editable data file, and who updates it? (SPEC backlog) — no MVP task currently owns "legal limits by category"; if this is in scope for guards (T4.6), it needs its own task added before Phase 4 starts. Currently treated as out of MVP scope pending confirmation.
 - [ ] Product name and domain (SPEC backlog) — affects T0.12 (README), T7.14 (PWA manifest name/icons). Using "Stoafi" as a working name per CLAUDE.md; needs confirmation before Phase 7 UI copy is finalized.
