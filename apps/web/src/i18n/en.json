@@ -372,14 +372,36 @@
     "title": "Decisions",
     "totalSaved": "Total saved by skipped purchases: {amount}",
     "outcome": {
-      "bought": "bought",
-      "postponed": "postponed",
-      "skipped": "skipped"
+      "bought": "Bought",
+      "postponed": "Postponed",
+      "skipped": "Skipped"
     },
     "unknownItem": "Deleted item",
-    "emptyTitle": "No decisions yet",
-    "emptyText": "When you buy, postpone or skip something from your queue, it is recorded here with the money you saved.",
-    "emptyAction": "Go to the queue"
+    "emptyTitle": "Your shopping decisions will gather here",
+    "emptyText": "When you buy, postpone or skip something from your queue it is recorded here, with the money you saved turned into hours of your life. Waiting 30 days before a want is the habit this page rewards.",
+    "emptyAction": "Go to the queue",
+    "stats": {
+      "saved": "Saved by skipping",
+      "savedWorkDays": "About {days} work days of your time",
+      "savedCount": "{count, plural, one {# purchase skipped} other {# purchases skipped}}",
+      "bought": "Bought",
+      "boughtCount": "{count, plural, one {# purchase} other {# purchases}}",
+      "postponed": "Postponed",
+      "postponedHint": "Still on your mind"
+    },
+    "filter": {
+      "label": "Filter decisions",
+      "all": "All",
+      "bought": "Bought",
+      "postponed": "Postponed",
+      "skipped": "Skipped",
+      "none": "No decisions match this filter."
+    },
+    "riskAccepted": "You knowingly accepted a risk",
+    "addBack": "Add back",
+    "addBackNamed": "Add {name} back to the queue",
+    "deleteNamed": "Delete decision {name}",
+    "addedBack": "{name} is back in your queue"
   },
   "settings": {
     "title": "Settings",

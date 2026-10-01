@@ -94,7 +94,16 @@ export {
   emergencyFundMonths,
   runway,
 } from "../modules/health/selectors";
-export { savingsSummary, type SavingsSummary } from "../modules/decisions/selectors";
+export {
+  WORK_HOURS_PER_DAY,
+  decisionStats,
+  filterDecisions,
+  groupDecisionsByMonth,
+  savingsSummary,
+  type DecisionMonthGroup,
+  type DecisionStats,
+  type SavingsSummary,
+} from "../modules/decisions/selectors";
 export { timingTip, type TimingTip } from "../modules/cards/timing";
 export { minimumPaymentPayoff, type MinPaymentRule } from "../modules/cards/minimum-payment";
 export { toCommitment } from "../modules/sinking-funds/schema";

@@ -833,7 +833,8 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [ ] **T12.4** Income & Expenses and Profile, with a recurring savings/investing type (5.2, 5.3)
 - [ ] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)
 - [ ] **T12.6** Health: status, units, thresholds, next steps (5.8)
-- [ ] **T12.7** Decisions: feed, filters, stats (5.9)
+- [x] **T12.7** Decisions: feed, filters, stats (5.9)
+  Note: stats (saved, with work days from the hourly income; bought; postponed), outcome filter, month-grouped feed with item names, risk-accepted badge, add back to queue (rebuilt from name and amount with default priority) and delete with undo, teaching empty state. Not done: changing a decision's outcome, the monthly picker and the gentle insight sentence. A work day is 8 hours (`WORK_HOURS_PER_DAY`).
 - [ ] **T12.8** Savings pots (5.6, 6.4)
   Goal: the owner adds money as they save; each pot shows a filling piggy bank with an animation (off under reduced motion); deposit and withdraw with history and undo; a monthly summary shows what is left, what must be set aside, what was set aside and what is free afterwards, with a suggested split; the emergency fund is the first, undeletable pot sharing one balance with `Profile.savings`.
   Core first (tests before code): `addDeposit`/`removeDeposit`/`editDeposit` (no negative balance), `requiredThisMonth`, `depositedInMonth`, `monthlySavingsAdvice`, savings rate from deposits, emergency pot and `Profile.savings` never diverging. `SinkingFund` gains optional `icon`, `color`, `kind`, `deposits` (additive, no migration).

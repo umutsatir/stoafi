@@ -372,14 +372,36 @@
     "title": "Kararlar",
     "totalSaved": "Vazgeçilen alımlarla biriken toplam: {amount}",
     "outcome": {
-      "bought": "alındı",
-      "postponed": "ertelendi",
-      "skipped": "vazgeçildi"
+      "bought": "Aldım",
+      "postponed": "Ertelendi",
+      "skipped": "Vazgeçtim"
     },
     "unknownItem": "Silinmiş ürün",
-    "emptyTitle": "Henüz karar yok",
-    "emptyText": "Kuyruğundan bir şeyi alınca, ertelediğinde ya da vazgeçtiğinde burada, kazandığın parayla birlikte kayıtlanır.",
-    "emptyAction": "Kuyruğa git"
+    "emptyTitle": "Alışveriş kararların burada birikecek",
+    "emptyText": "Kuyruğundan bir şeyi alınca, ertelediğinde ya da vazgeçtiğinde burada kayıtlanır; kazandığın para hayatından saatlere çevrilir. Bir istek için 30 gün beklemek bu sayfanın ödüllendirdiği alışkanlık.",
+    "emptyAction": "Kuyruğa git",
+    "stats": {
+      "saved": "Vazgeçerek biriktirdiğin",
+      "savedWorkDays": "Yaklaşık {days} iş günü emeğin",
+      "savedCount": "{count, plural, one {# alımdan vazgeçildi} other {# alımdan vazgeçildi}}",
+      "bought": "Aldıkların",
+      "boughtCount": "{count, plural, one {# alım} other {# alım}}",
+      "postponed": "Ertelenenler",
+      "postponedHint": "Hâlâ aklında"
+    },
+    "filter": {
+      "label": "Kararları filtrele",
+      "all": "Hepsi",
+      "bought": "Aldım",
+      "postponed": "Ertelendi",
+      "skipped": "Vazgeçtim",
+      "none": "Bu filtreye uyan karar yok."
+    },
+    "riskAccepted": "Riski bilerek onayladın",
+    "addBack": "Geri ekle",
+    "addBackNamed": "{name} ürününü kuyruğa geri ekle",
+    "deleteNamed": "{name} kararını sil",
+    "addedBack": "{name} kuyruğuna geri eklendi"
   },
   "settings": {
     "title": "Ayarlar",
