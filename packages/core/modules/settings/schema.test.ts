@@ -75,3 +75,15 @@ describe("theme setting", () => {
     expect(defaultSettings("en").theme).toBe("system");
   });
 });
+
+describe("read lessons setting", () => {
+  it("keeps the ids of lessons marked as read, and older settings without them stay valid", () => {
+    expect(
+      SettingsSchema.safeParse({ locale: "en", currency: "TRY", readLessons: ["a", "b"] }).success,
+    ).toBe(true);
+    expect(SettingsSchema.safeParse({ locale: "en", currency: "TRY" }).success).toBe(true);
+    expect(
+      SettingsSchema.safeParse({ locale: "en", currency: "TRY", readLessons: [1] }).success,
+    ).toBe(false);
+  });
+});

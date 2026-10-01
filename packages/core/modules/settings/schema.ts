@@ -11,6 +11,8 @@ export const SettingsSchema = z.object({
   currency: z.enum(SUPPORTED_CURRENCIES),
   /** Optional so settings saved before themes existed stay valid; missing reads as "system". */
   theme: z.enum(THEMES).optional(),
+  /** Ids of lesson cards the user marked as read. Optional so older settings stay valid. */
+  readLessons: z.array(z.string()).optional(),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

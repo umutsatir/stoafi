@@ -584,7 +584,22 @@
     "formula": "Uygulama bunu nasıl kullanır",
     "fitsWhen": "Kime uyar",
     "critique": "Sınırları ve karşı görüşler",
-    "openInLessons": "Dersler sayfasında aç"
+    "openInLessons": "Dersler sayfasında aç",
+    "progress": "{total} dersten {read} tanesi okundu",
+    "progressLabel": "Okunan dersler",
+    "search": "Derslerde ara",
+    "noMatch": "Aramana uyan ders yok.",
+    "read": "Okundu",
+    "markRead": "Okundu olarak işaretle",
+    "markUnread": "Okunmadı olarak işaretle",
+    "shelf": {
+      "label": "Raf",
+      "all": "Hepsi",
+      "planning": "Planlama",
+      "saving": "Biriktirme",
+      "investing": "Yatırım",
+      "thinking": "Düşünme"
+    }
   },
   "insights": {
     "title": "Planın ne diyor",

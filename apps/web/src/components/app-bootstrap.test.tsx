@@ -68,7 +68,12 @@ describe("AppBootstrap", () => {
 
       await waitFor(async () => {
         const row = await db.settings.get("singleton");
-        expect(row?.data).toEqual({ locale: "tr", currency: "USD", theme: "system" });
+        expect(row?.data).toEqual({
+          locale: "tr",
+          currency: "USD",
+          theme: "system",
+          readLessons: [],
+        });
       });
       expect(document.documentElement.lang).toBe("tr");
     });

@@ -584,7 +584,22 @@
     "formula": "How the app applies it",
     "fitsWhen": "Who it fits",
     "critique": "Limits and counter-arguments",
-    "openInLessons": "Open in the lessons page"
+    "openInLessons": "Open in the lessons page",
+    "progress": "{read} of {total} lessons read",
+    "progressLabel": "Lessons read",
+    "search": "Search lessons",
+    "noMatch": "No lesson matches your search.",
+    "read": "Read",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "shelf": {
+      "label": "Shelf",
+      "all": "All",
+      "planning": "Planning",
+      "saving": "Saving",
+      "investing": "Investing",
+      "thinking": "Thinking"
+    }
   },
   "insights": {
     "title": "What your plan says",

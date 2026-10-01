@@ -20,6 +20,7 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
   const locale = useAppStore((s) => s.locale);
   const currency = useAppStore((s) => s.currency);
   const theme = useAppStore((s) => s.theme);
+  const readLessons = useAppStore((s) => s.readLessons);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,10 +36,13 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     document.documentElement.lang = locale;
-    void putSingleton(db, "settings", SettingsSchema, { locale, currency, theme }).catch((error) =>
-      console.error("Could not save settings", error),
-    );
-  }, [hydrated, locale, currency, theme]);
+    void putSingleton(db, "settings", SettingsSchema, {
+      locale,
+      currency,
+      theme,
+      readLessons,
+    }).catch((error) => console.error("Could not save settings", error));
+  }, [hydrated, locale, currency, theme, readLessons]);
 
   // Follow the saved theme, and the system's while the user has not picked one.
   useEffect(() => {

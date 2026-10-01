@@ -32,6 +32,8 @@ export interface AppState {
   locale: Locale;
   currency: string;
   theme: ThemePreference;
+  /** Lesson cards marked as read. */
+  readLessons: string[];
   guardThresholds: GuardThresholds;
   /** Local date (YYYY-MM-DD) set at the app boundary; core never reads the clock. */
   today: string;
@@ -49,6 +51,7 @@ export interface AppState {
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: string) => void;
   setTheme: (theme: ThemePreference) => void;
+  toggleLessonRead: (id: string) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
   setToday: (today: string) => void;
 }
@@ -64,6 +67,7 @@ export const useAppStore = create<AppState>((set) => ({
   locale: "en",
   currency: "TRY",
   theme: "system",
+  readLessons: [],
   guardThresholds: { installmentCapPct: 0.2 },
   today: "1970-01-01",
   hydrated: false,
@@ -80,6 +84,7 @@ export const useAppStore = create<AppState>((set) => ({
       locale: loaded.settings.locale,
       currency: loaded.settings.currency,
       theme: loaded.settings.theme ?? "system",
+      readLessons: loaded.settings.readLessons ?? [],
       guardThresholds: loaded.guardThresholds,
       today,
       hydrated: true,
@@ -94,6 +99,12 @@ export const useAppStore = create<AppState>((set) => ({
   setLocale: (locale) => set({ locale }),
   setCurrency: (currency) => set({ currency }),
   setTheme: (theme) => set({ theme }),
+  toggleLessonRead: (id) =>
+    set((state) => ({
+      readLessons: state.readLessons.includes(id)
+        ? state.readLessons.filter((x) => x !== id)
+        : [...state.readLessons, id],
+    })),
   setGuardThresholds: (guardThresholds) => set({ guardThresholds }),
   setToday: (today) => set((state) => (state.today === today ? state : { today })),
 }));
