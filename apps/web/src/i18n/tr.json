@@ -148,7 +148,63 @@
     "priceRequired": "Sıfırdan büyük bir fiyat gir.",
     "empty": "Kuyrukta henüz bir şey yok. İstediğin ya da ihtiyacın olanları yukarıdan ekle.",
     "goToProfile": "Gelir ve gider ekle",
-    "dragHandle": "{name} öğesini sıralamak için sürükle"
+    "dragHandle": "{name} öğesini sıralamak için sürükle",
+    "addItem": "Öğe ekle",
+    "buy": "Satın al",
+    "priority": {
+      "urgentImportant": "Acil ve önemli",
+      "urgentOnly": "Acil",
+      "importantOnly": "Önemli",
+      "neither": "Bekleyebilir"
+    },
+    "summary": {
+      "total": "Bekleyen toplam",
+      "fits": "Bu ay sığan",
+      "nearest": "En yakın alım",
+      "none": "Henüz hiçbiri sığmıyor"
+    },
+    "views": {
+      "label": "Görünüm",
+      "list": "Liste",
+      "eisenhower": "Eisenhower",
+      "time": "Zaman"
+    },
+    "filters": {
+      "label": "Göster",
+      "all": "Hepsi",
+      "need": "İhtiyaçlar",
+      "want": "İstekler"
+    },
+    "eisenhower": {
+      "doNow": {
+        "title": "Şimdi yap",
+        "hint": "Acil ve önemli"
+      },
+      "plan": {
+        "title": "Planla",
+        "hint": "Önemli, acil değil"
+      },
+      "quick": {
+        "title": "Hızlı çözümler",
+        "hint": "Acil, önemli değil"
+      },
+      "maybe": {
+        "title": "Belki sonra",
+        "hint": "Ne acil ne önemli"
+      },
+      "none": "Burada bir şey yok."
+    },
+    "time": {
+      "items": "{count, plural, one {# öğe} other {# öğe}}",
+      "cooling": "Bekleme süresinde",
+      "coolingUntil": "{date} tarihine kadar bekliyor",
+      "unaffordable": "Henüz karşılanamıyor",
+      "unaffordableHint": "Mevcut planınla bunlar önümüzdeki 12 aya sığmıyor."
+    },
+    "emptyState": {
+      "title": "Kuyruğun boş",
+      "text": "Almayı düşündüğün bir şey ekle. Karar vermeden önce biraz beklemek işin özü."
+    }
   },
   "queuePreview": {
     "wantsBeforeAfter": "İstekler önce / sonra",

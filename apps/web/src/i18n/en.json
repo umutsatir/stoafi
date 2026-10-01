@@ -148,7 +148,63 @@
     "priceRequired": "Enter a price above zero.",
     "empty": "Nothing in the queue yet. Add what you want or need above.",
     "goToProfile": "Add income and expenses",
-    "dragHandle": "Drag {name} to reorder"
+    "dragHandle": "Drag {name} to reorder",
+    "addItem": "Add item",
+    "buy": "Buy",
+    "priority": {
+      "urgentImportant": "Urgent and important",
+      "urgentOnly": "Urgent",
+      "importantOnly": "Important",
+      "neither": "Can wait"
+    },
+    "summary": {
+      "total": "Total waiting",
+      "fits": "Fits this month",
+      "nearest": "Nearest purchase",
+      "none": "Nothing fits yet"
+    },
+    "views": {
+      "label": "View",
+      "list": "List",
+      "eisenhower": "Eisenhower",
+      "time": "Time"
+    },
+    "filters": {
+      "label": "Show",
+      "all": "All",
+      "need": "Needs",
+      "want": "Wants"
+    },
+    "eisenhower": {
+      "doNow": {
+        "title": "Do now",
+        "hint": "Urgent and important"
+      },
+      "plan": {
+        "title": "Plan it",
+        "hint": "Important, not urgent"
+      },
+      "quick": {
+        "title": "Quick fixes",
+        "hint": "Urgent, not important"
+      },
+      "maybe": {
+        "title": "Maybe later",
+        "hint": "Neither urgent nor important"
+      },
+      "none": "Nothing here."
+    },
+    "time": {
+      "items": "{count, plural, one {# item} other {# items}}",
+      "cooling": "Cooling down",
+      "coolingUntil": "Cooling down until {date}",
+      "unaffordable": "Not affordable yet",
+      "unaffordableHint": "These do not fit in the next 12 months with your current plan."
+    },
+    "emptyState": {
+      "title": "Your queue is empty",
+      "text": "Add something you are thinking of buying. Waiting a little before deciding is the whole idea."
+    }
   },
   "queuePreview": {
     "wantsBeforeAfter": "Wants before / after",

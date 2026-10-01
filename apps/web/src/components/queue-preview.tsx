@@ -23,7 +23,6 @@ import {
 } from "@stoafi/core";
 import { useMoney } from "@/lib/use-money";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -134,195 +133,185 @@ export function QueuePreview({
   const money = useMoney();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{item.name}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {selectedOffer && (
-          <div
-            data-testid="installment-draft-state"
-            className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-secondary p-3 text-sm"
-          >
-            <span>{t("installmentDraft", { months: selectedOffer.months })}</span>
+    <div className="flex flex-col gap-4">
+      {selectedOffer && (
+        <div
+          data-testid="installment-draft-state"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-secondary p-3 text-sm"
+        >
+          <span>{t("installmentDraft", { months: selectedOffer.months })}</span>
+          <Button type="button" variant="outline" size="sm" onClick={() => setSelectedOffer(null)}>
+            {t("payCashInstead")}
+          </Button>
+        </div>
+      )}
+
+      {suggestedMonth !== undefined && (
+        <div
+          data-testid="suggested-month"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm"
+        >
+          <span>
+            {suggestedMonth ? t("suggestedMonth", { month: suggestedMonth }) : t("suggestedNone")}
+          </span>
+          {suggestedMonth && suggestedMonth !== firstMonth && (
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setSelectedOffer(null)}
-            >
-              {t("payCashInstead")}
-            </Button>
-          </div>
-        )}
-
-        {suggestedMonth !== undefined && (
-          <div
-            data-testid="suggested-month"
-            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm"
-          >
-            <span>
-              {suggestedMonth ? t("suggestedMonth", { month: suggestedMonth }) : t("suggestedNone")}
-            </span>
-            {suggestedMonth && suggestedMonth !== firstMonth && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setPreviewMonth(suggestedMonth);
-                  setShiftedMonth(null);
-                }}
-              >
-                {t("previewIn", { month: suggestedMonth })}
-              </Button>
-            )}
-          </div>
-        )}
-
-        {cards.length > 0 && (
-          <Field label={t("payWithCard")} htmlFor="preview-card">
-            <NativeSelect
-              id="preview-card"
-              value={cardId}
-              onChange={(e) => {
-                setCardId(e.target.value);
+              onClick={() => {
+                setPreviewMonth(suggestedMonth);
                 setShiftedMonth(null);
               }}
             >
-              <option value="">{t("noCard")}</option>
-              {cards.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.kind === "supplementary"
-                    ? `${cards.find((m) => m.id === c.parentId)?.label ?? ""} · ${c.label}`
-                    : c.label}
-                </option>
-              ))}
-            </NativeSelect>
-          </Field>
-        )}
-
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableCell className="text-muted-foreground">{t("wantsBeforeAfter")}</TableCell>
-              <TableCell data-testid="wants-before" className="text-right">
-                {money(before.byBucket.wants.committed)}
-              </TableCell>
-              <TableCell data-testid="wants-after" className="text-right font-medium">
-                {money(after.byBucket.wants.committed)}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="text-muted-foreground">
-                {t("installmentLoadBeforeAfter")}
-              </TableCell>
-              <TableCell data-testid="installment-load-before" className="text-right">
-                {money(before.installmentLoad)}
-              </TableCell>
-              <TableCell data-testid="installment-load-after" className="text-right font-medium">
-                {money(after.installmentLoad)}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="text-muted-foreground">{t("freeCashBeforeAfter")}</TableCell>
-              <TableCell data-testid="freecash-before" className="text-right">
-                {money(before.freeCash)}
-              </TableCell>
-              <TableCell data-testid="freecash-after" className="text-right font-medium">
-                {money(after.freeCash)}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-
-        {tip && !shiftedMonth && (
-          <div
-            data-testid="card-timing-tip"
-            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm"
-          >
-            <span>{t("cardTimingTip", { days: tip.extraFloatDays, month: tip.newDueMonth })}</span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShiftedMonth(tip.newDueMonth)}
-            >
-              {t("accept")}
+              {t("previewIn", { month: suggestedMonth })}
             </Button>
-          </div>
-        )}
-
-        {hasBreach && (
-          <div
-            data-testid="guard-breach-dialog"
-            className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 p-3"
-          >
-            <ul data-testid="guard-breaches" className="flex flex-col gap-1">
-              {breaches.map((b) => (
-                <li key={b.ruleId} className="text-sm font-medium text-destructive">
-                  {t.has(`guard.${b.ruleId}`) ? t(`guard.${b.ruleId}`) : t("guard.unknown")}
-                </li>
-              ))}
-            </ul>
-            {!acknowledged && (
-              <div>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => setAcknowledged(true)}
-                >
-                  {t("iKnow")}
-                </Button>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            disabled={!canConfirm}
-            onClick={() =>
-              onConfirm(
-                { ...draft, status: "active" },
-                breaches,
-                hasBreach,
-                offer
-                  ? { method: "installment", offer, firstMonth, ...(cardId ? { cardId } : {}) }
-                  : { method: "cash" },
-              )
-            }
-          >
-            {t("confirm")}
-          </Button>
-          <Button type="button" variant="outline" onClick={() => setShowInstallments(true)}>
-            {t("calculateWithInstallments")}
-          </Button>
-          {onDecide && (
-            <>
-              <Button type="button" variant="ghost" onClick={() => onDecide("postponed")}>
-                {t("postpone")}
-              </Button>
-              <Button type="button" variant="ghost" onClick={() => onDecide("skipped")}>
-                {t("skip")}
-              </Button>
-            </>
           )}
         </div>
+      )}
 
-        {showInstallments && (
-          <InstallmentCalculator
-            cashPrice={cashPrice}
-            annualInflation={profile.annualInflationExpectation}
-            onSelect={(offer) => {
-              setSelectedOffer(offer);
-              setShowInstallments(false);
+      {cards.length > 0 && (
+        <Field label={t("payWithCard")} htmlFor="preview-card">
+          <NativeSelect
+            id="preview-card"
+            value={cardId}
+            onChange={(e) => {
+              setCardId(e.target.value);
+              setShiftedMonth(null);
             }}
-          />
+          >
+            <option value="">{t("noCard")}</option>
+            {cards.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.kind === "supplementary"
+                  ? `${cards.find((m) => m.id === c.parentId)?.label ?? ""} · ${c.label}`
+                  : c.label}
+              </option>
+            ))}
+          </NativeSelect>
+        </Field>
+      )}
+
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell className="text-muted-foreground">{t("wantsBeforeAfter")}</TableCell>
+            <TableCell data-testid="wants-before" className="text-right">
+              {money(before.byBucket.wants.committed)}
+            </TableCell>
+            <TableCell data-testid="wants-after" className="text-right font-medium">
+              {money(after.byBucket.wants.committed)}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-muted-foreground">
+              {t("installmentLoadBeforeAfter")}
+            </TableCell>
+            <TableCell data-testid="installment-load-before" className="text-right">
+              {money(before.installmentLoad)}
+            </TableCell>
+            <TableCell data-testid="installment-load-after" className="text-right font-medium">
+              {money(after.installmentLoad)}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-muted-foreground">{t("freeCashBeforeAfter")}</TableCell>
+            <TableCell data-testid="freecash-before" className="text-right">
+              {money(before.freeCash)}
+            </TableCell>
+            <TableCell data-testid="freecash-after" className="text-right font-medium">
+              {money(after.freeCash)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+
+      {tip && !shiftedMonth && (
+        <div
+          data-testid="card-timing-tip"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm"
+        >
+          <span>{t("cardTimingTip", { days: tip.extraFloatDays, month: tip.newDueMonth })}</span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShiftedMonth(tip.newDueMonth)}
+          >
+            {t("accept")}
+          </Button>
+        </div>
+      )}
+
+      {hasBreach && (
+        <div
+          data-testid="guard-breach-dialog"
+          className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 p-3"
+        >
+          <ul data-testid="guard-breaches" className="flex flex-col gap-1">
+            {breaches.map((b) => (
+              <li key={b.ruleId} className="text-sm font-medium text-destructive">
+                {t.has(`guard.${b.ruleId}`) ? t(`guard.${b.ruleId}`) : t("guard.unknown")}
+              </li>
+            ))}
+          </ul>
+          {!acknowledged && (
+            <div>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() => setAcknowledged(true)}
+              >
+                {t("iKnow")}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          disabled={!canConfirm}
+          onClick={() =>
+            onConfirm(
+              { ...draft, status: "active" },
+              breaches,
+              hasBreach,
+              offer
+                ? { method: "installment", offer, firstMonth, ...(cardId ? { cardId } : {}) }
+                : { method: "cash" },
+            )
+          }
+        >
+          {t("confirm")}
+        </Button>
+        <Button type="button" variant="outline" onClick={() => setShowInstallments(true)}>
+          {t("calculateWithInstallments")}
+        </Button>
+        {onDecide && (
+          <>
+            <Button type="button" variant="ghost" onClick={() => onDecide("postponed")}>
+              {t("postpone")}
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => onDecide("skipped")}>
+              {t("skip")}
+            </Button>
+          </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+
+      {showInstallments && (
+        <InstallmentCalculator
+          cashPrice={cashPrice}
+          annualInflation={profile.annualInflationExpectation}
+          onSelect={(offer) => {
+            setSelectedOffer(offer);
+            setShowInstallments(false);
+          }}
+        />
+      )}
+    </div>
   );
 }

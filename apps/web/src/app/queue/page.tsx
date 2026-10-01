@@ -10,18 +10,25 @@ import {
   monthlyNeeds,
   type Commitment,
   type Decision,
+  type Month,
   type GuardBreach,
   type QueueItem,
   scheduleQueue,
 } from "@stoafi/core";
+import { ListChecks, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Page } from "@/components/ui/page";
 import { notify, notifyUndo } from "@/components/ui/toaster";
 import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
-import { QueueTimeline } from "@/components/queue-timeline";
+import { QueueEisenhower } from "@/components/queue-eisenhower";
+import { QueueSummary } from "@/components/queue-summary";
+import { QueueTimeView } from "@/components/queue-time-view";
 import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem, saveQueueOrder } from "@/storage/queue-repo";
@@ -46,6 +53,9 @@ export default function QueuePage() {
   const setDecisions = useAppStore((s) => s.setDecisions);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [view, setView] = useState<"list" | "eisenhower" | "time">("list");
+  const [filter, setFilter] = useState<"all" | "need" | "want">("all");
   const t = useTranslations("queue");
   const tc = useTranslations("common");
 
@@ -81,6 +91,20 @@ export default function QueuePage() {
     ? (schedule.find((r) => r.itemId === selectedItem.id)?.month ?? null)
     : undefined;
   const nextOrder = waitingItems.reduce((max, i) => Math.max(max, i.order + 1), 0);
+  const monthByItemId = new Map<string, Month | null>(schedule.map((r) => [r.itemId, r.month]));
+  const cashPrice = (item: QueueItem) => item.discountedCashPrice ?? item.price;
+  const currentMonth = monthOf(today);
+  const placed = schedule.flatMap((r) => (r.month ? [r.month] : []));
+  const summary = {
+    total: waitingItems.reduce((sum, i) => sum + cashPrice(i), 0),
+    fitsThisMonth: waitingItems
+      .filter((i) => monthByItemId.get(i.id) === currentMonth)
+      .reduce((sum, i) => sum + cashPrice(i), 0),
+    nearestMonth: placed.length > 0 ? ([...placed].sort()[0] ?? null) : null,
+  };
+  const visibleItems = waitingItems.filter(
+    (i) => filter === "all" || (filter === "need" ? i.isNeed : !i.isNeed),
+  );
 
   function handleSave(item: QueueItem) {
     const exists = queueItems.some((i) => i.id === item.id);
@@ -175,57 +199,131 @@ export default function QueuePage() {
     setSelectedId(null);
   }
 
+  const formOpen = adding || editingItem !== undefined;
+  const closeForm = () => {
+    setAdding(false);
+    setEditingId(null);
+  };
+
   return (
-    <Page title={t("title")}>
-      <QueueForm
-        key={editingItem?.id ?? "new"}
-        initial={editingItem}
-        today={today}
-        nextOrder={nextOrder}
-        createId={() => crypto.randomUUID()}
-        currency={currency}
-        onSubmit={handleSave}
-        onCancel={editingItem ? () => setEditingId(null) : undefined}
-      />
-      <QueueList
-        items={waitingItems}
-        commitments={commitments}
-        onItemsChange={handleReorder}
-        onSelect={(item) => setSelectedId(item.id)}
-        onEdit={(item) => setEditingId(item.id)}
-        onDelete={handleDelete}
-        profile={profile}
-        planState={planState}
-        today={today}
-        startMonth={monthOf(today)}
-        hourlyNetIncome={hourlyNetIncome(profile)}
-      />
-      <h2 className="text-lg font-semibold tracking-tight">{t("timelineTitle")}</h2>
-      <QueueTimeline
-        items={waitingItems}
-        commitments={commitments}
-        profile={profile}
-        planState={planState}
-        today={today}
-        startMonth={monthOf(today)}
-      />
-      {selectedItem && (
-        <QueuePreview
-          item={selectedItem}
-          profile={profile}
-          planState={planState}
-          commitments={commitments}
-          month={monthOf(today)}
-          income={income}
-          monthlyNeeds={needs}
-          installmentCapPct={guardThresholds.installmentCapPct}
-          cards={cards}
-          purchaseDate={today}
-          suggestedMonth={suggestedMonth}
-          onDecide={handleDecide}
-          onConfirm={handleConfirm}
+    <Page
+      title={t("title")}
+      action={
+        <Button type="button" onClick={() => setAdding(true)}>
+          <Plus className="h-4 w-4" aria-hidden="true" />
+          {t("addItem")}
+        </Button>
+      }
+    >
+      {waitingItems.length === 0 ? (
+        <EmptyState
+          icon={<ListChecks className="h-8 w-8" />}
+          title={t("emptyState.title")}
+          description={t("emptyState.text")}
+          action={
+            <Button type="button" onClick={() => setAdding(true)}>
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              {t("addItem")}
+            </Button>
+          }
         />
+      ) : (
+        <>
+          <QueueSummary {...summary} />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <SegmentedControl
+              label={t("views.label")}
+              value={view}
+              onChange={setView}
+              options={[
+                { value: "list", label: t("views.list") },
+                { value: "eisenhower", label: t("views.eisenhower") },
+                { value: "time", label: t("views.time") },
+              ]}
+            />
+            <SegmentedControl
+              label={t("filters.label")}
+              value={filter}
+              onChange={setFilter}
+              options={[
+                { value: "all", label: t("filters.all") },
+                { value: "need", label: t("filters.need") },
+                { value: "want", label: t("filters.want") },
+              ]}
+            />
+          </div>
+          {view === "list" && (
+            <QueueList
+              items={visibleItems}
+              commitments={commitments}
+              reorderable={filter === "all"}
+              onItemsChange={handleReorder}
+              onSelect={(item) => setSelectedId(item.id)}
+              onEdit={(item) => setEditingId(item.id)}
+              onDelete={handleDelete}
+              profile={profile}
+              planState={planState}
+              today={today}
+              startMonth={currentMonth}
+              hourlyNetIncome={hourlyNetIncome(profile)}
+            />
+          )}
+          {view === "eisenhower" && (
+            <QueueEisenhower items={visibleItems} onSelect={(item) => setSelectedId(item.id)} />
+          )}
+          {view === "time" && (
+            <QueueTimeView
+              items={visibleItems}
+              monthByItemId={monthByItemId}
+              today={today}
+              onSelect={(item) => setSelectedId(item.id)}
+            />
+          )}
+        </>
       )}
+
+      <Sheet open={formOpen} onOpenChange={(open) => !open && closeForm()}>
+        {formOpen && (
+          <SheetContent title={editingItem ? t("editTitle") : t("addTitle")}>
+            <QueueForm
+              bare
+              key={editingItem?.id ?? "new"}
+              initial={editingItem}
+              today={today}
+              nextOrder={nextOrder}
+              createId={() => crypto.randomUUID()}
+              currency={currency}
+              onSubmit={(item) => {
+                handleSave(item);
+                closeForm();
+              }}
+              onCancel={closeForm}
+            />
+          </SheetContent>
+        )}
+      </Sheet>
+
+      <Sheet open={selectedItem !== null} onOpenChange={(open) => !open && setSelectedId(null)}>
+        {selectedItem && (
+          <SheetContent title={selectedItem.name} className="md:max-w-xl">
+            <QueuePreview
+              item={selectedItem}
+              profile={profile}
+              planState={planState}
+              commitments={commitments}
+              month={monthOf(today)}
+              income={income}
+              monthlyNeeds={needs}
+              installmentCapPct={guardThresholds.installmentCapPct}
+              cards={cards}
+              purchaseDate={today}
+              suggestedMonth={suggestedMonth}
+              onDecide={handleDecide}
+              onConfirm={handleConfirm}
+            />
+          </SheetContent>
+        )}
+      </Sheet>
     </Page>
   );
 }

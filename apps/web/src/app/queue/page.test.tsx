@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { installmentCommitments, savingsSummary, type Profile, type QueueItem } from "@stoafi/core";
 import { db } from "@/storage/instance";
@@ -47,9 +47,11 @@ beforeEach(async () => {
 describe("QueuePage purchase flow", () => {
   it("adds a queue item from the form and saves it", async () => {
     renderWithIntl(<QueuePage />);
-    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Desk" } });
-    fireEvent.change(screen.getByLabelText("Price"), { target: { value: "1500" } });
-    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add item" }));
+    const panel = await screen.findByRole("dialog", { name: "Add to queue" });
+    fireEvent.change(within(panel).getByLabelText("Name"), { target: { value: "Desk" } });
+    fireEvent.change(within(panel).getByLabelText("Price"), { target: { value: "1500" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Add" }));
 
     expect(useAppStore.getState().queueItems.map((i) => i.name)).toEqual(["Headphones", "Desk"]);
     await waitFor(async () => expect(await db.queue.count()).toBe(2));

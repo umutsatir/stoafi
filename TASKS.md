@@ -828,7 +828,8 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [ ] **T12.1** Home (5.1)
 - [x] **T12.2** Cards with supplementary cards, bank presets and card widgets; minimum-payment tool collapsed (5.7, 6.1, 6.2)
   Note: core has `limitUsage`, `removeCardFromSet`, `validateCardSet`, bank presets (`data/banks.json`, colours approximate and flagged, no logos) and `remainingInstallmentsByCard`; purchases remember their `cardId`, so remaining installments count against the shared limit. A limit of 0 in the form means "not tracked". Not done from the plan: the card-limit guard rule in the queue preview and the upcoming-payments calendar (T13.x), and the best-day-to-buy hint per card stays where it already was (queue preview).
-- [ ] **T12.3** Queue: side panel preview, Eisenhower and time views (5.5)
+- [x] **T12.3** Queue: side panel preview, Eisenhower and time views (5.5)
+  Note: done: add and edit in a side panel, summary strip, list/Eisenhower/time views with a needs/wants filter, priority as one chip, month names, Buy button, preview in a side panel, empty state; the duplicate 12-month timeline is gone. Not done yet: dragging between Eisenhower quadrants (change priority with Edit for now), the ⋯ menu (edit and delete stay as icon buttons), before/after progress bars, Peşin/Taksit segment and card widget picker inside the preview, the stale-price reminder, and the card-limit warning. These belong to a second queue pass.
 - [ ] **T12.4** Income & Expenses and Profile, with a recurring savings/investing type (5.2, 5.3)
 - [ ] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)
 - [ ] **T12.6** Health: status, units, thresholds, next steps (5.8)
