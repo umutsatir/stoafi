@@ -55,7 +55,19 @@ export const useAppStore = create<AppState>((set) => ({
   today: "1970-01-01",
   hydrated: false,
 
-  hydrate: (loaded, today) => set({ ...loaded, today, hydrated: true }),
+  hydrate: (loaded, today) =>
+    set({
+      profile: loaded.profile,
+      planState: loaded.planState,
+      queueItems: loaded.queueItems,
+      sinkingFunds: loaded.sinkingFunds,
+      cards: loaded.cards,
+      decisions: loaded.decisions,
+      locale: loaded.settings.locale,
+      currency: loaded.settings.currency,
+      today,
+      hydrated: true,
+    }),
   setProfile: (profile) => set({ profile }),
   setPlanState: (planState) => set({ planState }),
   setQueueItems: (queueItems) => set({ queueItems }),

@@ -8,7 +8,16 @@ describe("StoafiDb", () => {
 
     const tableNames = db.tables.map((t) => t.name).sort();
     expect(tableNames).toEqual(
-      ["cards", "decisions", "guards", "plan", "profile", "queue", "sinkingFunds"].sort(),
+      [
+        "cards",
+        "decisions",
+        "guards",
+        "plan",
+        "profile",
+        "queue",
+        "settings",
+        "sinkingFunds",
+      ].sort(),
     );
 
     db.close();

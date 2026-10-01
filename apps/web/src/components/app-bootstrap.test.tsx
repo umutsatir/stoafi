@@ -1,5 +1,5 @@
-import { screen, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
 import { renderWithIntl } from "@/test-utils";
@@ -32,5 +32,45 @@ describe("AppBootstrap", () => {
     expect(state.planState?.strategyId).toBe("fifty-thirty-twenty");
     expect(state.today).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(state.today).not.toBe("1970-01-01");
+  });
+
+  describe("settings", () => {
+    beforeEach(async () => {
+      await db.settings.clear();
+      useAppStore.setState({ hydrated: false, locale: "en", currency: "TRY" });
+    });
+
+    it("applies saved language and currency and sets the page language", async () => {
+      await db.settings.put({ id: "singleton", data: { locale: "tr", currency: "EUR" } });
+      renderWithIntl(
+        <AppBootstrap>
+          <p>app ready</p>
+        </AppBootstrap>,
+      );
+      await waitFor(() => expect(screen.getByText("app ready")).toBeInTheDocument());
+      expect(useAppStore.getState().locale).toBe("tr");
+      expect(useAppStore.getState().currency).toBe("EUR");
+      await waitFor(() => expect(document.documentElement.lang).toBe("tr"));
+    });
+
+    it("saves a language or currency change so a reload keeps it", async () => {
+      renderWithIntl(
+        <AppBootstrap>
+          <p>app ready</p>
+        </AppBootstrap>,
+      );
+      await waitFor(() => expect(screen.getByText("app ready")).toBeInTheDocument());
+
+      act(() => {
+        useAppStore.getState().setLocale("tr");
+        useAppStore.getState().setCurrency("USD");
+      });
+
+      await waitFor(async () => {
+        const row = await db.settings.get("singleton");
+        expect(row?.data).toEqual({ locale: "tr", currency: "USD" });
+      });
+      expect(document.documentElement.lang).toBe("tr");
+    });
   });
 });

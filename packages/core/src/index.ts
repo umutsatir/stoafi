@@ -99,3 +99,11 @@ export {
 } from "../modules/profile/inflation-by-country";
 export { cashFlowSeries, type CashFlowPoint } from "../modules/profile/cash-flow";
 export { recurringCommitments } from "../modules/profile/recurring-commitments";
+export { settingsModule } from "../modules/settings/module";
+export {
+  LOCALES,
+  SettingsSchema,
+  defaultSettings,
+  detectLocale,
+  type Settings,
+} from "../modules/settings/schema";

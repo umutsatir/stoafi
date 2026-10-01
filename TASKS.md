@@ -726,10 +726,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T9.15
   Note: `recurringCommitments` (core, `profile/recurring-commitments.ts`, 24-month horizon) feeds the ledger built by `buildLedger` (`store/ledger.ts`, used by `useLedger()`); the old `useCommitments` is now `useInstallmentCommitments` (installments only, used where only the installment load matters). The dashboard's "left" is now `project().freeCash`, checked equal to `cashFlowSeries` in a test. Visible behavior change: a need no longer "fits" when recurring costs already fill the needs limit (a dashboard test that expected this was wrong and was rewritten); with 50/30/20, rent plus living costs above 50% of income leave no room for needs items.
 
-- [ ] **T10.2** Persist language and currency; correct `<html lang>`
+- [x] **T10.2** Persist language and currency; correct `<html lang>`
   Goal: a `settings` module (Zod schema, version 1, registered, in backups) stored in Dexie; first run picks the browser's language (`tr`/`en`); changing language or currency saves it; `document.documentElement.lang` follows the locale.
   Acceptance: tests: saved settings load into the store on bootstrap; changing locale persists; invalid stored settings fall back to defaults; export/import round-trips settings.
   Depends on: T10.1
+  Note: `settings` is a core module like the others (Zod schema, version 1, registered, included in backups) with a Dexie table added in v4 (existing rows untouched). `AppBootstrap` passes `navigator.language` to `loadAppState`, which uses it only when nothing is saved, and then saves whatever the screens change, so no screen needs its own save call. Invalid stored settings fall back to defaults instead of crashing startup.
 
 - [ ] **T10.3** Lessons screen and working source links
   Goal: `/lessons` lists every card for the active locale with source, principle, formula, fits-when and critique; every existing lesson link goes to `/lessons#<id>` and the target scrolls into view; nav entry added.

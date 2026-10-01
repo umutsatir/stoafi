@@ -26,6 +26,7 @@ export class StoafiDb extends Dexie {
   sinkingFunds!: EntityTable<ListRow, "id">;
   cards!: EntityTable<ListRow, "id">;
   decisions!: EntityTable<ListRow, "id">;
+  settings!: EntityTable<SingletonRow, "id">;
 
   constructor(name = "stoafi") {
     super(name);
@@ -64,5 +65,17 @@ export class StoafiDb extends Dexie {
         decisions: "id",
       })
       .upgrade(migrateProfileV2ToV3);
+
+    // v4 adds the settings table (language and currency); existing rows are untouched.
+    this.version(4).stores({
+      profile: "id",
+      plan: "id",
+      guards: "id",
+      queue: "id",
+      sinkingFunds: "id",
+      cards: "id",
+      decisions: "id",
+      settings: "id",
+    });
   }
 }
