@@ -12,10 +12,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const BUCKET_COLORS = {
-  needs: "#0f172a",
-  wants: "#64748b",
-  savings: "#0ea5e9",
-  investing: "#22c55e",
+  needs: "var(--chart-needs)",
+  wants: "var(--chart-wants)",
+  savings: "var(--chart-savings)",
+  investing: "var(--chart-investing)",
 };
 
 export interface PlanComparisonProps {

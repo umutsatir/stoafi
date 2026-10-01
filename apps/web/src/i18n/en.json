@@ -231,6 +231,12 @@
     "languageNames": {
       "en": "English",
       "tr": "Türkçe"
+    },
+    "theme": "Appearance",
+    "themeOptions": {
+      "system": "Follow my device",
+      "light": "Light",
+      "dark": "Dark"
     }
   },
   "installmentExpenses": {

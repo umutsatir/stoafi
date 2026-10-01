@@ -790,10 +790,11 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
   Depends on: T10.9
   Note: the minimum-payment payoff now counts a balance under half a minor unit as paid and exposes `neverPaysOff`; before, a percentage-only minimum showed the 600-month cap for ordinary inputs. Decisions and the profile gained optional `itemName` and `countryCode` (additive, no migration). H5 (savings rate) waits for the pots in T12.8.
 
-- [ ] **T11.2** Design tokens and theme
+- [x] **T11.2** Design tokens and theme
   Goal: brand and semantic colors, data colors per bucket, type scale, spacing, radius, light and dark themes, theme setting (system, light, dark) saved in settings.
   Acceptance: both themes pass contrast checks; theme survives reload; no hard-coded colors outside the tokens.
   Depends on: T11.1
+  Note: brand is deep teal with an amber highlight; `tokens.test.ts` reads `globals.css` and checks contrast in both themes and forbids hard-coded colours. The theme is saved in settings (optional field, no migration) and mirrored in localStorage only so the first paint has no flash. Fonts are still the system stack: self-hosted fonts come with T11.3 (next/font needs network at build time, not available in the sandbox).
 
 - [ ] **T11.3** Shared component library and motion
   Goal: motion foundation (`motion`, respects reduced-motion), a decision on community components (own code vs copied from a registry such as 21st.dev, license checked per component and recorded in `docs/THIRD-PARTY.md`), and `Money`, `StatCard`, `ProgressBar`, `ProgressRing`, `Sheet`, `Dialog`/`ConfirmDialog`, `Toast` with undo, `Tabs`/`SegmentedControl`, `EmptyState`, `Skeleton`, `InfoPopover`, `StatusChip`, `MonthTrack`.

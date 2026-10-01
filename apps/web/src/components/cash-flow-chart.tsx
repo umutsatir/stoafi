@@ -7,12 +7,12 @@ import { useMoney } from "@/lib/use-money";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const COLORS = {
-  obligations: "#0f172a",
-  living: "#64748b",
-  installments: "#0ea5e9",
-  setAside: "#a855f7",
-  income: "#22c55e",
-  left: "#f59e0b",
+  obligations: "var(--chart-needs)",
+  living: "var(--chart-wants)",
+  installments: "var(--chart-installments)",
+  setAside: "var(--chart-setaside)",
+  income: "var(--chart-income)",
+  left: "var(--chart-left)",
 };
 
 /** Income against what goes out each month, with what is left. Also readable as a table. */

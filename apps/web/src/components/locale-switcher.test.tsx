@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from "next-intl";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import en from "@/i18n/en.json";
 import tr from "@/i18n/tr.json";
@@ -40,5 +40,13 @@ describe("LocaleSwitcher", () => {
     expect(screen.getByRole("option", { name: "English" })).toBeInTheDocument();
     expect(screen.getByTestId("sample-amount")).toHaveTextContent("₺123,456.78");
     expect(screen.getByTestId("sample-amount")).not.toHaveTextContent("TRY");
+  });
+
+  it("changes the saved appearance with the selector", () => {
+    useAppStore.setState({ theme: "system" });
+    renderWithLocale("en");
+    fireEvent.change(screen.getByLabelText("Appearance"), { target: { value: "dark" } });
+    expect(useAppStore.getState().theme).toBe("dark");
+    expect(screen.getByRole("option", { name: "Follow my device" })).toBeInTheDocument();
   });
 });

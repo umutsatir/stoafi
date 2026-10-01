@@ -13,6 +13,7 @@ import {
   type Profile,
   type QueueItem,
   type SinkingFund,
+  type ThemePreference,
 } from "@stoafi/core";
 import type { Locale } from "@/i18n/messages";
 import { monthOf } from "@/lib/clock";
@@ -28,6 +29,7 @@ export interface AppState {
   decisions: Decision[];
   locale: Locale;
   currency: string;
+  theme: ThemePreference;
   guardThresholds: GuardThresholds;
   /** Local date (YYYY-MM-DD) set at the app boundary; core never reads the clock. */
   today: string;
@@ -43,6 +45,7 @@ export interface AppState {
   setDecisions: (decisions: Decision[]) => void;
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: string) => void;
+  setTheme: (theme: ThemePreference) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
   setToday: (today: string) => void;
 }
@@ -56,6 +59,7 @@ export const useAppStore = create<AppState>((set) => ({
   decisions: [],
   locale: "en",
   currency: "TRY",
+  theme: "system",
   guardThresholds: { installmentCapPct: 0.2 },
   today: "1970-01-01",
   hydrated: false,
@@ -70,6 +74,7 @@ export const useAppStore = create<AppState>((set) => ({
       decisions: loaded.decisions,
       locale: loaded.settings.locale,
       currency: loaded.settings.currency,
+      theme: loaded.settings.theme ?? "system",
       guardThresholds: loaded.guardThresholds,
       today,
       hydrated: true,
@@ -82,6 +87,7 @@ export const useAppStore = create<AppState>((set) => ({
   setDecisions: (decisions) => set({ decisions }),
   setLocale: (locale) => set({ locale }),
   setCurrency: (currency) => set({ currency }),
+  setTheme: (theme) => set({ theme }),
   setGuardThresholds: (guardThresholds) => set({ guardThresholds }),
   setToday: (today) => set((state) => (state.today === today ? state : { today })),
 }));

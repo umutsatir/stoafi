@@ -102,10 +102,13 @@ export { recurringCommitments } from "../modules/profile/recurring-commitments";
 export { settingsModule } from "../modules/settings/module";
 export {
   LOCALES,
+  THEMES,
   SettingsSchema,
   defaultSettings,
   detectLocale,
+  resolveTheme,
   type Settings,
+  type ThemePreference,
 } from "../modules/settings/schema";
 export {
   sinkingFundCommitments,

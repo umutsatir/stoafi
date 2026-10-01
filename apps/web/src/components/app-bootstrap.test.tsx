@@ -68,9 +68,37 @@ describe("AppBootstrap", () => {
 
       await waitFor(async () => {
         const row = await db.settings.get("singleton");
-        expect(row?.data).toEqual({ locale: "tr", currency: "USD" });
+        expect(row?.data).toEqual({ locale: "tr", currency: "USD", theme: "system" });
       });
       expect(document.documentElement.lang).toBe("tr");
+    });
+  });
+
+  describe("theme", () => {
+    beforeEach(async () => {
+      await db.settings.clear();
+      localStorage.clear();
+      delete document.documentElement.dataset.theme;
+      useAppStore.setState({ hydrated: false, theme: "system" });
+    });
+
+    it("applies the saved theme to the page and keeps a change saved", async () => {
+      await db.settings.put({
+        id: "singleton",
+        data: { locale: "en", currency: "TRY", theme: "dark" },
+      });
+      renderWithIntl(
+        <AppBootstrap>
+          <p>app ready</p>
+        </AppBootstrap>,
+      );
+      await waitFor(() => expect(document.documentElement.dataset.theme).toBe("dark"));
+
+      act(() => useAppStore.getState().setTheme("light"));
+      await waitFor(async () => {
+        expect((await db.settings.get("singleton"))?.data).toMatchObject({ theme: "light" });
+      });
+      expect(document.documentElement.dataset.theme).toBe("light");
     });
   });
 

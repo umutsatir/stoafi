@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createRegistry } from "../../kernel/registry";
 import { settingsModule } from "./module";
-import { SettingsSchema, defaultSettings, detectLocale } from "./schema";
+import { SettingsSchema, defaultSettings, detectLocale, resolveTheme } from "./schema";
 
 describe("SettingsSchema", () => {
   it("accepts a supported locale and currency", () => {
@@ -33,11 +33,11 @@ describe("detectLocale", () => {
 
 describe("defaultSettings", () => {
   it("uses the detected locale with TRY for a Turkish browser", () => {
-    expect(defaultSettings("tr-TR")).toEqual({ locale: "tr", currency: "TRY" });
+    expect(defaultSettings("tr-TR")).toEqual({ locale: "tr", currency: "TRY", theme: "system" });
   });
 
   it("uses English with TRY otherwise", () => {
-    expect(defaultSettings("en-GB")).toEqual({ locale: "en", currency: "TRY" });
+    expect(defaultSettings("en-GB")).toEqual({ locale: "en", currency: "TRY", theme: "system" });
   });
 });
 
@@ -46,5 +46,32 @@ describe("settingsModule", () => {
     const registry = createRegistry();
     registry.register(settingsModule);
     expect(registry.getModule("settings")?.version).toBe(1);
+  });
+});
+
+describe("theme setting", () => {
+  it("accepts system, light and dark and leaves older settings without a theme valid", () => {
+    for (const theme of ["system", "light", "dark"]) {
+      expect(SettingsSchema.safeParse({ locale: "en", currency: "TRY", theme }).success).toBe(true);
+    }
+    expect(SettingsSchema.safeParse({ locale: "en", currency: "TRY" }).success).toBe(true);
+    expect(SettingsSchema.safeParse({ locale: "en", currency: "TRY", theme: "blue" }).success).toBe(
+      false,
+    );
+  });
+
+  it("follows the system when the theme is system or was never chosen", () => {
+    expect(resolveTheme("system", true)).toBe("dark");
+    expect(resolveTheme("system", false)).toBe("light");
+    expect(resolveTheme(undefined, true)).toBe("dark");
+  });
+
+  it("ignores the system when the user picked a theme", () => {
+    expect(resolveTheme("light", true)).toBe("light");
+    expect(resolveTheme("dark", false)).toBe("dark");
+  });
+
+  it("defaults new settings to following the system", () => {
+    expect(defaultSettings("en").theme).toBe("system");
   });
 });

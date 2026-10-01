@@ -66,8 +66,16 @@ describe("loadAppState", () => {
 
   it("defaults settings from the browser language on a fresh database", async () => {
     const db = new StoafiDb(`boot-${Math.random()}`);
-    expect((await loadAppState(db, "tr-TR")).settings).toEqual({ locale: "tr", currency: "TRY" });
-    expect((await loadAppState(db, "en-US")).settings).toEqual({ locale: "en", currency: "TRY" });
+    expect((await loadAppState(db, "tr-TR")).settings).toEqual({
+      locale: "tr",
+      currency: "TRY",
+      theme: "system",
+    });
+    expect((await loadAppState(db, "en-US")).settings).toEqual({
+      locale: "en",
+      currency: "TRY",
+      theme: "system",
+    });
     db.close();
   });
 
@@ -85,7 +93,7 @@ describe("loadAppState", () => {
     await db.open();
     await db.settings.put({ id: "singleton", data: { locale: "klingon", currency: "TRY" } });
     const state = await loadAppState(db, "tr");
-    expect(state.settings).toEqual({ locale: "tr", currency: "TRY" });
+    expect(state.settings).toEqual({ locale: "tr", currency: "TRY", theme: "system" });
     db.close();
   });
 
