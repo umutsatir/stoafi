@@ -126,7 +126,24 @@ export {
   INFLATION_DATA_SOURCE,
   suggestedAnnualInflation,
 } from "../modules/profile/inflation-by-country";
+export {
+  healthSummary,
+  metricStatus,
+  monthlySavingRate,
+  type HealthInputs,
+  type HealthMetricKind,
+  type HealthStatus,
+  type HealthStep,
+  type HealthSummary,
+} from "../modules/health/status";
 export { cashFlowSeries, type CashFlowPoint } from "../modules/profile/cash-flow";
+export {
+  addEmergencyDeposit,
+  editEmergencyDeposit,
+  emergencyGap,
+  removeEmergencyDeposit,
+  type ProfileDepositResult,
+} from "../modules/profile/emergency-deposits";
 export { recurringCommitments } from "../modules/profile/recurring-commitments";
 export { settingsModule } from "../modules/settings/module";
 export {
@@ -145,3 +162,19 @@ export {
   type SinkingFundStatus,
 } from "../modules/sinking-funds/status";
 export { monthlySetAside } from "../modules/sinking-funds/selectors";
+export {
+  monthlySavingsAdvice,
+  requiredThisMonth,
+  type SavingsAdvice,
+  type SavingsAdviceInput,
+} from "../modules/sinking-funds/savings-advice";
+export {
+  DepositSchema,
+  addDeposit,
+  depositedInMonth,
+  editDeposit,
+  removeDeposit,
+  type Deposit,
+  type PotResult,
+  type PotState,
+} from "../kernel/deposit";

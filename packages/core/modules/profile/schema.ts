@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DepositSchema } from "../../kernel/deposit";
 import { BUCKETS } from "../../kernel/bucket";
 import { MonthSchema } from "../../kernel/month";
 
@@ -26,6 +27,8 @@ export const ProfileSchema = z.object({
   /** One lump monthly line for day-to-day living costs (groceries etc.); counted as needs. */
   livingExpenses: z.number().int().nonnegative(),
   savings: z.number().int().nonnegative(),
+  /** Money put into or taken out of the emergency fund by hand; `savings` moves with it. */
+  deposits: z.array(DepositSchema).optional(),
   emergencyFundTargetMonths: z.number().nonnegative(),
   annualInflationExpectation: z.number(),
   /** ISO 3166 country the inflation suggestion came from; remembered so the form can show it again. */
