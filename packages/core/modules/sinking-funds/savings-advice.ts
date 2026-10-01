@@ -28,6 +28,8 @@ export interface SavingsAdvice {
   deposited: Minor;
   stillToSet: Minor;
   freeAfter: Minor;
+  /** What the plan sets aside beyond what pots and the emergency fund still need: the part meant for investing. */
+  investingShare: Minor;
   /** Where the remaining amount could go; each pot only up to its own need this month. */
   suggestedSplit: { id: string; amount: Minor }[];
 }
@@ -66,7 +68,10 @@ export function monthlySavingsAdvice(input: SavingsAdviceInput): SavingsAdvice {
   if (input.emergency) {
     give("emergency", input.emergency.gap - input.emergency.depositedThisMonth);
   }
-  if (left > 0) give("unassigned", left);
+  // What no pot and not the emergency fund still needs goes to investing: it should not sit idle.
+  if (left > 0) give("investing", left);
 
-  return { required, deposited, stillToSet, freeAfter, suggestedSplit: split };
+  const investingShare = Math.max(0, required - fundsNeed - (input.emergency?.gap ?? 0));
+
+  return { required, deposited, stillToSet, freeAfter, investingShare, suggestedSplit: split };
 }

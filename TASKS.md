@@ -889,6 +889,9 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
   Note: the bands are our own rule of thumb (tunable data), not official statistics, and the screen says so.
 - [x] **T15.8** Basket ticks: the monthly amount is remembered; each slice has "I put this in" that notes it for the month (`basketLog`) and, when the slice has one priced holding, records the purchase at its current price (undo removes both).
 
+- [x] **T15.9** Surplus saving goes to investing: once pots with a date and the emergency fund are covered, the rest of what the plan saves is suggested for investing (`investingShare`, split id `investing`), and it becomes the default monthly amount for the basket.
+  Note: pots without a target never hold money back; only a pot or the emergency fund that still needs money does.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

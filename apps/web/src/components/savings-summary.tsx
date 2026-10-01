@@ -70,7 +70,7 @@ export function SavingsSummary({ advice, freeBeforeSaving, potNames }: SavingsSu
               className="rounded-full bg-muted px-3 py-1"
               data-testid={`split-${part.id}`}
             >
-              {t(`split.${part.id === "emergency" || part.id === "unassigned" ? part.id : "pot"}`, {
+              {t(`split.${part.id === "emergency" || part.id === "investing" ? part.id : "pot"}`, {
                 amount: money(part.amount),
                 name: potNames[part.id] ?? part.id,
               })}

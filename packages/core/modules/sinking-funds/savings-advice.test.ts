@@ -126,20 +126,73 @@ describe("monthlySavingsAdvice", () => {
     ]);
   });
 
-  it("leaves what no pot can take unassigned instead of inventing a destination", () => {
+  it("sends what no pot and no emergency fund can take to investing", () => {
     const advice = monthlySavingsAdvice({
       freeBeforeSaving: 5_000_000,
       planSavings: 1_000_000,
       funds: [],
       month: "2026-10",
     });
-    expect(advice.suggestedSplit).toEqual([{ id: "unassigned", amount: 1_000_000 }]);
+    expect(advice.suggestedSplit).toEqual([{ id: "investing", amount: 1_000_000 }]);
+  });
+
+  it("keeps the money in savings while the emergency fund or a pot still needs it", () => {
+    const advice = monthlySavingsAdvice({
+      freeBeforeSaving: 5_000_000,
+      planSavings: 1_000_000,
+      funds: [fund({ id: "near", target: 600_000, dueMonth: "2026-12" })], // 300,000 a month
+      emergency: { gap: 400_000, depositedThisMonth: 0 },
+      month: "2026-10",
+    });
+    // pot 300,000, emergency 400,000, the remaining 300,000 is free for investing
+    expect(advice.suggestedSplit).toEqual([
+      { id: "near", amount: 300_000 },
+      { id: "emergency", amount: 400_000 },
+      { id: "investing", amount: 300_000 },
+    ]);
+  });
+
+  it("puts everything into investing once the emergency fund is full and no pot needs money", () => {
+    const advice = monthlySavingsAdvice({
+      freeBeforeSaving: 5_000_000,
+      planSavings: 1_000_000,
+      funds: [],
+      emergency: { gap: 0, depositedThisMonth: 0 },
+      month: "2026-10",
+    });
+    expect(advice.suggestedSplit).toEqual([{ id: "investing", amount: 1_000_000 }]);
+  });
+
+  it("reports the part of the plan that is meant for investing, whatever was already put in", () => {
+    const input = {
+      freeBeforeSaving: 5_000_000,
+      planSavings: 1_000_000,
+      funds: [fund({ id: "near", target: 600_000, dueMonth: "2026-12" })], // 300,000 a month
+      emergency: { gap: 400_000, depositedThisMonth: 0 },
+      month: "2026-10" as const,
+    };
+    expect(monthlySavingsAdvice(input).investingShare).toBe(300_000);
+    expect(
+      monthlySavingsAdvice({ ...input, emergency: { gap: 400_000, depositedThisMonth: 400_000 } })
+        .investingShare,
+    ).toBe(300_000);
+    expect(
+      monthlySavingsAdvice({ ...input, emergency: { gap: 5_000_000, depositedThisMonth: 0 } })
+        .investingShare,
+    ).toBe(0);
   });
 
   it("handles no pots, no plan and no money", () => {
     expect(
       monthlySavingsAdvice({ freeBeforeSaving: 0, planSavings: 0, funds: [], month: "2026-10" }),
-    ).toEqual({ required: 0, deposited: 0, stillToSet: 0, freeAfter: 0, suggestedSplit: [] });
+    ).toEqual({
+      required: 0,
+      deposited: 0,
+      stillToSet: 0,
+      freeAfter: 0,
+      investingShare: 0,
+      suggestedSplit: [],
+    });
   });
 });
 

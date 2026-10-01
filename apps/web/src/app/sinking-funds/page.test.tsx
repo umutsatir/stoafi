@@ -273,3 +273,24 @@ describe("Savings screen basket ticks", () => {
     expect(useAppStore.getState().holdings[0]?.trades).toHaveLength(1);
   });
 });
+
+describe("Savings screen once the emergency fund is full", () => {
+  it("suggests the rest of the plan's saving for investing, and offers it to the basket", async () => {
+    useAppStore.setState({
+      profile: { ...profile, savings: 50_000_000 },
+      basket: [{ id: "gold", label: "Gold", typeId: "gold", percent: 100 }],
+      basketMonthly: null,
+    });
+    renderPage();
+    expect(screen.getByTestId("split-investing")).toHaveTextContent("to investing");
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Investments" }));
+    // 20% of 60,000 is set aside by the 50/30/20 plan and nothing else needs it.
+    expect(await screen.findByLabelText("Amount to invest")).toHaveValue("12000");
+  });
+
+  it("keeps the money in savings while the emergency fund still needs it", () => {
+    renderPage();
+    expect(screen.queryByTestId("split-investing")).not.toBeInTheDocument();
+    expect(screen.getByTestId("split-emergency")).toBeInTheDocument();
+  });
+});

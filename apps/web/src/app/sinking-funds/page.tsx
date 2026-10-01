@@ -9,7 +9,9 @@ import {
   addEmergencyDeposit,
   currentAllocation,
   depositedInMonth,
+  emergencyGap,
   monthlyNeeds,
+  monthlySavingsAdvice,
   project,
   markBasketDone,
   removeDeposit,
@@ -97,6 +99,24 @@ export default function SavingsPage() {
     income - projection.byBucket.needs.committed - projection.byBucket.wants.committed,
   );
   const planSavings = limits ? limits.savings + limits.investing : 0;
+  // Once the emergency fund and the pots are covered, the rest of what the plan saves is for investing.
+  const investingSuggestion = Math.max(
+    limits ? limits.investing : 0,
+    monthlySavingsAdvice({
+      freeBeforeSaving,
+      planSavings,
+      funds,
+      emergency: {
+        gap: emergencyGap(
+          profile.savings,
+          monthlyNeeds(profile, month),
+          profile.emergencyFundTargetMonths,
+        ),
+        depositedThisMonth: 0,
+      },
+      month,
+    }).investingShare,
+  );
 
   function replaceFund(next: SinkingFund) {
     setFunds(funds.map((f) => (f.id === next.id ? next : f)));
@@ -309,7 +329,7 @@ export default function SavingsPage() {
             createId={() => crypto.randomUUID()}
             annualInflation={profile.annualInflationExpectation}
             basket={basket}
-            suggestedMonthly={limits ? limits.investing : 0}
+            suggestedMonthly={investingSuggestion}
             onBasketChange={setBasket}
             onAssign={handleAssign}
             savedMonthly={basketMonthly}

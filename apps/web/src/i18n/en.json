@@ -927,7 +927,7 @@
       "split": {
         "emergency": "{amount} to the emergency fund",
         "pot": "{amount} to {name}",
-        "unassigned": "{amount} wherever you like"
+        "investing": "{amount} to investing"
       }
     },
     "potsTitle": "Your pots",
