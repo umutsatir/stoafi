@@ -826,7 +826,8 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
 Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, Plan, Health, Decisions, Savings goals, Lessons, Settings with "Ask AI", Onboarding with demo mode. Section 5 of the plan lists every control for each page.
 
 - [ ] **T12.1** Home (5.1)
-- [ ] **T12.2** Cards with supplementary cards, bank presets and card widgets; minimum-payment tool collapsed (5.7, 6.1, 6.2)
+- [x] **T12.2** Cards with supplementary cards, bank presets and card widgets; minimum-payment tool collapsed (5.7, 6.1, 6.2)
+  Note: core has `limitUsage`, `removeCardFromSet`, `validateCardSet`, bank presets (`data/banks.json`, colours approximate and flagged, no logos) and `remainingInstallmentsByCard`; purchases remember their `cardId`, so remaining installments count against the shared limit. A limit of 0 in the form means "not tracked". Not done from the plan: the card-limit guard rule in the queue preview and the upcoming-payments calendar (T13.x), and the best-day-to-buy hint per card stays where it already was (queue preview).
 - [ ] **T12.3** Queue: side panel preview, Eisenhower and time views (5.5)
 - [ ] **T12.4** Income & Expenses and Profile, with a recurring savings/investing type (5.2, 5.3)
 - [ ] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)

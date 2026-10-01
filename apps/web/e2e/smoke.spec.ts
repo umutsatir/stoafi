@@ -81,3 +81,21 @@ test("deleting a saved goal can be undone", async ({ page }) => {
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByRole("button", { name: "Delete Car insurance" })).toBeVisible();
 });
+
+test("a card added from a bank shows as a card and passes the accessibility scan", async ({
+  page,
+}) => {
+  await page.goto("/cards");
+  await page.getByRole("button", { name: "Garanti BBVA" }).click();
+  await page.getByLabel("Card name").fill("Bonus");
+  await page.getByLabel("Credit limit").fill("50000");
+  await page.getByRole("dialog").getByRole("button", { name: "Add card" }).click();
+  await expect(page.getByRole("button", { name: "Open Bonus" })).toBeVisible();
+
+  const { violations } = await new AxeBuilder({ page }).analyze();
+  expect(
+    violations
+      .filter((v) => v.impact === "serious" || v.impact === "critical")
+      .map((v) => `${v.id}: ${v.help}`),
+  ).toEqual([]);
+});

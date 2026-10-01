@@ -25,6 +25,8 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "inputMode",
   "autoComplete",
   "aria-hidden",
+  "aria-labelledby", // points at another element's id
+  "aria-controls", // points at another element's id
   "role",
   "dataKey", // recharts chart config, not display text
   "stackId", // recharts chart config, not display text

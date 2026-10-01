@@ -196,13 +196,83 @@
   },
   "cards": {
     "title": "Cards",
-    "summary": "{label}: statement {statementDay}, due {dueDay}",
-    "label": "Label",
     "statementDay": "Statement day",
     "dueDay": "Due day",
     "add": "Add card",
     "delete": "Delete {name}",
-    "labelRequired": "Enter a name for the card."
+    "labelRequired": "Enter a name for the card.",
+    "edit": "Edit",
+    "deleteShort": "Delete",
+    "addSupplementary": "Add supplementary card",
+    "supplementaryBadge": "Supplementary",
+    "openSupplementary": "Open {name}, supplementary card of {main}",
+    "dayValue": "Day {day}",
+    "onlyMinimum": "Only paying the minimum?",
+    "empty": {
+      "title": "Add your first card",
+      "text": "Pick your bank to start. I will track statement and due days and your limit, and hint at the best day to buy."
+    },
+    "tools": {
+      "show": "Show the minimum-payment trap calculator",
+      "hide": "Hide the minimum-payment trap calculator"
+    },
+    "form": {
+      "titleAdd": "Add a card",
+      "titleEdit": "Edit card",
+      "titleSupplementary": "Add a supplementary card",
+      "bank": "Bank",
+      "bankHint": "Colours are approximate and only give the card the feel of its bank.",
+      "otherBank": "Other",
+      "color": "Card colour",
+      "label": "Card name",
+      "previewName": "My card",
+      "kind": "Type",
+      "kinds": {
+        "main": "Main card",
+        "supplementary": "Supplementary card"
+      },
+      "parent": "Main card",
+      "parentHint": "A supplementary card shares the limit of its main card.",
+      "parentPlaceholder": "Choose a main card",
+      "parentRequired": "Choose the main card this one belongs to.",
+      "limit": "Credit limit",
+      "limitHint": "Leave at 0 if you do not want to track it.",
+      "currentDebt": "Currently owed on this card",
+      "currentDebtHint": "Optional. Remaining installments bought through the queue are added automatically.",
+      "last4": "Last 4 digits",
+      "last4Hint": "Optional. Never enter the full number.",
+      "last4Invalid": "Enter exactly four digits, or leave it empty.",
+      "network": "Card network",
+      "networkNone": "Not set",
+      "cancel": "Cancel",
+      "save": "Save changes"
+    },
+    "detail": {
+      "sharesLimitOf": "Shares the limit of",
+      "limitSection": "Limit",
+      "limitUsed": "Limit used:",
+      "limitBar": "Share of the limit in use",
+      "available": "Still available:",
+      "overLimit": "Over the limit by {amount}.",
+      "sharedNote": "All cards of this group draw from one limit.",
+      "noLimit": "Add a limit to see how much is left.",
+      "owedHere": "Owed on this card",
+      "supplementaryTitle": "Supplementary cards",
+      "availableShort": "Limit tracked",
+      "overLimitShort": "Over the limit"
+    },
+    "deleteDialog": {
+      "title": "Delete {name}?",
+      "plain": "This removes the card from the app. Your bank account is not touched.",
+      "withExtras": "This card has supplementary cards. Delete them too, or keep them as separate main cards.",
+      "confirm": "Delete card",
+      "deleteAll": "Delete with supplementary cards",
+      "keepSupplementary": "Keep supplementary cards",
+      "limitsHint": "A main card needs its own limit. Enter one for each card you keep.",
+      "limitFor": "Limit for {name}",
+      "deleteAndKeep": "Delete and keep the rest"
+    },
+    "openCard": "Open {name}"
   },
   "minimumPayment": {
     "title": "Minimum-payment trap calculator",

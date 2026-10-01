@@ -196,13 +196,83 @@
   },
   "cards": {
     "title": "Kartlar",
-    "summary": "{label}: hesap kesim {statementDay}, son ödeme {dueDay}",
-    "label": "Etiket",
     "statementDay": "Hesap kesim günü",
     "dueDay": "Son ödeme günü",
     "add": "Kart ekle",
     "delete": "{name} sil",
-    "labelRequired": "Kart için bir ad gir."
+    "labelRequired": "Kart için bir ad gir.",
+    "edit": "Düzenle",
+    "deleteShort": "Sil",
+    "addSupplementary": "Ek kart ekle",
+    "supplementaryBadge": "Ek kart",
+    "openSupplementary": "{name} aç, {main} kartının ek kartı",
+    "dayValue": "Ayın {day}. günü",
+    "onlyMinimum": "Sadece asgariyi ödersem?",
+    "empty": {
+      "title": "İlk kartını ekle",
+      "text": "Bankanı seçerek başla. Hesap kesim ve son ödeme günlerini, limitini takip ederim; alışverişte en iyi günü söylerim."
+    },
+    "tools": {
+      "show": "Asgari ödeme tuzağı hesaplayıcısını göster",
+      "hide": "Asgari ödeme tuzağı hesaplayıcısını gizle"
+    },
+    "form": {
+      "titleAdd": "Kart ekle",
+      "titleEdit": "Kartı düzenle",
+      "titleSupplementary": "Ek kart ekle",
+      "bank": "Banka",
+      "bankHint": "Renkler yaklaşıktır, karta bankasının havasını vermek içindir.",
+      "otherBank": "Diğer",
+      "color": "Kart rengi",
+      "label": "Kart adı",
+      "previewName": "Kartım",
+      "kind": "Tür",
+      "kinds": {
+        "main": "Ana kart",
+        "supplementary": "Ek kart"
+      },
+      "parent": "Ana kart",
+      "parentHint": "Ek kart, ana kartının limitini paylaşır.",
+      "parentPlaceholder": "Ana kart seç",
+      "parentRequired": "Bu kartın bağlı olduğu ana kartı seç.",
+      "limit": "Kredi limiti",
+      "limitHint": "Takip etmek istemiyorsan 0 bırak.",
+      "currentDebt": "Bu kartta şu an borç",
+      "currentDebtHint": "İsteğe bağlı. Kuyruktan taksitle aldıkların kalan taksitleriyle otomatik eklenir.",
+      "last4": "Son 4 hane",
+      "last4Hint": "İsteğe bağlı. Kart numarasının tamamını asla girme.",
+      "last4Invalid": "Tam dört rakam gir ya da boş bırak.",
+      "network": "Kart ağı",
+      "networkNone": "Belirtilmedi",
+      "cancel": "Vazgeç",
+      "save": "Değişiklikleri kaydet"
+    },
+    "detail": {
+      "sharesLimitOf": "Limiti paylaştığı kart",
+      "limitSection": "Limit",
+      "limitUsed": "Kullanılan limit:",
+      "limitBar": "Kullanılan limit oranı",
+      "available": "Kalan:",
+      "overLimit": "Limiti {amount} aşıyor.",
+      "sharedNote": "Bu gruptaki tüm kartlar tek limitten harcar.",
+      "noLimit": "Ne kadarı kaldığını görmek için limit ekle.",
+      "owedHere": "Bu kartta borç",
+      "supplementaryTitle": "Ek kartlar",
+      "availableShort": "Limit takip ediliyor",
+      "overLimitShort": "Limit aşıldı"
+    },
+    "deleteDialog": {
+      "title": "{name} silinsin mi?",
+      "plain": "Kart uygulamadan kaldırılır. Banka hesabına dokunulmaz.",
+      "withExtras": "Bu kartın ek kartları var. Onları da sil ya da ayrı ana kart olarak koru.",
+      "confirm": "Kartı sil",
+      "deleteAll": "Ek kartlarla birlikte sil",
+      "keepSupplementary": "Ek kartları koru",
+      "limitsHint": "Ana kartın kendi limiti olmalı. Koruduğun her kart için bir limit gir.",
+      "limitFor": "{name} limiti",
+      "deleteAndKeep": "Sil, diğerlerini koru"
+    },
+    "openCard": "{name} aç"
   },
   "minimumPayment": {
     "title": "Asgari ödeme tuzağı hesaplayıcısı",

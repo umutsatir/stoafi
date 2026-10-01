@@ -10,8 +10,12 @@ import { Field } from "@/components/ui/field";
 import { MoneyInput } from "./money-input";
 import { PercentInput } from "./percent-input";
 
-export function MinimumPaymentCalculator() {
-  const [balance, setBalance] = useState(1_000_000);
+export function MinimumPaymentCalculator({
+  initialBalance = 1_000_000,
+}: {
+  initialBalance?: number;
+}) {
+  const [balance, setBalance] = useState(initialBalance);
   const [monthlyRate, setMonthlyRate] = useState(0.02);
   const [pct, setPct] = useState(0.05);
   const [floor, setFloor] = useState(0);

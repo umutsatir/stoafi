@@ -31,7 +31,8 @@ import { InstallmentCalculator } from "./installment-calculator";
 
 /** How the user chose to pay; the page turns this into a decision plus (for installments) a saved purchase. */
 export type PurchaseChoice =
-  { method: "cash" } | { method: "installment"; offer: InstallmentOfferInput; firstMonth: Month };
+  | { method: "cash" }
+  | { method: "installment"; offer: InstallmentOfferInput; firstMonth: Month; cardId?: string };
 
 export interface QueuePreviewProps {
   item: QueueItem;
@@ -192,7 +193,9 @@ export function QueuePreview({
               <option value="">{t("noCard")}</option>
               {cards.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.label}
+                  {c.kind === "supplementary"
+                    ? `${cards.find((m) => m.id === c.parentId)?.label ?? ""} · ${c.label}`
+                    : c.label}
                 </option>
               ))}
             </NativeSelect>
@@ -286,7 +289,9 @@ export function QueuePreview({
                 { ...draft, status: "active" },
                 breaches,
                 hasBreach,
-                offer ? { method: "installment", offer, firstMonth } : { method: "cash" },
+                offer
+                  ? { method: "installment", offer, firstMonth, ...(cardId ? { cardId } : {}) }
+                  : { method: "cash" },
               )
             }
           >

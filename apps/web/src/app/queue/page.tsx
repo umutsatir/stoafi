@@ -144,7 +144,11 @@ export default function QueuePage() {
       // Installments become an expense: the item stays, flagged, and its payments are derived from it.
       const bought: QueueItem = {
         ...selectedItem,
-        installmentPurchase: { offer: purchase.offer, firstMonth: purchase.firstMonth },
+        installmentPurchase: {
+          offer: purchase.offer,
+          firstMonth: purchase.firstMonth,
+          ...(purchase.cardId ? { cardId: purchase.cardId } : {}),
+        },
       };
       setQueueItems(queueItems.map((i) => (i.id === bought.id ? bought : i)));
       void saveQueueItem(db, bought).catch(logFailure("save the installment purchase"));
