@@ -778,6 +778,86 @@ Not in this phase, needs a product decision first (recorded under Open questions
 
 ---
 
+## Phases 11 to 14 — Product and interface pass (PLANNED, nothing started)
+
+Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, every screen's controls, new features, module wiring, readiness checklist). **No task below starts until the owner answers the decisions in section 11 of that document.** Work goes page by page: one page, a screenshot for review, then the next. Do not change several pages in one go.
+
+### Phase 11 — Foundation (everything later builds on it)
+
+- [ ] **T11.1** Fix the real defects found in the audit
+  Goal: decisions store the item's name (additive optional field on `Decision`) instead of showing an id; guard breaches show translated sentences, never rule ids; the minimum-payment result says "never pays off" instead of "600 months"; the chosen country is saved; metrics show units; settings show language names and consistent currency formatting.
+  Acceptance: a test per defect (H1, H2, H3, H4, H6, H7 in the plan); no raw id or rule id reaches the screen.
+  Depends on: T10.9
+
+- [ ] **T11.2** Design tokens and theme
+  Goal: brand and semantic colors, data colors per bucket, type scale, spacing, radius, light and dark themes, theme setting (system, light, dark) saved in settings.
+  Acceptance: both themes pass contrast checks; theme survives reload; no hard-coded colors outside the tokens.
+  Depends on: T11.1
+
+- [ ] **T11.3** Shared component library
+  Goal: `Money`, `StatCard`, `ProgressBar`, `ProgressRing`, `Sheet`, `Dialog`/`ConfirmDialog`, `Toast` with undo, `Tabs`/`SegmentedControl`, `EmptyState`, `Skeleton`, `InfoPopover`, `StatusChip`, `MonthTrack`.
+  Acceptance: each component has a test and is used by at least one screen before the phase ends.
+  Depends on: T11.2
+
+- [ ] **T11.4** App shell
+  Goal: grouped sidebar, mobile bottom tab bar (5 items plus More), page header bar, skip link.
+  Acceptance: on a 390 px screen every route is reachable without horizontal scrolling.
+  Depends on: T11.3
+
+- [ ] **T11.5** Feedback patterns
+  Goal: "Saved" feedback, undo on delete, confirmation for destructive bulk actions, autosave on small forms, unsaved-changes guard on long forms.
+  Acceptance: no save or delete happens silently.
+  Depends on: T11.3
+
+- [ ] **T11.6** Browser tests in the repo
+  Goal: Playwright smoke tests for every page (desktop and phone, empty and filled) and an axe accessibility scan, run in CI.
+  Acceptance: CI fails on a console error, a horizontal scroll on a phone, or a serious axe violation.
+  Depends on: T11.4
+
+- [ ] **T11.7** Preview deployments
+  Goal: every pull request gets a preview URL (service chosen by the owner).
+  Acceptance: a PR shows a working preview link.
+  Depends on: T11.6
+
+### Phase 12 — Page by page (each page needs its own approval before the next starts)
+
+Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, Plan, Health, Decisions, Savings goals, Lessons, Settings with "Ask AI", Onboarding with demo mode. Section 5 of the plan lists every control for each page.
+
+- [ ] **T12.1** Home (5.1)
+- [ ] **T12.2** Cards with supplementary cards, bank presets and card widgets; minimum-payment tool collapsed (5.7, 6.1, 6.2)
+- [ ] **T12.3** Queue: side panel preview, Eisenhower and time views (5.5)
+- [ ] **T12.4** Income & Expenses and Profile, with a recurring savings/investing type (5.2, 5.3)
+- [ ] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)
+- [ ] **T12.6** Health: status, units, thresholds, next steps (5.8)
+- [ ] **T12.7** Decisions: feed, filters, stats (5.9)
+- [ ] **T12.8** Savings goals as pots (5.6)
+- [ ] **T12.9** Lessons reading experience (5.10)
+- [ ] **T12.10** Settings and "Ask AI" export with privacy levels (5.11, 6.3)
+- [ ] **T12.11** Onboarding and demo mode (5.0)
+  Each: tests first for any logic, a screenshot for review, empty/loading/error states, phone layout, acceptance as written in the plan.
+  Depends on: Phase 11
+
+### Phase 13 — Connections between modules
+
+- [ ] **T13.1** Calendar of upcoming payments (S1)
+- [ ] **T13.2** Installments linked to a card, card limit and a card-limit guard rule (S4)
+- [ ] **T13.3** Monthly snapshots and trends (S3)
+- [ ] **T13.4** Price-age reminder (S8), undo everywhere (S7), command palette (S6)
+  Depends on: the matching Phase 12 pages.
+
+### Phase 14 — Ready for customers
+
+- [ ] **T14.1** Privacy and security: app lock and hide amounts (S9), security headers, backup warnings and reminders (S15)
+- [ ] **T14.2** Error boundary and local error report; migration fixtures for every stored version; import of old backups
+- [ ] **T14.3** Accessibility and performance pass against a written budget
+- [ ] **T14.4** Native Turkish copy review; legal text (not financial advice, privacy)
+- [ ] **T14.5** PWA check on real devices (T8.6), deployment, product name, domain and license decisions
+  Depends on: Phases 11 to 13.
+
+**Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
+
+---
+
 ## Acceptance criteria mapping
 
 Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task(s) that implement and verify it.
@@ -805,6 +885,7 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 
 ## Open questions
 
+- [ ] Product and interface decisions 1 to 12 in `docs/PRODUCT-PLAN.md` section 11 (brand direction, dark theme, fonts and new dependencies, "Ask AI" export vs the no-network rule, savings-rate definition, bank colors, AI logos, cooldown re-prompt, preview hosting, which suggestions S1 to S17, phone navigation, page order). Phases 11 to 14 wait on these.
 - [ ] Cooldown re-prompt: SPEC says a want's 30-day cooldown "prompts again when it ends". Today the timeline only shows the countdown. Proposed: once the cooldown has ended, the queue card asks "Still want it?" with Keep / Skip, remembering the answer on the item. Needs confirmation before it is built (adds an optional field to the queue item).
 - [ ] Default installment cap: 20% of net income, or lower? (SPEC backlog) — blocks final default value in T4.6's `defaultGuardRules`; task can proceed with 20% as a placeholder default since it's data, not code, but the number needs confirmation before Phase 8's acceptance pass.
 - [ ] Legal installment limits by category: keep as an editable data file, and who updates it? (SPEC backlog) — no MVP task currently owns "legal limits by category"; if this is in scope for guards (T4.6), it needs its own task added before Phase 4 starts. Currently treated as out of MVP scope pending confirmation.
