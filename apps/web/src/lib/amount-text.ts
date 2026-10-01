@@ -69,3 +69,14 @@ export function formatPercentForInput(ratio: number, locale: string): string {
   const percent = Math.round(ratio * 10_000) / 100;
   return String(percent).replace(".", decimal);
 }
+
+/**
+ * A quantity of something (grams, shares): a positive decimal typed in the user's style, or null.
+ * Unlike money it may be fractional, so it is a plain number rather than minor units.
+ */
+export function parseQuantity(text: string, locale: string): number | null {
+  const normalized = normalize(text, locale);
+  if (normalized === null) return null;
+  const value = Number(normalized);
+  return Number.isFinite(value) && value > 0 ? value : null;
+}

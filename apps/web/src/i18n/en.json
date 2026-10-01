@@ -624,6 +624,211 @@
       "in": "Put in",
       "out": "Taken out",
       "delete": "Delete the entry from {date}"
+    },
+    "tabs": {
+      "pots": "Pots",
+      "investments": "Investments"
+    }
+  },
+  "investments": {
+    "types": {
+      "gold": {
+        "name": "Gold"
+      },
+      "currency": {
+        "name": "Foreign currency"
+      },
+      "stock": {
+        "name": "Shares"
+      },
+      "fund": {
+        "name": "Investment fund"
+      },
+      "index-fund": {
+        "name": "Index fund"
+      },
+      "bond": {
+        "name": "Bonds"
+      },
+      "deposit": {
+        "name": "Deposit account"
+      },
+      "crypto": {
+        "name": "Crypto"
+      },
+      "real-estate": {
+        "name": "Real estate"
+      },
+      "other": {
+        "name": "Other"
+      }
+    },
+    "guide": {
+      "gold": {
+        "what": "A metal people have trusted for thousands of years; it pays no interest and its price swings.",
+        "risk": "The price moves with the world, the dollar and fear; it can stay flat for years.",
+        "cost": "The gap between buying and selling price, plus craftsmanship cost for jewellery.",
+        "horizon": "Long term, as a small part of what you own.",
+        "mistake": "Putting most of your money in one thing because it has been rising."
+      },
+      "currency": {
+        "what": "Money of another country, kept as cash or in an account.",
+        "risk": "Its value against your own currency changes daily; it earns no interest at home.",
+        "cost": "The gap between the bank's buying and selling rate.",
+        "horizon": "Short to medium term, or to cover costs paid in that currency.",
+        "mistake": "Buying after a big jump and selling in a panic when it dips."
+      },
+      "stock": {
+        "what": "A small piece of ownership in one company.",
+        "risk": "One company can lose most of its value; prices swing a lot, day to day and year to year.",
+        "cost": "Broker commission and, in some countries, tax on gains.",
+        "horizon": "Five years or more, and only money you will not need soon.",
+        "mistake": "Betting on one or two companies instead of spreading out."
+      },
+      "fund": {
+        "what": "A pool of money that a manager invests in many things for you.",
+        "risk": "Depends on what it holds; a fund of shares is far riskier than one of bonds.",
+        "cost": "A yearly management fee that comes out of your return whether the fund does well or not.",
+        "horizon": "Match it to what the fund holds: shares need years, bonds need less.",
+        "mistake": "Choosing by last year's return and ignoring the fee."
+      },
+      "index-fund": {
+        "what": "A fund that simply copies a market index, such as the largest companies, instead of picking winners.",
+        "risk": "It falls when the market falls, but you are spread across hundreds of companies.",
+        "cost": "Usually the lowest fees of any fund, which matters a great deal over decades.",
+        "horizon": "Ten years or more, bought steadily month after month.",
+        "mistake": "Selling when the market drops, which locks in the loss."
+      },
+      "bond": {
+        "what": "A loan you give to a government or company that pays you interest and returns the money on a set date.",
+        "risk": "The issuer might fail to pay, and prices fall when interest rates rise.",
+        "cost": "Usually small commissions; check the tax on the interest.",
+        "horizon": "Until the maturity date, or as the steady part of a mix.",
+        "mistake": "Chasing the highest interest without asking why it is so high."
+      },
+      "deposit": {
+        "what": "Money kept in a bank for a fixed time at a promised rate.",
+        "risk": "Very low risk to your money, but inflation can still eat the real value.",
+        "cost": "Usually free, but breaking it early can cost you the interest.",
+        "horizon": "Short term, and for money you need in a known month.",
+        "mistake": "Leaving a lot there for years while prices rise faster than interest."
+      },
+      "crypto": {
+        "what": "Digital coins that live on networks rather than being issued by a bank or government.",
+        "risk": "Prices can fall by half within months, and exchanges or wallets can be hacked or fail.",
+        "cost": "Exchange fees and the spread; tax rules differ and often change.",
+        "horizon": "Only an amount you could lose without it changing your life.",
+        "mistake": "Borrowing to buy, or following a hyped coin."
+      },
+      "real-estate": {
+        "what": "A home, shop or land you own, for living in or renting out.",
+        "risk": "Hard to sell quickly, and one property is a big bet on one place.",
+        "cost": "Taxes, notary and agent fees, repairs and time spent managing it.",
+        "horizon": "Many years; it is hard to get out of quickly.",
+        "mistake": "Counting the rent but forgetting repairs, empty months and taxes."
+      },
+      "other": {
+        "what": "Anything else you own for its value, such as art, wine or a business share.",
+        "risk": "Often hard to value and hard to sell, so the price you see may not be a price you can get.",
+        "cost": "Varies a lot; ask what it costs to sell.",
+        "horizon": "Think about how you would turn it back into cash.",
+        "mistake": "Trusting a number you cannot actually sell at."
+      },
+      "title": "Know before you buy",
+      "intro": "Plain notes on each kind of investment, in our own words. Tap one to read it.",
+      "notAdvice": "This is general education, not financial advice. Nobody can promise a return, and past performance does not predict the future.",
+      "fields": {
+        "what": "What it is",
+        "risk": "The risks",
+        "cost": "What it costs",
+        "horizon": "How long to hold it",
+        "mistake": "A common mistake"
+      }
+    },
+    "title": "Investments",
+    "addInvestment": "Add an investment",
+    "holdingsTitle": "What you own",
+    "summary": {
+      "title": "Portfolio",
+      "value": "Worth now",
+      "cost": "What you paid",
+      "profit": "Profit or loss",
+      "profitPct": "{pct} on what you paid",
+      "allocationLabel": "Split by type: {parts}",
+      "inflationNote": "You expect about {rate} inflation a year. A return below that loses buying power. The values here are prices you typed in; the app never looks them up."
+    },
+    "empty": {
+      "title": "Record what you invest in",
+      "text": "Gold, shares, funds, deposits, anything you own to grow your money. Add what you bought and update its price now and then, and you will see how it is doing."
+    },
+    "add": {
+      "type": "Type",
+      "customType": "Your own type",
+      "customName": "Name of your type",
+      "customRequired": "Give your type a name.",
+      "name": "Name",
+      "nameHint": "e.g. Gram gold, Global index fund",
+      "nameRequired": "Enter a name.",
+      "unit": "Unit",
+      "unitHint": "What one unit is called: g, lot, share. Optional.",
+      "firstPurchase": "First purchase (optional)",
+      "quantity": "How many units",
+      "quantityRequired": "Enter how many units, like 2 or 0.35.",
+      "unitPrice": "Price of one unit",
+      "priceRequired": "Enter the price of one unit.",
+      "date": "Date",
+      "cancel": "Cancel",
+      "submit": "Add"
+    },
+    "card": {
+      "quantity": "{quantity} {unit}",
+      "average": "average {price}",
+      "cost": "Paid",
+      "profit": "Profit or loss",
+      "noPrice": "No price yet, shown at cost",
+      "stale": "Price is {days} days old",
+      "trade": "Buy or sell",
+      "updatePrice": "Update price",
+      "history": "History"
+    },
+    "trade": {
+      "title": "Buy or sell {name}",
+      "side": "Buy or sell",
+      "buy": "Buy",
+      "sell": "Sell",
+      "quantity": "How many units",
+      "quantityUnit": "How many ({unit})",
+      "quantityRequired": "Enter how many units, like 2 or 0.35.",
+      "tooMany": "You hold fewer units than that.",
+      "unitPrice": "Price of one unit",
+      "priceRequired": "Enter the price of one unit.",
+      "fee": "Fee",
+      "feeHint": "Commission or charges. Optional.",
+      "date": "Date",
+      "note": "Note (optional)",
+      "cancel": "Cancel",
+      "submitBuy": "Record purchase",
+      "submitSell": "Record sale"
+    },
+    "price": {
+      "title": "Update the price of {name}",
+      "hint": "Type what one unit is worth today. You can find it with your bank or broker.",
+      "price": "Price of one unit",
+      "required": "Enter a price above zero.",
+      "date": "As of",
+      "cancel": "Cancel",
+      "save": "Save price"
+    },
+    "history": {
+      "title": "History of {name}",
+      "empty": "No purchases or sales yet.",
+      "buy": "Bought {quantity} {unit}",
+      "sell": "Sold {quantity} {unit}",
+      "at": "at {price}",
+      "delete": "Delete the entry from {date}",
+      "deleteShort": "Delete",
+      "deleteHolding": "Delete {name}",
+      "deleteHoldingShort": "Delete this investment"
     }
   }
 }

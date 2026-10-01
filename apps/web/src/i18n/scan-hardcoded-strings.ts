@@ -36,6 +36,7 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "variant", // shadcn/ui component variant props (cva), not display text
   "size",
   "reducedMotion", // motion library option, not display text
+  "defaultValue", // tab id, not display text
   "tone", // StatusChip/ProgressBar colour name, not display text
   "strokeLinecap", // SVG drawing option, not display text
   "position", // toast placement, not display text

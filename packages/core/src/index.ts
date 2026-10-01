@@ -178,3 +178,33 @@ export {
   type PotResult,
   type PotState,
 } from "../kernel/deposit";
+
+export { investmentsModule } from "../modules/investments/module";
+export {
+  HoldingSchema,
+  TradeSchema,
+  type Holding,
+  type Trade,
+} from "../modules/investments/schema";
+export {
+  INVESTMENT_TYPES,
+  investmentType,
+  type InvestmentType,
+} from "../modules/investments/types";
+export {
+  addTrade,
+  allocationByType,
+  averageCost,
+  costBasis,
+  holdingQuantity,
+  marketValue,
+  portfolioTotals,
+  priceStaleDays,
+  realReturn,
+  realizedPnL,
+  removeTrade,
+  unrealizedPnL,
+  type Allocation,
+  type PortfolioTotals,
+  type TradeResult,
+} from "../modules/investments/selectors";

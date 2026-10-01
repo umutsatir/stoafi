@@ -7,6 +7,7 @@ import {
   type Card,
   type Decision,
   type GuardThresholds,
+  type Holding,
   type Minor,
   type Month,
   type PlanStateInput,
@@ -27,6 +28,7 @@ export interface AppState {
   sinkingFunds: SinkingFund[];
   cards: Card[];
   decisions: Decision[];
+  holdings: Holding[];
   locale: Locale;
   currency: string;
   theme: ThemePreference;
@@ -43,6 +45,7 @@ export interface AppState {
   setSinkingFunds: (funds: SinkingFund[]) => void;
   setCards: (cards: Card[]) => void;
   setDecisions: (decisions: Decision[]) => void;
+  setHoldings: (holdings: Holding[]) => void;
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: string) => void;
   setTheme: (theme: ThemePreference) => void;
@@ -57,6 +60,7 @@ export const useAppStore = create<AppState>((set) => ({
   sinkingFunds: [],
   cards: [],
   decisions: [],
+  holdings: [],
   locale: "en",
   currency: "TRY",
   theme: "system",
@@ -72,6 +76,7 @@ export const useAppStore = create<AppState>((set) => ({
       sinkingFunds: loaded.sinkingFunds,
       cards: loaded.cards,
       decisions: loaded.decisions,
+      holdings: loaded.holdings,
       locale: loaded.settings.locale,
       currency: loaded.settings.currency,
       theme: loaded.settings.theme ?? "system",
@@ -85,6 +90,7 @@ export const useAppStore = create<AppState>((set) => ({
   setSinkingFunds: (sinkingFunds) => set({ sinkingFunds }),
   setCards: (cards) => set({ cards }),
   setDecisions: (decisions) => set({ decisions }),
+  setHoldings: (holdings) => set({ holdings }),
   setLocale: (locale) => set({ locale }),
   setCurrency: (currency) => set({ currency }),
   setTheme: (theme) => set({ theme }),

@@ -624,6 +624,211 @@
       "in": "Para eklendi",
       "out": "Para çekildi",
       "delete": "{date} tarihli kaydı sil"
+    },
+    "tabs": {
+      "pots": "Kumbaralar",
+      "investments": "Yatırımlar"
+    }
+  },
+  "investments": {
+    "types": {
+      "gold": {
+        "name": "Altın"
+      },
+      "currency": {
+        "name": "Döviz"
+      },
+      "stock": {
+        "name": "Hisse senedi"
+      },
+      "fund": {
+        "name": "Yatırım fonu"
+      },
+      "index-fund": {
+        "name": "Endeks fonu"
+      },
+      "bond": {
+        "name": "Tahvil"
+      },
+      "deposit": {
+        "name": "Mevduat"
+      },
+      "crypto": {
+        "name": "Kripto"
+      },
+      "real-estate": {
+        "name": "Gayrimenkul"
+      },
+      "other": {
+        "name": "Diğer"
+      }
+    },
+    "guide": {
+      "gold": {
+        "what": "İnsanların binlerce yıldır güvendiği bir maden; faiz getirmez ve fiyatı oynar.",
+        "risk": "Fiyat dünyayla, dolarla ve korkuyla hareket eder; yıllarca yatay kalabilir.",
+        "cost": "Alış ve satış fiyatı arasındaki fark, takılarda ayrıca işçilik.",
+        "horizon": "Uzun vadede, sahip olduklarının küçük bir parçası olarak.",
+        "mistake": "Parayı yükseliyor diye çoğunlukla tek bir şeye yatırmak."
+      },
+      "currency": {
+        "what": "Başka bir ülkenin parası; nakit ya da hesapta tutulur.",
+        "risk": "Kendi paranıza göre değeri her gün değişir; yurt içinde faiz getirmez.",
+        "cost": "Bankanın alış ve satış kuru arasındaki fark.",
+        "horizon": "Kısa ve orta vade, ya da o para birimiyle ödenen giderleri karşılamak için.",
+        "mistake": "Büyük bir sıçramadan sonra almak, düşüşte panikle satmak."
+      },
+      "stock": {
+        "what": "Tek bir şirketin küçük bir parçasına ortak olmak.",
+        "risk": "Bir şirket değerinin çoğunu kaybedebilir; fiyat günden güne ve yıldan yıla çok oynar.",
+        "cost": "Aracı kurum komisyonu ve bazı ülkelerde kazanç vergisi.",
+        "horizon": "Beş yıl ve üzeri, ve yakında ihtiyacın olmayan para.",
+        "mistake": "Dağıtmak yerine bir iki şirkete bahis yapmak."
+      },
+      "fund": {
+        "what": "Bir yöneticinin senin adına birçok şeye yatırdığı ortak para havuzu.",
+        "risk": "İçindekilere bağlı; hisse fonu, tahvil fonundan çok daha risklidir.",
+        "cost": "Fon iyi de kötü de gitse getirinden düşen yıllık yönetim ücreti.",
+        "horizon": "İçindekine göre ayarla: hisse yıllar ister, tahvil daha azını.",
+        "mistake": "Geçen yılın getirisine bakıp ücreti görmezden gelmek."
+      },
+      "index-fund": {
+        "what": "Kazananı seçmek yerine, en büyük şirketler gibi bir piyasa endeksini kopyalayan fon.",
+        "risk": "Piyasa düşünce düşer ama yüzlerce şirkete yayılmış olursun.",
+        "cost": "Genellikle tüm fonlar arasında en düşük ücret; on yıllar boyunca çok fark eder.",
+        "horizon": "On yıl ve üzeri, ay ay düzenli alınarak.",
+        "mistake": "Piyasa düşünce satmak, zararı kalıcı hale getirir."
+      },
+      "bond": {
+        "what": "Bir devlete ya da şirkete verdiğin, sana faiz ödeyen ve parayı belirli tarihte geri veren borç.",
+        "risk": "İhraç eden ödeyemeyebilir, faizler yükselince fiyatı düşer.",
+        "cost": "Genellikle küçük komisyonlar; faiz üzerindeki vergiye bak.",
+        "horizon": "Vade tarihine kadar, ya da karışımın sakin kısmı olarak.",
+        "mistake": "Neden bu kadar yüksek olduğunu sormadan en yüksek faizin peşinden gitmek."
+      },
+      "deposit": {
+        "what": "Bankada belirli süre, vaat edilen oranla tutulan para.",
+        "risk": "Paran için çok düşük risk, ama enflasyon gerçek değerini yiyebilir.",
+        "cost": "Genelde ücretsiz; ama erken bozmak faizi kaybettirebilir.",
+        "horizon": "Kısa vade ve belli bir ayda lazım olan para için.",
+        "mistake": "Fiyatlar faizden hızlı artarken yıllarca çok para bekletmek."
+      },
+      "crypto": {
+        "what": "Banka ya da devlet değil, ağlar üzerinde yaşayan dijital paralar.",
+        "risk": "Fiyat aylar içinde yarıya inebilir; borsalar ve cüzdanlar saldırıya uğrayabilir ya da batabilir.",
+        "cost": "Borsa ücretleri ve alış-satış farkı; vergi kuralları değişir ve sık güncellenir.",
+        "horizon": "Kaybetsen hayatını değiştirmeyecek bir tutar.",
+        "mistake": "Borçlanıp almak ya da şişirilmiş bir coini takip etmek."
+      },
+      "real-estate": {
+        "what": "Oturmak ya da kiraya vermek için sahip olduğun ev, dükkân ya da arsa.",
+        "risk": "Hızlı satmak zor; tek mülk tek bir yere büyük bahis demek.",
+        "cost": "Vergiler, noter ve emlakçı masrafları, bakım onarım ve yönetmeye giden zaman.",
+        "horizon": "Uzun yıllar; hızlıca çıkmak zordur.",
+        "mistake": "Kirayı sayıp bakımı, boş ayları ve vergileri unutmak."
+      },
+      "other": {
+        "what": "Değeri için sahip olduğun başka her şey: sanat eseri, şarap, bir iş ortaklığı payı.",
+        "risk": "Değerlemesi ve satışı çoğunlukla zor; gördüğün fiyat alabileceğin fiyat olmayabilir.",
+        "cost": "Çok değişir; satmanın neye mal olduğunu sor.",
+        "horizon": "Bunu tekrar nakde nasıl çevireceğini düşün.",
+        "mistake": "Gerçekte satamayacağın bir rakama güvenmek."
+      },
+      "title": "Almadan önce bil",
+      "intro": "Her yatırım türü için kendi cümlelerimizle sade notlar. Okumak için birine dokun.",
+      "notAdvice": "Bu genel bir eğitimdir, yatırım tavsiyesi değildir. Hiç kimse getiri vaat edemez ve geçmiş performans geleceği göstermez.",
+      "fields": {
+        "what": "Nedir",
+        "risk": "Riskleri",
+        "cost": "Maliyeti",
+        "horizon": "Ne kadar tutulur",
+        "mistake": "Sık yapılan hata"
+      }
+    },
+    "title": "Yatırımlar",
+    "addInvestment": "Yatırım ekle",
+    "holdingsTitle": "Sahip olduklarını",
+    "summary": {
+      "title": "Portföy",
+      "value": "Şu anki değeri",
+      "cost": "Ödediğin",
+      "profit": "Kâr ya da zarar",
+      "profitPct": "Ödediğine göre {pct}",
+      "allocationLabel": "Türe göre dağılım: {parts}",
+      "inflationNote": "Yılda yaklaşık {rate} enflasyon bekliyorsun. Bunun altındaki getiri alım gücünü kaybettirir. Buradaki değerler senin girdiğin fiyatlar; uygulama hiçbir fiyatı kendisi aramaz."
+    },
+    "empty": {
+      "title": "Yatırımlarını kaydet",
+      "text": "Altın, hisse, fon, mevduat: paranı büyütmek için sahip olduğun her şey. Aldıklarını ekle, fiyatını ara sıra güncelle, nasıl gittiğini gör."
+    },
+    "add": {
+      "type": "Tür",
+      "customType": "Kendi türün",
+      "customName": "Türünün adı",
+      "customRequired": "Türüne bir ad ver.",
+      "name": "Ad",
+      "nameHint": "ör. Gram altın, Küresel endeks fonu",
+      "nameRequired": "Bir ad gir.",
+      "unit": "Birim",
+      "unitHint": "Bir birimin adı: gr, lot, adet. İsteğe bağlı.",
+      "firstPurchase": "İlk alış (isteğe bağlı)",
+      "quantity": "Kaç birim",
+      "quantityRequired": "Kaç birim olduğunu gir, örneğin 2 ya da 0,35.",
+      "unitPrice": "Bir birimin fiyatı",
+      "priceRequired": "Bir birimin fiyatını gir.",
+      "date": "Tarih",
+      "cancel": "Vazgeç",
+      "submit": "Ekle"
+    },
+    "card": {
+      "quantity": "{quantity} {unit}",
+      "average": "ortalama {price}",
+      "cost": "Ödenen",
+      "profit": "Kâr ya da zarar",
+      "noPrice": "Henüz fiyat yok, maliyetle gösteriliyor",
+      "stale": "Fiyat {days} gündür güncellenmedi",
+      "trade": "Al veya sat",
+      "updatePrice": "Fiyatı güncelle",
+      "history": "Geçmiş"
+    },
+    "trade": {
+      "title": "{name} al veya sat",
+      "side": "Alış ya da satış",
+      "buy": "Al",
+      "sell": "Sat",
+      "quantity": "Kaç birim",
+      "quantityUnit": "Kaç ({unit})",
+      "quantityRequired": "Kaç birim olduğunu gir, örneğin 2 ya da 0,35.",
+      "tooMany": "Elinde bundan az birim var.",
+      "unitPrice": "Bir birimin fiyatı",
+      "priceRequired": "Bir birimin fiyatını gir.",
+      "fee": "Masraf",
+      "feeHint": "Komisyon ya da ücretler. İsteğe bağlı.",
+      "date": "Tarih",
+      "note": "Not (isteğe bağlı)",
+      "cancel": "Vazgeç",
+      "submitBuy": "Alışı kaydet",
+      "submitSell": "Satışı kaydet"
+    },
+    "price": {
+      "title": "{name} fiyatını güncelle",
+      "hint": "Bir birimin bugün ne kadar ettiğini yaz. Bankandan ya da aracı kurumundan öğrenebilirsin.",
+      "price": "Bir birimin fiyatı",
+      "required": "Sıfırdan büyük bir fiyat gir.",
+      "date": "Tarih",
+      "cancel": "Vazgeç",
+      "save": "Fiyatı kaydet"
+    },
+    "history": {
+      "title": "{name} geçmişi",
+      "empty": "Henüz alış ya da satış yok.",
+      "buy": "{quantity} {unit} alındı",
+      "sell": "{quantity} {unit} satıldı",
+      "at": "{price} fiyatla",
+      "delete": "{date} tarihli kaydı sil",
+      "deleteShort": "Sil",
+      "deleteHolding": "{name} yatırımını sil",
+      "deleteHoldingShort": "Bu yatırımı sil"
     }
   }
 }

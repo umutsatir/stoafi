@@ -13,17 +13,21 @@ import {
   removeEmergencyDeposit,
   strategyRegistry,
   type Deposit,
+  type Holding,
   type SinkingFund,
 } from "@stoafi/core";
+import { InvestmentsBoard } from "@/components/investments-board";
 import { LessonLink } from "@/components/lesson-link";
 import { SavingsBoard } from "@/components/savings-board";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Page } from "@/components/ui/page";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notify, notifyError, notifyUndo } from "@/components/ui/toaster";
 import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
+import { removeHolding, saveHolding } from "@/storage/holding-repo";
 import { removeSinkingFund, saveSinkingFund } from "@/storage/sinking-repo";
 import { useAppStore, useLedger } from "@/store";
 
@@ -35,6 +39,8 @@ export default function SavingsPage() {
   const profile = useAppStore((s) => s.profile);
   const setProfile = useAppStore((s) => s.setProfile);
   const planState = useAppStore((s) => s.planState);
+  const holdings = useAppStore((s) => s.holdings);
+  const setHoldings = useAppStore((s) => s.setHoldings);
   const funds = useAppStore((s) => s.sinkingFunds);
   const setFunds = useAppStore((s) => s.setSinkingFunds);
   const currency = useAppStore((s) => s.currency);
@@ -150,24 +156,71 @@ export default function SavingsPage() {
     });
   }
 
+  function handleSaveHolding(holding: Holding) {
+    const exists = holdings.some((h) => h.id === holding.id);
+    setHoldings(
+      exists ? holdings.map((h) => (h.id === holding.id ? holding : h)) : [...holdings, holding],
+    );
+    void saveHolding(db, holding).catch(logFailure("save the investment"));
+    notify(tc("saved"));
+  }
+
+  function handleDeleteHolding(holding: Holding) {
+    setHoldings(holdings.filter((h) => h.id !== holding.id));
+    void removeHolding(db, holding.id).catch(logFailure("delete the investment"));
+    notifyUndo(tc("deletedItem", { name: holding.label }), tc("undo"), () => {
+      const current = useAppStore.getState();
+      current.setHoldings([...current.holdings, holding]);
+      void saveHolding(db, holding).catch(logFailure("restore the investment"));
+    });
+  }
+
+  function handleTradeRemoved(before: Holding) {
+    notifyUndo(t("deposit.removed"), tc("undo"), () => {
+      const current = useAppStore.getState();
+      current.setHoldings(current.holdings.map((h) => (h.id === before.id ? before : h)));
+      void saveHolding(db, before).catch(logFailure("restore the investment"));
+    });
+  }
+
   return (
     <Page title={t("title")}>
       <p className="max-w-prose text-sm text-muted-foreground">{t("intro")}</p>
-      <SavingsBoard
-        funds={funds}
-        profile={profile}
-        month={month}
-        today={today}
-        currency={currency}
-        freeBeforeSaving={freeBeforeSaving}
-        planSavings={planSavings}
-        monthlyNeeds={monthlyNeeds(profile, month)}
-        createId={() => crypto.randomUUID()}
-        onDeposit={handleDeposit}
-        onDeleteDeposit={handleDeleteDeposit}
-        onSaveFund={handleSaveFund}
-        onDeleteFund={handleDeleteFund}
-      />
+      <Tabs defaultValue="pots">
+        <TabsList>
+          <TabsTrigger value="pots">{t("tabs.pots")}</TabsTrigger>
+          <TabsTrigger value="investments">{t("tabs.investments")}</TabsTrigger>
+        </TabsList>
+        <TabsContent value="pots">
+          <SavingsBoard
+            funds={funds}
+            profile={profile}
+            month={month}
+            today={today}
+            currency={currency}
+            freeBeforeSaving={freeBeforeSaving}
+            planSavings={planSavings}
+            monthlyNeeds={monthlyNeeds(profile, month)}
+            createId={() => crypto.randomUUID()}
+            onDeposit={handleDeposit}
+            onDeleteDeposit={handleDeleteDeposit}
+            onSaveFund={handleSaveFund}
+            onDeleteFund={handleDeleteFund}
+          />
+        </TabsContent>
+        <TabsContent value="investments">
+          <InvestmentsBoard
+            holdings={holdings}
+            today={today}
+            currency={currency}
+            createId={() => crypto.randomUUID()}
+            annualInflation={profile.annualInflationExpectation}
+            onSave={handleSaveHolding}
+            onDelete={handleDeleteHolding}
+            onTradeRemoved={handleTradeRemoved}
+          />
+        </TabsContent>
+      </Tabs>
       <div>
         <LessonLink lessonId="sinking-funds" testId="lesson-link-sinking-funds" />
       </div>

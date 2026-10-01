@@ -2,6 +2,7 @@ import {
   CardSchema,
   DecisionSchema,
   GuardThresholdsSchema,
+  HoldingSchema,
   PlanStateSchema,
   ProfileSchema,
   QueueItemSchema,
@@ -12,6 +13,7 @@ import {
   type Card,
   type Decision,
   type GuardThresholds,
+  type Holding,
   type PlanStateInput,
   type Profile,
   type QueueItem,
@@ -30,6 +32,7 @@ export interface LoadedState {
   decisions: Decision[];
   settings: Settings;
   guardThresholds: GuardThresholds;
+  holdings: Holding[];
 }
 
 /** Runs one loader; a row that no longer validates is reported and skipped, not fatal. */
@@ -48,21 +51,27 @@ export async function loadAppState(
   /** The browser's language (`navigator.language`), used only when nothing is saved yet. */
   language?: string,
 ): Promise<LoadedState> {
-  const [profile, planState, queueItems, sinkingFunds, cards, decisions, settings, thresholds] =
-    await Promise.all([
-      safely("profile", () => getSingleton(db, "profile", ProfileSchema), undefined),
-      safely("plan", () => getSingleton(db, "plan", PlanStateSchema), undefined),
-      safely("queue", () => listItems(db, "queue", QueueItemSchema), []),
-      safely("sinking funds", () => listItems(db, "sinkingFunds", SinkingFundSchema), []),
-      safely("cards", () => listItems(db, "cards", CardSchema), []),
-      safely("decisions", () => listItems(db, "decisions", DecisionSchema), []),
-      safely("settings", () => getSingleton(db, "settings", SettingsSchema), undefined),
-      safely(
-        "guard thresholds",
-        () => getSingleton(db, "guards", GuardThresholdsSchema),
-        undefined,
-      ),
-    ]);
+  const [
+    profile,
+    planState,
+    queueItems,
+    sinkingFunds,
+    cards,
+    decisions,
+    settings,
+    thresholds,
+    holdings,
+  ] = await Promise.all([
+    safely("profile", () => getSingleton(db, "profile", ProfileSchema), undefined),
+    safely("plan", () => getSingleton(db, "plan", PlanStateSchema), undefined),
+    safely("queue", () => listItems(db, "queue", QueueItemSchema), []),
+    safely("sinking funds", () => listItems(db, "sinkingFunds", SinkingFundSchema), []),
+    safely("cards", () => listItems(db, "cards", CardSchema), []),
+    safely("decisions", () => listItems(db, "decisions", DecisionSchema), []),
+    safely("settings", () => getSingleton(db, "settings", SettingsSchema), undefined),
+    safely("guard thresholds", () => getSingleton(db, "guards", GuardThresholdsSchema), undefined),
+    safely("holdings", () => listItems(db, "holdings", HoldingSchema), []),
+  ]);
 
   return {
     profile: profile ?? null,
@@ -73,5 +82,6 @@ export async function loadAppState(
     decisions,
     settings: settings ?? defaultSettings(language),
     guardThresholds: thresholds ?? GuardThresholdsSchema.parse({}),
+    holdings,
   };
 }
