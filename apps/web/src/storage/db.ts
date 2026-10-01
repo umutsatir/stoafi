@@ -28,6 +28,7 @@ export class StoafiDb extends Dexie {
   decisions!: EntityTable<ListRow, "id">;
   settings!: EntityTable<SingletonRow, "id">;
   holdings!: EntityTable<ListRow, "id">;
+  snapshots!: EntityTable<ListRow, "id">;
 
   constructor(name = "stoafi") {
     super(name);
@@ -90,6 +91,20 @@ export class StoafiDb extends Dexie {
       decisions: "id",
       settings: "id",
       holdings: "id",
+    });
+
+    // v6 adds the monthly snapshots table; existing rows are untouched.
+    this.version(6).stores({
+      profile: "id",
+      plan: "id",
+      guards: "id",
+      queue: "id",
+      sinkingFunds: "id",
+      cards: "id",
+      decisions: "id",
+      settings: "id",
+      holdings: "id",
+      snapshots: "id",
     });
   }
 }

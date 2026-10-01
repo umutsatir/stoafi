@@ -515,6 +515,19 @@
         "why": "Your savings would not cover many months of needs. Lowering fixed costs helps most.",
         "action": "Review expenses"
       }
+    },
+    "trends": {
+      "title": "How it is changing",
+      "soon": "Stoafi records how each month looks. Trends appear here once you have two months.",
+      "savingsRate": "Savings rate",
+      "emergencyMonths": "Emergency fund",
+      "installmentRatio": "Installment load",
+      "wealth": "What you have saved and invested",
+      "lineLabel": "{name} over the last {months} months",
+      "same": "No change since last month",
+      "points": "points",
+      "better": "better",
+      "worse": "worse"
     }
   },
   "decisions": {

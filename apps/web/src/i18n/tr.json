@@ -515,6 +515,19 @@
         "why": "Birikimin birkaç aylık ihtiyacını karşılamaz. En çok sabit giderleri azaltmak yardım eder.",
         "action": "Giderleri gözden geçir"
       }
+    },
+    "trends": {
+      "title": "Nasıl değişiyor",
+      "soon": "Stoafi her ayın nasıl göründüğünü kaydeder. İki ayın olunca eğilimler burada görünür.",
+      "savingsRate": "Birikim oranı",
+      "emergencyMonths": "Acil durum fonu",
+      "installmentRatio": "Taksit yükü",
+      "wealth": "Biriktirdiğin ve yatırdığın",
+      "lineLabel": "Son {months} ayda {name}",
+      "same": "Geçen aydan değişiklik yok",
+      "points": "puan",
+      "better": "daha iyi",
+      "worse": "daha kötü"
     }
   },
   "decisions": {

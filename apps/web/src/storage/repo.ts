@@ -3,7 +3,7 @@ import type { StoafiDb } from "./db";
 import { SINGLETON_ID, type ListRow } from "./db";
 
 type SingletonTableName = "profile" | "plan" | "guards" | "settings";
-type ListTableName = "queue" | "sinkingFunds" | "cards" | "decisions" | "holdings";
+type ListTableName = "queue" | "sinkingFunds" | "cards" | "decisions" | "holdings" | "snapshots";
 
 /** Validates `value` against `schema` and writes it as the table's one row. */
 export async function putSingleton<Schema extends z.ZodTypeAny>(

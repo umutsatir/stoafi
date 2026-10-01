@@ -18,6 +18,7 @@ describe("StoafiDb", () => {
         "queue",
         "settings",
         "sinkingFunds",
+        "snapshots",
       ].sort(),
     );
 

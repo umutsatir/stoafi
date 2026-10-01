@@ -24,6 +24,7 @@ export async function clearUserData(db: StoafiDb): Promise<void> {
       db.cards,
       db.decisions,
       db.holdings,
+      db.snapshots,
     ],
     async () => {
       await Promise.all([
@@ -35,6 +36,7 @@ export async function clearUserData(db: StoafiDb): Promise<void> {
         db.cards.clear(),
         db.decisions.clear(),
         db.holdings.clear(),
+        db.snapshots.clear(),
       ]);
     },
   );

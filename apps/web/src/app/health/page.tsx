@@ -15,6 +15,7 @@ import { useAppStore, useLedger } from "@/store";
 export default function HealthPage() {
   const profile = useAppStore((s) => s.profile);
   const funds = useAppStore((s) => s.sinkingFunds);
+  const snapshots = useAppStore((s) => s.snapshots);
   const guardThresholds = useAppStore((s) => s.guardThresholds);
   const commitments = useLedger();
   const today = useAppStore((s) => s.today);
@@ -59,6 +60,7 @@ export default function HealthPage() {
         summary={summary}
         emergencyFundTargetMonths={profile.emergencyFundTargetMonths}
         installmentCapPct={guardThresholds.installmentCapPct}
+        snapshots={snapshots}
       />
       <LessonLink lessonId="room-for-error" testId="lesson-link-room-for-error" />
     </Page>

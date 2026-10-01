@@ -1,6 +1,11 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { healthSummary, type HealthInputs, type MonthProjection } from "@stoafi/core";
+import {
+  healthSummary,
+  type HealthInputs,
+  type MonthProjection,
+  type Snapshot,
+} from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { HealthMetrics } from "./health-metrics";
 
@@ -18,7 +23,7 @@ const projection: MonthProjection = {
   freeCash: 1000,
 };
 
-function render(over: Partial<HealthInputs> = {}) {
+function render(over: Partial<HealthInputs> = {}, snapshots: Snapshot[] = []) {
   const inputs: HealthInputs = {
     projection,
     savingsBalance: 30000,
@@ -33,6 +38,7 @@ function render(over: Partial<HealthInputs> = {}) {
       summary={healthSummary(inputs)}
       emergencyFundTargetMonths={inputs.emergencyFundTargetMonths}
       installmentCapPct={inputs.installmentCapPct}
+      snapshots={snapshots}
     />,
   );
 }
@@ -112,5 +118,50 @@ describe("HealthMetrics", () => {
       depositedThisMonth: 2000,
     });
     expect(screen.getByTestId("savings-rate")).toHaveTextContent("20.0%");
+  });
+});
+
+describe("HealthMetrics trends", () => {
+  const snap = (month: string, over: Partial<Snapshot> = {}): Snapshot => ({
+    id: month,
+    month: month as Snapshot["month"],
+    income: 6_000_000,
+    left: 1_000_000,
+    savingsRate: 0.1,
+    installmentRatio: 0.2,
+    emergencyMonths: 2,
+    runwayMonths: 2,
+    wealth: 10_000_000,
+    ...over,
+  });
+
+  it("says trends are coming until there are two months", () => {
+    render({}, [snap("2026-09")]);
+    expect(screen.getByText(/once you have two months/)).toBeInTheDocument();
+    expect(screen.queryByTestId("trend-savingsRate")).not.toBeInTheDocument();
+  });
+
+  it("draws a line per number and says if it moved the right way", () => {
+    render({}, [
+      snap("2026-08", { savingsRate: 0.05, installmentRatio: 0.1, wealth: 9_000_000 }),
+      snap("2026-09", { savingsRate: 0.12, installmentRatio: 0.2, wealth: 10_000_000 }),
+    ]);
+    expect(screen.getByTestId("trend-savingsRate")).toHaveTextContent("12.0%");
+    expect(screen.getByTestId("trend-change-savingsRate")).toHaveTextContent(
+      "▲ 7.0 points · better",
+    );
+    // A rising installment load is worse.
+    expect(screen.getByTestId("trend-change-installmentRatio")).toHaveTextContent(
+      "▲ 10.0 points · worse",
+    );
+    expect(screen.getByTestId("trend-change-wealth")).toHaveTextContent("▲ ₺10,000.00 · better");
+    expect(screen.getAllByRole("img", { name: /over the last 2 months/ })).toHaveLength(4);
+  });
+
+  it("says no change when nothing moved", () => {
+    render({}, [snap("2026-08"), snap("2026-09")]);
+    expect(screen.getByTestId("trend-change-emergencyMonths")).toHaveTextContent(
+      "No change since last month",
+    );
   });
 });

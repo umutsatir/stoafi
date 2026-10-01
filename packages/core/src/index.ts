@@ -226,3 +226,16 @@ export {
   type AiPrivacyLevel,
   type AiQuestion,
 } from "../kernel/ai-export";
+
+export { snapshotsModule } from "../modules/snapshots/module";
+export {
+  SnapshotSchema,
+  buildSnapshot,
+  sameSnapshot,
+  trendOf,
+  upsertSnapshot,
+  type Snapshot,
+  type SnapshotInput,
+  type SnapshotKey,
+  type Trend,
+} from "../modules/snapshots/snapshots";

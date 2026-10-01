@@ -9,11 +9,13 @@ import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { applyTheme } from "@/lib/theme";
+import { useSnapshotRecorder } from "@/lib/use-snapshot-recorder";
 import { useAppStore } from "@/store";
 
 /** Loads saved data into the store once, keeps language and currency saved, then renders the app. */
 export function AppBootstrap({ children }: { children: ReactNode }) {
   const t = useTranslations("app");
+  useSnapshotRecorder();
   const hydrated = useAppStore((s) => s.hydrated);
   const hydrate = useAppStore((s) => s.hydrate);
   const setToday = useAppStore((s) => s.setToday);

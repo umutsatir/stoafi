@@ -8,6 +8,7 @@ import {
   profileModule,
   queueModule,
   settingsModule,
+  snapshotsModule,
   sinkingFundsModule,
 } from "@stoafi/core";
 
@@ -22,6 +23,7 @@ export function createAppRegistry() {
   registry.register(decisionsModule);
   registry.register(settingsModule);
   registry.register(investmentsModule);
+  registry.register(snapshotsModule);
   return registry;
 }
 
@@ -36,6 +38,7 @@ export const MODULE_ID_TO_TABLE = {
   decisions: "decisions",
   settings: "settings",
   investments: "holdings",
+  snapshots: "snapshots",
 } as const;
 
 export const SINGLETON_MODULE_IDS = new Set(["profile", "plan", "guards", "settings"]);

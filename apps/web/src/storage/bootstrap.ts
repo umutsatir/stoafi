@@ -3,6 +3,7 @@ import {
   DecisionSchema,
   GuardThresholdsSchema,
   HoldingSchema,
+  SnapshotSchema,
   PlanStateSchema,
   ProfileSchema,
   QueueItemSchema,
@@ -14,6 +15,7 @@ import {
   type Decision,
   type GuardThresholds,
   type Holding,
+  type Snapshot,
   type PlanStateInput,
   type Profile,
   type QueueItem,
@@ -33,6 +35,7 @@ export interface LoadedState {
   settings: Settings;
   guardThresholds: GuardThresholds;
   holdings: Holding[];
+  snapshots: Snapshot[];
 }
 
 /** Runs one loader; a row that no longer validates is reported and skipped, not fatal. */
@@ -61,6 +64,7 @@ export async function loadAppState(
     settings,
     thresholds,
     holdings,
+    snapshots,
   ] = await Promise.all([
     safely("profile", () => getSingleton(db, "profile", ProfileSchema), undefined),
     safely("plan", () => getSingleton(db, "plan", PlanStateSchema), undefined),
@@ -71,6 +75,7 @@ export async function loadAppState(
     safely("settings", () => getSingleton(db, "settings", SettingsSchema), undefined),
     safely("guard thresholds", () => getSingleton(db, "guards", GuardThresholdsSchema), undefined),
     safely("holdings", () => listItems(db, "holdings", HoldingSchema), []),
+    safely("snapshots", () => listItems(db, "snapshots", SnapshotSchema), []),
   ]);
 
   return {
@@ -83,5 +88,6 @@ export async function loadAppState(
     settings: settings ?? defaultSettings(language),
     guardThresholds: thresholds ?? GuardThresholdsSchema.parse({}),
     holdings,
+    snapshots: [...snapshots].sort((a, b) => a.month.localeCompare(b.month)),
   };
 }

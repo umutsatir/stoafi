@@ -8,6 +8,7 @@ import {
   type Decision,
   type GuardThresholds,
   type Holding,
+  type Snapshot,
   type Minor,
   type Month,
   type PlanStateInput,
@@ -29,6 +30,7 @@ export interface AppState {
   cards: Card[];
   decisions: Decision[];
   holdings: Holding[];
+  snapshots: Snapshot[];
   locale: Locale;
   currency: string;
   theme: ThemePreference;
@@ -50,6 +52,7 @@ export interface AppState {
   setCards: (cards: Card[]) => void;
   setDecisions: (decisions: Decision[]) => void;
   setHoldings: (holdings: Holding[]) => void;
+  setSnapshots: (snapshots: Snapshot[]) => void;
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: string) => void;
   setTheme: (theme: ThemePreference) => void;
@@ -67,6 +70,7 @@ export const useAppStore = create<AppState>((set) => ({
   cards: [],
   decisions: [],
   holdings: [],
+  snapshots: [],
   locale: "en",
   currency: "TRY",
   theme: "system",
@@ -85,6 +89,7 @@ export const useAppStore = create<AppState>((set) => ({
       cards: loaded.cards,
       decisions: loaded.decisions,
       holdings: loaded.holdings,
+      snapshots: loaded.snapshots,
       locale: loaded.settings.locale,
       currency: loaded.settings.currency,
       theme: loaded.settings.theme ?? "system",
@@ -101,6 +106,7 @@ export const useAppStore = create<AppState>((set) => ({
   setCards: (cards) => set({ cards }),
   setDecisions: (decisions) => set({ decisions }),
   setHoldings: (holdings) => set({ holdings }),
+  setSnapshots: (snapshots) => set({ snapshots }),
   setLocale: (locale) => set({ locale }),
   setCurrency: (currency) => set({ currency }),
   setTheme: (theme) => set({ theme }),
