@@ -756,10 +756,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T10.1, T10.3
   Note: `sinkingFundStatus` (core) names a fund's state (funded, active with its monthly set-aside, due this month, overdue) so the screen never calls `monthlySetAside` with zero or negative months; `sinkingFundCommitments` feeds the ledger and skips due/overdue funds. Set-asides start next month (T2.9's `toCommitment`), so the current month's figures do not change when a fund is added; the home chart shows them from next month on and `CashFlowPoint` gained `setAside`, which `left` now subtracts. "Saved so far" is entered by hand (the app does not track the user's own transfers). The sinking-funds lesson link moved here from the Queue page, and nav gained a Sinking funds entry.
 
-- [ ] **T10.7** Persist cards
+- [x] **T10.7** Persist cards
   Goal: cards are saved to Dexie and can be deleted.
   Acceptance: tests: adding a card writes it and a reload restores it; deleting removes it.
   Depends on: T10.5
+  Note: cards are saved and deleted through `storage/card-repo.ts` (validated against `CardSchema`); the add form now trims the name and refuses an empty one with a message, and the id comes from an injectable `createId` so tests are deterministic. Deleting a card does not touch past decisions (they never referenced one).
 
 - [ ] **T10.8** Editable installment cap
   Goal: the installment cap is read from `GuardThresholds` (saved in Dexie) and editable in Settings; the queue page uses it instead of the literal 0.2.

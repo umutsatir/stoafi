@@ -181,7 +181,9 @@
     "label": "Etiket",
     "statementDay": "Hesap kesim günü",
     "dueDay": "Son ödeme günü",
-    "add": "Kart ekle"
+    "add": "Kart ekle",
+    "delete": "{name} sil",
+    "labelRequired": "Kart için bir ad gir."
   },
   "minimumPayment": {
     "title": "Asgari ödeme tuzağı hesaplayıcısı",

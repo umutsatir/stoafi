@@ -181,7 +181,9 @@
     "label": "Label",
     "statementDay": "Statement day",
     "dueDay": "Due day",
-    "add": "Add card"
+    "add": "Add card",
+    "delete": "Delete {name}",
+    "labelRequired": "Enter a name for the card."
   },
   "minimumPayment": {
     "title": "Minimum-payment trap calculator",
