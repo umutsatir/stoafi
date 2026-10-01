@@ -830,6 +830,12 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
   Goal: the owner adds money as they save; each pot shows a filling piggy bank with an animation (off under reduced motion); deposit and withdraw with history and undo; a monthly summary shows what is left, what must be set aside, what was set aside and what is free afterwards, with a suggested split; the emergency fund is the first, undeletable pot sharing one balance with `Profile.savings`.
   Core first (tests before code): `addDeposit`/`removeDeposit`/`editDeposit` (no negative balance), `requiredThisMonth`, `depositedInMonth`, `monthlySavingsAdvice`, savings rate from deposits, emergency pot and `Profile.savings` never diverging. `SinkingFund` gains optional `icon`, `color`, `kind`, `deposits` (additive, no migration).
   Acceptance: depositing is two taps; the monthly numbers equal Home's; all edge cases in 6.4 are tested.
+- [ ] **T12.8b** Investments (5.6b)
+  Goal: second tab on the savings page. New versioned `investments` module: holdings with buy/sell trades, user-entered current price with date, weighted-average cost, realized/unrealized P&L, allocation by type, real return, price staleness; user-editable investment types as data; animated per-type visuals (gold bars, share certificates, banknotes, coins; off under reduced motion); "what you should know" cards per type in our own words with source labels and a not-advice note; regular monthly investing shares the recurring savings/investing expense type; health and AI export use it. No fetched prices.
+  Core first: formulas and edge cases in the plan (sell more than held rejected, decimal quantity, single rounding, no price entered).
+  Acceptance: a buy is two taps; totals match tested formulas; SPEC updated with the module before code.
+  Depends on: T12.8, T12.4
+
 - [ ] **T12.9** Lessons reading experience (5.10)
 - [ ] **T12.10** Settings and "Ask AI" export with privacy levels (5.11, 6.3)
 - [ ] **T12.11** Onboarding and demo mode (5.0)

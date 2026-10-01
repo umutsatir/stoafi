@@ -407,6 +407,34 @@ Kabul: yeni kullanıcı, kılavuzu bitirince ana sayfada dolu bir durum görür;
 **Bağlantılar:** Ledger (aylık gereken tutar Plan'ın birikim kovasına ve Ana sayfaya girer), Sağlık (birikim oranı, acil durum), Plan (önerilen birikim), Takvim (vade), Kararlar (isteğe bağlı: "Vazgeçerek biriktirdiğini kumbaraya ekle" önerisi), AI dışa aktarma.
 **Kabul:** para eklemek 2 dokunuş; ekleme anında animasyon çalışır (hareket azaltma açıkken çalışmaz); "ayırman gereken" ve "serbest kalan" sayıları Ana sayfa ile tutarlı; veri modeli ve hesaplar için bkz. 6.4.
 
+### 5.6b Yatırımlar (🆕, 2 Ekim isteği) — Birikim sayfasının ikinci sekmesi
+
+**Ayrım:** Birikim sayfası iki sekme: **Kumbaralar** (acil durum fonu + hedefler; para ekledikçe artar, 5.6) ve **Yatırımlar** (yaptığın yatırımları kaydettiğin portföy defteri). Acil durum fonu yatırım değildir; ayrı kalır.
+
+**Ne yapar:** kullanıcı yaptığı yatırımları kendisi girer. Uygulama fiyat çekmez (ağ yok), değerleri kullanıcı günceller.
+1. **Yatırım türleri (hazır + kendi türün):** Altın, Döviz, Hisse senedi, Yatırım fonu, Endeks fonu / ETF, Tahvil/bono, Mevduat, Kripto, Gayrimenkul, Diğer + `+ Kendi türünü ekle` (ad, ikon, renk). Türler veridir (`packages/core/data`), kod değil.
+2. **Varlık (holding) kaydı:** tür, ad (ör. "Gram altın", "BIST 30 fonu"), işlemler: `Alış` / `Satış` (tarih, miktar, birim fiyat, masraf, not). **Maliyet ve miktar işlemlerden hesaplanır**; güncel birim fiyatı kullanıcı elle girer ("Fiyatı güncelle", tarih saklanır, eski fiyat uyarısı "30 gündür güncellenmedi").
+3. **Gösterim:** toplam portföy değeri, maliyet, kâr/zarar (tutar ve %), türe göre dağılım halkası, tür başına kart. Reel getiri: enflasyona göre düzeltilmiş (profildeki enflasyon beklentisiyle, "yaklaşık").
+4. **Animasyonlu görseller (türe göre, hepsi kapatılabilir/`prefers-reduced-motion`):** altın → altın külçe deposu (alışta külçe/sikke yığına eklenir, yığın yükselir); hisse/fon → kâğıt (hisse belgesi) destesi, alışta yeni kâğıt üstüne düşer; döviz → banknot destesi; kripto → sikke; mevduat → vadeli hesap kasası; gayrimenkul → bina; diğer → genel kutu. Sayılar sayaçla artar.
+5. **Aylık düzenli yatırım:** "Her ay ₺X altın alıyorum" gibi düzenli kalem (Gelir/Gider'deki **düzenli birikim/yatırım türü** ile aynı kayıt, S2). Plan'ın birikim/yatırım kovasında sayılır; "bu ay yaptığın" ile "plandaki" yan yana görünür.
+6. **Güvenilir kaynaklardan tavsiye (kendi cümlelerimizle):** her türün altında kısa "Bilmen gerekenler" kartı: nedir, riski, maliyeti (komisyon, stopaj, fon yönetim ücreti), ne kadar süre için uygun, sık yapılan hatalar. İçerik kaynaklı (Bogle, Graham, Malkiel, Housel, Swedroe, Dalio, Kiyosaki'nin tartışmalı yönü dahil dengeli) ama **kitaplardan metin yapıştırılmaz**, sadece özet + "Kaynak: ..." etiketi. Dersler (5.10) ile aynı kart sistemi; düğme `Dersi oku`. "Bu yatırım tavsiyesi değildir" notu her kartta. **Spesifik varlık/hisse önerisi yok**, yalnızca ilke ve çeşitlendirme eğitimi.
+7. **Sağlık bağlantısı:** yatırım oranı (ayın alışları + düzenli yatırım ÷ net gelir), tek varlıkta yoğunlaşma uyarısı (>%50 aynı tür, bilgi amaçlı), "acil durum fonun hedefin altındayken yatırım" nazik uyarısı.
+8. **Silme/geri alma:** işlem silinebilir (geri al toast'ı); varlık silinmeden önce onay.
+9. **AI dışa aktarma:** portföy ayrı bölüm (gizlilik seviyesine göre tutarlar yuvarlanır ya da yalnızca oranlar).
+
+**Veri modeli (yeni modül `investments`, versiyonlu Zod şeması):**
+
+```ts
+interface Holding { id; label; typeId; currency?: string; unitLabel?: string; // gram, adet, lot
+  currentPrice?: Minor; priceDate?: string; trades: Trade[]; }
+interface Trade { id; date: string; side: 'buy' | 'sell'; quantity: number /* ondalık, string olarak girilir */; unitPrice: Minor; fee?: Minor; note?: string }
+```
+
+Hesaplar (saf, testli): `holdingQuantity`, `averageCost` (ağırlıklı ortalama), `realizedPnL`, `unrealizedPnL`, `portfolioValue`, `allocationByType`, `realReturn`, `priceStaleness`. **Miktar ondalık olabilir** (0,35 gram): para değil, bu yüzden miktar ondalık sayı saklanır; **para çarpımı tek yerde, bir kez yuvarlanır** (çiftten-yarım, kural gereği). Kenar durumlar: satış > eldeki miktar reddedilir; sıfır miktar; çok büyük; kuruş yuvarlama; hiç fiyat girilmemiş (değer = maliyet, "fiyat yok" etiketi).
+
+**Boş durum:** "Henüz yatırım kaydın yok. İlk yatırımını ekle ya da önce 'Yatırım türleri' kartını oku." + tür çipleri.
+**Kabul:** alış 2 dokunuştan sonra animasyonlu; portföy toplamı ve kâr/zarar testli formüllerle birebir; fiyat güncelleme tarihi görünür; telefonda tek sütun.
+
 ### 5.7 Kartlar (+ ek kart, banka widget'ları)
 
 **Amaç:** kartlarımı, limitlerimi, ödeme günlerimi ve kart borcunun risklerini yönetmek.
