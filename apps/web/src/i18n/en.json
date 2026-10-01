@@ -57,7 +57,16 @@
     }
   },
   "incomeExpenses": {
-    "title": "Income & Expenses"
+    "title": "Income & Expenses",
+    "summary": {
+      "in": "Money in",
+      "out": "Money out",
+      "left": "Left over",
+      "inHint": "Your salaries each month",
+      "outHint": "Recurring expenses, living costs and installments",
+      "leftHint": "What you can save or spend freely",
+      "leftNegative": "You spend more than you earn this month"
+    }
   },
   "profile": {
     "title": "Profile",
@@ -73,7 +82,7 @@
     "addSalary": "Add salary",
     "removeSalary": "Remove salary {n}",
     "expensesTitle": "Recurring expenses",
-    "expensesHint": "Loans, installments, bills, subscriptions: anything that leaves your account every month.",
+    "expensesHint": "Loans, installments, bills, subscriptions, and money you move to savings or investments every month: anything that leaves your account on a schedule.",
     "expenseName": "Expense {n} name",
     "expenseNamePlaceholder": "e.g. Car loan",
     "expenseAmount": "Expense {n} amount",
@@ -97,7 +106,25 @@
     "suggestedInflationCaption": "Suggested from an approximate snapshot ({asOf}). Check current figures and edit if needed.",
     "emergencyFundReached": "You already have your emergency fund target.",
     "emergencyFundOnTrack": "At your current pace you reach the target in {month}.",
-    "emergencyFundUnreachable": "Your monthly surplus is not enough to reach the target yet."
+    "emergencyFundUnreachable": "Your monthly surplus is not enough to reach the target yet.",
+    "typeSavings": "Saving",
+    "typeInvesting": "Investing",
+    "overview": {
+      "title": "Your money at a glance",
+      "income": "Monthly income",
+      "needs": "Needs cost {amount} a month",
+      "hour": "Your hour is worth",
+      "hourHint": "Compare a price with the hours of work behind it",
+      "fund": "Emergency fund",
+      "fundMonths": "{months} of {target} months",
+      "fundRing": "Emergency fund progress",
+      "addMoney": "Add money to it"
+    },
+    "fundTitle": "Emergency fund",
+    "fundHint": "Money kept aside so a bad month never turns into debt. Add to it from the Savings page as you save.",
+    "economyTitle": "Your economy",
+    "economyHint": "Prices rise every year. The inflation you expect lets Stoafi judge installments and savings fairly.",
+    "inflationInsight": "At {rate} a year, something that costs {amount} today will cost about {then} in a year."
   },
   "plan": {
     "title": "Plan",

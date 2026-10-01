@@ -167,4 +167,11 @@ describe("ProfileForm settings", () => {
       expect(screen.queryByTestId("emergency-fund-caption")).not.toBeInTheDocument();
     });
   });
+
+  it("shows what inflation does to a price, and updates as the rate changes", () => {
+    renderWithIntl(<ProfileForm onSave={vi.fn()} />);
+    expect(screen.getByTestId("inflation-insight")).toHaveTextContent("₺1,300.00");
+    type("Annual inflation expectation", "50");
+    expect(screen.getByTestId("inflation-insight")).toHaveTextContent("₺1,500.00");
+  });
 });

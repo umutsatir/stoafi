@@ -173,4 +173,21 @@ describe("IncomeExpensesForm", () => {
       expect(screen.getByLabelText("Expense 1 end month")).toHaveValue("2027-01");
     });
   });
+
+  it("lets a recurring line be a saving or an investing transfer", () => {
+    const onSave = vi.fn();
+    renderWithIntl(<IncomeExpensesForm onSave={onSave} />);
+    fireEvent.click(screen.getByRole("button", { name: "Add expense" }));
+    fireEvent.change(screen.getByLabelText("Expense 1 name"), {
+      target: { value: "Gold every month" },
+    });
+    fireEvent.change(screen.getByLabelText("Expense 1 amount"), { target: { value: "2000" } });
+    fireEvent.change(screen.getByLabelText("Expense 1 type"), { target: { value: "investing" } });
+    expect(screen.getByRole("option", { name: "Saving" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /save profile/i }));
+    expect(onSave.mock.calls[0]?.[0].fixedExpenses[0]).toMatchObject({
+      bucket: "investing",
+      monthly: 200_000,
+    });
+  });
 });

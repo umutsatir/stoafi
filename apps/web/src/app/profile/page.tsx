@@ -2,6 +2,7 @@
 
 import { ProfileSchema, project } from "@stoafi/core";
 import { useTranslations } from "next-intl";
+import { ProfileOverview } from "@/components/profile-overview";
 import { ProfileForm } from "@/components/profile-form";
 import { Page } from "@/components/ui/page";
 import { notify } from "@/components/ui/toaster";
@@ -22,6 +23,7 @@ export default function ProfilePage() {
 
   return (
     <Page title={t("title")}>
+      {profile && <ProfileOverview profile={profile} month={monthOf(today)} />}
       <ProfileForm
         initial={profile ?? undefined}
         currency={currency}

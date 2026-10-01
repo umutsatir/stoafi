@@ -1,7 +1,8 @@
 "use client";
 
-import { ProfileSchema } from "@stoafi/core";
+import { ProfileSchema, installmentCommitments } from "@stoafi/core";
 import { useTranslations } from "next-intl";
+import { MoneyFlowSummary } from "@/components/money-flow-summary";
 import { IncomeExpensesForm } from "@/components/income-expenses-form";
 import { InstallmentExpenses } from "@/components/installment-expenses";
 import { Page } from "@/components/ui/page";
@@ -23,8 +24,20 @@ export default function IncomeExpensesPage() {
   const t = useTranslations("incomeExpenses");
   const tc = useTranslations("common");
 
+  const installmentsThisMonth = installmentCommitments(queueItems)
+    .flatMap((c) => c.payments)
+    .filter((p) => p.month === monthOf(today))
+    .reduce((sum, p) => sum + p.amount, 0);
+
   return (
     <Page title={t("title")}>
+      {profile && (
+        <MoneyFlowSummary
+          profile={profile}
+          month={monthOf(today)}
+          installmentsThisMonth={installmentsThisMonth}
+        />
+      )}
       <IncomeExpensesForm
         initial={profile ?? undefined}
         currency={currency}

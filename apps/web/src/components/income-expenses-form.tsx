@@ -41,8 +41,14 @@ interface ExpenseRow {
   endMonth?: string;
 }
 
-type ExpenseBucket = Extract<Bucket, "needs" | "wants">;
-const EXPENSE_BUCKETS: ExpenseBucket[] = ["needs", "wants"];
+type ExpenseBucket = Bucket;
+const EXPENSE_BUCKETS: ExpenseBucket[] = ["needs", "wants", "savings", "investing"];
+const TYPE_KEY: Record<ExpenseBucket, string> = {
+  needs: "typeNeed",
+  wants: "typeWant",
+  savings: "typeSavings",
+  investing: "typeInvesting",
+};
 
 function isBlank(row: { label: string; monthly: number }): boolean {
   return row.label.trim() === "" && row.monthly === 0;
@@ -214,7 +220,7 @@ export function IncomeExpensesForm({
                 >
                   {EXPENSE_BUCKETS.map((bucket) => (
                     <option key={bucket} value={bucket}>
-                      {t(bucket === "needs" ? "typeNeed" : "typeWant")}
+                      {t(TYPE_KEY[bucket])}
                     </option>
                   ))}
                 </NativeSelect>

@@ -57,7 +57,16 @@
     }
   },
   "incomeExpenses": {
-    "title": "Gelir ve Giderler"
+    "title": "Gelir ve Giderler",
+    "summary": {
+      "in": "Giren para",
+      "out": "Çıkan para",
+      "left": "Kalan",
+      "inHint": "Her ay maaşların",
+      "outHint": "Düzenli giderler, yaşam masrafı ve taksitler",
+      "leftHint": "Biriktirebileceğin ya da serbest harcayabileceğin",
+      "leftNegative": "Bu ay kazandığından fazla harcıyorsun"
+    }
   },
   "profile": {
     "title": "Profil",
@@ -73,7 +82,7 @@
     "addSalary": "Maaş ekle",
     "removeSalary": "Maaş {n} sil",
     "expensesTitle": "Düzenli giderler",
-    "expensesHint": "Krediler, taksitler, faturalar, abonelikler: her ay hesabından çıkan her şey.",
+    "expensesHint": "Krediler, taksitler, faturalar, abonelikler ve her ay birikime ya da yatırıma aktardığın para: hesabından düzenli çıkan her şey.",
     "expenseName": "Gider {n} adı",
     "expenseNamePlaceholder": "örn. Araba kredisi",
     "expenseAmount": "Gider {n} tutarı",
@@ -97,7 +106,25 @@
     "suggestedInflationCaption": "Yaklaşık bir veri kümesinden ({asOf}) önerildi. Güncel rakamları kontrol et, gerekirse düzenle.",
     "emergencyFundReached": "Acil durum fonu hedefine zaten ulaştın.",
     "emergencyFundOnTrack": "Şu anki hızınla hedefe {month} ayında ulaşırsın.",
-    "emergencyFundUnreachable": "Aylık artan paran hedefe ulaşmaya henüz yetmiyor."
+    "emergencyFundUnreachable": "Aylık artan paran hedefe ulaşmaya henüz yetmiyor.",
+    "typeSavings": "Birikim",
+    "typeInvesting": "Yatırım",
+    "overview": {
+      "title": "Paran bir bakışta",
+      "income": "Aylık gelir",
+      "needs": "İhtiyaçların ayda {amount}",
+      "hour": "Bir saatin değeri",
+      "hourHint": "Bir fiyatı arkasındaki çalışma saatiyle karşılaştır",
+      "fund": "Acil durum fonu",
+      "fundMonths": "{target} aydan {months} ay",
+      "fundRing": "Acil durum fonu ilerlemesi",
+      "addMoney": "Ona para ekle"
+    },
+    "fundTitle": "Acil durum fonu",
+    "fundHint": "Kötü bir ayın borca dönüşmemesi için kenara ayrılan para. Biriktirdikçe Birikim sayfasından ekle.",
+    "economyTitle": "Ekonomin",
+    "economyHint": "Fiyatlar her yıl artar. Beklediğin enflasyon, Stoafi'nin taksitleri ve birikimi adil değerlendirmesini sağlar.",
+    "inflationInsight": "Yılda {rate} ile, bugün {amount} olan bir şey bir yıl sonra yaklaşık {then} olur."
   },
   "plan": {
     "title": "Plan",
