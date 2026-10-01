@@ -768,10 +768,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T10.2
   Note: the cap is stored in the `guards` table (already in backups) as `GuardThresholds`; a missing or out-of-range stored value falls back to the 20% default instead of crashing startup. The Settings field accepts 0 to 100% and refuses more with a message rather than saving it. This does not settle the open question about the default value; 20% stays the default and is now one setting away from changing.
 
-- [ ] **T10.9** Release hygiene
+- [x] **T10.9** Release hygiene
   Goal: core branch coverage back above 90% with a coverage threshold enforced in `vitest.config.ts`; CI also builds the web app; README rewritten (what it is, features, run, test, deploy, data stays on device); `today` refreshes when the app becomes visible on a new day.
   Acceptance: `pnpm --filter @stoafi/core test:coverage` reports >= 90% lines and branches and fails below that; CI runs `pnpm build`; a test shows `today` updates after a date change.
   Depends on: T10.1–T10.8
+  Note: core coverage is now 100% lines and 98.2% branches (it had slipped to 89.7%, below the bar) and the vitest config fails the run below 90% on lines, branches, functions and statements. Real untested behavior got tests (cancelled commitments, impossible months, unknown modules in a backup, damaged v1 profiles, partial dates); two dead `?? 0` fallbacks in `cashFlowSeries` were removed instead of tested. CI now also checks formatting, runs core coverage and builds the web app. `today` refreshes on tab visibility and window focus, so an installed app left open overnight moves to the new day. README rewritten.
 
 **Stop and report after Phase 10.**
 

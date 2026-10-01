@@ -1,5 +1,5 @@
 import { act, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
 import { renderWithIntl } from "@/test-utils";
@@ -71,6 +71,58 @@ describe("AppBootstrap", () => {
         expect(row?.data).toEqual({ locale: "tr", currency: "USD" });
       });
       expect(document.documentElement.lang).toBe("tr");
+    });
+  });
+
+  describe("today", () => {
+    beforeEach(async () => {
+      await db.settings.clear();
+      useAppStore.setState({ hydrated: false });
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date(2026, 9, 1, 9, 0, 0));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    async function renderReady() {
+      renderWithIntl(
+        <AppBootstrap>
+          <p>app ready</p>
+        </AppBootstrap>,
+      );
+      await waitFor(() => expect(screen.getByText("app ready")).toBeInTheDocument());
+    }
+
+    it("moves to the new day when the app is brought back after midnight", async () => {
+      await renderReady();
+      expect(useAppStore.getState().today).toBe("2026-10-01");
+
+      vi.setSystemTime(new Date(2026, 9, 2, 8, 0, 0));
+      act(() => {
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+      expect(useAppStore.getState().today).toBe("2026-10-02");
+    });
+
+    it("also catches up when the window regains focus", async () => {
+      await renderReady();
+      vi.setSystemTime(new Date(2026, 10, 3, 8, 0, 0));
+      act(() => {
+        window.dispatchEvent(new Event("focus"));
+      });
+      expect(useAppStore.getState().today).toBe("2026-11-03");
+    });
+
+    it("leaves the state untouched when the day has not changed", async () => {
+      await renderReady();
+      const before = useAppStore.getState();
+      vi.setSystemTime(new Date(2026, 9, 1, 23, 59, 0));
+      act(() => {
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+      expect(useAppStore.getState()).toBe(before);
     });
   });
 });

@@ -20,8 +20,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm exec prettier --check .
+
       - run: pnpm typecheck
 
       - run: pnpm lint
 
       - run: pnpm test
+
+      # SPEC acceptance: core coverage stays at or above 90% (enforced in the core vitest config).
+      - run: pnpm --filter @stoafi/core test:coverage
+
+      - run: pnpm --filter @stoafi/web build

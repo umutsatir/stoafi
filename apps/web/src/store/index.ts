@@ -44,6 +44,7 @@ export interface AppState {
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: string) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
+  setToday: (today: string) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -82,6 +83,7 @@ export const useAppStore = create<AppState>((set) => ({
   setLocale: (locale) => set({ locale }),
   setCurrency: (currency) => set({ currency }),
   setGuardThresholds: (guardThresholds) => set({ guardThresholds }),
+  setToday: (today) => set((state) => (state.today === today ? state : { today })),
 }));
 
 /**

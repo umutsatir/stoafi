@@ -99,3 +99,18 @@ describe("projectSeries", () => {
     expect(byMonth.get("2026-06")?.installmentLoad).toBe(0);
   });
 });
+
+describe("project ignores cancelled commitments", () => {
+  it("does not count a cancelled commitment even with drafts included", () => {
+    const cancelled: Commitment = {
+      id: "c",
+      source: { module: "queue", refId: "c" },
+      bucket: "wants",
+      payments: [{ month: "2026-10", amount: 50_000 }],
+      status: "cancelled",
+    };
+    const result = project({ income: 100_000 }, [cancelled], "2026-10", { includeDrafts: true });
+    expect(result.byBucket.wants.committed).toBe(0);
+    expect(result.freeCash).toBe(100_000);
+  });
+});

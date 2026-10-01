@@ -33,10 +33,9 @@ export function cashFlowSeries(
   const income = netMonthlyIncome(profile);
   const projections = projectSeries({ income }, commitments, months);
 
-  return months.map((month, index) => {
+  return projections.map((projection) => {
+    const { month, installmentLoad: installments, sinkingSetAside: setAside } = projection;
     const obligations = activeFixedExpenses(profile, month).reduce((sum, e) => sum + e.monthly, 0);
-    const installments = projections[index]?.installmentLoad ?? 0;
-    const setAside = projections[index]?.sinkingSetAside ?? 0;
     return {
       month,
       income,

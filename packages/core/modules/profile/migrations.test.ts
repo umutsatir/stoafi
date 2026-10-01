@@ -41,3 +41,44 @@ describe("migrateProfileV1ToV2", () => {
     expect(migrateProfileV1ToV2(null)).toBeNull();
   });
 });
+
+describe("migrateProfileV1ToV2 with damaged v1 data", () => {
+  const base = {
+    savings: 0,
+    emergencyFundTargetMonths: 6,
+    annualInflationExpectation: 0.3,
+    fixedExpenses: [],
+  };
+
+  it("treats a non-list avgVariableExpenses as no living costs", () => {
+    const migrated = migrateProfileV1ToV2({
+      ...base,
+      incomes: [{ label: "Salary", monthly: 1, variable: false }],
+      avgVariableExpenses: "oops",
+    }) as { livingExpenses: number };
+    expect(migrated.livingExpenses).toBe(0);
+  });
+
+  it("skips entries without a numeric amount when summing living costs", () => {
+    const migrated = migrateProfileV1ToV2({
+      ...base,
+      incomes: [],
+      avgVariableExpenses: [
+        { label: "Good", monthly: 500, bucket: "needs" },
+        { label: "No amount", bucket: "needs" },
+        { label: "Text amount", monthly: "lots", bucket: "needs" },
+        null,
+      ],
+    }) as { livingExpenses: number };
+    expect(migrated.livingExpenses).toBe(500);
+  });
+
+  it("leaves a non-list incomes value for schema validation to reject", () => {
+    const migrated = migrateProfileV1ToV2({
+      ...base,
+      incomes: "none",
+      avgVariableExpenses: [],
+    }) as { incomes: unknown };
+    expect(migrated.incomes).toBe("none");
+  });
+});
