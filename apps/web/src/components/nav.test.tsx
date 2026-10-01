@@ -18,7 +18,7 @@ describe("Nav", () => {
       "Profile",
       "Plan",
       "Queue",
-      "Sinking funds",
+      "Savings goals",
       "Cards",
       "Health",
       "Decisions",
