@@ -105,9 +105,10 @@ export function useInstallmentCommitments(): Commitment[] {
 export function useLedger(): Commitment[] {
   const profile = useAppStore((s) => s.profile);
   const queueItems = useAppStore((s) => s.queueItems);
+  const sinkingFunds = useAppStore((s) => s.sinkingFunds);
   const today = useAppStore((s) => s.today);
   return useMemo(
-    () => buildLedger(profile, queueItems, monthOf(today)),
-    [profile, queueItems, today],
+    () => buildLedger(profile, queueItems, monthOf(today), sinkingFunds),
+    [profile, queueItems, sinkingFunds, today],
   );
 }

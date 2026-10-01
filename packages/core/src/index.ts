@@ -107,3 +107,9 @@ export {
   detectLocale,
   type Settings,
 } from "../modules/settings/schema";
+export {
+  sinkingFundCommitments,
+  sinkingFundStatus,
+  type SinkingFundStatus,
+} from "../modules/sinking-funds/status";
+export { monthlySetAside } from "../modules/sinking-funds/selectors";

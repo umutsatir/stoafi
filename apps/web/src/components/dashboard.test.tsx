@@ -1,6 +1,6 @@
 import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { Profile, QueueItem } from "@stoafi/core";
+import type { Profile, QueueItem, SinkingFund } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { Dashboard } from "./dashboard";
 
@@ -173,5 +173,20 @@ describe("Dashboard", () => {
       queueItems: [waiting("Boiler", 0, 10_000, true)],
     });
     expect(screen.getByTestId("next-month-Boiler")).toHaveTextContent("2026-09");
+  });
+
+  it("takes sinking-fund set-asides off what is left in the months they run", () => {
+    // 6,000.00 due 2027-03 = 1,000.00 a month from next month (2026-10)
+    const fund: SinkingFund = {
+      id: "ins",
+      label: "Insurance",
+      target: 600_000,
+      dueMonth: "2027-03",
+      currentBalance: 0,
+    };
+    renderDashboard({ sinkingFunds: [fund] });
+    const rows = within(screen.getByTestId("cash-flow-chart")).getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("₺5,000.00"); // September: nothing set aside yet
+    expect(rows[2]).toHaveTextContent("₺4,000.00"); // October: 1,000.00 set aside
   });
 });

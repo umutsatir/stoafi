@@ -7,7 +7,7 @@ import { QueueList } from "@/components/queue-list";
 import { PlanComparison } from "@/components/plan-comparison";
 import { InstallmentCalculator } from "@/components/installment-calculator";
 import HealthPage from "@/app/health/page";
-import QueuePage from "@/app/queue/page";
+import SinkingFundsPage from "@/app/sinking-funds/page";
 
 const profile: Profile = {
   incomes: [{ label: "Salary", monthly: 10000 }],
@@ -82,9 +82,8 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
     );
   });
 
-  it("sinking-funds -> sinking-funds card (linked from queue, its closest existing screen)", () => {
-    useAppStore.setState({ profile, planState, queueItems: [], decisions: [] });
-    renderWithIntl(<QueuePage />);
+  it("sinking-funds -> sinking-funds card (linked from the sinking funds screen)", () => {
+    renderWithIntl(<SinkingFundsPage />);
     expect(screen.getByTestId("lesson-link-sinking-funds")).toHaveAttribute(
       "href",
       "/lessons#sinking-funds",

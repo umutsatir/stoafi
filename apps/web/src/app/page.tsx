@@ -7,9 +7,16 @@ export default function Home() {
   const profile = useAppStore((s) => s.profile);
   const planState = useAppStore((s) => s.planState);
   const queueItems = useAppStore((s) => s.queueItems);
+  const sinkingFunds = useAppStore((s) => s.sinkingFunds);
   const today = useAppStore((s) => s.today);
 
   return (
-    <Dashboard profile={profile} planState={planState} queueItems={queueItems} today={today} />
+    <Dashboard
+      profile={profile}
+      planState={planState}
+      queueItems={queueItems}
+      sinkingFunds={sinkingFunds}
+      today={today}
+    />
   );
 }

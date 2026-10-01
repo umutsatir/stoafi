@@ -1,10 +1,12 @@
 import {
   installmentCommitments,
   recurringCommitments,
+  sinkingFundCommitments,
   type Commitment,
   type Month,
   type Profile,
   type QueueItem,
+  type SinkingFund,
 } from "@stoafi/core";
 
 /**
@@ -16,9 +18,11 @@ export function buildLedger(
   profile: Profile | null,
   queueItems: QueueItem[],
   fromMonth: Month,
+  sinkingFunds: SinkingFund[] = [],
 ): Commitment[] {
   return [
     ...(profile ? recurringCommitments(profile, fromMonth) : []),
     ...installmentCommitments(queueItems),
+    ...sinkingFundCommitments(sinkingFunds, fromMonth),
   ];
 }

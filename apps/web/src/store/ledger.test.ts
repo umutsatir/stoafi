@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Profile, QueueItem } from "@stoafi/core";
+import type { Profile, QueueItem, SinkingFund } from "@stoafi/core";
 import { buildLedger } from "./ledger";
 
 const profile: Profile = {
@@ -47,5 +47,15 @@ describe("buildLedger", () => {
   it("starts recurring costs at the given month", () => {
     const rent = buildLedger(profile, [], "2026-10").find((c) => c.source.refId === "fixed-0");
     expect(rent?.payments[0]?.month).toBe("2026-10");
+  });
+
+  it("adds sinking-fund set-asides that still have months to run", () => {
+    const funds: SinkingFund[] = [
+      { id: "ahead", label: "Insurance", target: 600_000, dueMonth: "2027-04", currentBalance: 0 },
+      { id: "late", label: "Old", target: 100_000, dueMonth: "2026-05", currentBalance: 0 },
+    ];
+    const ledger = buildLedger(profile, [], "2026-10", funds);
+    const sinking = ledger.filter((c) => c.source.module === "sinking-funds");
+    expect(sinking.map((c) => c.source.refId)).toEqual(["ahead"]);
   });
 });

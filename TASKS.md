@@ -750,10 +750,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T10.1
   Note: Skip removes the item and logs `skipped` at the cash price (`discountedCashPrice` when set), which is what the decision log's "saved" total sums; Postpone logs `postponed` and keeps the item (it does not restart the 30-day cooldown; revisit with the cooldown re-prompt open question). Neither needs the guard "I know". The preview's before/after now uses the chosen first-payment month (suggested month or a card-shifted one) instead of always the current month. The preview takes `cards` and a purchase date and owns the card choice, replacing the old single `card` prop that no screen ever passed (flow 4 was unreachable).
 
-- [ ] **T10.6** Sinking funds screen
+- [x] **T10.6** Sinking funds screen
   Goal: add, edit and delete sinking funds (label, target, due month, saved so far); show each one's monthly set-aside; their commitments join the ledger; overdue or due-this-month funds are handled instead of throwing; the sinking-funds lesson link moves here from the Queue page.
   Acceptance: tests: a fund due in 6 months shows the expected set-aside and appears in the home chart's savings usage; a fund due this month shows a clear state, not an error; funds persist across reload.
   Depends on: T10.1, T10.3
+  Note: `sinkingFundStatus` (core) names a fund's state (funded, active with its monthly set-aside, due this month, overdue) so the screen never calls `monthlySetAside` with zero or negative months; `sinkingFundCommitments` feeds the ledger and skips due/overdue funds. Set-asides start next month (T2.9's `toCommitment`), so the current month's figures do not change when a fund is added; the home chart shows them from next month on and `CashFlowPoint` gained `setAside`, which `left` now subtracts. "Saved so far" is entered by hand (the app does not track the user's own transfers). The sinking-funds lesson link moved here from the Queue page, and nav gained a Sinking funds entry.
 
 - [ ] **T10.7** Persist cards
   Goal: cards are saved to Dexie and can be deleted.

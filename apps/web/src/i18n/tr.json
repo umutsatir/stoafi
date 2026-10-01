@@ -26,7 +26,8 @@
     "addToQueue": "Kuyruğuna ekle",
     "openQueue": "Kuyruğu aç",
     "cashFlowTitle": "Önümüzdeki 12 ay",
-    "month": "Ay"
+    "month": "Ay",
+    "setAside": "Birikim hedefleri"
   },
   "nav": {
     "ariaLabel": "Ana",
@@ -35,6 +36,7 @@
     "profile": "Profil",
     "plan": "Plan",
     "queue": "Kuyruk",
+    "sinkingFunds": "Birikim hedefleri",
     "cards": "Kartlar",
     "health": "Sağlık",
     "decisions": "Kararlar",
@@ -241,5 +243,32 @@
     "babyStepsStep2": "2. adım: fazladan biriktirmeden önce borçları öde ({months}).",
     "babyStepsStep3": "3. adım: tam acil durum fonunu biriktir ({months}).",
     "babyStepsStep4": "4. adım ve sonrası: acil durum fonu tamam, yatırıma başla ({months})."
+  },
+  "sinkingFunds": {
+    "title": "Birikim hedefleri",
+    "intro": "Bildiğin bir gider için her ay para ayır; araba sigortası ya da tatil gibi. Tutarı ve ödeme ayını seç, Stoafi kalan aylara eşit böler ve planında sayar.",
+    "addTitle": "Birikim hedefi ekle",
+    "editTitle": "Birikim hedefini düzenle",
+    "name": "Ad",
+    "nameHint": "örn. Araba sigortası",
+    "target": "Hedef tutar",
+    "dueMonth": "Ödeme ayı",
+    "saved": "Şimdiye kadar biriken",
+    "savedHint": "Bunun için şimdiye kadar ayırdığın tutar.",
+    "add": "Ekle",
+    "saveChanges": "Değişiklikleri kaydet",
+    "cancel": "İptal",
+    "nameRequired": "Bir ad gir.",
+    "targetRequired": "Sıfırdan büyük bir hedef gir.",
+    "dueRequired": "Ödeme ayını seç.",
+    "empty": "Henüz birikim hedefi yok. Yukarıdan ekle.",
+    "progress": "{target} içinde {saved}, ödeme ayı {month}",
+    "progressLabel": "{name} ilerlemesi",
+    "funded": "Tamamen biriktirildi.",
+    "setAside": "{month} ayına kadar ayda {amount} ayır.",
+    "dueNow": "Bu ay ödenecek. {amount} eksik.",
+    "overdue": "{month} ayından beri gecikmiş. {amount} eksik.",
+    "edit": "{name} düzenle",
+    "delete": "{name} sil"
   }
 }

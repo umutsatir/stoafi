@@ -14,7 +14,9 @@ export interface CashFlowPoint {
   living: Minor;
   /** Installment payments due that month (from active commitments). */
   installments: Minor;
-  /** income - obligations - living - installments; negative when the month is overspent. */
+  /** Sinking-fund set-asides due that month. */
+  setAside: Minor;
+  /** income - obligations - living - installments - set-asides; negative when the month is overspent. */
   left: Minor;
 }
 
@@ -34,13 +36,15 @@ export function cashFlowSeries(
   return months.map((month, index) => {
     const obligations = activeFixedExpenses(profile, month).reduce((sum, e) => sum + e.monthly, 0);
     const installments = projections[index]?.installmentLoad ?? 0;
+    const setAside = projections[index]?.sinkingSetAside ?? 0;
     return {
       month,
       income,
       obligations,
       living: profile.livingExpenses,
       installments,
-      left: income - obligations - profile.livingExpenses - installments,
+      setAside,
+      left: income - obligations - profile.livingExpenses - installments - setAside,
     };
   });
 }

@@ -26,7 +26,8 @@
     "addToQueue": "Add to your queue",
     "openQueue": "Open the queue",
     "cashFlowTitle": "Next 12 months",
-    "month": "Month"
+    "month": "Month",
+    "setAside": "Savings goals"
   },
   "nav": {
     "ariaLabel": "Main",
@@ -35,6 +36,7 @@
     "profile": "Profile",
     "plan": "Plan",
     "queue": "Queue",
+    "sinkingFunds": "Sinking funds",
     "cards": "Cards",
     "health": "Health",
     "decisions": "Decisions",
@@ -241,5 +243,32 @@
     "babyStepsStep2": "Step 2: pay off debt before saving extra ({months}).",
     "babyStepsStep3": "Step 3: build the full emergency fund ({months}).",
     "babyStepsStep4": "Step 4 and on: the emergency fund is complete, start investing ({months})."
+  },
+  "sinkingFunds": {
+    "title": "Savings goals",
+    "intro": "Set money aside every month for a bill you know is coming, like car insurance or a holiday. Pick the amount and the month it is due, and Stoafi spreads it evenly over the months left and counts it in your plan.",
+    "addTitle": "Add a savings goal",
+    "editTitle": "Edit savings goal",
+    "name": "Name",
+    "nameHint": "e.g. Car insurance",
+    "target": "Target amount",
+    "dueMonth": "Due month",
+    "saved": "Saved so far",
+    "savedHint": "What you have already put aside for it.",
+    "add": "Add",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "nameRequired": "Enter a name.",
+    "targetRequired": "Enter a target above zero.",
+    "dueRequired": "Choose the month it is due.",
+    "empty": "No savings goals yet. Add one above.",
+    "progress": "{saved} of {target}, due {month}",
+    "progressLabel": "{name} progress",
+    "funded": "Fully funded.",
+    "setAside": "Set aside {amount} a month until {month}.",
+    "dueNow": "Due this month. {amount} still missing.",
+    "overdue": "Overdue since {month}. {amount} still missing.",
+    "edit": "Edit {name}",
+    "delete": "Delete {name}"
   }
 }

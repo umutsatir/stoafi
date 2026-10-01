@@ -43,6 +43,7 @@ describe("cashFlowSeries", () => {
       obligations: 300_000,
       living: 300_000,
       installments: 100_000,
+      setAside: 0,
       left: 300_000,
     });
   });
@@ -70,5 +71,18 @@ describe("cashFlowSeries", () => {
     const [first] = cashFlowSeries({ ...profile, incomes: [] }, [], months);
     expect(first?.income).toBe(0);
     expect(first?.left).toBe(-600_000);
+  });
+
+  it("takes sinking-fund set-asides off what is left", () => {
+    const fund: Commitment = {
+      id: "fund",
+      source: { module: "sinking-funds", refId: "fund" },
+      bucket: "savings",
+      payments: [{ month: "2026-11", amount: 50_000 }],
+      status: "active",
+    };
+    const series = cashFlowSeries(profile, [fund], months);
+    expect(series.map((p) => p.setAside)).toEqual([0, 50_000, 0]);
+    expect(series[1]?.left).toBe(1_000_000 - 300_000 - 300_000 - 50_000);
   });
 });

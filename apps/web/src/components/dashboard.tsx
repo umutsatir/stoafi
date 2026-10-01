@@ -17,7 +17,9 @@ import {
   strategyRegistry,
   type PlanStateInput,
   type Profile,
+  sinkingFundCommitments,
   type QueueItem,
+  type SinkingFund,
 } from "@stoafi/core";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
@@ -35,6 +37,7 @@ export interface DashboardProps {
   profile: Profile | null;
   planState: PlanStateInput | null;
   queueItems: QueueItem[];
+  sinkingFunds?: SinkingFund[];
   /** Local date (YYYY-MM-DD) from the app boundary. */
   today: string;
   /** How many upcoming queue items to list. */
@@ -45,6 +48,7 @@ export function Dashboard({
   profile,
   planState,
   queueItems,
+  sinkingFunds = [],
   today,
   nextCount = 3,
 }: DashboardProps) {
@@ -72,14 +76,14 @@ export function Dashboard({
   const income = netMonthlyIncome(profile);
   const obligations = activeFixedExpenses(profile, month).reduce((sum, e) => sum + e.monthly, 0);
   const installmentLedger = installmentCommitments(queueItems);
-  const ledger = buildLedger(profile, queueItems, month);
+  const ledger = buildLedger(profile, queueItems, month, sinkingFunds);
   const thisMonth = project({ income }, ledger, month);
   const installments = thisMonth.installmentLoad;
   const left = thisMonth.freeCash;
 
   const cashFlow = cashFlowSeries(
     profile,
-    installmentLedger,
+    [...installmentLedger, ...sinkingFundCommitments(sinkingFunds, month)],
     Array.from({ length: 12 }, (_, i) => addMonths(month, i)),
   );
   const needs = monthlyNeeds(profile, month);

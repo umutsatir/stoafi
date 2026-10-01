@@ -21,7 +21,6 @@ import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
 import { QueueTimeline } from "@/components/queue-timeline";
-import { LessonLink } from "@/components/lesson-link";
 import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem, saveQueueOrder } from "@/storage/queue-repo";
@@ -46,8 +45,6 @@ export default function QueuePage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const t = useTranslations("queue");
-  // No dedicated sinking-funds screen exists yet; queue (dated purchase
-  // planning) is the closest fit among Phase 7's screens for this lesson.
 
   if (!profile || !planState) {
     return (
@@ -183,7 +180,6 @@ export default function QueuePage() {
         startMonth={monthOf(today)}
         hourlyNetIncome={hourlyNetIncome(profile)}
       />
-      <LessonLink lessonId="sinking-funds" testId="lesson-link-sinking-funds" />
       <h2 className="text-lg font-semibold tracking-tight">{t("timelineTitle")}</h2>
       <QueueTimeline
         items={waitingItems}
