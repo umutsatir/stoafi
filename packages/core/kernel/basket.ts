@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Minor } from "./money";
+import { MonthSchema, type Month } from "./month";
 
 /** One slice of the user's investing basket: a name and the share of new money it should get. */
 export const BasketEntrySchema = z.object({
@@ -112,4 +113,39 @@ export function basketDrift(
       difference: total > 0 ? Math.round((currentPercent - targetPercent) * 10) / 10 : 0,
     };
   });
+}
+
+/** "I put this month's share into this slice": what was invested, ticked off without typing a figure. */
+export const BasketLogEntrySchema = z.object({
+  month: MonthSchema,
+  entryId: z.string(),
+  amount: z.number().int().nonnegative(),
+});
+
+export type BasketLogEntry = z.infer<typeof BasketLogEntrySchema>;
+
+export function basketDone(
+  log: BasketLogEntry[],
+  month: Month,
+  entryId: string,
+): BasketLogEntry | undefined {
+  return log.find((l) => l.month === month && l.entryId === entryId);
+}
+
+/** Marks a slice done for a month; ticking it again replaces the earlier entry instead of doubling it. */
+export function markBasketDone(log: BasketLogEntry[], entry: BasketLogEntry): BasketLogEntry[] {
+  return [...unmarkBasketDone(log, entry.month, entry.entryId), entry];
+}
+
+export function unmarkBasketDone(
+  log: BasketLogEntry[],
+  month: Month,
+  entryId: string,
+): BasketLogEntry[] {
+  return log.filter((l) => !(l.month === month && l.entryId === entryId));
+}
+
+/** Everything ticked off for a month. */
+export function basketInvestedIn(log: BasketLogEntry[], month: Month): Minor {
+  return log.filter((l) => l.month === month).reduce((sum, l) => sum + l.amount, 0);
 }

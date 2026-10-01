@@ -97,7 +97,29 @@
         "wantsSpare": "Kuyruğu aç",
         "savingsToSet": "Para ayır",
         "investingToSet": "Para ayır"
+      },
+      "category": {
+        "bills": "Faturalar",
+        "living": "Yaşam giderleri",
+        "installments": "Taksitler",
+        "loans": "Krediler",
+        "pots": "Birikim kumbaraları",
+        "saving": "Birikim ve yatırım"
       }
+    },
+    "installmentRoom": {
+      "title": "Taksit payı",
+      "manage": "Taksitleri yönet",
+      "cap": "Sınırın gelirinin %{pct}'i: ayda {amount}",
+      "state": {
+        "ok": "Yer var",
+        "tight": "Neredeyse dolu",
+        "over": "Sınır aşıldı"
+      },
+      "barLabel": "Taksit sınırının ne kadarı kullanıldı",
+      "canTake": "Ayda {amount} daha taksit alabilirsin.",
+      "overBy": "Sınırını {amount} aşıyorsun.",
+      "used": "({amount} kullanılıyor)"
     }
   },
   "nav": {
@@ -248,7 +270,64 @@
           "hint": "Her ay kenara ayırdığın para",
           "example": "örn. Aylık altın"
         }
+      },
+      "card": "Kart (isteğe bağlı)",
+      "cardHint": "Kalan ödemeler o kartın limitine sayılır.",
+      "noCard": "Bir karta bağlı değil"
+    },
+    "salary": {
+      "addTitle": "Gelir ekle",
+      "editTitle": "Geliri düzenle",
+      "addButton": "Gelir ekle",
+      "name": "Ad",
+      "example": "örn. Ana iş",
+      "amount": "Aylık tutar",
+      "amountHint": "Vergiden sonra her ay hesabına geçen tutar.",
+      "payDay": "Maaş günü",
+      "add": "Ekle",
+      "saveChanges": "Değişiklikleri kaydet",
+      "cancel": "Vazgeç",
+      "nameRequired": "Bir ad yaz.",
+      "amountRequired": "Tutar sıfırdan büyük olmalı.",
+      "removed": "“{name}” silindi",
+      "editRow": "{name} düzenle",
+      "removeRow": "{name} sil",
+      "total": "Aylık toplam gelir",
+      "row": {
+        "day": "Ayın {day}. günü yatıyor"
+      },
+      "empty": {
+        "title": "Henüz gelir yok",
+        "text": "Maaşını ve düzenli gelen diğer paraları ekle."
       }
+    },
+    "living": {
+      "title": "Yaşam giderleri",
+      "hint": "Mutfak ve ev faturaları, tek bir aylık tutar olarak.",
+      "amount": "Aylık yaşam giderleri",
+      "amountHint": "Market, elektrik, su, doğalgaz, internet gibi.",
+      "yearAgo": "Bir yıl önce (isteğe bağlı)",
+      "yearAgoHint": "O zaman kabaca ne kadardı. Stoafi böylece senin fiyat artışını beklenen enflasyonla karşılaştırabilir.",
+      "share": "Bu, gelirinin {share} kadarı.",
+      "band": {
+        "comfortable": "Rahat",
+        "typical": "Olağan",
+        "high": "Yüksek",
+        "veryHigh": "Çok yüksek"
+      },
+      "bandText": {
+        "comfortable": "Gelirinin az bir kısmı gündelik harcamalara gidiyor, birikime yer kalıyor.",
+        "typical": "Olağan bir pay. Birikim mümkün ama biraz dikkat ister.",
+        "high": "Gelirinin büyük bir kısmı. Buradaki küçük kısıntılar her yerden çok işe yarar.",
+        "veryHigh": "Gelirinin çoğu gündelik harcamalara gidiyor. Her şeyden önce buna bak."
+      },
+      "nextYear": "{rate} enflasyonla bu giderler bir yıl sonra ayda yaklaşık {amount} olur, yani {increase} daha fazla.",
+      "own": {
+        "above": "Giderlerin bir yılda {rise} arttı, beklediğin {expected} oranından hızlı. En çok neyin arttığına bak.",
+        "near": "Giderlerin bir yılda {rise} arttı, beklediğin {expected} oranına yakın.",
+        "below": "Giderlerin bir yılda {rise} arttı, beklediğin {expected} oranından yavaş. Aferin."
+      },
+      "note": "Bantlar bizim pratik kuralımız, resmî istatistik değil. Kendi durumun, hane büyüklüğün ve yaşadığın şehir fark yaratır."
     }
   },
   "plan": {
@@ -279,7 +358,8 @@
         "investing": "Yıllar içinde büyümesi için çalıştırılan para."
       },
       "investingWhere": "Bu para nereye gidebilir?",
-      "learnInvesting": "Endeks fonları ve maliyetleri öğren"
+      "learnInvesting": "Endeks fonları ve maliyetleri öğren",
+      "installmentRoomTitle": "Taksit payı"
     }
   },
   "queue": {
@@ -1173,7 +1253,18 @@
         "percentHint": "Tutarı yüzdelerine göre tam olarak böler."
       },
       "finishFirst": "Bölünmeyi görmek için yüzdelerin toplamı 100 olsun.",
-      "notAdvice": "Kendi seçimini düzenlemenin bir yolu; bir şey almanı önermez. Geçmiş sonuçlar gelecekteki sonuçların habercisi değildir."
+      "notAdvice": "Kendi seçimini düzenlemenin bir yolu; bir şey almanı önermez. Geçmiş sonuçlar gelecekteki sonuçların habercisi değildir.",
+      "investedThisMonth": "Bu ay şu ana kadar yatırılan: {total} içinden {done}",
+      "investedBar": "Bu ayki yatırımın ne kadarı tamam",
+      "markDone": "{name} yatırıldı olarak işaretle",
+      "undoDone": "{name} işaretini geri al",
+      "markDoneShort": "Yatırdım",
+      "doneUndo": "Tamam · geri al",
+      "recorded": "Bu ay için not edildi.",
+      "willRecord": "İşaretlemek bu alımı {name} yatırımına da güncel fiyatıyla ekler.",
+      "willLog": "İşaretlemek sadece not alır. Toplamların güncellensin istiyorsan alımı bir yatırıma ekle.",
+      "cheerDone": "{name} için {amount} işaretlendi. İstikrar kazandırır.",
+      "monthlyHintNone": "Planın yatırım için pay ayırmıyor; her ay yatırmak istediğin tutarı kendin yaz."
     }
   },
   "calendar": {

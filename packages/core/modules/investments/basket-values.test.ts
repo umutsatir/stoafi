@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { BasketEntry } from "../../kernel/basket";
-import { basketValues } from "./basket-values";
+import { basketValues, holdingsInSlice, sliceOf } from "./basket-values";
 import type { Holding } from "./schema";
 
 const holding = (id: string, typeId: string, quantity: number, basketId?: string): Holding => ({
@@ -47,5 +47,19 @@ describe("basketValues", () => {
 
   it("starts every slice at zero", () => {
     expect(basketValues([], entries).values).toEqual({ gold: 0, sp: 0, nasdaq: 0 });
+  });
+});
+
+describe("sliceOf and holdingsInSlice", () => {
+  it("find the slice a holding counts toward, and the holdings in a slice", () => {
+    const gold = holding("g", "gold", 1);
+    const nasdaq = holding("n", "index-fund", 1, "nasdaq");
+    const unplaced = holding("i", "index-fund", 1);
+    expect(sliceOf(gold, entries)?.id).toBe("gold");
+    expect(sliceOf(unplaced, entries)).toBeUndefined();
+    expect(holdingsInSlice([gold, nasdaq, unplaced], entries, "nasdaq").map((h) => h.id)).toEqual([
+      "n",
+    ]);
+    expect(holdingsInSlice([gold], entries, "sp")).toEqual([]);
   });
 });

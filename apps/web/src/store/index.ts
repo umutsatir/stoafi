@@ -4,6 +4,7 @@ import {
   installmentCommitments,
   projectSeries,
   type BasketEntry,
+  type BasketLogEntry,
   type Commitment,
   type Card,
   type Decision,
@@ -49,6 +50,9 @@ export interface AppState {
   lastBackup: string | null;
   /** How the user wants new investing money shared; empty until they make a basket. */
   basket: BasketEntry[];
+  /** What was put into each slice, by month; and the amount the user splits each month, if they set one. */
+  basketLog: BasketLogEntry[];
+  basketMonthly: number | null;
   /** The PIN lock, when one is set. */
   lock: PinLock | null;
   /** True while the lock screen covers the app. */
@@ -77,6 +81,8 @@ export interface AppState {
   setHideAmounts: (hide: boolean) => void;
   setLastBackup: (date: string) => void;
   setBasket: (basket: BasketEntry[]) => void;
+  setBasketLog: (log: BasketLogEntry[]) => void;
+  setBasketMonthly: (amount: number | null) => void;
   setLock: (lock: PinLock | null) => void;
   setLocked: (locked: boolean) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
@@ -101,6 +107,8 @@ export const useAppStore = create<AppState>((set) => ({
   hideAmounts: false,
   lastBackup: null,
   basket: [],
+  basketLog: [],
+  basketMonthly: null,
   lock: null,
   locked: false,
   guardThresholds: { installmentCapPct: 0.2 },
@@ -125,6 +133,8 @@ export const useAppStore = create<AppState>((set) => ({
       hideAmounts: loaded.settings.hideAmounts ?? false,
       lastBackup: loaded.settings.lastBackup ?? null,
       basket: loaded.settings.basket ?? [],
+      basketLog: loaded.settings.basketLog ?? [],
+      basketMonthly: loaded.settings.basketMonthly ?? null,
       lock: loaded.settings.lock ?? null,
       // A saved PIN covers the app from the first moment.
       locked: loaded.settings.lock !== undefined,
@@ -148,6 +158,8 @@ export const useAppStore = create<AppState>((set) => ({
   setHideAmounts: (hideAmounts) => set({ hideAmounts }),
   setLastBackup: (lastBackup) => set({ lastBackup }),
   setBasket: (basket) => set({ basket }),
+  setBasketLog: (basketLog) => set({ basketLog }),
+  setBasketMonthly: (basketMonthly) => set({ basketMonthly }),
   setLock: (lock) => set({ lock }),
   setLocked: (locked) => set({ locked }),
   toggleLessonRead: (id) =>

@@ -1,7 +1,11 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
+  basketDone,
   basketDrift,
+  basketInvestedIn,
+  markBasketDone,
+  unmarkBasketDone,
   basketTotal,
   catchUpSplit,
   isBasketComplete,
@@ -118,5 +122,45 @@ describe("basketDrift", () => {
     const drift = basketDrift([entry("a", 30), entry("b", 30)], { a: 50, b: 50 });
     expect(drift.map((d) => d.targetPercent)).toEqual([50, 50]);
     expect(drift.map((d) => d.difference)).toEqual([0, 0]);
+  });
+});
+
+describe("basket log", () => {
+  const entryOf = (entryId: string, amount: number, month = "2026-10" as const) => ({
+    month,
+    entryId,
+    amount,
+  });
+
+  it("marks a slice done for a month and finds it again", () => {
+    const log = markBasketDone([], entryOf("gold", 500_000));
+    expect(basketDone(log, "2026-10", "gold")?.amount).toBe(500_000);
+    expect(basketDone(log, "2026-11", "gold")).toBeUndefined();
+    expect(basketDone(log, "2026-10", "sp")).toBeUndefined();
+  });
+
+  it("replaces an earlier tick instead of counting it twice", () => {
+    const log = markBasketDone(
+      markBasketDone([], entryOf("gold", 500_000)),
+      entryOf("gold", 600_000),
+    );
+    expect(log).toHaveLength(1);
+    expect(basketInvestedIn(log, "2026-10")).toBe(600_000);
+  });
+
+  it("unticks only that slice and month", () => {
+    const log = [entryOf("gold", 1), entryOf("sp", 2), entryOf("gold", 3, "2026-11" as never)];
+    const next = unmarkBasketDone(log, "2026-10", "gold");
+    expect(next.map((l) => `${l.month}:${l.entryId}`)).toEqual(["2026-10:sp", "2026-11:gold"]);
+  });
+
+  it("adds up the month's ticks", () => {
+    const log = [
+      entryOf("gold", 500_000),
+      entryOf("sp", 300_000),
+      entryOf("gold", 9, "2026-09" as never),
+    ];
+    expect(basketInvestedIn(log, "2026-10")).toBe(800_000);
+    expect(basketInvestedIn([], "2026-10")).toBe(0);
   });
 });

@@ -8,6 +8,7 @@ import {
   expenseKind,
   remainingPayments,
   type Bucket,
+  type Card,
   type Month,
   type Profile,
 } from "@stoafi/core";
@@ -44,6 +45,8 @@ export interface ExpenseEditorProps {
   initial?: ExpenseValue;
   currency: string;
   currentMonth: Month;
+  /** Cards an installment can be put on; the choice is only offered when there are some. */
+  cards?: Card[];
   onSave: (expense: ExpenseValue) => void;
   onCancel: () => void;
 }
@@ -53,6 +56,7 @@ export function ExpenseEditor({
   initial,
   currency,
   currentMonth,
+  cards = [],
   onSave,
   onCancel,
 }: ExpenseEditorProps) {
@@ -70,6 +74,7 @@ export function ExpenseEditor({
     initial?.endMonth !== undefined && tileOf(initial) === "regular",
   );
   const [endMonth, setEndMonth] = useState(initial?.endMonth ?? currentMonth);
+  const [cardId, setCardId] = useState(initial?.cardId ?? "");
   const [errors, setErrors] = useState<string[]>([]);
 
   const owed = tile === "installment" || tile === "loan";
@@ -106,6 +111,7 @@ export function ExpenseEditor({
       monthly,
       bucket: effectiveBucket,
       ...(owed ? { kind: tile } : {}),
+      ...(tile === "installment" && cardId ? { cardId } : {}),
       ...(dueDay !== undefined ? { dueDay } : {}),
       ...(end ? { endMonth: end } : {}),
     });
@@ -176,6 +182,24 @@ export function ExpenseEditor({
               setRemaining(e.target.value === "" ? Number.NaN : Number(e.target.value))
             }
           />
+        </Field>
+      )}
+
+      {tile === "installment" && cards.length > 0 && (
+        <Field label={t("card")} htmlFor="expense-card" hint={t("cardHint")}>
+          <select
+            id="expense-card"
+            value={cardId}
+            onChange={(e) => setCardId(e.target.value)}
+            className="h-9 rounded-md border border-input bg-card px-3 text-sm"
+          >
+            <option value="">{t("noCard")}</option>
+            {cards.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
         </Field>
       )}
 

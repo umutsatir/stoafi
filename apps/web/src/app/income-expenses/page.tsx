@@ -19,6 +19,7 @@ export default function IncomeExpensesPage() {
   const setProfile = useAppStore((s) => s.setProfile);
   const currency = useAppStore((s) => s.currency);
   const queueItems = useAppStore((s) => s.queueItems);
+  const cards = useAppStore((s) => s.cards);
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const today = useAppStore((s) => s.today);
   const t = useTranslations("incomeExpenses");
@@ -40,15 +41,14 @@ export default function IncomeExpensesPage() {
       )}
       <IncomeExpensesForm
         initial={profile ?? undefined}
+        cards={cards}
         currency={currency}
         currentMonth={monthOf(today)}
         onSave={async (value) => {
-          const saved = await putSingleton(
-            db,
-            "profile",
-            ProfileSchema,
-            mergeProfile(profile, value),
-          );
+          const merged = mergeProfile(profile, value);
+          // Clearing last year's figure must remove it, not leave the old one behind.
+          if (value.livingExpensesYearAgo === undefined) delete merged.livingExpensesYearAgo;
+          const saved = await putSingleton(db, "profile", ProfileSchema, merged);
           setProfile(saved);
           notify(tc("saved"));
         }}

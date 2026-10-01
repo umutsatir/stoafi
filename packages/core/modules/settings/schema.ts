@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BasketEntrySchema } from "../../kernel/basket";
+import { BasketEntrySchema, BasketLogEntrySchema } from "../../kernel/basket";
 import { SUPPORTED_CURRENCIES } from "../../kernel/money";
 
 export const LOCALES = ["en", "tr"] as const;
@@ -25,6 +25,10 @@ export const SettingsSchema = z.object({
     .optional(),
   /** The user's investing basket: how new investing money should be shared. Optional; none until they make one. */
   basket: z.array(BasketEntrySchema).optional(),
+  /** What was put into each basket slice, month by month. */
+  basketLog: z.array(BasketLogEntrySchema).optional(),
+  /** The amount the user splits across the basket each month, when it differs from what the plan suggests. */
+  basketMonthly: z.number().int().nonnegative().optional(),
   /** A PIN that covers the app: a random salt and the PBKDF2 hash of the PIN, never the PIN itself. */
   lock: z.object({ salt: z.string(), hash: z.string() }).optional(),
 });

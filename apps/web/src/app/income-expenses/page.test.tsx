@@ -60,9 +60,10 @@ describe("Income & Expenses and Profile screens share one profile", () => {
     await db.profile.clear();
     useAppStore.setState({ profile: null });
     renderWithIntl(<IncomeExpensesPage />);
-    fireEvent.change(screen.getByLabelText("Salary 1 name"), { target: { value: "Job" } });
-    fireEvent.change(screen.getByLabelText("Salary 1 amount"), { target: { value: "500" } });
-    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Add income" })[0] as HTMLElement);
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Job" } });
+    fireEvent.change(screen.getByLabelText("Monthly amount"), { target: { value: "500" } });
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Add" }));
     await waitFor(async () => expect((await stored())?.incomes).toHaveLength(1));
     expect(await stored()).toMatchObject({ savings: 0, emergencyFundTargetMonths: 6 });
   });

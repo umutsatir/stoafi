@@ -6,15 +6,19 @@ import { Layers, Plus, Trash2 } from "lucide-react";
 import {
   BASKET_TEMPLATES,
   BASKET_TEMPLATES_AS_OF,
+  basketDone,
   basketDrift,
+  basketInvestedIn,
   basketTotal,
   basketValues,
   catchUpSplit,
   isBasketComplete,
   splitByBasket,
   type BasketEntry,
+  type BasketLogEntry,
   type BasketTemplate,
   type Holding,
+  type Month,
 } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -22,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { notifyUndo, useUndoLabel } from "@/components/ui/toaster";
+import { holdingForTick } from "@/lib/basket-tick";
 import { useMoney } from "@/lib/use-money";
 import { stagger } from "@/lib/utils";
 import { MoneyInput } from "./money-input";
@@ -32,6 +37,14 @@ export interface BasketPanelProps {
   currency: string;
   /** What the plan sets aside for investing this month; offered as the amount to split. */
   suggestedMonthly: number;
+  /** The amount the user set to split each month, if they ever changed it. */
+  savedMonthly?: number | null;
+  onMonthlyChange?: (amount: number) => void;
+  /** What was ticked off in each slice, and the month it counts for. */
+  log?: BasketLogEntry[];
+  month?: Month;
+  /** Ticks a slice off (or takes the tick back) for this month, with the amount the split gave it. */
+  onToggle?: (entry: BasketEntry, amount: number, done: boolean) => void;
   createId: () => string;
   onChange: (basket: BasketEntry[]) => void;
   /** Puts a holding into a basket slice (or takes it out with undefined). */
@@ -44,6 +57,11 @@ export function BasketPanel({
   holdings,
   currency,
   suggestedMonthly,
+  savedMonthly = null,
+  onMonthlyChange,
+  log = [],
+  month,
+  onToggle,
   createId,
   onChange,
   onAssign,
@@ -53,7 +71,11 @@ export function BasketPanel({
   const format = useFormatter();
   const undoLabel = useUndoLabel();
   const [choosing, setChoosing] = useState(basket.length === 0);
-  const [monthly, setMonthly] = useState(suggestedMonthly);
+  const [monthly, setMonthlyState] = useState(savedMonthly ?? suggestedMonthly);
+  const setMonthly = (amount: number) => {
+    setMonthlyState(amount);
+    onMonthlyChange?.(amount);
+  };
   const [mode, setMode] = useState<"percent" | "catchUp">("catchUp");
 
   const total = basketTotal(basket);
@@ -306,7 +328,11 @@ export function BasketPanel({
             data-testid="basket-split"
           >
             <h3 className="text-sm font-semibold">{t("splitTitle")}</h3>
-            <Field label={t("monthlyAmount")} htmlFor="basket-monthly" hint={t("monthlyHint")}>
+            <Field
+              label={t("monthlyAmount")}
+              htmlFor="basket-monthly"
+              hint={suggestedMonthly > 0 || savedMonthly ? t("monthlyHint") : t("monthlyHintNone")}
+            >
               <MoneyInput
                 id="basket-monthly"
                 currency={currency}
@@ -329,21 +355,72 @@ export function BasketPanel({
               </div>
             )}
             {complete ? (
-              <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
-                {basket.map((entry) => {
-                  const share = shares.find((s) => s.id === entry.id);
-                  return (
-                    <li
-                      key={entry.id}
-                      data-testid={`split-${entry.id}`}
-                      className="flex items-center justify-between gap-2 p-3 text-sm"
-                    >
-                      <span>{entry.label || t("unnamed")}</span>
-                      <span className="font-semibold">{money(share?.amount ?? 0)}</span>
-                    </li>
-                  );
-                })}
-              </ul>
+              <>
+                {month && onToggle && (
+                  <div className="flex flex-col gap-1" data-testid="basket-progress">
+                    <p className="text-sm">
+                      {t("investedThisMonth", {
+                        done: money(basketInvestedIn(log, month)),
+                        total: money(monthly),
+                      })}
+                    </p>
+                    <ProgressBar
+                      value={basketInvestedIn(log, month)}
+                      max={monthly}
+                      label={t("investedBar")}
+                      tone="success"
+                    />
+                  </div>
+                )}
+                <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
+                  {basket.map((entry) => {
+                    const share = shares.find((s) => s.id === entry.id);
+                    const planned = share?.amount ?? 0;
+                    const done = month ? basketDone(log, month, entry.id) : undefined;
+                    const target = holdingForTick(holdings, basket, entry.id);
+                    return (
+                      <li
+                        key={entry.id}
+                        data-testid={`split-${entry.id}`}
+                        className="flex flex-col gap-1 p-3 text-sm"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-medium">{entry.label || t("unnamed")}</span>
+                          <span className="font-semibold">
+                            {money(done ? done.amount : planned)}
+                          </span>
+                          {onToggle && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant={done ? "outline" : "default"}
+                              aria-pressed={done !== undefined}
+                              aria-label={
+                                done
+                                  ? t("undoDone", { name: entry.label || t("unnamed") })
+                                  : t("markDone", { name: entry.label || t("unnamed") })
+                              }
+                              disabled={!done && planned <= 0}
+                              onClick={() => onToggle(entry, planned, !done)}
+                            >
+                              {done ? t("doneUndo") : t("markDoneShort")}
+                            </Button>
+                          )}
+                        </div>
+                        {onToggle && (
+                          <p className="text-xs text-muted-foreground">
+                            {done
+                              ? t("recorded")
+                              : target
+                                ? t("willRecord", { name: target.label })
+                                : t("willLog")}
+                          </p>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
             ) : (
               <p className="text-sm text-muted-foreground">{t("finishFirst")}</p>
             )}

@@ -23,6 +23,8 @@ export const ProfileSchema = z.object({
       bucket: z.enum(BUCKETS),
       /** Omitted reads as "regular", so expenses saved before kinds existed stay valid. */
       kind: z.enum(EXPENSE_KINDS).optional(),
+      /** The card an installment is on, so it counts against that card's limit. */
+      cardId: z.string().optional(),
       isSubscription: z.boolean().optional(),
       /** Day of month the expense is due, 1-31. Omitted reads as the 1st (see `dueDayOf`). */
       dueDay: z.number().int().min(1).max(31).optional(),
@@ -32,6 +34,8 @@ export const ProfileSchema = z.object({
   ),
   /** One lump monthly line for day-to-day living costs (groceries etc.); counted as needs. */
   livingExpenses: z.number().int().nonnegative(),
+  /** What living costs were about a year ago, to compare the user's own price rise with expected inflation. */
+  livingExpensesYearAgo: z.number().int().positive().optional(),
   savings: z.number().int().nonnegative(),
   /** Money put into or taken out of the emergency fund by hand; `savings` moves with it. */
   deposits: z.array(DepositSchema).optional(),

@@ -29,6 +29,8 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
   const lock = useAppStore((s) => s.lock);
   const lastBackup = useAppStore((s) => s.lastBackup);
   const basket = useAppStore((s) => s.basket);
+  const basketLog = useAppStore((s) => s.basketLog);
+  const basketMonthly = useAppStore((s) => s.basketMonthly);
 
   useEffect(() => {
     let cancelled = false;
@@ -54,8 +56,23 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
       ...(lock ? { lock } : {}),
       ...(lastBackup ? { lastBackup } : {}),
       ...(basket.length > 0 ? { basket } : {}),
+      ...(basketLog.length > 0 ? { basketLog } : {}),
+      ...(basketMonthly !== null ? { basketMonthly } : {}),
     }).catch((error) => console.error("Could not save settings", error));
-  }, [hydrated, locale, currency, theme, readLessons, demo, hideAmounts, lock, lastBackup, basket]);
+  }, [
+    hydrated,
+    locale,
+    currency,
+    theme,
+    readLessons,
+    demo,
+    hideAmounts,
+    lock,
+    lastBackup,
+    basket,
+    basketLog,
+    basketMonthly,
+  ]);
 
   // Follow the saved theme, and the system's while the user has not picked one.
   useEffect(() => {

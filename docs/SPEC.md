@@ -330,6 +330,9 @@ These extend the modules above; the rules in "Design principles" still hold (int
 - **Open pots.** A pot may have no due month and no target; it asks nothing each month.
 - **Limits advice** (`kernel/limits.ts`). Per bucket: limit, committed, remaining, over by, and a short list of what to do, derived from the month's projection.
 - **Investing basket** (`kernel/basket.ts`, `modules/investments/basket-*.ts`). Slices with whole percents; split a monthly amount exactly (largest remainder) by percent or by filling the gaps against what is held (never sells); drift against what is held; example baskets are dated data with named sources and a not-advice note.
+- **Category breakdown and installment room.** Committed money is cut by what it is for inside each bucket; installment room is the installment cap (share of income) minus this month's installment and loan payments.
+- **Living costs check** (`modules/profile/living-costs.ts`). Share of income against rule-of-thumb bands, a year of expected inflation, and the user's own rise against it when they give last year's figure.
+- **Basket log.** A tick per slice and month; may also record one purchase at the holding's current price.
 - **Quality budget** in `docs/QUALITY-BUDGET.md`.
 
 ## Acceptance criteria

@@ -260,6 +260,12 @@ export {
 } from "../kernel/limits";
 export {
   BasketEntrySchema,
+  BasketLogEntrySchema,
+  basketDone,
+  basketInvestedIn,
+  markBasketDone,
+  unmarkBasketDone,
+  type BasketLogEntry,
   basketDrift,
   basketTotal,
   catchUpSplit,
@@ -275,4 +281,22 @@ export {
   type BasketTemplate,
   type BasketTemplateEntry,
 } from "../modules/investments/basket-templates";
-export { basketValues, type BasketValues } from "../modules/investments/basket-values";
+export {
+  basketValues,
+  holdingsInSlice,
+  sliceOf,
+  type BasketValues,
+} from "../modules/investments/basket-values";
+export {
+  livingCostCheck,
+  type InflationComparison,
+  type LivingBand,
+  type LivingCostCheck,
+} from "../modules/profile/living-costs";
+export { installmentDebtByCard } from "../modules/profile/installment-debt";
+export {
+  committedByCategory,
+  type CategoryAmount,
+  type CategoryItem,
+  type CostCategory,
+} from "../modules/profile/category-breakdown";

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import {
+  committedByCategory,
   currentAllocation,
   netMonthlyIncome,
   project,
@@ -11,6 +12,8 @@ import {
   type Month,
   type PlanStateInput,
   type Profile,
+  type QueueItem,
+  type SinkingFund,
 } from "@stoafi/core";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
@@ -19,6 +22,8 @@ import { InfoPopover } from "@/components/ui/info-popover";
 import { Money } from "@/components/ui/money";
 import { ProgressBar, type Tone } from "@/components/ui/progress-bar";
 import { stagger } from "@/lib/utils";
+import { CategoryLines } from "./category-lines";
+import { InstallmentRoom } from "./installment-room";
 import { LessonPanelLink } from "./lesson-panel";
 
 export interface PlanUsageProps {
@@ -26,6 +31,11 @@ export interface PlanUsageProps {
   planState: PlanStateInput;
   ledger: Commitment[];
   month: Month;
+  /** Names for queue purchases and pots, so their lines in the breakdown read as names. */
+  queueItems?: QueueItem[];
+  sinkingFunds?: SinkingFund[];
+  /** When given, the page also shows how much installment room is left under this cap. */
+  installmentCapPct?: number;
 }
 
 const BUCKET_LIST: Bucket[] = ["needs", "wants", "savings", "investing"];
@@ -37,7 +47,15 @@ function tone(committed: number, limit: number): Tone {
 }
 
 /** The active plan and how much of each bucket this month's commitments already use. */
-export function PlanUsage({ profile, planState, ledger, month }: PlanUsageProps) {
+export function PlanUsage({
+  profile,
+  planState,
+  ledger,
+  month,
+  queueItems = [],
+  sinkingFunds = [],
+  installmentCapPct,
+}: PlanUsageProps) {
   const t = useTranslations("plan.usage");
   const locale = useLocale() as Locale;
   const strategy = strategyRegistry[planState.strategyId];
@@ -45,6 +63,11 @@ export function PlanUsage({ profile, planState, ledger, month }: PlanUsageProps)
   const projection = project({ income: netMonthlyIncome(profile) }, ledger, month, {
     bucketLimits: limits,
   });
+  const categories = committedByCategory(profile, ledger, month);
+  const names = {
+    ...Object.fromEntries(queueItems.map((i) => [i.id, i.name])),
+    ...Object.fromEntries(sinkingFunds.map((f) => [f.id, f.label])),
+  };
   const title = strategy ? getLessonCard(strategy.lessonId, locale)?.title : undefined;
 
   return (
@@ -81,6 +104,7 @@ export function PlanUsage({ profile, planState, ledger, month }: PlanUsageProps)
                 label={t("barLabel", { bucket: t(`bucket.${bucket}`) })}
                 tone={tone(committed, limit)}
               />
+              <CategoryLines rows={categories} bucket={bucket} names={names} detailed />
               {bucket === "investing" && limit > 0 && (
                 <p className="text-xs text-muted-foreground">
                   {t("investingWhere")}{" "}
@@ -97,6 +121,19 @@ export function PlanUsage({ profile, planState, ledger, month }: PlanUsageProps)
           );
         })}
       </ul>
+      {installmentCapPct !== undefined && (
+        <div
+          className="flex flex-col gap-2 border-t border-border pt-4"
+          data-testid="plan-installment-room"
+        >
+          <h3 className="text-sm font-semibold">{t("installmentRoomTitle")}</h3>
+          <InstallmentRoom
+            income={netMonthlyIncome(profile)}
+            capPct={installmentCapPct}
+            used={projection.installmentLoad}
+          />
+        </div>
+      )}
     </section>
   );
 }

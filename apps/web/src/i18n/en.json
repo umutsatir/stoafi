@@ -97,7 +97,29 @@
         "wantsSpare": "Open queue",
         "savingsToSet": "Put money aside",
         "investingToSet": "Put money aside"
+      },
+      "category": {
+        "bills": "Bills",
+        "living": "Living costs",
+        "installments": "Installments",
+        "loans": "Loans",
+        "pots": "Savings pots",
+        "saving": "Saving and investing"
       }
+    },
+    "installmentRoom": {
+      "title": "Installment room",
+      "manage": "Manage installments",
+      "cap": "Your cap is {pct}% of income: {amount} a month",
+      "state": {
+        "ok": "Room left",
+        "tight": "Almost full",
+        "over": "Over the cap"
+      },
+      "barLabel": "Installments used of your cap",
+      "canTake": "You can take on {amount} more a month.",
+      "overBy": "You are {amount} over your cap.",
+      "used": "({amount} used)"
     }
   },
   "nav": {
@@ -248,7 +270,64 @@
           "hint": "Money you move aside every month",
           "example": "e.g. Gold every month"
         }
+      },
+      "card": "Card (optional)",
+      "cardHint": "The remaining payments then count against that card's limit.",
+      "noCard": "Not on a card"
+    },
+    "salary": {
+      "addTitle": "Add income",
+      "editTitle": "Edit income",
+      "addButton": "Add income",
+      "name": "Name",
+      "example": "e.g. Main job",
+      "amount": "Monthly amount",
+      "amountHint": "What reaches your account each month, after tax.",
+      "payDay": "Pay day",
+      "add": "Add",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "nameRequired": "Write a name.",
+      "amountRequired": "The amount must be more than zero.",
+      "removed": "“{name}” removed",
+      "editRow": "Edit {name}",
+      "removeRow": "Remove {name}",
+      "total": "Total income each month",
+      "row": {
+        "day": "Paid on day {day}"
+      },
+      "empty": {
+        "title": "No income yet",
+        "text": "Add your salary, and any other regular money that comes in."
       }
+    },
+    "living": {
+      "title": "Living costs",
+      "hint": "Groceries and household bills together, as one monthly figure.",
+      "amount": "Monthly living costs",
+      "amountHint": "Groceries, electricity, water, gas, internet and the like.",
+      "yearAgo": "A year ago (optional)",
+      "yearAgoHint": "About what these cost then. It lets Stoafi compare your own price rise with expected inflation.",
+      "share": "This is {share} of your income.",
+      "band": {
+        "comfortable": "Comfortable",
+        "typical": "Typical",
+        "high": "High",
+        "veryHigh": "Very high"
+      },
+      "bandText": {
+        "comfortable": "Little of your income goes to everyday costs, which leaves room to save.",
+        "typical": "A usual share. Savings are possible but need some care.",
+        "high": "A big share of your income. Small cuts here help more than anywhere else.",
+        "veryHigh": "Most of your income goes to everyday costs. Look at this before anything else."
+      },
+      "nextYear": "At {rate} inflation these costs become about {amount} a month in a year, {increase} more.",
+      "own": {
+        "above": "Your costs rose {rise} in a year, faster than the {expected} you expect. Look for what grew most.",
+        "near": "Your costs rose {rise} in a year, close to the {expected} you expect.",
+        "below": "Your costs rose {rise} in a year, slower than the {expected} you expect. Well done."
+      },
+      "note": "The bands are rules of thumb of ours, not official statistics. Your own situation, family size and city matter."
     }
   },
   "plan": {
@@ -279,7 +358,8 @@
         "investing": "Money put to work to grow over many years."
       },
       "investingWhere": "Where can this money go?",
-      "learnInvesting": "Learn about index funds and costs"
+      "learnInvesting": "Learn about index funds and costs",
+      "installmentRoomTitle": "Installment room"
     }
   },
   "queue": {
@@ -1173,7 +1253,18 @@
         "percentHint": "Splits the amount exactly by your percentages."
       },
       "finishFirst": "Make the percentages add up to 100% to see the split.",
-      "notAdvice": "A way to organise your own choice, not a recommendation to buy anything. Past results do not predict future ones."
+      "notAdvice": "A way to organise your own choice, not a recommendation to buy anything. Past results do not predict future ones.",
+      "investedThisMonth": "Put in so far this month: {done} of {total}",
+      "investedBar": "Share of this month's investing that is done",
+      "markDone": "Mark {name} as invested",
+      "undoDone": "Undo {name}",
+      "markDoneShort": "I put this in",
+      "doneUndo": "Done · undo",
+      "recorded": "Noted for this month.",
+      "willRecord": "Ticking also adds this purchase to {name}, at its current price.",
+      "willLog": "Ticking only notes it. Add the purchase to a holding to update your totals.",
+      "cheerDone": "{amount} into {name} ticked off. Steady wins.",
+      "monthlyHintNone": "Your plan sets nothing aside for investing, so type the amount you want to invest each month."
     }
   },
   "calendar": {

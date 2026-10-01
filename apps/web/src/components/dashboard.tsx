@@ -16,6 +16,7 @@ import {
   activeQueueItems,
   addMonths,
   cashFlowSeries,
+  committedByCategory,
   currentAllocation,
   depositedInMonth,
   emergencyFundMonths,
@@ -52,6 +53,7 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { StatusChip } from "@/components/ui/status-chip";
 import { CashFlowChart } from "./cash-flow-chart";
+import { InstallmentRoom } from "./installment-room";
 import { LimitsPanel } from "./limits-panel";
 
 export interface DashboardProps {
@@ -176,6 +178,11 @@ export function Dashboard({
   const fundLow = savedMonths < profile.emergencyFundTargetMonths;
   const overspent = left < 0;
 
+  const categories = committedByCategory(profile, ledger, month);
+  const names = {
+    ...Object.fromEntries(queueItems.map((i) => [i.id, i.name])),
+    ...Object.fromEntries(sinkingFunds.map((f) => [f.id, f.label])),
+  };
   const waiting = activeQueueItems(queueItems);
   // Without a known plan there are no bucket limits to schedule against.
   const schedule =
@@ -307,7 +314,7 @@ export function Dashboard({
         </ProgressRing>
       </section>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-flow-dense md:grid-cols-2">
         <Panel
           title={t("upcoming")}
           icon={CalendarClock}
@@ -445,7 +452,12 @@ export function Dashboard({
             hrefLabel={t("changePlan")}
           >
             <p className="text-sm text-muted-foreground">{planTitle}</p>
-            <LimitsPanel projection={thisMonth} queueFits={queueFitsNow} />
+            <LimitsPanel
+              projection={thisMonth}
+              queueFits={queueFitsNow}
+              categories={categories}
+              names={names}
+            />
           </Panel>
         )}
 
@@ -482,6 +494,17 @@ export function Dashboard({
               </Link>
             </>
           )}
+        </Panel>
+
+        <Panel
+          title={t("installmentRoom.title")}
+          icon={CreditCard}
+          index={7}
+          testId="installment-room-panel"
+          href="/income-expenses"
+          hrefLabel={t("installmentRoom.manage")}
+        >
+          <InstallmentRoom income={income} capPct={installmentCapPct} used={installments} />
         </Panel>
       </div>
       <CashFlowChart series={cashFlow} />

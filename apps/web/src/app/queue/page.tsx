@@ -8,7 +8,6 @@ import {
   activeQueueItems,
   hourlyNetIncome,
   monthlyNeeds,
-  remainingInstallmentsByCard,
   type Commitment,
   type Decision,
   type Month,
@@ -30,6 +29,7 @@ import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
 import { QueueEisenhower } from "@/components/queue-eisenhower";
 import { QueueSummary } from "@/components/queue-summary";
 import { QueueTimeView } from "@/components/queue-time-view";
+import { remainingByCard } from "@/lib/card-debt";
 import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem, saveQueueOrder } from "@/storage/queue-repo";
@@ -77,7 +77,7 @@ export default function QueuePage() {
     );
   }
 
-  const remainingByCard = remainingInstallmentsByCard(queueItems, monthOf(today));
+  const remainingByCardId = remainingByCard(queueItems, profile, monthOf(today));
   const waitingItems = activeQueueItems(queueItems);
   const selectedItem = waitingItems.find((i) => i.id === selectedId) ?? null;
   const editingItem = waitingItems.find((i) => i.id === editingId);
@@ -349,7 +349,7 @@ export default function QueuePage() {
               monthlyNeeds={needs}
               installmentCapPct={guardThresholds.installmentCapPct}
               cards={cards}
-              remainingInstallments={remainingByCard}
+              remainingInstallments={remainingByCardId}
               purchaseDate={today}
               suggestedMonth={suggestedMonth}
               onDecide={handleDecide}

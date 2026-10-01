@@ -2,10 +2,11 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { remainingInstallmentsByCard, removeCardFromSet, type Card } from "@stoafi/core";
+import { removeCardFromSet, type Card } from "@stoafi/core";
 import { CardWallet } from "@/components/card-wallet";
 import { notify, notifyUndo } from "@/components/ui/toaster";
 import { Page } from "@/components/ui/page";
+import { remainingByCard } from "@/lib/card-debt";
 import { monthOf } from "@/lib/clock";
 import { removeCard, saveCard } from "@/storage/card-repo";
 import { db } from "@/storage/instance";
@@ -19,14 +20,15 @@ export default function CardsPage() {
   const cards = useAppStore((s) => s.cards);
   const setCards = useAppStore((s) => s.setCards);
   const queueItems = useAppStore((s) => s.queueItems);
+  const profile = useAppStore((s) => s.profile);
   const currency = useAppStore((s) => s.currency);
   const today = useAppStore((s) => s.today);
   const t = useTranslations("cards");
   const tc = useTranslations("common");
 
   const remaining = useMemo(
-    () => remainingInstallmentsByCard(queueItems, monthOf(today)),
-    [queueItems, today],
+    () => remainingByCard(queueItems, profile, monthOf(today)),
+    [queueItems, profile, today],
   );
 
   function handleSave(card: Card) {

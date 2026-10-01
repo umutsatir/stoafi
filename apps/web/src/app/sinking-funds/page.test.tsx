@@ -212,3 +212,64 @@ describe("Savings screen", () => {
     );
   });
 });
+
+describe("Savings screen basket ticks", () => {
+  const gold = {
+    id: "g",
+    label: "Gram gold",
+    typeId: "gold",
+    currentPrice: 300_000,
+    trades: [
+      { id: "t0", date: "2026-01-01", side: "buy" as const, quantity: 1, unitPrice: 200_000 },
+    ],
+  };
+
+  beforeEach(async () => {
+    await db.holdings.clear();
+    await db.holdings.put(gold);
+    useAppStore.setState({
+      holdings: [gold],
+      basket: [
+        { id: "gold", label: "Gold", typeId: "gold", percent: 60 },
+        { id: "idx", label: "Index", typeId: "index-fund", percent: 40 },
+      ],
+      basketLog: [],
+      basketMonthly: 1_000_000,
+    });
+  });
+
+  it("ticking a slice notes it for the month and records the purchase in its only holding", async () => {
+    renderPage();
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Investments" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Mark Gold as invested" }));
+
+    const log = useAppStore.getState().basketLog;
+    expect(log).toHaveLength(1);
+    expect(log[0]).toMatchObject({ month: "2026-10", entryId: "gold" });
+    const holding = useAppStore.getState().holdings[0];
+    const trade = holding?.trades.find((t) => t.id === "basket-2026-10-gold");
+    expect(trade).toMatchObject({ side: "buy", unitPrice: 300_000, date: "2026-10-15" });
+    await waitFor(async () => {
+      const row = await db.holdings.get("g");
+      expect(row?.trades).toHaveLength(2);
+    });
+    expect(await screen.findByText(/ticked off/)).toBeInTheDocument();
+  });
+
+  it("undoing the tick removes the note and the purchase", async () => {
+    renderPage();
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Investments" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Mark Gold as invested" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Undo Gold" }));
+    expect(useAppStore.getState().basketLog).toEqual([]);
+    expect(useAppStore.getState().holdings[0]?.trades).toHaveLength(1);
+  });
+
+  it("only notes a slice that has no holding to update", async () => {
+    renderPage();
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Investments" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Mark Index as invested" }));
+    expect(useAppStore.getState().basketLog).toHaveLength(1);
+    expect(useAppStore.getState().holdings[0]?.trades).toHaveLength(1);
+  });
+});

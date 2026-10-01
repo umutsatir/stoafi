@@ -1,7 +1,7 @@
 import { fireEvent, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
-import type { BasketEntry, Holding } from "@stoafi/core";
+import type { BasketEntry, BasketLogEntry, Holding } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { BasketPanel } from "./basket-panel";
 
@@ -150,5 +150,81 @@ describe("BasketPanel", () => {
     renderWithIntl(<Harness />, "tr");
     expect(screen.getByText("Temkinli")).toBeInTheDocument();
     expect(screen.getByTestId("basket-source")).toHaveTextContent("Son gözden geçirme: 2026-10");
+  });
+});
+
+function TickHarness({
+  holdings = [] as Holding[],
+  onToggle = vi.fn(),
+  onMonthlyChange = vi.fn(),
+  savedMonthly = null as number | null,
+}) {
+  const [log, setLog] = useState<BasketLogEntry[]>([]);
+  return (
+    <BasketPanel
+      basket={mine}
+      holdings={holdings}
+      currency="TRY"
+      suggestedMonthly={1_000_000}
+      savedMonthly={savedMonthly}
+      onMonthlyChange={onMonthlyChange}
+      log={log}
+      month="2026-10"
+      createId={() => "x"}
+      onChange={vi.fn()}
+      onAssign={vi.fn()}
+      onToggle={(entry, amount, done) => {
+        onToggle(entry, amount, done);
+        setLog((l) =>
+          done
+            ? [...l, { month: "2026-10", entryId: entry.id, amount }]
+            : l.filter((x) => x.entryId !== entry.id),
+        );
+      }}
+    />
+  );
+}
+
+describe("BasketPanel ticking", () => {
+  it("lets the user tick a slice instead of typing the amount again", () => {
+    const onToggle = vi.fn();
+    renderWithIntl(<TickHarness onToggle={onToggle} />);
+    fireEvent.click(screen.getByRole("button", { name: "Mark Gold as invested" }));
+    expect(onToggle).toHaveBeenCalledWith(mine[0], 600_000, true);
+    const row = screen.getByTestId("split-gold");
+    expect(row).toHaveTextContent("Done · undo");
+    expect(row).toHaveTextContent("Noted for this month.");
+    expect(screen.getByTestId("basket-progress")).toHaveTextContent(
+      "Put in so far this month: ₺6,000.00 of ₺10,000.00",
+    );
+  });
+
+  it("takes a tick back", () => {
+    const onToggle = vi.fn();
+    renderWithIntl(<TickHarness onToggle={onToggle} />);
+    fireEvent.click(screen.getByRole("button", { name: "Mark Gold as invested" }));
+    fireEvent.click(screen.getByRole("button", { name: "Undo Gold" }));
+    expect(onToggle).toHaveBeenLastCalledWith(mine[0], 600_000, false);
+    expect(screen.getByTestId("basket-progress")).toHaveTextContent("₺0.00 of ₺10,000.00");
+  });
+
+  it("says when ticking also records a purchase, and when it only notes it", () => {
+    renderWithIntl(<TickHarness holdings={[held("g", "gold", 1, 300_000)]} />);
+    expect(screen.getByTestId("split-gold")).toHaveTextContent(
+      "Ticking also adds this purchase to g, at its current price.",
+    );
+    expect(screen.getByTestId("split-sp")).toHaveTextContent("Ticking only notes it.");
+  });
+
+  it("remembers a monthly amount the user changed", () => {
+    const onMonthlyChange = vi.fn();
+    renderWithIntl(<TickHarness onMonthlyChange={onMonthlyChange} />);
+    fireEvent.change(screen.getByLabelText("Amount to invest"), { target: { value: "20000" } });
+    expect(onMonthlyChange).toHaveBeenLastCalledWith(2_000_000);
+  });
+
+  it("starts from the saved amount instead of the suggestion", () => {
+    renderWithIntl(<TickHarness savedMonthly={2_500_000} />);
+    expect(screen.getByLabelText("Amount to invest")).toHaveValue("25000");
   });
 });

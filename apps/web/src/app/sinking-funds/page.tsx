@@ -11,9 +11,12 @@ import {
   depositedInMonth,
   monthlyNeeds,
   project,
+  markBasketDone,
   removeDeposit,
   removeEmergencyDeposit,
   strategyRegistry,
+  unmarkBasketDone,
+  type BasketEntry,
   type Deposit,
   type Holding,
   type SinkingFund,
@@ -27,6 +30,7 @@ import { Page } from "@/components/ui/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notify, notifyError, notifyUndo } from "@/components/ui/toaster";
 import { monthOf } from "@/lib/clock";
+import { tickBasketSlice, untickBasketSlice } from "@/lib/basket-tick";
 import { crossedMilestone } from "@/lib/savings-cheer";
 import { useMoney } from "@/lib/use-money";
 import { db } from "@/storage/instance";
@@ -50,6 +54,10 @@ export default function SavingsPage() {
   const currency = useAppStore((s) => s.currency);
   const basket = useAppStore((s) => s.basket);
   const setBasket = useAppStore((s) => s.setBasket);
+  const basketLog = useAppStore((s) => s.basketLog);
+  const setBasketLog = useAppStore((s) => s.setBasketLog);
+  const basketMonthly = useAppStore((s) => s.basketMonthly);
+  const setBasketMonthly = useAppStore((s) => s.setBasketMonthly);
   const today = useAppStore((s) => s.today);
   const ledger = useLedger();
   const [tab, setTab] = useState("pots");
@@ -60,6 +68,7 @@ export default function SavingsPage() {
     else if (quickAction === "addPot") setTab("pots");
   }, [quickAction]);
   const t = useTranslations("savings");
+  const tBasket = useTranslations("investments.basket");
   const money = useMoney();
   const tc = useTranslations("common");
 
@@ -223,6 +232,33 @@ export default function SavingsPage() {
     });
   }
 
+  function handleBasketToggle(entry: BasketEntry, amount: number, done: boolean) {
+    const name = entry.label || tBasket("unnamed");
+    if (done) {
+      setBasketLog(markBasketDone(basketLog, { month, entryId: entry.id, amount }));
+      const updated = tickBasketSlice({
+        holdings,
+        basket,
+        entryId: entry.id,
+        month,
+        date: today,
+        amount,
+      });
+      if (updated) {
+        setHoldings(holdings.map((h) => (h.id === updated.id ? updated : h)));
+        void saveHolding(db, updated).catch(logFailure("save the investment"));
+      }
+      notify(tBasket("cheerDone", { amount: money(amount), name }));
+      return;
+    }
+    setBasketLog(unmarkBasketDone(basketLog, month, entry.id));
+    const back = untickBasketSlice(holdings, month, entry.id);
+    if (back.length > 0) {
+      setHoldings(holdings.map((h) => back.find((b) => b.id === h.id) ?? h));
+      for (const h of back) void saveHolding(db, h).catch(logFailure("save the investment"));
+    }
+  }
+
   function handleAssign(holdingId: string, basketId: string | undefined) {
     const holding = holdings.find((h) => h.id === holdingId);
     if (!holding) return;
@@ -276,6 +312,11 @@ export default function SavingsPage() {
             suggestedMonthly={limits ? limits.investing : 0}
             onBasketChange={setBasket}
             onAssign={handleAssign}
+            savedMonthly={basketMonthly}
+            onMonthlyChange={setBasketMonthly}
+            basketLog={basketLog}
+            month={month}
+            onBasketToggle={handleBasketToggle}
             onSave={handleSaveHolding}
             onDelete={handleDeleteHolding}
             onTradeRemoved={handleTradeRemoved}

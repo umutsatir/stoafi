@@ -27,21 +27,32 @@ const base: Profile = {
   annualInflationExpectation: 0.3,
 };
 
+function addSalary(name: string, amount: string, day?: string) {
+  fireEvent.click(screen.getAllByRole("button", { name: "Add income" })[0] as HTMLElement);
+  const dialog = screen.getByRole("dialog");
+  fireEvent.change(within(dialog).getByLabelText("Name"), { target: { value: name } });
+  fireEvent.change(within(dialog).getByLabelText("Monthly amount"), { target: { value: amount } });
+  if (day) fireEvent.change(within(dialog).getByLabelText("Pay day"), { target: { value: day } });
+  fireEvent.click(within(dialog).getByRole("button", { name: "Add" }));
+}
+
 describe("IncomeExpensesForm", () => {
-  it("saves two salaries and living costs as integer minor units", () => {
+  it("saves two salaries at once as integer minor units, then living costs with the button", () => {
     const onSave = vi.fn();
     renderWithIntl(<IncomeExpensesForm onSave={onSave} />);
 
-    type("Salary 1 name", "Main job");
-    type("Salary 1 amount", "30000");
-    fireEvent.click(screen.getByRole("button", { name: "Add salary" }));
-    type("Salary 2 name", "Partner");
-    type("Salary 2 amount", "12500.50");
+    addSalary("Main job", "30000");
+    addSalary("Partner", "12500.50");
+    expect(onSave).toHaveBeenCalledTimes(2);
+    expect(onSave.mock.calls[1]?.[0].incomes).toEqual([
+      { label: "Main job", monthly: 3_000_000 },
+      { label: "Partner", monthly: 1_250_050 },
+    ]);
+    expect(screen.getByTestId("salary-total")).toHaveTextContent("₺42,500.50");
+
     type("Monthly living costs", "9000");
     fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
-
-    expect(onSave).toHaveBeenCalledTimes(1);
-    expect(onSave).toHaveBeenCalledWith({
+    expect(onSave).toHaveBeenLastCalledWith({
       incomes: [
         { label: "Main job", monthly: 3_000_000 },
         { label: "Partner", monthly: 1_250_050 },
@@ -51,20 +62,44 @@ describe("IncomeExpensesForm", () => {
     });
   });
 
-  it("removes a salary row", () => {
+  it("removes a salary, and undo brings it back", () => {
     const onSave = vi.fn();
     renderWithIntl(<IncomeExpensesForm onSave={onSave} />);
-    fireEvent.click(screen.getByRole("button", { name: "Add salary" }));
-    type("Salary 1 name", "A");
-    type("Salary 1 amount", "1");
-    type("Salary 2 name", "B");
-    type("Salary 2 amount", "2");
-    fireEvent.click(screen.getByRole("button", { name: "Remove salary 1" }));
-    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
-    expect(onSave.mock.calls[0]?.[0].incomes).toEqual([{ label: "B", monthly: 200 }]);
+    addSalary("A", "1");
+    addSalary("B", "2");
+    fireEvent.click(screen.getByRole("button", { name: "Remove A" }));
+    expect(onSave.mock.calls.at(-1)?.[0].incomes).toEqual([{ label: "B", monthly: 200 }]);
+    expect(screen.queryByTestId("salary-row-1")).not.toBeInTheDocument();
   });
 
-  it("requires no field beyond the schema's required set (no multi-step wizard)", () => {
+  it("edits a salary in place", () => {
+    const onSave = vi.fn();
+    renderWithIntl(<IncomeExpensesForm initial={base} onSave={onSave} />);
+    fireEvent.click(screen.getByRole("button", { name: "Edit Job" }));
+    const dialog = screen.getByRole("dialog", { name: "Edit income" });
+    expect(within(dialog).getByLabelText("Name")).toHaveValue("Job");
+    fireEvent.change(within(dialog).getByLabelText("Monthly amount"), {
+      target: { value: "60000" },
+    });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save changes" }));
+    expect(onSave.mock.calls.at(-1)?.[0].incomes).toEqual([{ label: "Job", monthly: 6_000_000 }]);
+  });
+
+  it("asks for a name and an amount before adding a salary", () => {
+    const onSave = vi.fn();
+    renderWithIntl(<IncomeExpensesForm onSave={onSave} />);
+    fireEvent.click(screen.getAllByRole("button", { name: "Add income" })[0] as HTMLElement);
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Add" }));
+    expect(onSave).not.toHaveBeenCalled();
+    expect(screen.getByText("Write a name.")).toBeInTheDocument();
+  });
+
+  it("shows an empty state when there is no income yet", () => {
+    renderWithIntl(<IncomeExpensesForm onSave={vi.fn()} />);
+    expect(screen.getByText("No income yet")).toBeInTheDocument();
+  });
+
+  it("requires nothing to save (no multi-step wizard)", () => {
     const onSave = vi.fn();
     renderWithIntl(<IncomeExpensesForm onSave={onSave} />);
     fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
@@ -75,25 +110,75 @@ describe("IncomeExpensesForm", () => {
   it("uses the Turkish decimal comma when typing amounts", () => {
     const onSave = vi.fn();
     renderWithIntl(<IncomeExpensesForm onSave={onSave} />, "tr");
-    type("Maaş 1 tutarı", "1.250,50");
-    type("Maaş 1 adı", "İş");
-    fireEvent.click(screen.getByRole("button", { name: "Profili kaydet" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Gelir ekle" })[0] as HTMLElement);
+    const dialog = screen.getByRole("dialog");
+    fireEvent.change(within(dialog).getByLabelText("Ad"), { target: { value: "İş" } });
+    fireEvent.change(within(dialog).getByLabelText("Aylık tutar"), {
+      target: { value: "1.250,50" },
+    });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Ekle" }));
     expect(onSave.mock.calls[0]?.[0].incomes).toEqual([{ label: "İş", monthly: 125_050 }]);
   });
 
   it("saves a pay day only when the user picks one", () => {
     const onSave = vi.fn();
     renderWithIntl(<IncomeExpensesForm onSave={onSave} />);
-    type("Salary 1 name", "Job");
-    type("Salary 1 amount", "1000");
-    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    addSalary("Job", "1000");
     expect(onSave.mock.calls[0]?.[0].incomes).toEqual([{ label: "Job", monthly: 100_000 }]);
+    addSalary("Side", "500", "15");
+    expect(onSave.mock.calls[1]?.[0].incomes[1]).toEqual({
+      label: "Side",
+      monthly: 50_000,
+      payDay: 15,
+    });
+  });
+});
 
-    fireEvent.change(screen.getByLabelText("Salary 1 pay day"), { target: { value: "15" } });
+describe("living costs", () => {
+  const withIncome: Profile = { ...base, annualInflationExpectation: 0.4 };
+
+  it("says what share of income they are and how that looks", () => {
+    renderWithIntl(<IncomeExpensesForm initial={withIncome} onSave={vi.fn()} />);
+    expect(screen.queryByTestId("living-check")).not.toBeInTheDocument();
+    type("Monthly living costs", "20000"); // 40% of 50,000
+    expect(screen.getByTestId("living-check")).toHaveTextContent("This is 40% of your income.");
+    expect(screen.getByTestId("living-band")).toHaveTextContent("Typical");
+  });
+
+  it("shows what the costs become after a year of expected inflation", () => {
+    renderWithIntl(<IncomeExpensesForm initial={withIncome} onSave={vi.fn()} />);
+    type("Monthly living costs", "10000");
+    expect(screen.getByTestId("living-next-year")).toHaveTextContent(
+      "At 40% inflation these costs become about ₺14,000.00 a month in a year, ₺4,000.00 more.",
+    );
+  });
+
+  it("compares the user's own rise with expected inflation when last year's figure is given", () => {
+    renderWithIntl(<IncomeExpensesForm initial={withIncome} onSave={vi.fn()} />);
+    type("Monthly living costs", "15000");
+    type("A year ago (optional)", "10000"); // +50% against 40% expected
+    expect(screen.getByTestId("living-own-rise")).toHaveTextContent(
+      "rose 50% in a year, faster than the 40%",
+    );
+  });
+
+  it("saves last year's figure, and leaves it out when cleared", () => {
+    const onSave = vi.fn();
+    renderWithIntl(<IncomeExpensesForm initial={withIncome} onSave={onSave} />);
+    type("Monthly living costs", "15000");
+    type("A year ago (optional)", "10000");
     fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
-    expect(onSave.mock.calls[1]?.[0].incomes).toEqual([
-      { label: "Job", monthly: 100_000, payDay: 15 },
-    ]);
+    expect(onSave.mock.calls[0]?.[0].livingExpensesYearAgo).toBe(1_000_000);
+    type("A year ago (optional)", "0");
+    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    expect(onSave.mock.calls[1]?.[0]).not.toHaveProperty("livingExpensesYearAgo");
+  });
+
+  it("gives no share verdict without income", () => {
+    renderWithIntl(<IncomeExpensesForm onSave={vi.fn()} />);
+    type("Monthly living costs", "10000");
+    expect(screen.queryByTestId("living-band")).not.toBeInTheDocument();
+    expect(screen.getByTestId("living-next-year")).toBeInTheDocument();
   });
 });
 
@@ -223,6 +308,48 @@ describe("adding an expense", () => {
   });
 });
 
+describe("installments on a card", () => {
+  const cards = [
+    { id: "c1", label: "Bonus", kind: "main" as const, limit: 5_000_000 },
+  ] as unknown as import("@stoafi/core").Card[];
+
+  it("offers the user's cards for an installment, and saves the one picked", () => {
+    const onSave = vi.fn();
+    renderWithIntl(
+      <IncomeExpensesForm initial={base} currentMonth="2026-09" cards={cards} onSave={onSave} />,
+    );
+    openAdd("Installment");
+    type("Name", "Phone");
+    type("Monthly payment", "1500");
+    fireEvent.change(screen.getByLabelText("Card (optional)"), { target: { value: "c1" } });
+    submitPanel();
+    expect(onSave.mock.calls[0]?.[0].fixedExpenses[0]).toMatchObject({
+      kind: "installment",
+      cardId: "c1",
+    });
+  });
+
+  it("does not ask for a card on a loan or a bill, or when the user has no cards", () => {
+    renderWithIntl(
+      <IncomeExpensesForm initial={base} currentMonth="2026-09" cards={cards} onSave={vi.fn()} />,
+    );
+    openAdd("Loan");
+    expect(screen.queryByLabelText("Card (optional)")).not.toBeInTheDocument();
+  });
+
+  it("leaves the card out when none is chosen", () => {
+    const onSave = vi.fn();
+    renderWithIntl(
+      <IncomeExpensesForm initial={base} currentMonth="2026-09" cards={cards} onSave={onSave} />,
+    );
+    openAdd("Installment");
+    type("Name", "TV");
+    type("Monthly payment", "500");
+    submitPanel();
+    expect(onSave.mock.calls[0]?.[0].fixedExpenses[0]).not.toHaveProperty("cardId");
+  });
+});
+
 describe("existing expenses", () => {
   const withExpenses: Profile = {
     ...base,
@@ -281,11 +408,10 @@ describe("existing expenses", () => {
     expect(screen.getByRole("dialog", { name: "Add expense" })).toBeInTheDocument();
   });
 
-  it("show saved pay day when editing", () => {
+  it("shows saved incomes with their pay day", () => {
     const initial: Profile = { ...base, incomes: [{ label: "Job", monthly: 100_000, payDay: 20 }] };
     renderWithIntl(<IncomeExpensesForm initial={initial} onSave={vi.fn()} />);
-    expect(screen.getByLabelText("Salary 1 pay day")).toHaveValue("20");
-    expect(screen.getByLabelText("Salary 1 name")).toHaveValue("Job");
-    expect(screen.getByLabelText("Salary 1 amount")).toHaveValue("1000");
+    expect(screen.getByTestId("salary-row-0")).toHaveTextContent("Job");
+    expect(screen.getByTestId("salary-row-0")).toHaveTextContent("Paid on day 20");
   });
 });

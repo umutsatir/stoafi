@@ -16,13 +16,24 @@ export default function PlanPage() {
   const planState = useAppStore((s) => s.planState);
   const setPlanState = useAppStore((s) => s.setPlanState);
   const today = useAppStore((s) => s.today);
+  const queueItems = useAppStore((s) => s.queueItems);
+  const sinkingFunds = useAppStore((s) => s.sinkingFunds);
+  const guardThresholds = useAppStore((s) => s.guardThresholds);
   const ledger = useLedger();
   const t = useTranslations("plan");
 
   return (
     <Page title={t("title")}>
       {profile && planState && (
-        <PlanUsage profile={profile} planState={planState} ledger={ledger} month={monthOf(today)} />
+        <PlanUsage
+          profile={profile}
+          planState={planState}
+          ledger={ledger}
+          month={monthOf(today)}
+          queueItems={queueItems}
+          sinkingFunds={sinkingFunds}
+          installmentCapPct={guardThresholds.installmentCapPct}
+        />
       )}
       {profile && planState && (
         <PlanInsights

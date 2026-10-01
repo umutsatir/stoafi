@@ -133,6 +133,13 @@ describe("Dashboard", () => {
     expect(plan.getByTestId("plan-needs")).toHaveTextContent("₺5,000.00");
   });
 
+  it("shows how much installment room is left, and what each bucket is made of", () => {
+    renderDashboard();
+    expect(screen.getByTestId("installment-room")).toBeInTheDocument();
+    expect(screen.getByTestId("installment-room-left")).toHaveTextContent("more a month");
+    expect(screen.getByTestId("limit-needs")).toBeInTheDocument();
+  });
+
   it("draws a 12-month cash-flow chart starting this month", () => {
     renderDashboard();
     const chart = screen.getByTestId("cash-flow-chart");

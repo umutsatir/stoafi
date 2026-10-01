@@ -24,6 +24,14 @@ function collectErrors(page: Page): string[] {
   return errors;
 }
 
+async function addSalary(page: Page, name: string, amount: string) {
+  await page.getByRole("button", { name: "Add income" }).first().click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Name", { exact: true }).fill(name);
+  await dialog.getByLabel("Monthly amount").fill(amount);
+  await dialog.getByRole("button", { name: "Add", exact: true }).click();
+}
+
 for (const path of PAGES) {
   test(`${path} opens without errors and fits a phone screen`, async ({ page }) => {
     const errors = collectErrors(page);
@@ -60,19 +68,16 @@ for (const path of PAGES) {
 
 test("saving income shows a confirmation and survives a reload", async ({ page }) => {
   await page.goto("/income-expenses");
-  await page.getByLabel("Salary 1 name").fill("Main job");
-  await page.getByLabel("Salary 1 amount").fill("30000");
-  await page.getByRole("button", { name: /^save/i }).first().click();
+  await addSalary(page, "Main job", "30000");
   await expect(page.getByText("Saved", { exact: true })).toBeVisible();
 
   await page.reload();
-  await expect(page.getByLabel("Salary 1 amount")).toHaveValue("30000");
+  await expect(page.getByTestId("salary-total")).toContainText("30,000");
 });
 
 test("deleting a pot can be undone", async ({ page }) => {
   await page.goto("/income-expenses");
-  await page.getByLabel("Salary 1 amount").fill("30000");
-  await page.getByRole("button", { name: /^save/i }).first().click();
+  await addSalary(page, "Job", "30000");
   await expect(page.getByText("Saved", { exact: true })).toBeVisible();
 
   await page.goto("/sinking-funds");
@@ -157,9 +162,7 @@ test("an installment added as an expense is listed under installments, with a cl
     const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("/income-expenses");
-    await page.getByLabel("Salary 1 name").fill("Job");
-    await page.getByLabel("Salary 1 amount").fill("30000");
-    await page.getByRole("button", { name: "Save profile" }).click();
+    await addSalary(page, "Job", "30000");
 
     await page.getByRole("button", { name: "Add expense" }).first().click();
     await page.getByRole("radio", { name: /^Installment/ }).click();

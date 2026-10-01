@@ -882,6 +882,13 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T15.4** Investing basket: percentages per kind of investment, example baskets dated 2026-10 with named sources, split of a monthly amount (exact to the kuruş) either by percent or by filling the gaps against what is held; holdings can be placed in a slice.
   Note: examples are static data (`data/basket-templates.json`), not live advice; the app makes no network call. Basket is stored in settings (optional field, included in backups).
 
+- [x] **T15.5** Limits in detail: home shows, per bucket, what is committed by category (bills, living costs, installments, loans, pots, saving) and a new "Installment room" card (cap minus installment load); the Plan page lists every line under each bucket and the same room. Core: `committedByCategory`.
+  Note: the home grid uses dense flow so no card is left alone in a row.
+- [x] **T15.6** Installments on a card: an installment expense can name a card; its remaining payments count against the card's limit together with queue purchases (`installmentDebtByCard`, `lib/card-debt.ts`).
+- [x] **T15.7** Income and expenses: incomes are rows with a panel like expenses (autosave, undo); living costs card with share-of-income band, a year of expected inflation, and optional "a year ago" figure to compare the user's own price rise (`livingCostCheck`, bands in `data/living-cost-bands.json`).
+  Note: the bands are our own rule of thumb (tunable data), not official statistics, and the screen says so.
+- [x] **T15.8** Basket ticks: the monthly amount is remembered; each slice has "I put this in" that notes it for the month (`basketLog`) and, when the slice has one priced holding, records the purchase at its current price (undo removes both).
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { limitAdvice, limitStatuses, type LimitAdvice, type MonthProjection } from "@stoafi/core";
+import {
+  limitAdvice,
+  limitStatuses,
+  type CategoryAmount,
+  type LimitAdvice,
+  type MonthProjection,
+} from "@stoafi/core";
 import { ProgressBar, type Tone } from "@/components/ui/progress-bar";
 import { StatusChip } from "@/components/ui/status-chip";
 import { useMoney } from "@/lib/use-money";
+import { CategoryLines } from "./category-lines";
 import { stagger } from "@/lib/utils";
 
 const TONE: Record<"ok" | "tight" | "over", Tone> = {
@@ -29,10 +36,13 @@ export interface LimitsPanelProps {
   projection: MonthProjection;
   /** How many waiting wants the queue already places in this month. */
   queueFits: number;
+  /** What each bucket's committed money is for; shown as one short line under the bar. */
+  categories?: CategoryAmount[];
+  names?: Record<string, string>;
 }
 
 /** Each bucket's plan limit against what is already committed this month, and what to do about it. */
-export function LimitsPanel({ projection, queueFits }: LimitsPanelProps) {
+export function LimitsPanel({ projection, queueFits, categories = [], names }: LimitsPanelProps) {
   const t = useTranslations("home.limits");
   const money = useMoney();
   const statuses = limitStatuses(projection);
@@ -60,6 +70,7 @@ export function LimitsPanel({ projection, queueFits }: LimitsPanelProps) {
               label={t("barLabel", { bucket: t(`bucket.${s.bucket}`) })}
               tone={TONE[s.state]}
             />
+            <CategoryLines rows={categories} bucket={s.bucket} {...(names ? { names } : {})} />
             <p className="flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
               <span
                 data-testid={`left-${s.bucket}`}

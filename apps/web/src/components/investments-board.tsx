@@ -11,6 +11,8 @@ import {
   portfolioTotals,
   removeTrade,
   type BasketEntry,
+  type BasketLogEntry,
+  type Month,
   type Holding,
   type Trade,
 } from "@stoafi/core";
@@ -48,6 +50,11 @@ export interface InvestmentsBoardProps {
   /** What the plan sets for investing this month; the basket offers it as the amount to split. */
   suggestedMonthly: number;
   onBasketChange: (basket: BasketEntry[]) => void;
+  savedMonthly?: number | null;
+  onMonthlyChange?: (amount: number) => void;
+  basketLog?: BasketLogEntry[];
+  month?: Month;
+  onBasketToggle?: (entry: BasketEntry, amount: number, done: boolean) => void;
   onAssign: (holdingId: string, basketId: string | undefined) => void;
   onSave: (holding: Holding) => void;
   onDelete: (holding: Holding) => void;
@@ -150,6 +157,11 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
         holdings={holdings}
         currency={currency}
         suggestedMonthly={props.suggestedMonthly}
+        {...(props.savedMonthly !== undefined ? { savedMonthly: props.savedMonthly } : {})}
+        {...(props.onMonthlyChange ? { onMonthlyChange: props.onMonthlyChange } : {})}
+        {...(props.basketLog ? { log: props.basketLog } : {})}
+        {...(props.month ? { month: props.month } : {})}
+        {...(props.onBasketToggle ? { onToggle: props.onBasketToggle } : {})}
         createId={createId}
         onChange={props.onBasketChange}
         onAssign={props.onAssign}
