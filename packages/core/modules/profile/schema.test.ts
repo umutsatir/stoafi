@@ -14,6 +14,19 @@ describe("ProfileSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("keeps the country the inflation suggestion came from", () => {
+    const result = ProfileSchema.safeParse({
+      incomes: [],
+      fixedExpenses: [],
+      livingExpenses: 0,
+      savings: 0,
+      emergencyFundTargetMonths: 6,
+      annualInflationExpectation: 0.3,
+      countryCode: "TR",
+    });
+    expect(result.success && result.data.countryCode).toBe("TR");
+  });
+
   it("rejects negative savings", () => {
     const result = ProfileSchema.safeParse({
       incomes: [{ label: "Salary", monthly: 50000 }],

@@ -16,7 +16,7 @@ describe("minimumPaymentPayoff", () => {
     let balance = 1000;
     let months = 0;
     let totalInterest = 0;
-    while (balance > 0 && months < 600) {
+    while (balance >= 0.5 && months < 600) {
       const interest = balance * 0.02;
       totalInterest += interest;
       const payment = Math.max(0.05 * balance, 0);
@@ -39,5 +39,11 @@ describe("minimumPaymentPayoff", () => {
     // rate 0.05 (5%/mo), payment pct 0.01 (1%/mo) -> payment never covers interest, balance grows.
     const result = minimumPaymentPayoff(1000, 0.05, { pct: 0.01, floor: 0 });
     expect(result.months).toBe(600);
+  });
+
+  it("flags a debt that never pays off and not one that does", () => {
+    expect(minimumPaymentPayoff(1000, 0.05, { pct: 0.01, floor: 0 }).neverPaysOff).toBe(true);
+    expect(minimumPaymentPayoff(1000, 0.02, { pct: 0.05, floor: 0 }).neverPaysOff).toBe(false);
+    expect(minimumPaymentPayoff(0, 0.02, { pct: 0.05, floor: 0 }).neverPaysOff).toBe(false);
   });
 });

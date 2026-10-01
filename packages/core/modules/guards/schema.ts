@@ -23,6 +23,11 @@ export interface GuardContext {
   projectedInstallmentLoad: Minor;
   netIncome: Minor;
   installmentCapPct: number;
+  /**
+   * How far the draft pushes the chosen card (with its supplementary cards) over its shared limit.
+   * Zero or missing when no card was chosen, the limit is unknown or the draft fits.
+   */
+  cardLimitOverBy?: Minor;
 }
 
 export interface GuardRule {
@@ -47,6 +52,11 @@ export const defaultGuardRules: GuardRule[] = [
     id: "installment-cap",
     severity: "block",
     check: (ctx) => ctx.projectedInstallmentLoad > ctx.netIncome * ctx.installmentCapPct,
+  },
+  {
+    id: "card-limit",
+    severity: "warning",
+    check: (ctx) => (ctx.cardLimitOverBy ?? 0) > 0,
   },
   {
     id: "wants-limit",

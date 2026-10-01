@@ -24,7 +24,13 @@ export function importAll(registry: Registry, backupJson: unknown): ImportResult
 
     const validRows: unknown[] = [];
     rows.forEach((row, index) => {
-      const parsed = module.schema.safeParse(row);
+      // A backup from an older app version holds rows in an older shape; bring them up to date first.
+      const upgraded = module.migrations.reduce<unknown>(
+        (current, migrate) =>
+          typeof migrate === "function" ? (migrate as (r: unknown) => unknown)(current) : current,
+        row,
+      );
+      const parsed = module.schema.safeParse(upgraded);
       if (parsed.success) {
         validRows.push(parsed.data);
       } else {

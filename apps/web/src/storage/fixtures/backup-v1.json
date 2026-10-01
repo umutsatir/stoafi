@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "exportedAt": "2025-03-01T10:00:00.000Z",
+  "data": {
+    "profile": [
+      {
+        "incomes": [{ "label": "Salary", "monthly": 5000000, "variable": false }],
+        "fixedExpenses": [{ "label": "Rent", "monthly": 1500000, "bucket": "needs" }],
+        "avgVariableExpenses": [{ "label": "Groceries", "monthly": 900000, "bucket": "needs" }],
+        "savings": 2000000,
+        "emergencyFundTargetMonths": 6,
+        "annualInflationExpectation": 0.3
+      }
+    ],
+    "plan": [{ "strategyId": "fifty-thirty-twenty", "params": {} }],
+    "queue": [
+      {
+        "id": "q1",
+        "name": "Headphones",
+        "price": 300000,
+        "urgency": 2,
+        "importance": 2,
+        "isNeed": false,
+        "expectedUses": 100,
+        "addedDate": "2025-02-01",
+        "priceUpdatedDate": "2025-02-01",
+        "order": 0
+      }
+    ],
+    "sinking-funds": [
+      {
+        "id": "f1",
+        "label": "Insurance",
+        "target": 600000,
+        "dueMonth": "2025-12",
+        "currentBalance": 100000
+      }
+    ],
+    "cards": [{ "id": "c1", "label": "Visa", "statementDay": 15, "dueDay": 5 }],
+    "decisions": [
+      {
+        "id": "d1",
+        "queueItemRef": "q0",
+        "outcome": "skipped",
+        "timestamp": "2025-02-10T10:00:00.000Z",
+        "amount": 400000
+      }
+    ],
+    "guards": [{ "installmentCapPct": 0.2 }],
+    "settings": [{ "locale": "en", "currency": "TRY" }]
+  }
+}

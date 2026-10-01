@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from "next-intl";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import en from "@/i18n/en.json";
 import tr from "@/i18n/tr.json";
@@ -32,5 +32,21 @@ describe("LocaleSwitcher", () => {
 
     expect(trAmount).not.toBe(enAmount);
     expect(trDate).not.toBe(enDate);
+  });
+
+  it("lists languages by name and formats the sample amount with the currency symbol", () => {
+    renderWithLocale("en");
+    expect(screen.getByRole("option", { name: "Türkçe" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "English" })).toBeInTheDocument();
+    expect(screen.getByTestId("sample-amount")).toHaveTextContent("₺123,456.78");
+    expect(screen.getByTestId("sample-amount")).not.toHaveTextContent("TRY");
+  });
+
+  it("changes the saved appearance with the selector", () => {
+    useAppStore.setState({ theme: "system" });
+    renderWithLocale("en");
+    expect(screen.getByRole("radio", { name: "Follow my device" })).toBeChecked();
+    fireEvent.click(screen.getByRole("radio", { name: "Dark" }));
+    expect(useAppStore.getState().theme).toBe("dark");
   });
 });

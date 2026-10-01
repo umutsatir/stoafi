@@ -704,6 +704,201 @@ Goal: the app is usable end to end by a real person. Added after user review of 
 
 ---
 
+## Phase 10 — Completion pass: ledger correctness, missing screens, release hygiene
+
+Goal: close the gaps found in a full read of the repo against `docs/SPEC.md` after Phase 9. Findings (verified in code, 2026-10-01):
+
+- `project()` only sees queue/installment commitments, so recurring expenses and living costs never count against bucket limits: free cash and the scheduler's room are overstated (a need "fits" even when rent already fills the needs bucket).
+- Sinking funds have a core module but no screen, so the acceptance criterion cannot be met by a user.
+- `Strategy.diagnose` is never shown: the Plan screen has no insights.
+- Lesson links point at `#lesson-<id>` anchors that exist nowhere: there is no lessons screen, so "every recommendation cites its source" is not met.
+- The card timing tip (flow 4) is unreachable: no card is ever passed to the preview. Cards are not persisted either.
+- Skip and postpone cannot be recorded, so the decision log can only ever show "bought". Flow 1's "cash in the first month it fits" is missing.
+- Language and currency are not persisted (a reload resets to English/TRY) and `<html lang>` is fixed to `en`.
+- The installment cap (20%) is hard-coded in the queue page; `GuardThresholdsSchema` exists but nothing reads or saves it.
+- Core branch coverage is 89.74%, under the 90% acceptance bar; CI does not build or check coverage; README is a stub.
+
+Not in this phase, needs a product decision first (recorded under Open questions): what "prompts again when the cooldown ends" should look like.
+
+- [x] **T10.1** Recurring obligations as derived commitments
+  Goal: `recurringCommitments(profile, fromMonth, horizon)` in core turns each recurring expense (respecting `endMonth`) and the living-costs line into active commitments (`source.module: "profile"`, needs/wants bucket) so `project()` counts them in bucket usage and `freeCash`. A `useLedger()` hook assembles recurring + installment (+ later sinking-fund) commitments; the queue list, timeline, preview, guards and dashboard use it.
+  Acceptance: tests: projection of a profile with rent and living costs reduces `freeCash` and fills the needs bucket; an expense stops after its `endMonth`; the scheduler places a need later (or `null`) when recurring costs already fill the needs limit; dashboard "left" equals `project().freeCash`.
+  Depends on: T9.15
+  Note: `recurringCommitments` (core, `profile/recurring-commitments.ts`, 24-month horizon) feeds the ledger built by `buildLedger` (`store/ledger.ts`, used by `useLedger()`); the old `useCommitments` is now `useInstallmentCommitments` (installments only, used where only the installment load matters). The dashboard's "left" is now `project().freeCash`, checked equal to `cashFlowSeries` in a test. Visible behavior change: a need no longer "fits" when recurring costs already fill the needs limit (a dashboard test that expected this was wrong and was rewritten); with 50/30/20, rent plus living costs above 50% of income leave no room for needs items.
+
+- [x] **T10.2** Persist language and currency; correct `<html lang>`
+  Goal: a `settings` module (Zod schema, version 1, registered, in backups) stored in Dexie; first run picks the browser's language (`tr`/`en`); changing language or currency saves it; `document.documentElement.lang` follows the locale.
+  Acceptance: tests: saved settings load into the store on bootstrap; changing locale persists; invalid stored settings fall back to defaults; export/import round-trips settings.
+  Depends on: T10.1
+  Note: `settings` is a core module like the others (Zod schema, version 1, registered, included in backups) with a Dexie table added in v4 (existing rows untouched). `AppBootstrap` passes `navigator.language` to `loadAppState`, which uses it only when nothing is saved, and then saves whatever the screens change, so no screen needs its own save call. Invalid stored settings fall back to defaults instead of crashing startup.
+
+- [x] **T10.3** Lessons screen and working source links
+  Goal: `/lessons` lists every card for the active locale with source, principle, formula, fits-when and critique; every existing lesson link goes to `/lessons#<id>` and the target scrolls into view; nav entry added.
+  Acceptance: tests: all 10 cards render with all fields in `en` and `tr`; each linked screen's link `href` matches an element id on the page.
+  Depends on: T10.1
+  Note: a shared `LessonLink` replaces six dead `#lesson-<id>` anchors (they pointed at nothing); links keep their `aria-label`/test ids. The strategy cards on Plan also get a "Read the full lesson" link. The page scrolls to the hash itself because screens only mount after saved data loads, so the browser cannot do it. `LESSON_IDS` lists the ten cards in SPEC order. The sinking-funds link still sits on the Queue page until T10.6 moves it.
+
+- [x] **T10.4** Plan insights
+  Goal: the Plan screen shows the active strategy's `diagnose` insights over the next 12 months of the ledger, each with its lesson link.
+  Acceptance: tests: an overspent wants bucket under 50/30/20 shows its insight; no insights shows an "all clear" line.
+  Depends on: T10.1, T10.3
+  Note: strategy insights were hard-coded English sentences in core (one even stated "30%" although the percentage is a parameter), so they could not be shown in Turkish. `Insight` now carries the `month` it is about; screens translate by `id` (`insights.*`, falling back to the English `message` for an unknown id) and group a finding's months into one line ("2026-10–2027-09"). The Pay Yourself First line says that only tracked set-asides (sinking funds) count, because the app does not track money the user moves to savings themselves.
+
+- [x] **T10.5** Finish the purchase flow: skip, postpone, first fitting month, card tip
+  Goal: the preview offers Skip and Postpone (writing `skipped`/`postponed` decisions; skip removes the item), shows and can preview "first month that fits", and lets the user pick a card and purchase date so `timingTip` can appear and shift the first payment.
+  Acceptance: tests: skipping adds a `skipped` decision and the decision log's total saved rises by the price; postponing keeps the item; the suggested month equals the scheduler's; selecting a card bought after its statement day shows the tip with the right day count.
+  Depends on: T10.1
+  Note: Skip removes the item and logs `skipped` at the cash price (`discountedCashPrice` when set), which is what the decision log's "saved" total sums; Postpone logs `postponed` and keeps the item (it does not restart the 30-day cooldown; revisit with the cooldown re-prompt open question). Neither needs the guard "I know". The preview's before/after now uses the chosen first-payment month (suggested month or a card-shifted one) instead of always the current month. The preview takes `cards` and a purchase date and owns the card choice, replacing the old single `card` prop that no screen ever passed (flow 4 was unreachable).
+
+- [x] **T10.6** Sinking funds screen
+  Goal: add, edit and delete sinking funds (label, target, due month, saved so far); show each one's monthly set-aside; their commitments join the ledger; overdue or due-this-month funds are handled instead of throwing; the sinking-funds lesson link moves here from the Queue page.
+  Acceptance: tests: a fund due in 6 months shows the expected set-aside and appears in the home chart's savings usage; a fund due this month shows a clear state, not an error; funds persist across reload.
+  Depends on: T10.1, T10.3
+  Note: `sinkingFundStatus` (core) names a fund's state (funded, active with its monthly set-aside, due this month, overdue) so the screen never calls `monthlySetAside` with zero or negative months; `sinkingFundCommitments` feeds the ledger and skips due/overdue funds. Set-asides start next month (T2.9's `toCommitment`), so the current month's figures do not change when a fund is added; the home chart shows them from next month on and `CashFlowPoint` gained `setAside`, which `left` now subtracts. "Saved so far" is entered by hand (the app does not track the user's own transfers). The sinking-funds lesson link moved here from the Queue page, and nav gained a Sinking funds entry.
+
+- [x] **T10.7** Persist cards
+  Goal: cards are saved to Dexie and can be deleted.
+  Acceptance: tests: adding a card writes it and a reload restores it; deleting removes it.
+  Depends on: T10.5
+  Note: cards are saved and deleted through `storage/card-repo.ts` (validated against `CardSchema`); the add form now trims the name and refuses an empty one with a message, and the id comes from an injectable `createId` so tests are deterministic. Deleting a card does not touch past decisions (they never referenced one).
+
+- [x] **T10.8** Editable installment cap
+  Goal: the installment cap is read from `GuardThresholds` (saved in Dexie) and editable in Settings; the queue page uses it instead of the literal 0.2.
+  Acceptance: tests: changing the cap to 10% makes an installment that breached nothing at 20% raise the `installment-cap` breach; the value survives reload.
+  Depends on: T10.2
+  Note: the cap is stored in the `guards` table (already in backups) as `GuardThresholds`; a missing or out-of-range stored value falls back to the 20% default instead of crashing startup. The Settings field accepts 0 to 100% and refuses more with a message rather than saving it. This does not settle the open question about the default value; 20% stays the default and is now one setting away from changing.
+
+- [x] **T10.9** Release hygiene
+  Goal: core branch coverage back above 90% with a coverage threshold enforced in `vitest.config.ts`; CI also builds the web app; README rewritten (what it is, features, run, test, deploy, data stays on device); `today` refreshes when the app becomes visible on a new day.
+  Acceptance: `pnpm --filter @stoafi/core test:coverage` reports >= 90% lines and branches and fails below that; CI runs `pnpm build`; a test shows `today` updates after a date change.
+  Depends on: T10.1–T10.8
+  Note: core coverage is now 100% lines and 98.2% branches (it had slipped to 89.7%, below the bar) and the vitest config fails the run below 90% on lines, branches, functions and statements. Real untested behavior got tests (cancelled commitments, impossible months, unknown modules in a backup, damaged v1 profiles, partial dates); two dead `?? 0` fallbacks in `cashFlowSeries` were removed instead of tested. CI now also checks formatting, runs core coverage and builds the web app. `today` refreshes on tab visibility and window focus, so an installed app left open overnight moves to the new day. README rewritten.
+
+**Stop and report after Phase 10.**
+
+---
+
+## Phases 11 to 14 — Product and interface pass (PLANNED, nothing started)
+
+Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, every screen's controls, new features, module wiring, readiness checklist). **No task below starts until the owner answers the decisions in section 11 of that document.** Work goes page by page: one page, a screenshot for review, then the next. Do not change several pages in one go.
+
+### Phase 11 — Foundation (everything later builds on it)
+
+- [x] **T11.1** Fix the real defects found in the audit
+  Goal: decisions store the item's name (additive optional field on `Decision`) instead of showing an id; guard breaches show translated sentences, never rule ids; the minimum-payment result says "never pays off" instead of "600 months"; the chosen country is saved; metrics show units; settings show language names and consistent currency formatting.
+  Acceptance: a test per defect (H1, H2, H3, H4, H6, H7 in the plan); no raw id or rule id reaches the screen.
+  Depends on: T10.9
+  Note: the minimum-payment payoff now counts a balance under half a minor unit as paid and exposes `neverPaysOff`; before, a percentage-only minimum showed the 600-month cap for ordinary inputs. Decisions and the profile gained optional `itemName` and `countryCode` (additive, no migration). H5 (savings rate) waits for the pots in T12.8.
+
+- [x] **T11.2** Design tokens and theme
+  Goal: brand and semantic colors, data colors per bucket, type scale, spacing, radius, light and dark themes, theme setting (system, light, dark) saved in settings.
+  Acceptance: both themes pass contrast checks; theme survives reload; no hard-coded colors outside the tokens.
+  Depends on: T11.1
+  Note: brand is deep teal with an amber highlight; `tokens.test.ts` reads `globals.css` and checks contrast in both themes and forbids hard-coded colours. The theme is saved in settings (optional field, no migration) and mirrored in localStorage only so the first paint has no flash. Fonts are still the system stack: self-hosted fonts come with T11.3 (next/font needs network at build time, not available in the sandbox).
+
+- [x] **T11.3** Shared component library and motion
+  Goal: motion foundation (`motion`, respects reduced-motion), a decision on community components (own code vs copied from a registry such as 21st.dev, license checked per component and recorded in `docs/THIRD-PARTY.md`), and `Money`, `StatCard`, `ProgressBar`, `ProgressRing`, `Sheet`, `Dialog`/`ConfirmDialog`, `Toast` with undo, `Tabs`/`SegmentedControl`, `EmptyState`, `Skeleton`, `InfoPopover`, `StatusChip`, `MonthTrack`.
+  Acceptance: each component has a test and is used by at least one screen before the phase ends.
+  Depends on: T11.2
+  Note: built on `motion`, Radix dialog/tabs/popover and sonner; components written in our own code (no 21st.dev code copied yet, so nothing to record in `docs/THIRD-PARTY.md`). Already used on screens: Money (decision log), StatCard, InfoPopover and ProgressRing (health), ProgressBar and EmptyState (savings goals, decisions), Skeleton (loading), ConfirmDialog and Dialog (backup import), Sheet (phone More menu), SegmentedControl (appearance), toasts with undo. Not yet on a screen: `Tabs` (first needed by the savings and investments page, T12.8b), `MonthTrack` and `StatusChip` outside StatCard (queue, T12.3), `AnimatedNumber` with `Money animated` (home hero, T12.1). Self-hosted fonts deferred: next/font needs network at build time.
+
+- [x] **T11.4** App shell
+  Goal: grouped sidebar, mobile bottom tab bar (5 items plus More), page header bar, skip link.
+  Acceptance: on a 390 px screen every route is reachable without horizontal scrolling.
+  Depends on: T11.3
+  Note: grouped sidebar (desktop) and a bottom bar with Home, Money, Queue, Plan and a More sheet (phone); Health, Savings, Cards, Decisions, Lessons, Profile and Settings sit under More. The plan listed Health as a tab; Queue replaced it because it is the main daily screen. Easy to swap.
+
+- [x] **T11.5** Feedback patterns
+  Goal: "Saved" feedback, undo on delete, confirmation for destructive bulk actions, autosave on small forms, unsaved-changes guard on long forms.
+  Acceptance: no save or delete happens silently.
+  Depends on: T11.3
+  Note: saving shows a toast on profile, income and expenses, savings goals, cards and queue; deleting a card, savings goal, queue item or installment purchase shows a toast with Undo that restores and saves it again. Buying or skipping from the queue still removes the item without an undo toast (the decision log is the record). Backup import asks for confirmation first.
+
+- [x] **T11.6** Small browser smoke tests in the repo
+  Goal: one Playwright smoke test per page (opens, no console error, no horizontal scroll on a phone, main action works) plus an axe accessibility scan, run in CI. Kept deliberately small (about 15 short tests); no long scenarios.
+  Acceptance: CI fails on a console error, a horizontal scroll on a phone, or a serious axe violation.
+  Depends on: T11.4
+  Note: 24 tests (per page: opens, no console error, no sideways scroll on a phone, no serious or critical axe problem in light and dark; plus saving income and delete-with-undo). They run against the static export; `PLAYWRIGHT_CHROMIUM_PATH` points at an existing Chromium where Playwright's own download is not available. New devDependencies: `@playwright/test` (pinned to the sandbox's browser build) and `@axe-core/playwright`. The pages are mostly empty in these runs; each page task in Phase 12 adds a filled-state scan for its own page.
+  Note: preview deployments were dropped (the owner runs branches locally).
+
+### Phase 12 — Page by page (each page needs its own approval before the next starts)
+
+Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, Plan, Health, Decisions, Savings goals, Lessons, Settings with "Ask AI", Onboarding with demo mode. Section 5 of the plan lists every control for each page.
+
+- [x] **T12.1** Home (5.1)
+- [x] **T12.2** Cards with supplementary cards, bank presets and card widgets; minimum-payment tool collapsed (5.7, 6.1, 6.2)
+  Note: core has `limitUsage`, `removeCardFromSet`, `validateCardSet`, bank presets (`data/banks.json`, colours approximate and flagged, no logos) and `remainingInstallmentsByCard`; purchases remember their `cardId`, so remaining installments count against the shared limit. A limit of 0 in the form means "not tracked". Not done from the plan: the card-limit guard rule in the queue preview and the upcoming-payments calendar (T13.x), and the best-day-to-buy hint per card stays where it already was (queue preview).
+- [x] **T12.3** Queue: side panel preview, Eisenhower and time views (5.5)
+  Note: done: add and edit in a side panel, summary strip, list/Eisenhower/time views with a needs/wants filter, priority as one chip, month names, Buy button, preview in a side panel, empty state; the duplicate 12-month timeline is gone. Not done yet: dragging between Eisenhower quadrants (change priority with Edit for now), the ⋯ menu (edit and delete stay as icon buttons), before/after progress bars, Peşin/Taksit segment and card widget picker inside the preview, the stale-price reminder, and the card-limit warning. These belong to a second queue pass.
+- [x] **T12.4** Income & Expenses and Profile, with a recurring savings/investing type (5.2, 5.3)
+- [x] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)
+- [x] **T12.6** Health: status, units, thresholds, next steps (5.8)
+- [x] **T12.7** Decisions: feed, filters, stats (5.9)
+  Note: stats (saved, with work days from the hourly income; bought; postponed), outcome filter, month-grouped feed with item names, risk-accepted badge, add back to queue (rebuilt from name and amount with default priority) and delete with undo, teaching empty state. Not done: changing a decision's outcome, the monthly picker and the gentle insight sentence. A work day is 8 hours (`WORK_HOURS_PER_DAY`).
+- [x] **T12.8** Savings pots (5.6, 6.4)
+  Goal: the owner adds money as they save; each pot shows a filling piggy bank with an animation (off under reduced motion); deposit and withdraw with history and undo; a monthly summary shows what is left, what must be set aside, what was set aside and what is free afterwards, with a suggested split; the emergency fund is the first, undeletable pot sharing one balance with `Profile.savings`.
+  Core first (tests before code): `addDeposit`/`removeDeposit`/`editDeposit` (no negative balance), `requiredThisMonth`, `depositedInMonth`, `monthlySavingsAdvice`, savings rate from deposits, emergency pot and `Profile.savings` never diverging. `SinkingFund` gains optional `icon`, `color`, `kind`, `deposits` (additive, no migration).
+  Acceptance: depositing is two taps; the monthly numbers equal Home's; all edge cases in 6.4 are tested.
+- [x] **T12.8b** Investments (5.6b)
+  Goal: second tab on the savings page. New versioned `investments` module: holdings with buy/sell trades, user-entered current price with date, weighted-average cost, realized/unrealized P&L, allocation by type, real return, price staleness; user-editable investment types as data; animated per-type visuals (gold bars, share certificates, banknotes, coins; off under reduced motion); "what you should know" cards per type in our own words with source labels and a not-advice note; regular monthly investing shares the recurring savings/investing expense type; health and AI export use it. No fetched prices.
+  Core first: formulas and edge cases in the plan (sell more than held rejected, decimal quantity, single rounding, no price entered).
+  Acceptance: a buy is two taps; totals match tested formulas; SPEC updated with the module before code.
+  Depends on: T12.8, T12.4
+
+- [x] **T12.9** Lessons reading experience (5.10)
+- [x] **T12.10** Settings and "Ask AI" export with privacy levels (5.11, 6.3)
+- [x] **T12.11** Onboarding and demo mode (5.0)
+  Each: tests first for any logic, a screenshot for review, empty/loading/error states, phone layout, acceptance as written in the plan.
+  Depends on: Phase 11
+
+### Phase 13 — Connections between modules
+
+- [x] **T13.1** Calendar of upcoming payments (S1)
+- [x] **T13.2** Installments linked to a card, card limit and a card-limit guard rule (S4)
+- [x] **T13.3** Monthly snapshots and trends (S3)
+- [x] **T13.4** Price-age reminder (S8), undo everywhere (S7), command palette (S6)
+  Depends on: the matching Phase 12 pages.
+
+### Phase 14 — Ready for customers
+
+- [x] **T14.1** Privacy and security: app lock and hide amounts (S9), security headers, backup warnings and reminders (S15)
+  Note: PIN is hashed with PBKDF2 (Web Crypto, per-install salt), never stored in clear; 5 wrong tries wait 30 s; auto-lock after 5 min hidden. A PIN is a screen lock, not encryption: the data in IndexedDB is not encrypted (said so in Settings). CSP is a meta tag in production plus `public/_headers` for hosts that read it; a test keeps both in sync. Backup reminder: settings remember `lastBackup`; Home asks after 30 days (or 30 days after the first data if never).
+- [x] **T14.2** Error boundary and local error report; migration fixtures for every stored version; import of old backups
+- [x] **T14.3** Accessibility and performance pass against a written budget
+  Note: `docs/QUALITY-BUDGET.md`, limits in `apps/web/quality-budget.json`, checked by `pnpm --filter @stoafi/web budget` (a CI step after the build). Accessibility is the axe scan of every page, light and dark, with sample data. Lighthouse stays a manual step.
+- [x] **T14.4** Native Turkish copy review; legal text (not financial advice, privacy)
+  Note: checked key parity, no English left in `tr`, one informal register ("sen") and one vocabulary (birikim, kumbara, kuyruk). A native speaker should still read it once. Legal text lives in Settings > About (not advice, privacy, approximate data, storage, licences) plus `docs/THIRD-PARTY.md`; a lawyer has not reviewed it.
+- [ ] **T14.5** PWA check on real devices (T8.6), deployment, product name, domain and license decisions
+  Depends on: Phases 11 to 13.
+
+### Owner feedback round (2026-10)
+
+- [x] **T15.1** Expenses page: pick a type first (bill, installment, loan, saving or investing), then only the fields that type needs; installments and loans are grouped apart from bills and show payments left. Core: optional `kind` on a recurring line (`regular`, `installment`, `loan`), `remainingPayments`; installments and loans count toward the installment load.
+  Note: adding, editing and removing an expense saves at once (removal has undo). Installment and loan lines carry the `installments` source label so the installment cap and health ratio see them. The queue's own installments card is renamed "Bought through the queue".
+- [x] **T15.2** Savings pots: encouragement on every deposit (milestones at 25, 50, 75 and 100%, otherwise what the month adds up to) and pots without a goal or date (`dueMonth` optional, `target` 0).
+  Note: an open pot is never "overdue" and asks nothing each month; it only gets what is left in the monthly advice.
+- [x] **T15.3** Home: the plan card now shows, per bucket, what is left of the limit and what to do about it (`kernel/limits.ts`: `limitStatuses`, `limitAdvice`).
+  Note: based on the plan limit minus commitments (recurring costs, installments, set-asides); no spending entry exists. Wants "fit" count comes from the queue scheduler.
+- [x] **T15.4** Investing basket: percentages per kind of investment, example baskets dated 2026-10 with named sources, split of a monthly amount (exact to the kuruş) either by percent or by filling the gaps against what is held; holdings can be placed in a slice.
+  Note: examples are static data (`data/basket-templates.json`), not live advice; the app makes no network call. Basket is stored in settings (optional field, included in backups).
+
+- [x] **T15.5** Limits in detail: home shows, per bucket, what is committed by category (bills, living costs, installments, loans, pots, saving) and a new "Installment room" card (cap minus installment load); the Plan page lists every line under each bucket and the same room. Core: `committedByCategory`.
+  Note: the home grid uses dense flow so no card is left alone in a row.
+- [x] **T15.6** Installments on a card: an installment expense can name a card; its remaining payments count against the card's limit together with queue purchases (`installmentDebtByCard`, `lib/card-debt.ts`).
+- [x] **T15.7** Income and expenses: incomes are rows with a panel like expenses (autosave, undo); living costs card with share-of-income band, a year of expected inflation, and optional "a year ago" figure to compare the user's own price rise (`livingCostCheck`, bands in `data/living-cost-bands.json`).
+  Note: the bands are our own rule of thumb (tunable data), not official statistics, and the screen says so.
+- [x] **T15.8** Basket ticks: the monthly amount is remembered; each slice has "I put this in" that notes it for the month (`basketLog`) and, when the slice has one priced holding, records the purchase at its current price (undo removes both).
+
+- [x] **T15.9** Surplus saving goes to investing: once pots with a date and the emergency fund are covered, the rest of what the plan saves is suggested for investing (`investingShare`, split id `investing`), and it becomes the default monthly amount for the basket.
+  Note: pots without a target never hold money back; only a pot or the emergency fund that still needs money does.
+
+- [x] **T15.10** Free spending: an optional monthly personal spending amount (counted as wants), or else what is left of the wants limit, shown on Home as "Free spending" with a weekly and daily spread; (`kernel/spending.ts`, `personalSpending` on the profile).
+  Note: installments stay in the bucket of the item (need or want); the bar that showed them under wants was removed because needs have installments too. No spending log, as chosen; the weekly and daily figures are the month spread evenly, not a live balance.
+
+**Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
+
+---
+
 ## Acceptance criteria mapping
 
 Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task(s) that implement and verify it.
@@ -731,6 +926,12 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 
 ## Open questions
 
+- [ ] T14.5 (owner): install and offline check on a real phone and Mac, domain, final product name, licence (MIT or AGPL). Hosting is Vercel with `stable` as the production branch (`vercel.json`, `docs/DEPLOY.md`); not yet deployed. Nothing in code blocks on these; `public/_headers` assumes a host that reads it (Cloudflare Pages, Netlify).
+- [ ] Not built from the plan, decide whether wanted: Eisenhower drag between quadrants, a `⋯` menu on queue rows, before/after bars and a cash/installment toggle with card picker in the queue preview, decision outcome change, a month picker and an insight sentence in Decisions, `MonthTrack` is unused, self-hosted fonts (system fonts today).
+- [ ] Suggested pot split gives pots due soonest priority before the emergency fund. Confirm that order.
+
+- [ ] Remaining product decisions in `docs/PRODUCT-PLAN.md` section 11.3 (brand direction, "Ask AI" export vs the no-network rule, bank colors, AI logos, cooldown re-prompt, phone navigation, page order, dateless pots, emergency fund as the first pot, new dependencies, component sourcing). Answered on 2026-10-02: higher UI polish with ready-made components, manual savings deposits with animation, suggestions accepted (preview deployments dropped, browser tests kept small). Phases 11 to 14 start when the owner says go.
+- [ ] Cooldown re-prompt: SPEC says a want's 30-day cooldown "prompts again when it ends". Today the timeline only shows the countdown. Proposed: once the cooldown has ended, the queue card asks "Still want it?" with Keep / Skip, remembering the answer on the item. Needs confirmation before it is built (adds an optional field to the queue item).
 - [ ] Default installment cap: 20% of net income, or lower? (SPEC backlog) — blocks final default value in T4.6's `defaultGuardRules`; task can proceed with 20% as a placeholder default since it's data, not code, but the number needs confirmation before Phase 8's acceptance pass.
 - [ ] Legal installment limits by category: keep as an editable data file, and who updates it? (SPEC backlog) — no MVP task currently owns "legal limits by category"; if this is in scope for guards (T4.6), it needs its own task added before Phase 4 starts. Currently treated as out of MVP scope pending confirmation.
 - [ ] Product name and domain (SPEC backlog) — affects T0.12 (README), T7.14 (PWA manifest name/icons). Using "Stoafi" as a working name per CLAUDE.md; needs confirmation before Phase 7 UI copy is finalized.

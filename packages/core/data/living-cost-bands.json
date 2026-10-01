@@ -1,0 +1,5 @@
+{
+  "note": "Rules of thumb for the share of take-home pay that groceries and household bills take. They are ours, not official statistics, and meant as a rough sense of where you stand. Tunable values live here, not in code.",
+  "shareOfIncome": { "comfortable": 0.3, "typical": 0.45, "high": 0.6 },
+  "inflationTolerance": 0.05
+}

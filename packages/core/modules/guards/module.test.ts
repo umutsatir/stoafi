@@ -8,13 +8,13 @@ describe("guardsModule", () => {
     expect(() => registry.register(guardsModule)).not.toThrow();
   });
 
-  it("collecting contributes.guards via the registry returns the 3 default rules", () => {
+  it("collecting contributes.guards via the registry returns the 4 default rules", () => {
     const registry = createRegistry();
     registry.register(guardsModule);
     const guards = registry.listModules().flatMap((m) => m.contributes?.guards ?? []);
-    expect(guards).toHaveLength(3);
+    expect(guards).toHaveLength(4);
     expect(guards.map((g) => g.id).sort()).toEqual(
-      ["emergency-fund-floor", "installment-cap", "wants-limit"].sort(),
+      ["card-limit", "emergency-fund-floor", "installment-cap", "wants-limit"].sort(),
     );
   });
 });

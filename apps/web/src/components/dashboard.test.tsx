@@ -1,6 +1,6 @@
 import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { Profile, QueueItem } from "@stoafi/core";
+import type { Card, Profile, QueueItem, SinkingFund } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { Dashboard } from "./dashboard";
 
@@ -18,14 +18,14 @@ const profile: Profile = {
   annualInflationExpectation: 0.3,
 };
 
-function waiting(id: string, order: number, price = 10_000): QueueItem {
+function waiting(id: string, order: number, price = 10_000, isNeed = false): QueueItem {
   return {
     id,
     name: id,
     price,
     urgency: 2,
     importance: 2,
-    isNeed: true,
+    isNeed,
     expectedUses: 10,
     addedDate: "2020-01-01",
     priceUpdatedDate: "2020-01-01",
@@ -133,6 +133,19 @@ describe("Dashboard", () => {
     expect(plan.getByTestId("plan-needs")).toHaveTextContent("₺5,000.00");
   });
 
+  it("shows how much installment room is left, and what each bucket is made of", () => {
+    renderDashboard();
+    expect(screen.getByTestId("installment-room")).toBeInTheDocument();
+    expect(screen.getByTestId("installment-room-left")).toHaveTextContent("more a month");
+    expect(screen.getByTestId("limit-needs")).toBeInTheDocument();
+  });
+
+  it("shows the money for everyday fun, from what is left of the wants", () => {
+    renderDashboard();
+    expect(screen.getByTestId("free-spending-monthly")).toBeInTheDocument();
+    expect(screen.getByTestId("free-spending-spread")).toHaveTextContent("a week");
+  });
+
   it("draws a 12-month cash-flow chart starting this month", () => {
     renderDashboard();
     const chart = screen.getByTestId("cash-flow-chart");
@@ -159,5 +172,96 @@ describe("Dashboard", () => {
   it("has no chart before a profile exists", () => {
     renderDashboard({ profile: null });
     expect(screen.queryByTestId("cash-flow-chart")).not.toBeInTheDocument();
+  });
+
+  it("does not schedule a need while recurring costs already fill the needs budget", () => {
+    // 50/30/20 on 10,000.00 gives needs 5,000.00; rent 2,000.00 + living 3,000.00 use all of it.
+    renderDashboard({ queueItems: [waiting("Boiler", 0, 10_000, true)] });
+    expect(screen.getByTestId("next-month-Boiler")).toHaveTextContent("not affordable yet");
+  });
+
+  it("schedules a need once recurring costs leave room for it", () => {
+    renderDashboard({
+      profile: { ...profile, livingExpenses: 100_000 },
+      queueItems: [waiting("Boiler", 0, 10_000, true)],
+    });
+    expect(screen.getByTestId("next-month-Boiler")).toHaveTextContent("2026-09");
+  });
+
+  it("takes sinking-fund set-asides off what is left in the months they run", () => {
+    // 6,000.00 due 2027-03 = 1,000.00 a month from next month (2026-10)
+    const fund: SinkingFund = {
+      id: "ins",
+      label: "Insurance",
+      target: 600_000,
+      dueMonth: "2027-03",
+      currentBalance: 0,
+    };
+    renderDashboard({ sinkingFunds: [fund] });
+    const rows = within(screen.getByTestId("cash-flow-chart")).getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("₺5,000.00"); // September: nothing set aside yet
+    expect(rows[2]).toHaveTextContent("₺4,000.00"); // October: 1,000.00 set aside
+  });
+
+  describe("what is coming up", () => {
+    const withDays: Profile = {
+      ...profile,
+      incomes: [{ label: "Job", monthly: 800_000, payDay: 17 }],
+      fixedExpenses: [
+        { label: "Rent", monthly: 200_000, bucket: "needs", dueDay: 20 },
+        { label: "Far bill", monthly: 5_000, bucket: "needs", dueDay: 3 },
+      ],
+    };
+    const bonus: Card = { id: "c", label: "Bonus", statementDay: 1, dueDay: 16 };
+
+    it("lists pay days, bills and card due dates in the next two weeks, soonest first", () => {
+      renderDashboard({ profile: withDays, cards: [bonus] });
+      const list = within(screen.getByTestId("upcoming"));
+      const items = list.getAllByRole("listitem").map((li) => li.textContent ?? "");
+      expect(items).toHaveLength(3);
+      expect(items[0]).toContain("Bonus");
+      expect(items[1]).toContain("Job");
+      expect(items[1]).toContain("+₺8,000.00");
+      expect(items[2]).toContain("Rent");
+      expect(list.queryByText("Far bill")).not.toBeInTheDocument();
+    });
+
+    it("says tomorrow and today instead of a date", () => {
+      renderDashboard({ profile: withDays, cards: [bonus], today: "2026-09-16" });
+      expect(within(screen.getByTestId("event-card-c")).getByText("Today")).toBeInTheDocument();
+      expect(
+        within(screen.getByTestId("event-income-0")).getByText("Tomorrow"),
+      ).toBeInTheDocument();
+    });
+
+    it("says so when nothing is due", () => {
+      renderDashboard({ profile: { ...profile, fixedExpenses: [], incomes: [] } });
+      expect(screen.getByText("Nothing due in the next two weeks.")).toBeInTheDocument();
+    });
+  });
+
+  it("shows what is still to set aside this month and links to the savings page", () => {
+    renderDashboard();
+    expect(screen.getByTestId("saving-sentence")).toHaveTextContent(/Set aside .* more/);
+    expect(
+      within(screen.getByTestId("saving-widget")).getByRole("link", { name: "Open savings" }),
+    ).toHaveAttribute("href", "/sinking-funds");
+  });
+
+  it("gives the overall health in a word, with the reason", () => {
+    renderDashboard();
+    expect(screen.getByTestId("home-health")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "See the details" })).toHaveAttribute(
+      "href",
+      "/health",
+    );
+  });
+
+  it("offers a fix right in each warning", () => {
+    renderDashboard({ profile: { ...profile, savings: 0 } });
+    expect(screen.getByRole("link", { name: "Add to the fund" })).toHaveAttribute(
+      "href",
+      "/sinking-funds",
+    );
   });
 });

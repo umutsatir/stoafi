@@ -29,3 +29,15 @@ describe("cooldownStatus", () => {
     expect(result.endsOn).toBe("2026-10-01");
   });
 });
+
+describe("cooldownStatus with partial dates", () => {
+  it("reads a date without a day as the 1st", () => {
+    const status = cooldownStatus({ isNeed: false, addedDate: "2026-10" }, "2026-10-15");
+    expect(status).toEqual({ active: true, endsOn: "2026-10-31" });
+  });
+
+  it("reads a date without a month as January", () => {
+    const status = cooldownStatus({ isNeed: false, addedDate: "2026" }, "2026-03-01");
+    expect(status.active).toBe(false);
+  });
+});

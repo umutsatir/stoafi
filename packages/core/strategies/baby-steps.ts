@@ -58,21 +58,25 @@ export function diagnose(profile: Profile, projections: MonthProjection[]): Insi
       insights.push({
         id: "baby-steps:step-1",
         message: `${projection.month}: building the starter emergency fund (step 1).`,
+        month: projection.month,
       });
     } else if (projection.installmentLoad > 0) {
       insights.push({
         id: "baby-steps:step-2",
         message: `${projection.month}: pay off debt before extra saving (step 2).`,
+        month: projection.month,
       });
     } else if (profile.savings < fullTarget) {
       insights.push({
         id: "baby-steps:step-3",
         message: `${projection.month}: building the full emergency fund (step 3).`,
+        month: projection.month,
       });
     } else {
       insights.push({
         id: "baby-steps:step-4",
         message: `${projection.month}: emergency fund complete, investing for the future (step 4+).`,
+        month: projection.month,
       });
     }
   }

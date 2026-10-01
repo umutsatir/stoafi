@@ -38,4 +38,14 @@ describe("MinimumPaymentCalculator", () => {
     const expected = minimumPaymentPayoff(1_000_000, 0.04, { pct: 0.1, floor: 0 });
     expect(screen.getByTestId("months-to-payoff")).toHaveTextContent(String(expected.months));
   });
+
+  it("says the debt never pays off instead of showing the safety cap", () => {
+    renderWithIntl(<MinimumPaymentCalculator />);
+    fireEvent.change(screen.getByLabelText("Monthly rate"), { target: { value: "5" } });
+    fireEvent.change(screen.getByLabelText("Minimum payment %"), { target: { value: "1" } });
+
+    expect(screen.getByTestId("months-to-payoff")).toHaveTextContent(/never pays off/i);
+    expect(screen.getByTestId("months-to-payoff")).not.toHaveTextContent("600");
+    expect(screen.queryByTestId("total-interest")).not.toBeInTheDocument();
+  });
 });

@@ -10,8 +10,12 @@ import { Field } from "@/components/ui/field";
 import { MoneyInput } from "./money-input";
 import { PercentInput } from "./percent-input";
 
-export function MinimumPaymentCalculator() {
-  const [balance, setBalance] = useState(1_000_000);
+export function MinimumPaymentCalculator({
+  initialBalance = 1_000_000,
+}: {
+  initialBalance?: number;
+}) {
+  const [balance, setBalance] = useState(initialBalance);
   const [monthlyRate, setMonthlyRate] = useState(0.02);
   const [pct, setPct] = useState(0.05);
   const [floor, setFloor] = useState(0);
@@ -43,10 +47,16 @@ export function MinimumPaymentCalculator() {
         </div>
 
         <div className="flex flex-col gap-1 rounded-md border border-border bg-secondary p-3 text-sm">
-          <p data-testid="months-to-payoff">{t("monthsToPayoff", { months: result.months })}</p>
-          <p data-testid="total-interest">
-            {t("totalInterest", { interest: money(result.totalInterest) })}
+          <p data-testid="months-to-payoff">
+            {result.neverPaysOff
+              ? t("neverPaysOff")
+              : t("monthsToPayoff", { months: result.months })}
           </p>
+          {!result.neverPaysOff && (
+            <p data-testid="total-interest">
+              {t("totalInterest", { interest: money(result.totalInterest) })}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

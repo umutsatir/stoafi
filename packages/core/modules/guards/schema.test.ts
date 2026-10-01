@@ -75,3 +75,21 @@ describe("wants limit rule", () => {
     expect(rule.check(context({ after: baseAfter({ committed: 2000 }) }))).toBe(false);
   });
 });
+
+describe("card limit rule", () => {
+  const rule = ruleById("card-limit");
+
+  it("fails when the draft pushes the chosen card over its shared limit, by any amount", () => {
+    expect(rule.check(context({ cardLimitOverBy: 1 }))).toBe(true);
+    expect(rule.check(context({ cardLimitOverBy: 500_000 }))).toBe(true);
+  });
+
+  it("passes when the draft fits, when no card was chosen and when the limit is unknown", () => {
+    expect(rule.check(context({ cardLimitOverBy: 0 }))).toBe(false);
+    expect(rule.check(context())).toBe(false);
+  });
+
+  it("only warns, so the user can still go ahead after confirming", () => {
+    expect(rule.severity).toBe("warning");
+  });
+});

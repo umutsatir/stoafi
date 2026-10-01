@@ -12,6 +12,7 @@ function point(index: number): CashFlowPoint {
     obligations: 200_000,
     living: 300_000,
     installments: index < 3 ? 100_000 : 0,
+    setAside: 0,
     left: index < 3 ? 400_000 : 500_000,
   };
 }

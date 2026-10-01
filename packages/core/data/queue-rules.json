@@ -1,0 +1,4 @@
+{
+  "note": "Tunable queue values. A price older than this many days gets a 'still right?' reminder.",
+  "priceStaleDays": 90
+}

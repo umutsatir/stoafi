@@ -5,14 +5,15 @@ import { useTranslations } from "next-intl";
 import { AlertCircle, Download, Upload } from "lucide-react";
 import type { ImportResult } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-
-const CURRENCIES = ["TRY", "USD", "EUR"] as const;
+import { daysSinceBackup } from "@/lib/backup-reminder";
 
 export interface SettingsPanelProps {
-  currency: string;
-  onCurrencyChange: (currency: string) => void;
+  /** YYYY-MM-DD of the last backup, if any, and today, to say how long ago it was. */
+  lastBackup?: string | null;
+  today?: string;
   onExport: () => Promise<string>;
   onImport: (json: string) => Promise<ImportResult>;
   /** Injected for testability; defaults to a real file download. */
@@ -30,14 +31,17 @@ function defaultDownload(json: string) {
 }
 
 export function SettingsPanel({
-  currency,
-  onCurrencyChange,
+  lastBackup = null,
+  today,
   onExport,
   onImport,
   downloadJson = defaultDownload,
 }: SettingsPanelProps) {
   const [importErrors, setImportErrors] = useState<string[] | null>(null);
+  /** A chosen backup file waits here until the user confirms replacing their data. */
+  const [pendingImport, setPendingImport] = useState<string | null>(null);
   const t = useTranslations("settings");
+  const since = today ? daysSinceBackup(lastBackup, today) : null;
 
   async function handleExport() {
     const json = await onExport();
@@ -47,29 +51,27 @@ export function SettingsPanel({
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const text = await file.text();
-    const result = await onImport(text);
+    setPendingImport(await file.text());
+    e.target.value = "";
+  }
+
+  async function confirmImport() {
+    if (pendingImport === null) return;
+    const result = await onImport(pendingImport);
+    setPendingImport(null);
     setImportErrors("errors" in result ? result.errors : null);
   }
 
   return (
     <Card>
       <CardContent className="flex flex-col gap-5 pt-6">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="currency">{t("currency")}</Label>
-          <select
-            id="currency"
-            value={currency}
-            onChange={(e) => onCurrencyChange(e.target.value)}
-            className="h-9 w-40 rounded-md border border-input bg-card px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
+        <p className="text-sm text-muted-foreground" data-testid="last-backup">
+          {since === null
+            ? t("lastBackupNever")
+            : since === 0
+              ? t("lastBackupToday")
+              : t("lastBackupDays", { days: since })}
+        </p>
 
         <div className="flex flex-wrap items-center gap-3">
           <Button type="button" variant="outline" onClick={() => void handleExport()}>
@@ -109,6 +111,17 @@ export function SettingsPanel({
           </ul>
         )}
       </CardContent>
+      <ConfirmDialog
+        open={pendingImport !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingImport(null);
+        }}
+        title={t("importConfirmTitle")}
+        description={t("importConfirmText")}
+        confirmLabel={t("importConfirm")}
+        destructive
+        onConfirm={() => void confirmImport()}
+      />
     </Card>
   );
 }

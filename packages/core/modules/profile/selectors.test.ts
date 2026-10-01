@@ -86,3 +86,9 @@ describe("monthlyNeeds for a given month", () => {
     expect(monthlyNeeds(profile)).toBe(15000);
   });
 });
+
+describe("hourlyNetIncome with no working hours", () => {
+  it("returns 0 instead of dividing by zero", () => {
+    expect(hourlyNetIncome(makeProfile(), 0)).toBe(0);
+  });
+});

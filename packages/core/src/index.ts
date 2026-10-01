@@ -33,7 +33,12 @@ export { backupModule } from "../modules/backup/module";
 export { exportAll, BackupSchema, type Backup } from "../modules/backup/schema";
 export { importAll, type ImportResult } from "../modules/backup/import";
 
-export { ProfileSchema, type Profile } from "../modules/profile/schema";
+export {
+  EXPENSE_KINDS,
+  ProfileSchema,
+  type ExpenseKind,
+  type Profile,
+} from "../modules/profile/schema";
 export {
   dueDayOf,
   hourlyNetIncome,
@@ -41,7 +46,12 @@ export {
   netMonthlyIncome,
   payDayOf,
 } from "../modules/profile/selectors";
-export { activeFixedExpenses, isExpenseActiveInMonth } from "../modules/profile/active-expenses";
+export {
+  activeFixedExpenses,
+  expenseKind,
+  isExpenseActiveInMonth,
+  remainingPayments,
+} from "../modules/profile/active-expenses";
 export { migrateProfileV1ToV2 } from "../modules/profile/migrations";
 export { PlanStateSchema, type PlanStateInput } from "../modules/plan/schema";
 export { strategies as strategyRegistry } from "../modules/plan/strategies-registry";
@@ -52,10 +62,29 @@ export {
   type StrategyComparison,
 } from "../modules/plan/selectors";
 export type { Strategy, Insight } from "../strategies/types";
-export { GuardThresholdsSchema } from "../modules/guards/schema";
+export { GuardThresholdsSchema, type GuardThresholds } from "../modules/guards/schema";
 export { QueueItemSchema, type QueueItem } from "../modules/queue/schema";
 export { SinkingFundSchema, type SinkingFund } from "../modules/sinking-funds/schema";
-export { CardSchema, type Card } from "../modules/cards/schema";
+export { CARD_NETWORKS, CardSchema, type Card, type CardNetwork } from "../modules/cards/schema";
+export {
+  limitUsage,
+  mainCards,
+  removeCardFromSet,
+  supplementariesOf,
+  validateCardSet,
+  type CardSetProblem,
+  type LimitUsage,
+  type RemoveResult,
+  type SupplementaryChoice,
+} from "../modules/cards/card-set";
+export {
+  BANKS,
+  BANKS_ARE_APPROXIMATE,
+  bankById,
+  cardColors,
+  type BankPreset,
+  type CardColors,
+} from "../modules/cards/banks";
 export { DecisionSchema, type Decision } from "../modules/decisions/schema";
 
 export { costInWorkHours, costPerUse, eisenhowerQuadrant } from "../modules/queue/selectors";
@@ -64,6 +93,7 @@ export { toDraftCommitment } from "../modules/queue/to-commitment";
 export {
   activeQueueItems,
   installmentCommitments,
+  remainingInstallmentsByCard,
   toInstallmentCommitment,
 } from "../modules/queue/installment-purchase";
 export { scheduleQueue, type ScheduleResult } from "../modules/queue/scheduler";
@@ -74,7 +104,16 @@ export {
   emergencyFundMonths,
   runway,
 } from "../modules/health/selectors";
-export { savingsSummary, type SavingsSummary } from "../modules/decisions/selectors";
+export {
+  WORK_HOURS_PER_DAY,
+  decisionStats,
+  filterDecisions,
+  groupDecisionsByMonth,
+  savingsSummary,
+  type DecisionMonthGroup,
+  type DecisionStats,
+  type SavingsSummary,
+} from "../modules/decisions/selectors";
 export { timingTip, type TimingTip } from "../modules/cards/timing";
 export { minimumPaymentPayoff, type MinPaymentRule } from "../modules/cards/minimum-payment";
 export { toCommitment } from "../modules/sinking-funds/schema";
@@ -97,4 +136,168 @@ export {
   INFLATION_DATA_SOURCE,
   suggestedAnnualInflation,
 } from "../modules/profile/inflation-by-country";
+export {
+  healthSummary,
+  metricStatus,
+  monthlySavingRate,
+  type HealthInputs,
+  type HealthMetricKind,
+  type HealthStatus,
+  type HealthStep,
+  type HealthSummary,
+} from "../modules/health/status";
 export { cashFlowSeries, type CashFlowPoint } from "../modules/profile/cash-flow";
+export {
+  addEmergencyDeposit,
+  editEmergencyDeposit,
+  emergencyGap,
+  removeEmergencyDeposit,
+  type ProfileDepositResult,
+} from "../modules/profile/emergency-deposits";
+export { recurringCommitments } from "../modules/profile/recurring-commitments";
+export { settingsModule } from "../modules/settings/module";
+export {
+  LOCALES,
+  THEMES,
+  SettingsSchema,
+  defaultSettings,
+  detectLocale,
+  resolveTheme,
+  type Settings,
+  type ThemePreference,
+} from "../modules/settings/schema";
+export {
+  sinkingFundCommitments,
+  sinkingFundStatus,
+  type SinkingFundStatus,
+} from "../modules/sinking-funds/status";
+export { monthlySetAside } from "../modules/sinking-funds/selectors";
+export {
+  monthlySavingsAdvice,
+  requiredThisMonth,
+  type SavingsAdvice,
+  type SavingsAdviceInput,
+} from "../modules/sinking-funds/savings-advice";
+export {
+  DepositSchema,
+  addDeposit,
+  depositedInMonth,
+  editDeposit,
+  removeDeposit,
+  type Deposit,
+  type PotResult,
+  type PotState,
+} from "../kernel/deposit";
+
+export { investmentsModule } from "../modules/investments/module";
+export {
+  HoldingSchema,
+  TradeSchema,
+  type Holding,
+  type Trade,
+} from "../modules/investments/schema";
+export {
+  INVESTMENT_TYPES,
+  investmentType,
+  type InvestmentType,
+} from "../modules/investments/types";
+export {
+  addTrade,
+  allocationByType,
+  averageCost,
+  costBasis,
+  holdingQuantity,
+  marketValue,
+  portfolioTotals,
+  priceStaleDays,
+  realReturn,
+  realizedPnL,
+  removeTrade,
+  unrealizedPnL,
+  type Allocation,
+  type PortfolioTotals,
+  type TradeResult,
+} from "../modules/investments/selectors";
+
+export {
+  dueDateInMonth,
+  eventsInMonth,
+  upcomingEvents,
+  type CalendarEvent,
+  type CalendarKind,
+  type DayRule,
+} from "../kernel/calendar";
+
+export {
+  buildAiExport,
+  type AiExportData,
+  type AiExportInput,
+  type AiLanguage,
+  type AiPrivacyLevel,
+  type AiQuestion,
+} from "../kernel/ai-export";
+
+export { snapshotsModule } from "../modules/snapshots/module";
+export {
+  SnapshotSchema,
+  buildSnapshot,
+  sameSnapshot,
+  trendOf,
+  upsertSnapshot,
+  type Snapshot,
+  type SnapshotInput,
+  type SnapshotKey,
+  type Trend,
+} from "../modules/snapshots/snapshots";
+
+export { PRICE_STALE_DAYS, priceAgeDays, priceIsStale } from "../modules/queue/price-age";
+export {
+  limitAdvice,
+  limitStatuses,
+  type LimitAdvice,
+  type LimitState,
+  type LimitStatus,
+} from "../kernel/limits";
+export {
+  BasketEntrySchema,
+  BasketLogEntrySchema,
+  basketDone,
+  basketInvestedIn,
+  markBasketDone,
+  unmarkBasketDone,
+  type BasketLogEntry,
+  basketDrift,
+  basketTotal,
+  catchUpSplit,
+  isBasketComplete,
+  splitByBasket,
+  type BasketDrift,
+  type BasketEntry,
+  type BasketShare,
+} from "../kernel/basket";
+export {
+  BASKET_TEMPLATES,
+  BASKET_TEMPLATES_AS_OF,
+  type BasketTemplate,
+  type BasketTemplateEntry,
+} from "../modules/investments/basket-templates";
+export {
+  basketValues,
+  holdingsInSlice,
+  sliceOf,
+  type BasketValues,
+} from "../modules/investments/basket-values";
+export {
+  livingCostCheck,
+  type InflationComparison,
+  type LivingBand,
+  type LivingCostCheck,
+} from "../modules/profile/living-costs";
+export { installmentDebtByCard } from "../modules/profile/installment-debt";
+export {
+  committedByCategory,
+  type CategoryAmount,
+  type CategoryItem,
+  type CostCategory,
+} from "../modules/profile/category-breakdown";
+export { freeSpending, type FreeSpending, type FreeSpendingInput } from "../kernel/spending";

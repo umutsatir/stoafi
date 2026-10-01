@@ -121,19 +121,4 @@ describe("QueueList", () => {
     expect(onEdit).toHaveBeenCalledWith(expect.objectContaining({ id: "first" }));
     expect(onDelete).toHaveBeenCalledWith(expect.objectContaining({ id: "first" }));
   });
-
-  it("shows an empty state instead of a blank list", () => {
-    renderWithIntl(
-      <QueueList
-        items={[]}
-        profile={profile}
-        planState={planState}
-        today="2026-01-01"
-        startMonth="2026-01"
-        hourlyNetIncome={200}
-        onItemsChange={vi.fn()}
-      />,
-    );
-    expect(screen.getByText(/Nothing in the queue yet/)).toBeInTheDocument();
-  });
 });

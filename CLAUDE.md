@@ -69,6 +69,7 @@ pnpm dev          # web app
 pnpm test         # all tests
 pnpm typecheck
 pnpm lint
+pnpm --filter @stoafi/web test:e2e   # browser smoke tests; run `pnpm --filter @stoafi/web build` first
 ```
 
 Update this section if the commands change.

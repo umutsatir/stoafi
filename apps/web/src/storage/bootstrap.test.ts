@@ -63,4 +63,59 @@ describe("loadAppState", () => {
     expect(state.profile).toBeNull();
     db.close();
   });
+
+  it("defaults settings from the browser language on a fresh database", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    expect((await loadAppState(db, "tr-TR")).settings).toEqual({
+      locale: "tr",
+      currency: "TRY",
+      theme: "system",
+    });
+    expect((await loadAppState(db, "en-US")).settings).toEqual({
+      locale: "en",
+      currency: "TRY",
+      theme: "system",
+    });
+    db.close();
+  });
+
+  it("loads saved settings in preference to the browser language", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    await db.open();
+    await db.settings.put({ id: "singleton", data: { locale: "en", currency: "EUR" } });
+    const state = await loadAppState(db, "tr-TR");
+    expect(state.settings).toEqual({ locale: "en", currency: "EUR" });
+    db.close();
+  });
+
+  it("falls back to defaults when stored settings are invalid", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    await db.open();
+    await db.settings.put({ id: "singleton", data: { locale: "klingon", currency: "TRY" } });
+    const state = await loadAppState(db, "tr");
+    expect(state.settings).toEqual({ locale: "tr", currency: "TRY", theme: "system" });
+    db.close();
+  });
+
+  it("uses a 20% installment cap until the user changes it", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    expect((await loadAppState(db)).guardThresholds).toEqual({ installmentCapPct: 0.2 });
+    db.close();
+  });
+
+  it("loads a saved installment cap", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    await db.open();
+    await db.guards.put({ id: "singleton", data: { installmentCapPct: 0.1 } });
+    expect((await loadAppState(db)).guardThresholds).toEqual({ installmentCapPct: 0.1 });
+    db.close();
+  });
+
+  it("falls back to the default cap when the stored one is out of range", async () => {
+    const db = new StoafiDb(`boot-${Math.random()}`);
+    await db.open();
+    await db.guards.put({ id: "singleton", data: { installmentCapPct: 7 } });
+    expect((await loadAppState(db)).guardThresholds).toEqual({ installmentCapPct: 0.2 });
+    db.close();
+  });
 });
