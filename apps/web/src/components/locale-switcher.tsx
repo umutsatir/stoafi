@@ -7,11 +7,16 @@ import { useAppStore } from "@/store";
 import { useMoney } from "@/lib/use-money";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+
+const CURRENCIES = ["TRY", "USD", "EUR"] as const;
 
 export function LocaleSwitcher() {
   const locale = useAppStore((s) => s.locale);
   const setLocale = useAppStore((s) => s.setLocale);
+  const currency = useAppStore((s) => s.currency);
+  const setCurrency = useAppStore((s) => s.setCurrency);
   const theme = useAppStore((s) => s.theme);
   const setTheme = useAppStore((s) => s.setTheme);
   const t = useTranslations("settings");
@@ -38,6 +43,22 @@ export function LocaleSwitcher() {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="currency">{t("currency")}</Label>
+          <NativeSelect
+            id="currency"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            className="w-40"
+          >
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </NativeSelect>
         </div>
 
         <div className="flex flex-col gap-1.5">

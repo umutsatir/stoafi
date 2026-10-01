@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { StoafiDb, SINGLETON_ID } from "@/storage/db";
 import { exportToJson, importFromJson } from "@/storage/backup";
 import { renderWithIntl } from "@/test-utils";
@@ -24,8 +24,6 @@ describe("SettingsPanel wired to the real db (export -> clear -> import)", () =>
 
     renderWithIntl(
       <SettingsPanel
-        currency="TRY"
-        onCurrencyChange={vi.fn()}
         onExport={() => exportToJson(db, "2026-01-01T00:00:00.000Z")}
         onImport={(json) => importFromJson(db, json)}
         downloadJson={(json) => {

@@ -23,3 +23,31 @@ describe("Settings screen installment cap", () => {
     });
   });
 });
+
+describe("Settings screen sections", () => {
+  it("groups settings under headings and offers the AI export once there is a profile", () => {
+    useAppStore.setState({
+      profile: {
+        incomes: [{ label: "Job", monthly: 6_000_000 }],
+        fixedExpenses: [],
+        livingExpenses: 0,
+        savings: 0,
+        emergencyFundTargetMonths: 6,
+        annualInflationExpectation: 0.3,
+      },
+    });
+    renderWithIntl(<SettingsPage />);
+    for (const name of ["General", "Rules", "Your data", "Ask an AI", "About"]) {
+      expect(screen.getByRole("region", { name })).toBeInTheDocument();
+    }
+    expect(screen.getByRole("button", { name: "Ask Claude" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Currency")).toBeInTheDocument();
+  });
+
+  it("keeps the AI export out of sight until there is something to share", () => {
+    useAppStore.setState({ profile: null });
+    renderWithIntl(<SettingsPage />);
+    expect(screen.queryByTestId("ai-section")).not.toBeInTheDocument();
+    expect(screen.getByText(/never leaves this device/)).toBeInTheDocument();
+  });
+});

@@ -9,11 +9,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
-const CURRENCIES = ["TRY", "USD", "EUR"] as const;
-
 export interface SettingsPanelProps {
-  currency: string;
-  onCurrencyChange: (currency: string) => void;
   onExport: () => Promise<string>;
   onImport: (json: string) => Promise<ImportResult>;
   /** Injected for testability; defaults to a real file download. */
@@ -31,8 +27,6 @@ function defaultDownload(json: string) {
 }
 
 export function SettingsPanel({
-  currency,
-  onCurrencyChange,
   onExport,
   onImport,
   downloadJson = defaultDownload,
@@ -64,22 +58,6 @@ export function SettingsPanel({
   return (
     <Card>
       <CardContent className="flex flex-col gap-5 pt-6">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="currency">{t("currency")}</Label>
-          <select
-            id="currency"
-            value={currency}
-            onChange={(e) => onCurrencyChange(e.target.value)}
-            className="h-9 w-40 rounded-md border border-input bg-card px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
-
         <div className="flex flex-wrap items-center gap-3">
           <Button type="button" variant="outline" onClick={() => void handleExport()}>
             <Download className="h-4 w-4" />

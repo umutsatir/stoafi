@@ -9,13 +9,7 @@ describe("SettingsPanel", () => {
     const downloadJson = vi.fn();
 
     renderWithIntl(
-      <SettingsPanel
-        currency="TRY"
-        onCurrencyChange={vi.fn()}
-        onExport={onExport}
-        onImport={vi.fn()}
-        downloadJson={downloadJson}
-      />,
+      <SettingsPanel onExport={onExport} onImport={vi.fn()} downloadJson={downloadJson} />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Export backup" }));
@@ -26,14 +20,7 @@ describe("SettingsPanel", () => {
   it("selecting a corrupted file surfaces the returned error list instead of failing silently", async () => {
     const onImport = vi.fn().mockResolvedValue({ errors: ["profile[0]: invalid"] });
 
-    renderWithIntl(
-      <SettingsPanel
-        currency="TRY"
-        onCurrencyChange={vi.fn()}
-        onExport={vi.fn()}
-        onImport={onImport}
-      />,
-    );
+    renderWithIntl(<SettingsPanel onExport={vi.fn()} onImport={onImport} />);
 
     const file = new File(["{}"], "backup.json", { type: "application/json" });
     const input = screen.getByLabelText("Import backup") as HTMLInputElement;
@@ -46,14 +33,7 @@ describe("SettingsPanel", () => {
 
   it("does not touch the data until the user confirms, and cancelling leaves it alone", async () => {
     const onImport = vi.fn().mockResolvedValue({});
-    renderWithIntl(
-      <SettingsPanel
-        currency="TRY"
-        onCurrencyChange={vi.fn()}
-        onExport={vi.fn()}
-        onImport={onImport}
-      />,
-    );
+    renderWithIntl(<SettingsPanel onExport={vi.fn()} onImport={onImport} />);
     const file = new File(["{}"], "backup.json", { type: "application/json" });
     fireEvent.change(screen.getByLabelText("Import backup"), { target: { files: [file] } });
 

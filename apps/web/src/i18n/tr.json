@@ -568,7 +568,58 @@
     },
     "importConfirmTitle": "Verilerin bu yedekle değiştirilsin mi?",
     "importConfirmText": "İçe aktarmak bu uygulamadaki her şeyin yerine geçer. Emin değilsen önce yedek al.",
-    "importConfirm": "Verilerimi değiştir"
+    "importConfirm": "Verilerimi değiştir",
+    "sections": {
+      "general": "Genel",
+      "generalHint": "Dil, para birimi ve uygulamanın görünümü.",
+      "rules": "Kurallar",
+      "rulesHint": "Bir alım seni riske sokmadan önce uyaran sınırlar.",
+      "data": "Verilerin",
+      "dataHint": "Her şey bu cihazda kalır. Kaybetmemek için yedekle.",
+      "ai": "Yapay zekâya sor",
+      "aiHint": "Kendi durumunu, kendi şartlarınla bir yapay zekâ sohbetine götür.",
+      "about": "Hakkında"
+    },
+    "about": {
+      "privacy": "Verilerin bu cihazdan çıkmaz. Stoafi'nin hesabı ve sunucusu yoktur, rakamlarını hiçbir yere göndermez.",
+      "notAdvice": "Stoafi bir planlama yardımcısı ve genel eğitimdir, mali tavsiye değildir. Paranla ilgili kararlar senindir."
+    },
+    "ai": {
+      "intro": "Stoafi yapay zekâ kullanmaz. Bu, rakamlarınla yapıştırmaya hazır bir metin hazırlar; böylece bir yapay zekâ sohbeti gerçek durumunu bilerek cevap verebilir. Sen kopyalarsın, sen yapıştırırsın, neyi görebileceğini sen seçersin.",
+      "levelTitle": "Ne kadar paylaşılsın",
+      "level": {
+        "ratios": "Yalnızca oranlar",
+        "rounded": "Yuvarlanmış",
+        "full": "Tam ayrıntı"
+      },
+      "levelHint": {
+        "ratios": "Tutar ve ad yok: yalnızca gelirinin payları ve aylar. En güvenli seçenek.",
+        "rounded": "Tutarlar en yakın yüze yuvarlanır, adlar genelleştirilir.",
+        "full": "Gerçek tutarlar ve adlar. Yalnızca paylaşmakta rahatsan seç."
+      },
+      "questionTitle": "Ne sormak istiyorsun?",
+      "questions": {
+        "assessBudget": "Bütçemi değerlendir",
+        "whatToCut": "Neyi kısmalıyım?",
+        "canIBuy": "Bir şey almalı mıyım?",
+        "installmentOrCash": "Taksit mi peşin mi?",
+        "emergencyFaster": "Acil durum fonuma daha hızlı ulaşayım",
+        "free": "Kendi sorum"
+      },
+      "itemLabel": "Hangi ürün?",
+      "freeLabel": "Sorun",
+      "previewLabel": "Kopyalanacak metin, tam olarak",
+      "previewHint": "Kopyalamadan önce düzenleyebilirsin. Stoafi hiçbir şey göndermez.",
+      "warning": "Bu metin seçtiğin yapay zekâ servisine gider ve onun kendi gizlilik politikası geçerlidir. Yapıştırmadan önce oku.",
+      "copy": "Metni kopyala",
+      "askClaude": "Claude'a sor",
+      "askChatGPT": "ChatGPT'ye sor",
+      "download": "Dosya olarak indir",
+      "howItWorks": "Claude'a sor ve ChatGPT'ye sor, metni kopyalar ve o siteyi yeni sekmede açar. Orada yapıştırıp gönder. Stoafi verilerini asla web adresine koymaz.",
+      "copied": "Metin kopyalandı",
+      "copiedPaste": "Metin kopyalandı. Az önce açılan sohbete yapıştır.",
+      "copyFailed": "Kopyalanamadı. Metni seçip kendin kopyala."
+    }
   },
   "installmentExpenses": {
     "title": "Satın alımlardan taksitler",

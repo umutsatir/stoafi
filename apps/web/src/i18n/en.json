@@ -568,7 +568,58 @@
     },
     "importConfirmTitle": "Replace your data with this backup?",
     "importConfirmText": "Importing replaces everything stored in this app. Export a backup first if you are not sure.",
-    "importConfirm": "Replace my data"
+    "importConfirm": "Replace my data",
+    "sections": {
+      "general": "General",
+      "generalHint": "Language, currency and how the app looks.",
+      "rules": "Rules",
+      "rulesHint": "Limits that warn you before a purchase puts you at risk.",
+      "data": "Your data",
+      "dataHint": "Everything stays on this device. Back it up so you never lose it.",
+      "ai": "Ask an AI",
+      "aiHint": "Take your own situation to an AI chat, on your terms.",
+      "about": "About"
+    },
+    "about": {
+      "privacy": "Your data never leaves this device. Stoafi has no account and no server, and it never sends your figures anywhere.",
+      "notAdvice": "Stoafi is a planning aid and general education, not financial advice. Decisions about your money are yours."
+    },
+    "ai": {
+      "intro": "Stoafi does not use AI. This makes a ready-to-paste prompt with your figures, so an AI chat can answer with your real situation in mind. You copy it, you paste it, you choose what it can see.",
+      "levelTitle": "How much to share",
+      "level": {
+        "ratios": "Only ratios",
+        "rounded": "Rounded",
+        "full": "Full detail"
+      },
+      "levelHint": {
+        "ratios": "No amounts and no names: only shares of your income and months. The safest choice.",
+        "rounded": "Amounts rounded to the nearest hundred, with generic names.",
+        "full": "Real amounts and real names. Only choose this if you are comfortable sharing them."
+      },
+      "questionTitle": "What do you want to ask?",
+      "questions": {
+        "assessBudget": "Assess my budget",
+        "whatToCut": "What should I cut?",
+        "canIBuy": "Should I buy something?",
+        "installmentOrCash": "Installments or cash?",
+        "emergencyFaster": "Reach my emergency fund faster",
+        "free": "My own question"
+      },
+      "itemLabel": "Which item?",
+      "freeLabel": "Your question",
+      "previewLabel": "Exactly what will be copied",
+      "previewHint": "You can edit it before you copy. Nothing is sent by Stoafi.",
+      "warning": "This text goes to the AI service you choose, and its own privacy policy applies. Read it before you paste.",
+      "copy": "Copy prompt",
+      "askClaude": "Ask Claude",
+      "askChatGPT": "Ask ChatGPT",
+      "download": "Download as a file",
+      "howItWorks": "Ask Claude and Ask ChatGPT copy the prompt, then open that site in a new tab. Paste it there and send. Stoafi never puts your data in the web address.",
+      "copied": "Prompt copied",
+      "copiedPaste": "Prompt copied. Paste it in the chat that just opened.",
+      "copyFailed": "Could not copy. Select the text and copy it yourself."
+    }
   },
   "installmentExpenses": {
     "title": "Installments from purchases",

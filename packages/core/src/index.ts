@@ -217,3 +217,12 @@ export {
   type CalendarKind,
   type DayRule,
 } from "../kernel/calendar";
+
+export {
+  buildAiExport,
+  type AiExportData,
+  type AiExportInput,
+  type AiLanguage,
+  type AiPrivacyLevel,
+  type AiQuestion,
+} from "../kernel/ai-export";
