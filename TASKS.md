@@ -864,8 +864,10 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T14.1** Privacy and security: app lock and hide amounts (S9), security headers, backup warnings and reminders (S15)
   Note: PIN is hashed with PBKDF2 (Web Crypto, per-install salt), never stored in clear; 5 wrong tries wait 30 s; auto-lock after 5 min hidden. A PIN is a screen lock, not encryption: the data in IndexedDB is not encrypted (said so in Settings). CSP is a meta tag in production plus `public/_headers` for hosts that read it; a test keeps both in sync. Backup reminder: settings remember `lastBackup`; Home asks after 30 days (or 30 days after the first data if never).
 - [x] **T14.2** Error boundary and local error report; migration fixtures for every stored version; import of old backups
-- [ ] **T14.3** Accessibility and performance pass against a written budget
-- [ ] **T14.4** Native Turkish copy review; legal text (not financial advice, privacy)
+- [x] **T14.3** Accessibility and performance pass against a written budget
+  Note: `docs/QUALITY-BUDGET.md`, limits in `apps/web/quality-budget.json`, checked by `pnpm --filter @stoafi/web budget` (a CI step after the build). Accessibility is the axe scan of every page, light and dark, with sample data. Lighthouse stays a manual step.
+- [x] **T14.4** Native Turkish copy review; legal text (not financial advice, privacy)
+  Note: checked key parity, no English left in `tr`, one informal register ("sen") and one vocabulary (birikim, kumbara, kuyruk). A native speaker should still read it once. Legal text lives in Settings > About (not advice, privacy, approximate data, storage, licences) plus `docs/THIRD-PARTY.md`; a lawyer has not reviewed it.
 - [ ] **T14.5** PWA check on real devices (T8.6), deployment, product name, domain and license decisions
   Depends on: Phases 11 to 13.
 
@@ -899,6 +901,10 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 ---
 
 ## Open questions
+
+- [ ] T14.5 (owner): install and offline check on a real phone and Mac, where to deploy (host, domain), final product name, licence (MIT or AGPL). Nothing in code blocks on these; `public/_headers` assumes a host that reads it (Cloudflare Pages, Netlify).
+- [ ] Not built from the plan, decide whether wanted: Eisenhower drag between quadrants, a `⋯` menu on queue rows, before/after bars and a cash/installment toggle with card picker in the queue preview, decision outcome change, a month picker and an insight sentence in Decisions, `MonthTrack` is unused, self-hosted fonts (system fonts today).
+- [ ] Suggested pot split gives pots due soonest priority before the emergency fund. Confirm that order.
 
 - [ ] Remaining product decisions in `docs/PRODUCT-PLAN.md` section 11.3 (brand direction, "Ask AI" export vs the no-network rule, bank colors, AI logos, cooldown re-prompt, phone navigation, page order, dateless pots, emergency fund as the first pot, new dependencies, component sourcing). Answered on 2026-10-02: higher UI polish with ready-made components, manual savings deposits with animation, suggestions accepted (preview deployments dropped, browser tests kept small). Phases 11 to 14 start when the owner says go.
 - [ ] Cooldown re-prompt: SPEC says a want's 30-day cooldown "prompts again when it ends". Today the timeline only shows the countdown. Proposed: once the cooldown has ended, the queue card asks "Still want it?" with Keep / Skip, remembering the answer on the item. Needs confirmation before it is built (adds an optional field to the queue item).

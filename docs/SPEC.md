@@ -311,6 +311,23 @@ packages/
 
 Each module folder holds `schema.ts`, `selectors.ts`, `module.ts` and its tests; the web app only imports from `packages/core`.
 
+## Additions after the first release (Phases 11 to 14)
+
+These extend the modules above; the rules in "Design principles" still hold (integer minor units, pure core, no network, derived projection never stored).
+
+- **Savings pots with deposits.** A pot has an optional icon and colour, and a list of dated deposits and withdrawals (`kernel/deposit.ts`: a balance never goes below zero). The emergency fund is a pot; `Profile.savings` and its pot never diverge. Advice per month: `requiredThisMonth`, `monthlySavingsAdvice`; the savings rate comes from deposits.
+- **Investments** (`modules/investments`, table `holdings`). Holdings of a user-editable type (`data/investment-types.json`) with buy and sell trades, a user-entered current price and its date. Cost basis is the weighted average; selling more than held is rejected; quantity may be decimal; rounding happens once, half-to-even. Output: unrealized and realized profit, allocation by type, real return after inflation, price staleness. No prices are fetched. Guidance text is our own words with source labels and a not-advice note.
+- **Cards.** Supplementary cards (`kind`, `parentId`), per-card limit and current debt, bank presets for Turkey and the US (`data/banks.json`, colours approximate, no logos), installment purchases remember their card, and a `card-limit` guard rule warns when a purchase would exceed the limit.
+- **Calendar** (`kernel/calendar.ts`). Upcoming card payments, installments and pot due dates, derived from the ledger for a window of days.
+- **Snapshots** (`modules/snapshots`, table `snapshots`). One saved summary per month for trends; derived figures are recomputed, only the snapshot is stored.
+- **Health.** Status per metric and an overall summary, with thresholds in `data/health-thresholds.json`.
+- **Queue.** Price-age reminder (`priceStaleDays` in `data/queue-rules.json`), undo for buy, skip, postpone and delete.
+- **Decision log.** Decisions keep the item name; filter, group by month, delete; stats (money saved by skipping, work hours).
+- **Ask AI export** (`kernel/ai-export.ts`). Builds a prompt in English or Turkish with three privacy levels (ratios, rounded, full) and six question types. The user reads it, edits it, copies it and pastes it into an assistant themselves. The app makes no request and puts no data in any address; the "open Claude / ChatGPT" buttons only open the assistant's new-chat page.
+- **Privacy.** Optional PIN lock (PBKDF2 hash, short wait after 5 wrong tries, auto-lock when hidden), a hide-amounts switch, a content security policy (`connect-src 'self'`), a backup reminder after 30 days. A PIN locks the screen; it does not encrypt stored data.
+- **Resilience.** Error screen with a local report (nothing sent), module migrations applied on import so old backups upgrade, a fixture per stored version.
+- **Quality budget** in `docs/QUALITY-BUDGET.md`.
+
 ## Acceptance criteria
 
 The MVP is done when every box below is ticked.

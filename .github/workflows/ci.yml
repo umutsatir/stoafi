@@ -33,6 +33,9 @@ jobs:
 
       - run: pnpm --filter @stoafi/web build
 
+      # Written budget: docs/QUALITY-BUDGET.md.
+      - run: pnpm --filter @stoafi/web budget
+
       # Browser smoke tests run against the static export built above.
       - run: pnpm --filter @stoafi/web exec playwright install --with-deps chromium
 

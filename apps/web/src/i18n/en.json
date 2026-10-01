@@ -605,7 +605,10 @@
     },
     "about": {
       "privacy": "Your data never leaves this device. Stoafi has no account and no server, and it never sends your figures anywhere.",
-      "notAdvice": "Stoafi is a planning aid and general education, not financial advice. Decisions about your money are yours."
+      "notAdvice": "Stoafi is a planning aid and general education, not financial advice. Decisions about your money are yours.",
+      "data": "Bank colours, card networks and typical rates are approximate and for orientation only. Inflation, card rates and prices are what you type in; Stoafi never fetches them.",
+      "storage": "Everything is kept in this browser on this device. Clearing site data or switching device removes it, so download a backup from time to time.",
+      "licenses": "Built with open-source software. The list and licences are in docs/THIRD-PARTY.md in the repository."
     },
     "ai": {
       "intro": "Stoafi does not use AI. This makes a ready-to-paste prompt with your figures, so an AI chat can answer with your real situation in mind. You copy it, you paste it, you choose what it can see.",

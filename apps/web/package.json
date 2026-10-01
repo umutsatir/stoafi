@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "budget": "node scripts/check-budget.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

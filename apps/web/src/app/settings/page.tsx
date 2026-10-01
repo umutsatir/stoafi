@@ -136,6 +136,9 @@ export default function SettingsPage() {
         <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
           <p>{t("about.privacy")}</p>
           <p className="mt-2">{t("about.notAdvice")}</p>
+          <p className="mt-2">{t("about.data")}</p>
+          <p className="mt-2">{t("about.storage")}</p>
+          <p className="mt-2">{t("about.licenses")}</p>
         </div>
       </SettingsSection>
     </Page>

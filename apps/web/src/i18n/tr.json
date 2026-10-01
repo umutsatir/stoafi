@@ -605,7 +605,10 @@
     },
     "about": {
       "privacy": "Verilerin bu cihazdan çıkmaz. Stoafi'nin hesabı ve sunucusu yoktur, rakamlarını hiçbir yere göndermez.",
-      "notAdvice": "Stoafi bir planlama yardımcısı ve genel eğitimdir, mali tavsiye değildir. Paranla ilgili kararlar senindir."
+      "notAdvice": "Stoafi bir planlama yardımcısı ve genel eğitimdir, mali tavsiye değildir. Paranla ilgili kararlar senindir.",
+      "data": "Banka renkleri, kart ağları ve tipik oranlar yaklaşıktır, yalnızca yön göstermek içindir. Enflasyon, kart oranları ve fiyatlar senin girdiğin değerlerdir; Stoafi bunları internetten çekmez.",
+      "storage": "Her şey bu cihazdaki bu tarayıcıda tutulur. Site verilerini silmek ya da cihaz değiştirmek onları kaldırır; bu yüzden ara sıra yedek indir.",
+      "licenses": "Açık kaynak yazılımlarla yapıldı. Liste ve lisanslar, depodaki docs/THIRD-PARTY.md dosyasında."
     },
     "ai": {
       "intro": "Stoafi yapay zekâ kullanmaz. Bu, rakamlarınla yapıştırmaya hazır bir metin hazırlar; böylece bir yapay zekâ sohbeti gerçek durumunu bilerek cevap verebilir. Sen kopyalarsın, sen yapıştırırsın, neyi görebileceğini sen seçersin.",
