@@ -1119,5 +1119,13 @@
       "addPot": "Add a savings pot",
       "addInvestment": "Add an investment"
     }
+  },
+  "errorScreen": {
+    "title": "Something went wrong",
+    "text": "This page hit an unexpected problem. Your data is still on this device. Try again, and if it keeps happening, save a backup first.",
+    "retry": "Try again",
+    "saveData": "Save a backup of my data",
+    "saveReport": "Save an error report",
+    "reportNote": "The error report holds technical details only: no amounts and no names. Nothing is sent anywhere; you decide whether to share it."
   }
 }

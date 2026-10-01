@@ -1119,5 +1119,13 @@
       "addPot": "Kumbara ekle",
       "addInvestment": "Yatırım ekle"
     }
+  },
+  "errorScreen": {
+    "title": "Bir şeyler ters gitti",
+    "text": "Bu sayfa beklenmedik bir sorunla karşılaştı. Verilerin hâlâ bu cihazda. Tekrar dene; yine olursa önce yedek al.",
+    "retry": "Tekrar dene",
+    "saveData": "Verilerimin yedeğini al",
+    "saveReport": "Hata raporunu kaydet",
+    "reportNote": "Hata raporu yalnızca teknik ayrıntı içerir: tutar ve ad yok. Hiçbir yere gönderilmez; paylaşıp paylaşmamak sana kalmış."
   }
 }
