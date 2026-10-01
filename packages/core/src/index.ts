@@ -239,3 +239,5 @@ export {
   type SnapshotKey,
   type Trend,
 } from "../modules/snapshots/snapshots";
+
+export { PRICE_STALE_DAYS, priceAgeDays, priceIsStale } from "../modules/queue/price-age";

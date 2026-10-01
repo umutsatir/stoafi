@@ -284,7 +284,8 @@
     "emptyState": {
       "title": "Kuyruğun boş",
       "text": "Almayı düşündüğün bir şey ekle. Karar vermeden önce biraz beklemek işin özü."
-    }
+    },
+    "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?"
   },
   "queuePreview": {
     "wantsBeforeAfter": "İstekler önce / sonra",

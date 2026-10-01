@@ -23,6 +23,8 @@ import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import {
   costInWorkHours,
   costPerUse,
+  priceAgeDays,
+  priceIsStale,
   eisenhowerQuadrant,
   scheduleQueue,
   type Commitment,
@@ -99,6 +101,7 @@ interface QueueRowProps {
   onDelete?: (item: QueueItem) => void;
   hourlyNetIncome: number;
   reorderable: boolean;
+  today: string;
   locale: string;
   t: (key: string, values?: Record<string, string | number>) => string;
   money: (minor: number) => string;
@@ -116,6 +119,7 @@ function QueueRow({
   onDelete,
   hourlyNetIncome,
   reorderable,
+  today,
   locale,
   t,
   money,
@@ -174,6 +178,18 @@ function QueueRow({
             </span>
           </StatusChip>
           <StatusChip tone={priority.tone}>{t(`priority.${priority.key}`)}</StatusChip>
+          {priceIsStale(item, today) && (
+            <button
+              type="button"
+              data-testid={`stale-${item.id}`}
+              onClick={() => onEdit?.(item)}
+              className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <StatusChip tone="warning" className="cursor-pointer hover:bg-warning/25">
+                {t("priceStale", { days: priceAgeDays(item, today) })}
+              </StatusChip>
+            </button>
+          )}
           <span>
             {t("hoursSuffix", { hours: costInWorkHours(item.price, hourlyNetIncome).toFixed(1) })}
           </span>
@@ -304,6 +320,7 @@ export function QueueList({
                 onDelete={onDelete}
                 hourlyNetIncome={hourlyNetIncome}
                 reorderable={reorderable}
+                today={today}
                 locale={locale}
                 t={t}
                 money={money}

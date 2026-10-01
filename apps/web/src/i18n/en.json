@@ -284,7 +284,8 @@
     "emptyState": {
       "title": "Your queue is empty",
       "text": "Add something you are thinking of buying. Waiting a little before deciding is the whole idea."
-    }
+    },
+    "priceStale": "Price is {days} days old: still right?"
   },
   "queuePreview": {
     "wantsBeforeAfter": "Wants before / after",

@@ -153,3 +153,29 @@ describe("Queue views and filters", () => {
     expect(within(screen.getByTestId("queue-item-h")).getByText("Important")).toBeInTheDocument();
   });
 });
+
+describe("Queue price age", () => {
+  it("asks whether an old price is still right, and opens the item to fix it", async () => {
+    useAppStore.setState({
+      queueItems: [
+        { ...headphones, priceUpdatedDate: "2026-05-01", addedDate: "2026-05-01" },
+        { ...rent, priceUpdatedDate: "2026-09-10" },
+      ],
+    });
+    renderWithIntl(<QueuePage />);
+    const chip = screen.getByTestId("stale-h");
+    expect(chip).toHaveTextContent("Price is 137 days old: still right?");
+    expect(screen.queryByTestId("stale-r")).not.toBeInTheDocument();
+    fireEvent.click(chip);
+    const panel = await screen.findByRole("dialog", { name: "Edit item" });
+    expect(within(panel).getByLabelText("Name")).toHaveValue("Headphones");
+  });
+
+  it("does not nag about a price that is only a little old", () => {
+    useAppStore.setState({
+      queueItems: [{ ...headphones, priceUpdatedDate: "2026-08-20", addedDate: "2026-08-20" }],
+    });
+    renderWithIntl(<QueuePage />);
+    expect(screen.queryByTestId("stale-h")).not.toBeInTheDocument();
+  });
+});
