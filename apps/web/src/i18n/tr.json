@@ -37,7 +37,7 @@
     "profile": "Profil",
     "plan": "Plan",
     "queue": "Kuyruk",
-    "sinkingFunds": "Birikim hedefleri",
+    "sinkingFunds": "Birikim",
     "cards": "Kartlar",
     "health": "Sağlık",
     "decisions": "Kararlar",
@@ -366,7 +366,75 @@
         "text": "Gelirin kesilirse ihtiyaçlarını ve taksitlerini birikiminle kaç ay ödeyebileceğin."
       }
     },
-    "fundRingLabel": "Acil durum fonu ilerlemesi"
+    "fundRingLabel": "Acil durum fonu ilerlemesi",
+    "metric": {
+      "savingsRate": "Birikim oranı",
+      "emergencyFundMonths": "Acil durum fonu",
+      "installmentRatio": "Taksit yükü",
+      "runway": "Dayanma süresi"
+    },
+    "status": {
+      "good": "İyi",
+      "watch": "Dikkat",
+      "risk": "Risk"
+    },
+    "summary": {
+      "title": "Genel durum",
+      "allGood": "Her şey yolunda. Böyle devam.",
+      "fix": "Düzelt"
+    },
+    "empty": {
+      "title": "Paranın ne kadar sağlıklı olduğunu gör",
+      "action": "Gelir ve gider ekle"
+    },
+    "ratioBarLabel": "Taksitler üst sınırınla karşılaştırıldı",
+    "rateBarLabel": "Birikim oranı yüzde 30 ölçeğinde",
+    "runwayBarLabel": "Dayanma süresi bir yıla göre",
+    "hint": {
+      "savingsRate": {
+        "good": "Gelirinin sağlıklı bir kısmını ayırıyorsun.",
+        "watch": "Birçok kaynağın önerdiği yüzde 20'nin biraz altında.",
+        "risk": "Birikime çok az gidiyor. Bir kumbaraya para ekle."
+      },
+      "emergencyFundMonths": {
+        "good": "{target} aylık hedefine ulaştın.",
+        "watch": "Yaklaşıyorsun. Hedefin {target} ay.",
+        "risk": "{target} aylık hedefinin epey altında."
+      },
+      "installmentRatio": {
+        "good": "Gelirinin %{cap} olan üst sınırının içinde.",
+        "watch": "%{cap} üst sınırının üstünde. Yeni taksitleri durdur.",
+        "risk": "%{cap} üst sınırının çok üstünde. Taksitler seni sıkıştırıyor."
+      },
+      "runway": {
+        "good": "Gelirin kesilirse altı ay ya da daha fazla idare edersin.",
+        "watch": "Gelirin kesilirse üç ila altı ay idare edersin.",
+        "risk": "Gelirin kesilirse üç aydan az idare edersin."
+      }
+    },
+    "steps": {
+      "title": "Sıradaki adımlar",
+      "build-emergency-fund": {
+        "title": "Acil durum fonunu büyüt",
+        "why": "Acil durum fonun hedefin altında. Kötü bir ayın borca dönüşmesini o engeller.",
+        "action": "Acil durum fonuna ekle"
+      },
+      "reduce-installments": {
+        "title": "Taksitleri hafiflet",
+        "why": "Taksitlerin gelirinden üst sınırın izin verdiğinden fazlasını alıyor. Yenilerini bekle.",
+        "action": "Kuyruğu gözden geçir"
+      },
+      "start-saving": {
+        "title": "Para ayırmaya başla",
+        "why": "Gelirinin az bir kısmı birikiyor. Önce kendine ödemek birikimi otomatik yapar.",
+        "action": "Birikimi aç"
+      },
+      "extend-runway": {
+        "title": "Dayanma süreni uzat",
+        "why": "Birikimin birkaç aylık ihtiyacını karşılamaz. En çok sabit giderleri azaltmak yardım eder.",
+        "action": "Giderleri gözden geçir"
+      }
+    }
   },
   "decisions": {
     "title": "Kararlar",
@@ -489,5 +557,73 @@
     "undo": "Geri al",
     "saved": "Kaydedildi",
     "deletedItem": "“{name}” silindi"
+  },
+  "savings": {
+    "title": "Birikim",
+    "intro": "Biriktirdikçe parayı kumbaralara ekle ve dolduğunu izle. Stoafi bu ay ne kaldığını ve ne kadar ayırman gerektiğini gösterir, ayı ona göre planlarsın.",
+    "needProfile": "Ne kadar ayırabileceğini söyleyebilmem için önce gelir ve giderlerini ekle.",
+    "goToIncome": "Gelir ve gider ekle",
+    "summary": {
+      "title": "Bu ayın birikimi",
+      "left": "Bu ay kalan",
+      "toSet": "Ayırman gereken",
+      "added": "Şimdiye kadar ayırdığın",
+      "free": "Ayırdıktan sonra serbest",
+      "barLabel": "Ayırdığın {added}, hâlâ ayırman gereken {still}, serbest {free}",
+      "sentenceMore": "Planına uymak için bu ay {more} daha ayırmalısın. Sonrasında {free} serbestçe harcayabilirsin.",
+      "sentenceDone": "Planının istediğini ayırdın. {free} serbestçe harcayabilirsin.",
+      "split": {
+        "emergency": "{amount} acil durum fonuna",
+        "pot": "{amount} {name} kumbarasına",
+        "unassigned": "{amount} istediğin yere"
+      }
+    },
+    "potsTitle": "Kumbaraların",
+    "addPot": "Kumbara ekle",
+    "editPot": "Kumbarayı düzenle",
+    "deletePot": "{name} kumbarasını sil",
+    "deletePotShort": "Kumbarayı sil",
+    "emergency": "Acil durum fonu",
+    "ofTarget": "hedef {target}",
+    "thisMonth": "Bu ay: {needed} içinden {added}",
+    "addMoney": "Para ekle",
+    "historyButton": "Geçmiş",
+    "progressLabel": "{name} ilerlemesi",
+    "state": {
+      "funded": "Tamam",
+      "active": "Yolunda",
+      "due": "Şimdi gerekli",
+      "overdue": "Süresi geçti",
+      "open": "Büyüyor"
+    },
+    "noGoals": {
+      "title": "Yaklaşan bir gider için kumbara aç",
+      "text": "Araba sigortası, tatil, vergi: bir tutar ve ay seç, her ay ne ayıracağını söyleyeyim."
+    },
+    "deposit": {
+      "title": "{name} kumbarasına ekle",
+      "mode": "Giriş ya da çıkış",
+      "modeIn": "Para koy",
+      "modeOut": "Para çek",
+      "amount": "Tutar",
+      "amountRequired": "Sıfırdan büyük bir tutar gir.",
+      "tooMuch": "Bu kumbarada bundan az para var.",
+      "date": "Tarih",
+      "note": "Not (isteğe bağlı)",
+      "cancel": "Vazgeç",
+      "submitIn": "Ekle",
+      "submitOut": "Çek",
+      "added": "Para eklendi",
+      "taken": "Para çekildi",
+      "removed": "Kayıt silindi",
+      "failed": "Bu değişiklik kumbarayı sıfırın altına düşürür."
+    },
+    "history": {
+      "title": "{name} geçmişi",
+      "empty": "Henüz bir şey yok. Eklediğin paralar burada listelenir.",
+      "in": "Para eklendi",
+      "out": "Para çekildi",
+      "delete": "{date} tarihli kaydı sil"
+    }
   }
 }

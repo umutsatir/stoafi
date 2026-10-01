@@ -24,7 +24,7 @@ describe("Nav", () => {
       "Profile",
       "Plan",
       "Queue",
-      "Savings goals",
+      "Savings",
       "Cards",
       "Health",
       "Decisions",
@@ -58,7 +58,7 @@ describe("Nav", () => {
     fireEvent.click(bar.getByRole("button", { name: "More" }));
     const sheet = within(await screen.findByRole("dialog", { name: "More pages" }));
     for (const label of [
-      "Savings goals",
+      "Savings",
       "Cards",
       "Health",
       "Decisions",

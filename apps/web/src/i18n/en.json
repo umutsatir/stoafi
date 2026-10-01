@@ -37,7 +37,7 @@
     "profile": "Profile",
     "plan": "Plan",
     "queue": "Queue",
-    "sinkingFunds": "Savings goals",
+    "sinkingFunds": "Savings",
     "cards": "Cards",
     "health": "Health",
     "decisions": "Decisions",
@@ -366,7 +366,75 @@
         "text": "How many months you could pay your needs and installments from savings if your income stopped."
       }
     },
-    "fundRingLabel": "Emergency fund progress"
+    "fundRingLabel": "Emergency fund progress",
+    "metric": {
+      "savingsRate": "Savings rate",
+      "emergencyFundMonths": "Emergency fund",
+      "installmentRatio": "Installment load",
+      "runway": "Runway"
+    },
+    "status": {
+      "good": "Good",
+      "watch": "Watch",
+      "risk": "At risk"
+    },
+    "summary": {
+      "title": "Overall",
+      "allGood": "Everything is on track. Keep going.",
+      "fix": "Fix this"
+    },
+    "empty": {
+      "title": "See how healthy your money is",
+      "action": "Add income and expenses"
+    },
+    "ratioBarLabel": "Installments compared with your cap",
+    "rateBarLabel": "Savings rate compared with a 30 percent scale",
+    "runwayBarLabel": "Runway compared with a year",
+    "hint": {
+      "savingsRate": {
+        "good": "You set aside a healthy share of your income.",
+        "watch": "A bit under the 20 percent many guides suggest.",
+        "risk": "Very little is going into savings. Add money to a pot."
+      },
+      "emergencyFundMonths": {
+        "good": "You have reached your target of {target} months.",
+        "watch": "Getting there. Your target is {target} months.",
+        "risk": "Well below your target of {target} months."
+      },
+      "installmentRatio": {
+        "good": "Within your cap of {cap}% of income.",
+        "watch": "Above your cap of {cap}%. Pause new installments.",
+        "risk": "Far above your cap of {cap}%. Installments are squeezing you."
+      },
+      "runway": {
+        "good": "You could cover six months or more if income stopped.",
+        "watch": "Three to six months of cover if income stopped.",
+        "risk": "Less than three months of cover if income stopped."
+      }
+    },
+    "steps": {
+      "title": "What to do next",
+      "build-emergency-fund": {
+        "title": "Build your emergency fund",
+        "why": "Your emergency fund is below target. It is what stops a bad month from becoming debt.",
+        "action": "Add to the emergency fund"
+      },
+      "reduce-installments": {
+        "title": "Ease the installments",
+        "why": "Your installments take more of your income than your cap allows. Hold off on new ones.",
+        "action": "Review the queue"
+      },
+      "start-saving": {
+        "title": "Start setting money aside",
+        "why": "Little of your income is being saved. Paying yourself first makes saving automatic.",
+        "action": "Open savings"
+      },
+      "extend-runway": {
+        "title": "Stretch your runway",
+        "why": "Your savings would not cover many months of needs. Lowering fixed costs helps most.",
+        "action": "Review expenses"
+      }
+    }
   },
   "decisions": {
     "title": "Decisions",
@@ -489,5 +557,73 @@
     "undo": "Undo",
     "saved": "Saved",
     "deletedItem": "Deleted “{name}”"
+  },
+  "savings": {
+    "title": "Savings",
+    "intro": "Put money aside as you save and watch the pots fill. Stoafi shows what is left this month and how much to set aside, so you can plan the month.",
+    "needProfile": "Add your income and expenses first so I can tell how much you can set aside.",
+    "goToIncome": "Add income and expenses",
+    "summary": {
+      "title": "This month's saving",
+      "left": "Left this month",
+      "toSet": "To set aside",
+      "added": "Already set aside",
+      "free": "Free after saving",
+      "barLabel": "Set aside {added}, still to set aside {still}, free {free}",
+      "sentenceMore": "To follow your plan, set aside {more} more this month. After that you can spend {free} freely.",
+      "sentenceDone": "You have set aside what your plan asks for. You can spend {free} freely.",
+      "split": {
+        "emergency": "{amount} to the emergency fund",
+        "pot": "{amount} to {name}",
+        "unassigned": "{amount} wherever you like"
+      }
+    },
+    "potsTitle": "Your pots",
+    "addPot": "Add a pot",
+    "editPot": "Edit pot",
+    "deletePot": "Delete {name}",
+    "deletePotShort": "Delete pot",
+    "emergency": "Emergency fund",
+    "ofTarget": "of {target}",
+    "thisMonth": "This month: {added} of {needed}",
+    "addMoney": "Add money",
+    "historyButton": "History",
+    "progressLabel": "Progress of {name}",
+    "state": {
+      "funded": "Reached",
+      "active": "On track",
+      "due": "Due now",
+      "overdue": "Past due",
+      "open": "Growing"
+    },
+    "noGoals": {
+      "title": "Make a pot for a bill you know is coming",
+      "text": "Car insurance, a holiday, taxes: pick an amount and a month and I will tell you what to set aside each month."
+    },
+    "deposit": {
+      "title": "Add to {name}",
+      "mode": "In or out",
+      "modeIn": "Put in",
+      "modeOut": "Take out",
+      "amount": "Amount",
+      "amountRequired": "Enter an amount above zero.",
+      "tooMuch": "There is less than that in this pot.",
+      "date": "Date",
+      "note": "Note (optional)",
+      "cancel": "Cancel",
+      "submitIn": "Put in",
+      "submitOut": "Take out",
+      "added": "Money added",
+      "taken": "Money taken out",
+      "removed": "Entry removed",
+      "failed": "That change would take the pot below zero."
+    },
+    "history": {
+      "title": "History of {name}",
+      "empty": "Nothing yet. Money you put in will be listed here.",
+      "in": "Put in",
+      "out": "Taken out",
+      "delete": "Delete the entry from {date}"
+    }
   }
 }

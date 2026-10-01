@@ -1,12 +1,21 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { toast } from "sonner";
 import { beforeEach, describe, expect, it } from "vitest";
-import type { SinkingFund } from "@stoafi/core";
+import type { Profile, SinkingFund } from "@stoafi/core";
+import { Toaster } from "@/components/ui/toaster";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
 import { renderWithIntl } from "@/test-utils";
-import { Toaster } from "@/components/ui/toaster";
-import SinkingFundsPage from "./page";
+import SavingsPage from "./page";
+
+const profile: Profile = {
+  incomes: [{ label: "Job", monthly: 6_000_000 }],
+  fixedExpenses: [{ label: "Rent", monthly: 1_800_000, bucket: "needs" }],
+  livingExpenses: 1_200_000,
+  savings: 900_000,
+  emergencyFundTargetMonths: 6,
+  annualInflationExpectation: 0.3,
+};
 
 const fund: SinkingFund = {
   id: "insurance",
@@ -16,99 +25,161 @@ const fund: SinkingFund = {
   currentBalance: 0,
 };
 
-function type(label: string, value: string) {
-  fireEvent.change(screen.getByLabelText(label), { target: { value } });
-}
-
 beforeEach(async () => {
   toast.dismiss();
   await db.sinkingFunds.clear();
-  useAppStore.setState({ sinkingFunds: [], today: "2026-10-15", hydrated: true });
+  await db.profile.clear();
+  useAppStore.setState({
+    profile,
+    planState: { strategyId: "fifty-thirty-twenty", params: {} },
+    sinkingFunds: [],
+    queueItems: [],
+    today: "2026-10-15",
+    hydrated: true,
+  });
 });
 
-describe("Sinking funds screen", () => {
-  it("adds a fund, shows its monthly set-aside and saves it", async () => {
-    renderWithIntl(<SinkingFundsPage />);
-    type("Name", "Car insurance");
-    type("Target amount", "6000");
-    type("Due month", "2027-04");
-    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+function renderPage() {
+  return renderWithIntl(
+    <>
+      <SavingsPage />
+      <Toaster />
+    </>,
+  );
+}
 
-    const [added] = useAppStore.getState().sinkingFunds;
-    expect(added).toMatchObject({ label: "Car insurance", target: 600_000, dueMonth: "2027-04" });
-    expect(screen.getByTestId(`sinking-status-${added?.id}`)).toHaveTextContent("₺1,000.00");
-    await waitFor(async () => expect(await db.sinkingFunds.count()).toBe(1));
+describe("Savings screen", () => {
+  it("asks for income and expenses first when there is no profile", () => {
+    useAppStore.setState({ profile: null });
+    renderPage();
+    expect(screen.getByRole("link", { name: "Add income and expenses" })).toBeInTheDocument();
   });
 
-  it("edits how much is saved and persists it", async () => {
+  it("always shows the emergency fund as the first pot, with the saved balance", () => {
+    renderPage();
+    expect(screen.getByTestId("pot-balance-emergency")).toHaveTextContent("₺9,000.00");
+  });
+
+  it("shows what is left, what to set aside and what stays free this month", () => {
+    renderPage();
+    expect(screen.getByTestId("summary-left")).toBeInTheDocument();
+    expect(screen.getByTestId("savings-sentence")).toHaveTextContent(/set aside/);
+  });
+
+  it("adds a pot from the panel, saves it and confirms with a toast", async () => {
+    renderPage();
+    fireEvent.click(screen.getAllByRole("button", { name: "Add a pot" })[0] as HTMLElement);
+    const panel = await screen.findByRole("dialog", { name: "Add a pot" });
+    fireEvent.change(within(panel).getByLabelText("Name"), { target: { value: "Tax" } });
+    fireEvent.change(within(panel).getByLabelText("Target amount"), { target: { value: "1200" } });
+    fireEvent.change(within(panel).getByLabelText("Due month"), { target: { value: "2027-04" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Add" }));
+
+    expect(useAppStore.getState().sinkingFunds[0]).toMatchObject({ label: "Tax", target: 120_000 });
+    await waitFor(async () => expect(await db.sinkingFunds.count()).toBe(1));
+    expect(await screen.findByText("Saved")).toBeInTheDocument();
+  });
+
+  it("puts money into a pot: balance, history and storage all follow", async () => {
     await db.sinkingFunds.put(fund);
     useAppStore.setState({ sinkingFunds: [fund] });
-    renderWithIntl(<SinkingFundsPage />);
-    fireEvent.click(screen.getByRole("button", { name: "Edit Car insurance" }));
-    type("Saved so far", "3000");
-    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Add money.*Car insurance/ }));
+    const panel = await screen.findByRole("dialog", { name: "Add to Car insurance" });
+    fireEvent.change(within(panel).getByLabelText("Amount"), { target: { value: "1500" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Put in" }));
 
-    expect(useAppStore.getState().sinkingFunds[0]?.currentBalance).toBe(300_000);
+    const saved = useAppStore.getState().sinkingFunds[0];
+    expect(saved?.currentBalance).toBe(150_000);
+    expect(saved?.deposits).toEqual([expect.objectContaining({ amount: 150_000 })]);
     await waitFor(async () => {
       const row = (await db.sinkingFunds.get("insurance")) as SinkingFund | undefined;
-      expect(row?.currentBalance).toBe(300_000);
+      expect(row?.currentBalance).toBe(150_000);
     });
-    // the form returns to "add" mode
-    expect(screen.getByRole("button", { name: "Add" })).toBeInTheDocument();
+    expect(await screen.findByText("Money added")).toBeInTheDocument();
   });
 
-  it("deletes a fund and persists the deletion", async () => {
+  it("puts money into the emergency fund and keeps the profile's savings in step", async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Add money.*Emergency fund/ }));
+    const panel = await screen.findByRole("dialog", { name: "Add to Emergency fund" });
+    fireEvent.change(within(panel).getByLabelText("Amount"), { target: { value: "1000" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Put in" }));
+
+    expect(useAppStore.getState().profile?.savings).toBe(1_000_000);
+    await waitFor(async () => {
+      const row = (await db.profile.get("singleton")) as { data: Profile } | undefined;
+      expect(row?.data.savings).toBe(1_000_000);
+      expect(row?.data.deposits).toHaveLength(1);
+    });
+  });
+
+  it("refuses to take out more than the pot holds", async () => {
+    await db.sinkingFunds.put({ ...fund, currentBalance: 10_000 });
+    useAppStore.setState({ sinkingFunds: [{ ...fund, currentBalance: 10_000 }] });
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Add money.*Car insurance/ }));
+    const panel = await screen.findByRole("dialog");
+    fireEvent.click(within(panel).getByText("Take out", { selector: "label" }));
+    fireEvent.change(within(panel).getByLabelText("Amount"), { target: { value: "500" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Take out" }));
+    expect(within(panel).getByText("There is less than that in this pot.")).toBeInTheDocument();
+    expect(useAppStore.getState().sinkingFunds[0]?.currentBalance).toBe(10_000);
+  });
+
+  it("lists the history and removes an entry with an undo", async () => {
+    const withMoney: SinkingFund = {
+      ...fund,
+      currentBalance: 200_000,
+      deposits: [{ id: "x", date: "2026-10-02", amount: 200_000 }],
+    };
+    await db.sinkingFunds.put(withMoney);
+    useAppStore.setState({ sinkingFunds: [withMoney] });
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /History.*Car insurance/ }));
+    const panel = await screen.findByRole("dialog", { name: "History of Car insurance" });
+    fireEvent.click(
+      within(panel).getByRole("button", { name: "Delete the entry from 2026-10-02" }),
+    );
+
+    expect(useAppStore.getState().sinkingFunds[0]).toMatchObject({
+      currentBalance: 0,
+      deposits: [],
+    });
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().sinkingFunds[0]?.currentBalance).toBe(200_000);
+  });
+
+  it("shows a pot as reached once it is full", () => {
+    useAppStore.setState({ sinkingFunds: [{ ...fund, currentBalance: 600_000 }] });
+    renderPage();
+    expect(screen.getByTestId("pot-state-insurance")).toHaveTextContent("Reached");
+  });
+
+  it("does not throw for a pot that is due this month", () => {
+    useAppStore.setState({ sinkingFunds: [{ ...fund, dueMonth: "2026-10" }] });
+    renderPage();
+    expect(screen.getByTestId("pot-state-insurance")).toHaveTextContent("Due now");
+  });
+
+  it("deletes a pot with an undo that brings it back, saved again", async () => {
     await db.sinkingFunds.put(fund);
     useAppStore.setState({ sinkingFunds: [fund] });
-    renderWithIntl(<SinkingFundsPage />);
-    fireEvent.click(screen.getByRole("button", { name: "Delete Car insurance" }));
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /History.*Car insurance/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "Delete Car insurance" }));
     expect(useAppStore.getState().sinkingFunds).toEqual([]);
     await waitFor(async () => expect(await db.sinkingFunds.count()).toBe(0));
-  });
-
-  it("does not throw for a fund that is due this month", () => {
-    useAppStore.setState({ sinkingFunds: [{ ...fund, dueMonth: "2026-10" }] });
-    renderWithIntl(<SinkingFundsPage />);
-    expect(screen.getByTestId("sinking-status-insurance")).toHaveTextContent("Due this month");
-  });
-
-  it("links to the sinking funds lesson", () => {
-    renderWithIntl(<SinkingFundsPage />);
-    expect(screen.getByTestId("lesson-link-sinking-funds")).toHaveAttribute(
-      "href",
-      "/lessons#sinking-funds",
-    );
-  });
-
-  it("deletes a fund with an undo toast that brings it back, saved again", async () => {
-    await db.sinkingFunds.put({ id: fund.id, data: fund } as never);
-    useAppStore.setState({ sinkingFunds: [fund] });
-    renderWithIntl(
-      <>
-        <SinkingFundsPage />
-        <Toaster />
-      </>,
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Delete Car insurance" }));
-    expect(useAppStore.getState().sinkingFunds).toEqual([]);
-    expect(await screen.findByText("Deleted “Car insurance”")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
     expect(useAppStore.getState().sinkingFunds).toEqual([fund]);
     await waitFor(async () => expect(await db.sinkingFunds.count()).toBe(1));
   });
 
-  it("confirms a save with a toast", async () => {
-    renderWithIntl(
-      <>
-        <SinkingFundsPage />
-        <Toaster />
-      </>,
+  it("links to the sinking funds lesson", () => {
+    renderPage();
+    expect(screen.getByTestId("lesson-link-sinking-funds")).toHaveAttribute(
+      "href",
+      "/lessons#sinking-funds",
     );
-    type("Name", "Tax");
-    type("Target amount", "1200");
-    type("Due month", "2027-04");
-    fireEvent.click(screen.getByRole("button", { name: "Add" }));
-    expect(await screen.findByText("Saved")).toBeInTheDocument();
   });
 });

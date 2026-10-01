@@ -41,7 +41,7 @@ export function StatCard({
           </p>
           {status && <StatusChip tone={status.tone}>{status.label}</StatusChip>}
         </div>
-        <p className="text-title font-semibold tracking-tight" data-testid={testId}>
+        <p className="text-2xl font-semibold tracking-tight" data-testid={testId}>
           {value}
         </p>
         {hint && <p className="text-caption text-muted-foreground">{hint}</p>}
