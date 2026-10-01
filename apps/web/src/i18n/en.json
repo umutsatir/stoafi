@@ -136,7 +136,26 @@
     "usePlan": "Use this plan",
     "activePlan": "Active plan",
     "chartTitle": "Monthly allocation by strategy",
-    "readFullLesson": "Read the full lesson"
+    "readFullLesson": "Read the full lesson",
+    "usage": {
+      "title": "Your active plan",
+      "bucket": {
+        "needs": "Needs",
+        "wants": "Wants",
+        "savings": "Savings",
+        "investing": "Investing"
+      },
+      "infoLabel": "What is {bucket}?",
+      "barLabel": "{bucket} used this month",
+      "info": {
+        "needs": "Things you cannot skip: rent, bills, groceries, minimum debt payments.",
+        "wants": "Things that make life nicer but you could do without.",
+        "savings": "Money set aside for safety and known future costs.",
+        "investing": "Money put to work to grow over many years."
+      },
+      "investingWhere": "Where can this money go?",
+      "learnInvesting": "Learn about index funds and costs"
+    }
   },
   "queue": {
     "title": "Queue",
@@ -533,7 +552,8 @@
     "intro": "Every recommendation in Stoafi comes from a book or an investor. These cards explain the idea in our own words, how the app uses it, who it suits and where it falls short.",
     "formula": "How the app applies it",
     "fitsWhen": "Who it fits",
-    "critique": "Limits and counter-arguments"
+    "critique": "Limits and counter-arguments",
+    "openInLessons": "Open in the lessons page"
   },
   "insights": {
     "title": "What your plan says",

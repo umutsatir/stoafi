@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Profile, QueueItem } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
@@ -74,9 +74,12 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
     );
   });
 
-  it("plan investing bucket -> index-funds", () => {
+  it("plan investing bucket -> index-funds, read in a panel without leaving the page", async () => {
     renderWithIntl(<PlanComparison profile={profile} />);
-    expect(screen.getByTestId("lesson-link-index-funds")).toHaveAttribute(
+    fireEvent.click(screen.getByTestId("lesson-link-index-funds"));
+    const panel = await screen.findByRole("dialog", { name: "Index funds and costs" });
+    expect(within(panel).getByText(/Bogle/)).toBeInTheDocument();
+    expect(within(panel).getByRole("link", { name: "Open in the lessons page" })).toHaveAttribute(
       "href",
       "/lessons#index-funds",
     );

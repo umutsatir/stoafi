@@ -2,6 +2,7 @@
 
 import { PlanStateSchema } from "@stoafi/core";
 import { useTranslations } from "next-intl";
+import { PlanUsage } from "@/components/plan-usage";
 import { PlanComparison } from "@/components/plan-comparison";
 import { PlanInsights } from "@/components/plan-insights";
 import { monthOf } from "@/lib/clock";
@@ -20,6 +21,9 @@ export default function PlanPage() {
 
   return (
     <Page title={t("title")}>
+      {profile && planState && (
+        <PlanUsage profile={profile} planState={planState} ledger={ledger} month={monthOf(today)} />
+      )}
       {profile && planState && (
         <PlanInsights
           profile={profile}

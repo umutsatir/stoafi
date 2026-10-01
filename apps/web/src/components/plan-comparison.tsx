@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { compareStrategies, strategyRegistry, type Profile } from "@stoafi/core";
-import { LessonLink } from "@/components/lesson-link";
+import { LessonPanelLink } from "@/components/lesson-panel";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { useMoney } from "@/lib/use-money";
@@ -115,13 +115,13 @@ export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComp
                     <footer className="mt-1 italic">
                       {lesson.source.author}, {lesson.source.work}
                     </footer>
-                    <LessonLink
+                    <LessonPanelLink
                       lessonId={lesson.id}
                       ariaLabel={`${lesson.id} full lesson`}
                       className="mt-2 inline-block text-xs"
                     >
                       {t("readFullLesson")}
-                    </LessonLink>
+                    </LessonPanelLink>
                   </article>
                 )}
               </CardContent>
@@ -130,7 +130,7 @@ export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComp
         })}
       </div>
 
-      <LessonLink lessonId="index-funds" testId="lesson-link-index-funds" />
+      <LessonPanelLink lessonId="index-funds" testId="lesson-link-index-funds" />
     </div>
   );
 }

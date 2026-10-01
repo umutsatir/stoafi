@@ -136,7 +136,26 @@
     "usePlan": "Bu planı kullan",
     "activePlan": "Aktif plan",
     "chartTitle": "Stratejiye göre aylık dağılım",
-    "readFullLesson": "Dersin tamamını oku"
+    "readFullLesson": "Dersin tamamını oku",
+    "usage": {
+      "title": "Aktif planın",
+      "bucket": {
+        "needs": "İhtiyaçlar",
+        "wants": "İstekler",
+        "savings": "Birikim",
+        "investing": "Yatırım"
+      },
+      "infoLabel": "{bucket} nedir?",
+      "barLabel": "Bu ay kullanılan {bucket}",
+      "info": {
+        "needs": "Atlayamayacağın şeyler: kira, faturalar, market, asgari borç ödemeleri.",
+        "wants": "Hayatı güzelleştiren ama olmadan da idare edebileceğin şeyler.",
+        "savings": "Güvenlik ve bilinen gelecek giderler için kenara ayrılan para.",
+        "investing": "Yıllar içinde büyümesi için çalıştırılan para."
+      },
+      "investingWhere": "Bu para nereye gidebilir?",
+      "learnInvesting": "Endeks fonları ve maliyetleri öğren"
+    }
   },
   "queue": {
     "title": "Kuyruk",
@@ -533,7 +552,8 @@
     "intro": "Stoafi'deki her öneri bir kitaptan ya da bir yatırımcıdan gelir. Bu kartlar fikri kendi sözlerimizle, uygulamanın onu nasıl kullandığını, kime uyduğunu ve nerede yetersiz kaldığını anlatır.",
     "formula": "Uygulama bunu nasıl kullanır",
     "fitsWhen": "Kime uyar",
-    "critique": "Sınırları ve karşı görüşler"
+    "critique": "Sınırları ve karşı görüşler",
+    "openInLessons": "Dersler sayfasında aç"
   },
   "insights": {
     "title": "Planın ne diyor",
