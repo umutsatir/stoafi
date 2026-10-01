@@ -142,3 +142,74 @@ test("every page passes the accessibility scan with sample data, in light and da
     expect(problems).toEqual([]);
   }
 });
+
+async function serious(page: Page): Promise<string[]> {
+  const { violations } = await new AxeBuilder({ page }).analyze();
+  return violations
+    .filter((v) => v.impact === "serious" || v.impact === "critical")
+    .map((v) => `${v.id} (${v.nodes.length}) ${v.nodes[0]?.html.slice(0, 90)}`);
+}
+
+test("an installment added as an expense is listed under installments, with a clean panel", async ({
+  browser,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto("/income-expenses");
+    await page.getByLabel("Salary 1 name").fill("Job");
+    await page.getByLabel("Salary 1 amount").fill("30000");
+    await page.getByRole("button", { name: "Save profile" }).click();
+
+    await page.getByRole("button", { name: "Add expense" }).first().click();
+    await page.getByRole("radio", { name: /^Installment/ }).click();
+    await page.getByLabel("Name", { exact: true }).fill("Phone");
+    await page.getByLabel("Monthly payment").fill("1500");
+    await page.getByLabel("Payments left").fill("6");
+    expect(await serious(page), `${colorScheme} panel`).toEqual([]);
+    await page.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
+
+    const group = page.getByTestId("expense-group-installment");
+    await expect(group).toContainText("Phone");
+    await expect(group).toContainText("6 payments left");
+    await expect(page.getByTestId("expense-group-regular")).toHaveCount(0);
+    expect(await serious(page), `${colorScheme} list`).toEqual([]);
+    await context.close();
+  }
+});
+
+test("a pot with no goal takes money and cheers, and the basket can be built from an example", async ({
+  browser,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto("/");
+    await page.getByRole("button", { name: "Look around with sample data" }).click();
+    await expect(page.getByTestId("demo-banner")).toBeVisible();
+
+    await page.goto("/sinking-funds");
+    await page.getByRole("button", { name: "Add a pot" }).first().click();
+    await page.getByText("Keeps growing", { exact: true }).click();
+    await page.getByLabel("Name", { exact: true }).fill("Rainy day");
+    await page.getByRole("dialog").getByRole("button", { name: "Add", exact: true }).click();
+    await expect(page.getByText("No goal or deadline: put in what you like")).toBeVisible();
+    await page.getByRole("button", { name: /Add money.*Rainy day/ }).click();
+    await page.getByRole("dialog").getByLabel("Amount", { exact: true }).fill("500");
+    await page.getByRole("dialog").getByRole("button", { name: "Put in" }).click();
+    await expect(page.getByText(/added to Rainy day/)).toBeVisible();
+
+    await page.getByRole("tab", { name: "Investments" }).click();
+    await page.getByRole("button", { name: "Use the Balanced basket" }).click();
+    await expect(page.getByTestId("basket-total")).toContainText("Adds up to 100%");
+    expect(await serious(page), `${colorScheme} basket`).toEqual([]);
+    await context.close();
+  }
+});
+
+test("the home page says what is left in each limit and what to do", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Look around with sample data" }).click();
+  await expect(page.getByTestId("limit-needs")).toBeVisible();
+  await expect(page.getByTestId("limit-advice")).toBeVisible();
+});

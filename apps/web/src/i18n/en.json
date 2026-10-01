@@ -63,7 +63,42 @@
     "demoClear": "Start with my own data",
     "demoCleared": "Sample data removed",
     "backupNudge": "You have not saved a backup in a while. Your data lives only on this device, so a copy keeps it safe.",
-    "backupNudgeAction": "Back up now"
+    "backupNudgeAction": "Back up now",
+    "limits": {
+      "bucket": {
+        "needs": "Needs",
+        "wants": "Wants",
+        "savings": "Savings",
+        "investing": "Investing"
+      },
+      "state": {
+        "ok": "Within limit",
+        "tight": "Almost used",
+        "over": "Over"
+      },
+      "barLabel": "{bucket}: used of the limit",
+      "left": "{amount} left",
+      "overBy": "{amount} over",
+      "ofLimit": "of",
+      "whatToDo": "What to do this month",
+      "advice": {
+        "needsOver": "Needs are {amount} over your plan. Look at your bills, installments and loans, or choose a plan with more room for needs.",
+        "wantsOver": "Wants are {amount} over your plan. Hold off on new wants this month, or pause a subscription.",
+        "wantsRoom": "You have {amount} left for wants, and {count, plural, one {# item} other {# items}} from your queue fits this month.",
+        "wantsSpare": "You have {amount} left for wants this month. Nothing in your queue fits it yet.",
+        "savingsToSet": "Put {amount} more into savings this month to follow your plan.",
+        "investingToSet": "Set aside {amount} more for investing this month to follow your plan.",
+        "allGood": "Every part of your plan is on track. Nothing to do this month."
+      },
+      "action": {
+        "needsOver": "Review expenses",
+        "wantsOver": "Review expenses",
+        "wantsRoom": "Open queue",
+        "wantsSpare": "Open queue",
+        "savingsToSet": "Put money aside",
+        "investingToSet": "Put money aside"
+      }
+    }
   },
   "nav": {
     "ariaLabel": "Main",
@@ -119,33 +154,18 @@
     "addSalary": "Add salary",
     "removeSalary": "Remove salary {n}",
     "expensesTitle": "Recurring expenses",
-    "expensesHint": "Loans, installments, bills, subscriptions, and money you move to savings or investments every month: anything that leaves your account on a schedule.",
-    "expenseName": "Expense {n} name",
-    "expenseNamePlaceholder": "e.g. Car loan",
-    "expenseAmount": "Expense {n} amount",
-    "expenseType": "Expense {n} type",
-    "typeNeed": "Need",
-    "typeWant": "Want",
-    "addExpense": "Add expense",
-    "removeExpense": "Remove expense {n}",
+    "expensesHint": "Everything that leaves your account on a schedule: bills, installments, loans and money you set aside. Pick a type when you add one, so installments and loans stay apart from bills.",
     "livingExpenses": "Monthly living costs",
     "livingExpensesHint": "Groceries and everyday spending as one monthly total.",
     "inflationHint": "Enter a percent, e.g. 30 for 30%.",
     "payDayLabel": "Paid on day",
     "salaryPayDay": "Salary {n} pay day",
-    "dueDayLabel": "Due on day",
-    "expenseDueDay": "Expense {n} due day",
-    "endsLabel": "Ends",
-    "expenseHasEnd": "Expense {n} has an end month",
-    "expenseEndMonth": "Expense {n} end month",
     "country": "Country",
     "countryPlaceholder": "Choose a country",
     "suggestedInflationCaption": "Suggested from an approximate snapshot ({asOf}). Check current figures and edit if needed.",
     "emergencyFundReached": "You already have your emergency fund target.",
     "emergencyFundOnTrack": "At your current pace you reach the target in {month}.",
     "emergencyFundUnreachable": "Your monthly surplus is not enough to reach the target yet.",
-    "typeSavings": "Saving",
-    "typeInvesting": "Investing",
     "overview": {
       "title": "Your money at a glance",
       "income": "Monthly income",
@@ -161,7 +181,75 @@
     "fundHint": "Money kept aside so a bad month never turns into debt. Add to it from the Savings page as you save.",
     "economyTitle": "Your economy",
     "economyHint": "Prices rise every year. The inflation you expect lets Stoafi judge installments and savings fairly.",
-    "inflationInsight": "At {rate} a year, something that costs {amount} today will cost about {then} in a year."
+    "inflationInsight": "At {rate} a year, something that costs {amount} today will cost about {then} in a year.",
+    "expense": {
+      "typeTitle": "What kind of expense is it?",
+      "name": "Name",
+      "amount": "Monthly amount",
+      "paymentAmount": "Monthly payment",
+      "remaining": "Payments left",
+      "remainingHint": "Counting this month. The last payment is in {month}.",
+      "importance": "How necessary is it?",
+      "whereTo": "Where does it go?",
+      "bucket": {
+        "needs": "Need",
+        "wants": "Want",
+        "savings": "Saving",
+        "investing": "Investing"
+      },
+      "dueDay": "Due on day",
+      "hasEnd": "It stops at some point",
+      "endMonth": "End month",
+      "add": "Add",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "nameRequired": "Write a name.",
+      "amountRequired": "The amount must be more than zero.",
+      "remainingRequired": "At least 1 payment must be left.",
+      "addTitle": "Add expense",
+      "editTitle": "Edit expense",
+      "addButton": "Add expense",
+      "removed": "“{name}” removed",
+      "editRow": "Edit {name}",
+      "removeRow": "Remove {name}",
+      "group": {
+        "regular": "Bills and regular costs",
+        "installment": "Installments",
+        "loan": "Loans",
+        "saving": "Saving and investing"
+      },
+      "row": {
+        "day": "Day {day}",
+        "left": "{count, plural, one {# payment left} other {# payments left}}, last in {month}",
+        "until": "ends {month}"
+      },
+      "empty": {
+        "title": "No expenses yet",
+        "text": "Rent, bills, installments and loans show up here. Pick a type when you add one."
+      },
+      "kind": {
+        "regular": {
+          "title": "Bill or regular cost",
+          "hint": "Rent, bills, subscriptions",
+          "example": "e.g. Rent"
+        },
+        "installment": {
+          "title": "Installment",
+          "hint": "Something you bought and are still paying off",
+          "example": "e.g. Phone"
+        },
+        "loan": {
+          "title": "Loan",
+          "hint": "Bank, car or housing loan",
+          "example": "e.g. Car loan"
+        },
+        "saving": {
+          "title": "Saving or investing",
+          "hint": "Money you move aside every month",
+          "example": "e.g. Gold every month"
+        }
+      }
+    }
   },
   "plan": {
     "title": "Plan",
@@ -651,8 +739,8 @@
     "lastBackupDays": "Last backup: {days} days ago."
   },
   "installmentExpenses": {
-    "title": "Installments from purchases",
-    "hint": "Added automatically when you buy something from the queue in installments.",
+    "title": "Bought through the queue",
+    "hint": "Added automatically when you buy something from the queue in installments. Installments you were already paying go under Recurring expenses above, as an Installment.",
     "empty": "No installment purchases yet.",
     "row": "{amount} a month until {month}",
     "thisMonth": "Installments this month: {amount}",
@@ -717,7 +805,12 @@
     "dueNow": "Due this month. {amount} still missing.",
     "overdue": "Overdue since {month}. {amount} still missing.",
     "edit": "Edit {name}",
-    "delete": "Delete {name}"
+    "delete": "Delete {name}",
+    "modeLabel": "Kind of pot",
+    "modeGoal": "For a goal",
+    "modeOpen": "Keeps growing",
+    "modeGoalHint": "You pick an amount and a month, and Stoafi tells you how much to set aside each month.",
+    "modeOpenHint": "No amount and no deadline. Put in whatever you can, whenever you can."
   },
   "guardSettings": {
     "installmentCap": "Installment cap (% of net income)",
@@ -807,6 +900,15 @@
     "tabs": {
       "pots": "Pots",
       "investments": "Investments"
+    },
+    "noTarget": "No goal or deadline: put in what you like",
+    "cheer": {
+      "default": "{amount} added to {name}. You have put {total} aside this month.",
+      "open": "{amount} added to {name}. It now holds {balance}.",
+      "m25": "A quarter of {name} is in. Good start!",
+      "m50": "Halfway to {name}. Keep going!",
+      "m75": "Three quarters of {name} done. Almost there!",
+      "m100": "{name} is fully funded. Well done!"
     }
   },
   "investments": {
@@ -957,7 +1059,10 @@
       "priceRequired": "Enter the price of one unit.",
       "date": "Date",
       "cancel": "Cancel",
-      "submit": "Add"
+      "submit": "Add",
+      "basketSlice": "Basket slice",
+      "basketSliceHint": "Which part of your basket this counts toward.",
+      "basketAuto": "Work it out from the type"
     },
     "card": {
       "quantity": "{quantity} {unit}",
@@ -1008,6 +1113,67 @@
       "deleteShort": "Delete",
       "deleteHolding": "Delete {name}",
       "deleteHoldingShort": "Delete this investment"
+    },
+    "basket": {
+      "title": "Your investing basket",
+      "intro": "Decide what share of each month's investing money goes where, like 50% gold and 30% S&P 500. Stoafi splits the amount for you and shows how far what you hold is from your basket.",
+      "startFromExample": "Start from an example",
+      "template": {
+        "careful": {
+          "name": "Careful",
+          "text": "Most of it in places that move little. For short horizons, or if big drops would cost you sleep."
+        },
+        "balanced": {
+          "name": "Balanced",
+          "text": "A mix of growth and steadier money. A common starting point for five years or more."
+        },
+        "growth": {
+          "name": "Growth",
+          "text": "Mostly stocks. A bad year can hurt, so it fits ten years or more and a calm temper."
+        }
+      },
+      "use": "Use this",
+      "useTemplate": "Use the {name} basket",
+      "sources": "These are general ideas about spreading money, not advice for you. The shares are examples; no live prices and no market timing are used. Ideas drawn from: the Bogleheads wiki on asset allocation and Vanguard's principles for investing success. Last reviewed {asOf}.",
+      "startEmpty": "Start empty",
+      "keepMine": "Keep my basket",
+      "replaced": "Basket replaced",
+      "slice": {
+        "deposit": "Deposit or money market",
+        "bond": "Bonds",
+        "gold": "Gold",
+        "world": "World stock index fund",
+        "sp500": "S&P 500 index fund",
+        "nasdaq": "Nasdaq-100 index fund"
+      },
+      "sliceName": "Slice {n} name",
+      "slicePlaceholder": "e.g. Gold",
+      "slicePercent": "Slice {n} percent",
+      "removeSlice": "Remove slice {n}",
+      "addSlice": "Add slice",
+      "totalOk": "Adds up to 100%",
+      "totalLow": "Adds up to {total}%: {missing}% still to place",
+      "totalHigh": "Adds up to {total}%: {extra}% too much",
+      "whereYouAre": "Where you are now",
+      "driftLine": "{current}% held, target {target}% ({diff} points)",
+      "driftBar": "{name}: share held",
+      "unnamed": "Unnamed",
+      "unassignedTitle": "Not in your basket yet",
+      "unassignedHint": "Say which slice each of these belongs to, so the numbers above include it.",
+      "assignTo": "Put {name} in a slice",
+      "choose": "Choose slice",
+      "splitTitle": "Split this month's money",
+      "monthlyAmount": "Amount to invest",
+      "monthlyHint": "Starts at what your plan sets for investing.",
+      "mode": {
+        "label": "How to split",
+        "catchUp": "Fill the gaps",
+        "percent": "Plain percentages",
+        "catchUpHint": "Puts new money where you hold less than your target first. Nothing is sold.",
+        "percentHint": "Splits the amount exactly by your percentages."
+      },
+      "finishFirst": "Make the percentages add up to 100% to see the split.",
+      "notAdvice": "A way to organise your own choice, not a recommendation to buy anything. Past results do not predict future ones."
     }
   },
   "calendar": {

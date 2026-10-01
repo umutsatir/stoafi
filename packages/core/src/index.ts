@@ -33,7 +33,12 @@ export { backupModule } from "../modules/backup/module";
 export { exportAll, BackupSchema, type Backup } from "../modules/backup/schema";
 export { importAll, type ImportResult } from "../modules/backup/import";
 
-export { ProfileSchema, type Profile } from "../modules/profile/schema";
+export {
+  EXPENSE_KINDS,
+  ProfileSchema,
+  type ExpenseKind,
+  type Profile,
+} from "../modules/profile/schema";
 export {
   dueDayOf,
   hourlyNetIncome,
@@ -41,7 +46,12 @@ export {
   netMonthlyIncome,
   payDayOf,
 } from "../modules/profile/selectors";
-export { activeFixedExpenses, isExpenseActiveInMonth } from "../modules/profile/active-expenses";
+export {
+  activeFixedExpenses,
+  expenseKind,
+  isExpenseActiveInMonth,
+  remainingPayments,
+} from "../modules/profile/active-expenses";
 export { migrateProfileV1ToV2 } from "../modules/profile/migrations";
 export { PlanStateSchema, type PlanStateInput } from "../modules/plan/schema";
 export { strategies as strategyRegistry } from "../modules/plan/strategies-registry";
@@ -241,3 +251,28 @@ export {
 } from "../modules/snapshots/snapshots";
 
 export { PRICE_STALE_DAYS, priceAgeDays, priceIsStale } from "../modules/queue/price-age";
+export {
+  limitAdvice,
+  limitStatuses,
+  type LimitAdvice,
+  type LimitState,
+  type LimitStatus,
+} from "../kernel/limits";
+export {
+  BasketEntrySchema,
+  basketDrift,
+  basketTotal,
+  catchUpSplit,
+  isBasketComplete,
+  splitByBasket,
+  type BasketDrift,
+  type BasketEntry,
+  type BasketShare,
+} from "../kernel/basket";
+export {
+  BASKET_TEMPLATES,
+  BASKET_TEMPLATES_AS_OF,
+  type BasketTemplate,
+  type BasketTemplateEntry,
+} from "../modules/investments/basket-templates";
+export { basketValues, type BasketValues } from "../modules/investments/basket-values";

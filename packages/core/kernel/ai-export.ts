@@ -28,7 +28,8 @@ export interface AiExportData {
   plan?: { name: string; source: string };
   queue: { name: string; price: Minor; month: string | null }[];
   installments: { name: string; payment: Minor; endsMonth: string }[];
-  pots: { label: string; balance: Minor; target: Minor; dueMonth: string }[];
+  /** A pot without a `dueMonth` is an open one that just keeps growing. */
+  pots: { label: string; balance: Minor; target: Minor; dueMonth?: string }[];
   holdings: { label: string; type: string; value: Minor; cost: Minor }[];
   cards: { label: string; limit?: Minor; dueDay: number }[];
   decisions: { name: string; outcome: "bought" | "postponed" | "skipped"; amount: Minor }[];
@@ -67,6 +68,8 @@ interface Words {
   installmentLine: (name: string, payment: string, ends: string) => string;
   potsHeader: string;
   potLine: (label: string, balance: string, target: string, due: string) => string;
+  /** A pot with no deadline; `balance` is hidden at the safest privacy level. */
+  potOpenLine: (label: string, balance: string | null) => string;
   holdingsHeader: string;
   holdingLine: (label: string, type: string, value: string, profit: string) => string;
   cardsHeader: string;
@@ -122,6 +125,10 @@ const EN: Words = {
   installmentLine: (name, payment, ends) => `${name}: ${payment} a month until ${ends}`,
   potsHeader: "Savings pots",
   potLine: (label, balance, target, due) => `${label}: ${balance} of ${target}, due ${due}`,
+  potOpenLine: (label, balance) =>
+    balance === null
+      ? `${label}: open savings, no deadline`
+      : `${label}: ${balance} saved, no deadline`,
   holdingsHeader: "Investments",
   holdingLine: (label, type, value, profit) => `${label} (${type}): worth ${value}, ${profit}`,
   cardsHeader: "Cards",
@@ -193,6 +200,8 @@ const TR: Words = {
   installmentLine: (name, payment, ends) => `${name}: ayda ${payment}, ${ends} tarihine kadar`,
   potsHeader: "Birikim kumbaraları",
   potLine: (label, balance, target, due) => `${label}: ${target} içinden ${balance}, vade ${due}`,
+  potOpenLine: (label, balance) =>
+    balance === null ? `${label}: süresiz birikim` : `${label}: ${balance} birikti, vadesiz`,
   holdingsHeader: "Yatırımlar",
   holdingLine: (label, type, value, profit) => `${label} (${type}): değeri ${value}, ${profit}`,
   cardsHeader: "Kartlar",
@@ -309,9 +318,11 @@ export function buildAiExport(input: AiExportInput): string {
     data.pots.forEach((p, n) =>
       lines.push(
         `- ${
-          level === "ratios"
-            ? w.potLine(name(p.label, "pot", n), percent(p.balance, p.target), "100%", p.dueMonth)
-            : w.potLine(name(p.label, "pot", n), money(p.balance), money(p.target), p.dueMonth)
+          p.dueMonth === undefined
+            ? w.potOpenLine(name(p.label, "pot", n), level === "ratios" ? null : money(p.balance))
+            : level === "ratios"
+              ? w.potLine(name(p.label, "pot", n), percent(p.balance, p.target), "100%", p.dueMonth)
+              : w.potLine(name(p.label, "pot", n), money(p.balance), money(p.target), p.dueMonth)
         }`,
       ),
     );

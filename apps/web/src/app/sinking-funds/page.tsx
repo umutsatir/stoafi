@@ -8,6 +8,7 @@ import {
   addDeposit,
   addEmergencyDeposit,
   currentAllocation,
+  depositedInMonth,
   monthlyNeeds,
   project,
   removeDeposit,
@@ -26,6 +27,8 @@ import { Page } from "@/components/ui/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notify, notifyError, notifyUndo } from "@/components/ui/toaster";
 import { monthOf } from "@/lib/clock";
+import { crossedMilestone } from "@/lib/savings-cheer";
+import { useMoney } from "@/lib/use-money";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
 import { removeHolding, saveHolding } from "@/storage/holding-repo";
@@ -45,6 +48,8 @@ export default function SavingsPage() {
   const funds = useAppStore((s) => s.sinkingFunds);
   const setFunds = useAppStore((s) => s.setSinkingFunds);
   const currency = useAppStore((s) => s.currency);
+  const basket = useAppStore((s) => s.basket);
+  const setBasket = useAppStore((s) => s.setBasket);
   const today = useAppStore((s) => s.today);
   const ledger = useLedger();
   const [tab, setTab] = useState("pots");
@@ -55,6 +60,7 @@ export default function SavingsPage() {
     else if (quickAction === "addPot") setTab("pots");
   }, [quickAction]);
   const t = useTranslations("savings");
+  const money = useMoney();
   const tc = useTranslations("common");
 
   if (!profile) {
@@ -96,18 +102,52 @@ export default function SavingsPage() {
 
   function handleDeposit(potId: string, deposit: Deposit): boolean {
     if (!profile) return false;
+    let pot: { name: string; before: number; after: number; target: number };
     if (potId === "emergency") {
       const result = addEmergencyDeposit(profile, deposit);
       if (!result.ok) return (notifyError(t("deposit.failed")), false);
+      pot = {
+        name: t("emergency"),
+        before: profile.savings,
+        after: result.profile.savings,
+        target: Math.round(monthlyNeeds(profile, month) * profile.emergencyFundTargetMonths),
+      };
       persistProfile(result.profile);
     } else {
       const fund = funds.find((f) => f.id === potId);
       if (!fund) return false;
       const result = addDeposit({ balance: fund.currentBalance, deposits: fund.deposits }, deposit);
       if (!result.ok) return (notifyError(t("deposit.failed")), false);
+      pot = {
+        name: fund.label,
+        before: fund.currentBalance,
+        after: result.balance,
+        target: fund.target,
+      };
       replaceFund({ ...fund, currentBalance: result.balance, deposits: result.deposits });
     }
-    notify(deposit.amount > 0 ? t("deposit.added") : t("deposit.taken"));
+    if (deposit.amount <= 0) {
+      notify(t("deposit.taken"));
+      return true;
+    }
+    // Put-ins get an encouraging line: a milestone if one was crossed, otherwise what this month adds up to.
+    const { name, before, after, target } = pot;
+    const milestone = crossedMilestone(before, after, target);
+    const totalThisMonth =
+      depositedInMonth(profile.deposits, month) +
+      funds.reduce((sum, f) => sum + depositedInMonth(f.deposits, month), 0) +
+      deposit.amount;
+    notify(
+      milestone
+        ? t(`cheer.m${milestone}`, { name })
+        : target > 0
+          ? t("cheer.default", {
+              amount: money(deposit.amount),
+              name,
+              total: money(totalThisMonth),
+            })
+          : t("cheer.open", { amount: money(deposit.amount), name, balance: money(after) }),
+    );
     return true;
   }
 
@@ -183,6 +223,15 @@ export default function SavingsPage() {
     });
   }
 
+  function handleAssign(holdingId: string, basketId: string | undefined) {
+    const holding = holdings.find((h) => h.id === holdingId);
+    if (!holding) return;
+    const next: Holding = { ...holding };
+    if (basketId) next.basketId = basketId;
+    else delete next.basketId;
+    handleSaveHolding(next);
+  }
+
   function handleTradeRemoved(before: Holding) {
     notifyUndo(t("deposit.removed"), tc("undo"), () => {
       const current = useAppStore.getState();
@@ -223,6 +272,10 @@ export default function SavingsPage() {
             currency={currency}
             createId={() => crypto.randomUUID()}
             annualInflation={profile.annualInflationExpectation}
+            basket={basket}
+            suggestedMonthly={limits ? limits.investing : 0}
+            onBasketChange={setBasket}
+            onAssign={handleAssign}
             onSave={handleSaveHolding}
             onDelete={handleDeleteHolding}
             onTradeRemoved={handleTradeRemoved}

@@ -138,3 +138,38 @@ describe("scheduling against recurring costs", () => {
     expect(result[0]?.month).toBe("2026-12");
   });
 });
+
+describe("installments and loans entered as expenses", () => {
+  const withInstallment: Profile = {
+    ...profile,
+    fixedExpenses: [
+      { label: "Rent", monthly: 200_000, bucket: "needs" },
+      {
+        label: "Phone",
+        monthly: 50_000,
+        bucket: "needs",
+        kind: "installment",
+        endMonth: "2027-03",
+      },
+      { label: "Loan", monthly: 80_000, bucket: "needs", kind: "loan", endMonth: "2027-06" },
+    ],
+  };
+
+  it("count toward the installment load, which a regular cost does not", () => {
+    const month = project(
+      { income },
+      recurringCommitments(withInstallment, "2026-10", 6),
+      "2026-10",
+    );
+    expect(month.installmentLoad).toBe(130_000);
+  });
+
+  it("still fill their own bucket", () => {
+    const month = project(
+      { income },
+      recurringCommitments(withInstallment, "2026-10", 6),
+      "2026-10",
+    );
+    expect(month.byBucket.needs.committed).toBe(200_000 + 50_000 + 80_000 + 300_000);
+  });
+});

@@ -6,6 +6,8 @@ import { monthlySetAside } from "./selectors";
 
 export type SinkingFundStatus =
   | { state: "funded"; monthsRemaining: number }
+  /** No due date: nothing is asked of the user each month; they put in what they like. */
+  | { state: "open" }
   | { state: "active"; monthsRemaining: number; monthlySetAside: Minor }
   | { state: "due"; monthsRemaining: 0; missing: Minor }
   | { state: "overdue"; monthsRemaining: number; missing: Minor };
@@ -17,6 +19,11 @@ export type SinkingFundStatus =
  * `monthlySetAside` error for a non-positive number of months.
  */
 export function sinkingFundStatus(fund: SinkingFund, fromMonth: Month): SinkingFundStatus {
+  if (!fund.dueMonth) {
+    return fund.target > 0 && fund.currentBalance >= fund.target
+      ? { state: "funded", monthsRemaining: 0 }
+      : { state: "open" };
+  }
   const monthsRemaining = monthsBetween(fromMonth, fund.dueMonth);
   if (fund.currentBalance >= fund.target) return { state: "funded", monthsRemaining };
 
@@ -34,6 +41,6 @@ export function sinkingFundStatus(fund: SinkingFund, fromMonth: Month): SinkingF
 /** Ledger commitments for every fund that still has months to run; due and overdue funds have none. */
 export function sinkingFundCommitments(funds: SinkingFund[], fromMonth: Month): Commitment[] {
   return funds
-    .filter((fund) => monthsBetween(fromMonth, fund.dueMonth) > 0)
+    .filter((fund) => fund.dueMonth !== undefined && monthsBetween(fromMonth, fund.dueMonth) > 0)
     .map((fund) => toCommitment(fund, fromMonth));
 }

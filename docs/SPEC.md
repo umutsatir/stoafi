@@ -326,6 +326,10 @@ These extend the modules above; the rules in "Design principles" still hold (int
 - **Ask AI export** (`kernel/ai-export.ts`). Builds a prompt in English or Turkish with three privacy levels (ratios, rounded, full) and six question types. The user reads it, edits it, copies it and pastes it into an assistant themselves. The app makes no request and puts no data in any address; the "open Claude / ChatGPT" buttons only open the assistant's new-chat page.
 - **Privacy.** Optional PIN lock (PBKDF2 hash, short wait after 5 wrong tries, auto-lock when hidden), a hide-amounts switch, a content security policy (`connect-src 'self'`), a backup reminder after 30 days. A PIN locks the screen; it does not encrypt stored data.
 - **Resilience.** Error screen with a local report (nothing sent), module migrations applied on import so old backups upgrade, a fixture per stored version.
+- **Recurring line kinds.** A recurring expense may be `regular`, `installment` or `loan` (optional field; missing reads as regular). Installments and loans end after a number of payments (stored as `endMonth`) and count toward the installment load and its cap.
+- **Open pots.** A pot may have no due month and no target; it asks nothing each month.
+- **Limits advice** (`kernel/limits.ts`). Per bucket: limit, committed, remaining, over by, and a short list of what to do, derived from the month's projection.
+- **Investing basket** (`kernel/basket.ts`, `modules/investments/basket-*.ts`). Slices with whole percents; split a monthly amount exactly (largest remainder) by percent or by filling the gaps against what is held (never sells); drift against what is held; example baskets are dated data with named sources and a not-advice note.
 - **Quality budget** in `docs/QUALITY-BUDGET.md`.
 
 ## Acceptance criteria

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { MoneyInput } from "./money-input";
 
 export interface SinkingFundFormProps {
@@ -36,6 +37,8 @@ export function SinkingFundForm({
   const t = useTranslations("sinkingFunds");
   const [label, setLabel] = useState(initial?.label ?? "");
   const [target, setTarget] = useState(initial?.target ?? 0);
+  // A pot is either aimed at an amount by a month, or open: it just keeps growing.
+  const [mode, setMode] = useState<"goal" | "open">(initial && !initial.dueMonth ? "open" : "goal");
   const [dueMonth, setDueMonth] = useState<string>(initial?.dueMonth ?? "");
   const [saved, setSaved] = useState(initial?.currentBalance ?? 0);
   const [error, setError] = useState<FieldError>(null);
@@ -44,18 +47,21 @@ export function SinkingFundForm({
     event.preventDefault();
     const trimmed = label.trim();
     if (trimmed === "") return setError("name");
-    if (target <= 0) return setError("target");
+    const open = mode === "open";
+    if (!open && target <= 0) return setError("target");
     const due = MonthSchema.safeParse(dueMonth);
-    if (!due.success) return setError("due");
+    if (!open && !due.success) return setError("due");
     setError(null);
 
+    // Keep what the form does not edit: the deposit log, icon and colour. An open pot has no date.
+    const kept: Partial<SinkingFund> = { ...initial };
+    delete kept.dueMonth;
     onSubmit({
-      // Keep what the form does not edit: the deposit log, icon and colour.
-      ...(initial ?? {}),
+      ...kept,
       id: initial?.id ?? createId(),
       label: trimmed,
-      target,
-      dueMonth: due.data,
+      target: open ? 0 : target,
+      ...(!open && due.success ? { dueMonth: due.data } : {}),
       currentBalance: saved,
     });
     if (!initial) {
@@ -70,6 +76,20 @@ export function SinkingFundForm({
 
   const formElement = (
     <form onSubmit={handleSubmit} aria-label={title} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <SegmentedControl
+          label={t("modeLabel")}
+          value={mode}
+          onChange={setMode}
+          options={[
+            { value: "goal", label: t("modeGoal") },
+            { value: "open", label: t("modeOpen") },
+          ]}
+        />
+        <p className="text-xs text-muted-foreground">
+          {mode === "goal" ? t("modeGoalHint") : t("modeOpenHint")}
+        </p>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label={t("name")}
@@ -85,27 +105,31 @@ export function SinkingFundForm({
             onChange={(e) => setLabel(e.target.value)}
           />
         </Field>
-        <Field
-          label={t("dueMonth")}
-          htmlFor="fund-due"
-          error={error === "due" ? t("dueRequired") : undefined}
-        >
-          <Input
-            id="fund-due"
-            type="month"
-            min={currentMonth}
-            value={dueMonth}
-            aria-invalid={error === "due" ? "true" : undefined}
-            onChange={(e) => setDueMonth(e.target.value)}
-          />
-        </Field>
-        <Field
-          label={t("target")}
-          htmlFor="fund-target"
-          error={error === "target" ? t("targetRequired") : undefined}
-        >
-          <MoneyInput id="fund-target" currency={currency} value={target} onChange={setTarget} />
-        </Field>
+        {mode === "goal" && (
+          <Field
+            label={t("dueMonth")}
+            htmlFor="fund-due"
+            error={error === "due" ? t("dueRequired") : undefined}
+          >
+            <Input
+              id="fund-due"
+              type="month"
+              min={currentMonth}
+              value={dueMonth}
+              aria-invalid={error === "due" ? "true" : undefined}
+              onChange={(e) => setDueMonth(e.target.value)}
+            />
+          </Field>
+        )}
+        {mode === "goal" && (
+          <Field
+            label={t("target")}
+            htmlFor="fund-target"
+            error={error === "target" ? t("targetRequired") : undefined}
+          >
+            <MoneyInput id="fund-target" currency={currency} value={target} onChange={setTarget} />
+          </Field>
+        )}
         {!initial?.deposits?.length && (
           <Field label={t("saved")} htmlFor="fund-saved" hint={t("savedHint")}>
             <MoneyInput id="fund-saved" currency={currency} value={saved} onChange={setSaved} />

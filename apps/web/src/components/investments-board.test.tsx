@@ -1,7 +1,7 @@
 import { fireEvent, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
-import type { Holding } from "@stoafi/core";
+import type { BasketEntry, Holding } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { InvestmentsBoard } from "./investments-board";
 
@@ -24,6 +24,7 @@ const stale: Holding = {
 
 function Harness({ initial = [] as Holding[], onSaved = vi.fn(), onDeleted = vi.fn() }) {
   const [holdings, setHoldings] = useState(initial);
+  const [basket, setBasket] = useState<BasketEntry[]>([]);
   return (
     <InvestmentsBoard
       holdings={holdings}
@@ -34,6 +35,10 @@ function Harness({ initial = [] as Holding[], onSaved = vi.fn(), onDeleted = vi.
         return () => `id-${n++}`;
       })()}
       annualInflation={0.38}
+      basket={basket}
+      suggestedMonthly={0}
+      onBasketChange={setBasket}
+      onAssign={vi.fn()}
       onSave={(h) => {
         onSaved(h);
         setHoldings((prev) =>

@@ -94,3 +94,45 @@ describe("SinkingFundForm", () => {
     });
   });
 });
+
+describe("open pots", () => {
+  it("saves an open pot with only a name: no target and no due month", () => {
+    const onSubmit = vi.fn();
+    renderWithIntl(<SinkingFundForm createId={() => "p1"} onSubmit={onSubmit} />);
+    fireEvent.click(screen.getByRole("radio", { name: "Keeps growing" }));
+    expect(screen.queryByLabelText("Due month")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Target amount")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Rainy day" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    expect(onSubmit).toHaveBeenCalledWith({
+      id: "p1",
+      label: "Rainy day",
+      target: 0,
+      currentBalance: 0,
+    });
+  });
+
+  it("still needs a name", () => {
+    const onSubmit = vi.fn();
+    renderWithIntl(<SinkingFundForm createId={() => "p1"} onSubmit={onSubmit} />);
+    fireEvent.click(screen.getByRole("radio", { name: "Keeps growing" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByText("Enter a name.")).toBeInTheDocument();
+  });
+
+  it("opens an existing open pot in the open mode, and switching it to a goal asks for a date", () => {
+    const onSubmit = vi.fn();
+    renderWithIntl(
+      <SinkingFundForm
+        createId={() => "x"}
+        initial={{ id: "o", label: "Open", target: 0, currentBalance: 500 }}
+        onSubmit={onSubmit}
+      />,
+    );
+    expect(screen.getByRole("radio", { name: "Keeps growing" })).toBeChecked();
+    fireEvent.click(screen.getByRole("radio", { name: "For a goal" }));
+    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+});

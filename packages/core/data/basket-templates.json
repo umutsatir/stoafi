@@ -1,0 +1,50 @@
+{
+  "note": "Example baskets to start from, not advice for any one person. They describe general ideas of spreading money across kinds of investment (the shares are illustrative, they follow no market timing and use no live prices). Names are in the app's language files under investments.basket. Review each year or when your life changes.",
+  "asOf": "2026-10",
+  "templates": [
+    {
+      "id": "careful",
+      "risk": 1,
+      "sources": [
+        "Bogleheads wiki: asset allocation",
+        "Vanguard: principles for investing success"
+      ],
+      "entries": [
+        { "key": "deposit", "typeId": "deposit", "percent": 40 },
+        { "key": "bond", "typeId": "bond", "percent": 20 },
+        { "key": "gold", "typeId": "gold", "percent": 20 },
+        { "key": "world", "typeId": "index-fund", "percent": 20 }
+      ]
+    },
+    {
+      "id": "balanced",
+      "risk": 2,
+      "sources": [
+        "Bogleheads wiki: asset allocation",
+        "Vanguard: principles for investing success"
+      ],
+      "entries": [
+        { "key": "sp500", "typeId": "index-fund", "percent": 30 },
+        { "key": "nasdaq", "typeId": "index-fund", "percent": 10 },
+        { "key": "gold", "typeId": "gold", "percent": 20 },
+        { "key": "bond", "typeId": "bond", "percent": 20 },
+        { "key": "deposit", "typeId": "deposit", "percent": 20 }
+      ]
+    },
+    {
+      "id": "growth",
+      "risk": 3,
+      "sources": [
+        "Bogleheads wiki: asset allocation",
+        "Vanguard: principles for investing success"
+      ],
+      "entries": [
+        { "key": "sp500", "typeId": "index-fund", "percent": 40 },
+        { "key": "nasdaq", "typeId": "index-fund", "percent": 25 },
+        { "key": "gold", "typeId": "gold", "percent": 15 },
+        { "key": "world", "typeId": "index-fund", "percent": 10 },
+        { "key": "deposit", "typeId": "deposit", "percent": 10 }
+      ]
+    }
+  ]
+}

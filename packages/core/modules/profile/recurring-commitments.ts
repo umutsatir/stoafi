@@ -1,6 +1,6 @@
 import type { Commitment } from "../../kernel/commitment";
 import { addMonths, type Month } from "../../kernel/month";
-import { isExpenseActiveInMonth } from "./active-expenses";
+import { expenseKind, isExpenseActiveInMonth } from "./active-expenses";
 import type { Profile } from "./schema";
 
 /**
@@ -24,9 +24,12 @@ export function recurringCommitments(
       .filter((month) => isExpenseActiveInMonth(expense, month))
       .map((month) => ({ month, amount: expense.monthly }));
     if (payments.length === 0) return;
+    // Installments and loans carry the installment module's label so they count toward the
+    // installment load (and its cap), the same as purchases made through the queue.
+    const owed = expenseKind(expense) !== "regular";
     commitments.push({
       id: `recurring-fixed-${index}`,
-      source: { module: "profile", refId: `fixed-${index}` },
+      source: { module: owed ? "installments" : "profile", refId: `fixed-${index}` },
       bucket: expense.bucket,
       payments,
       status: "active",

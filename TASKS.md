@@ -871,6 +871,17 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [ ] **T14.5** PWA check on real devices (T8.6), deployment, product name, domain and license decisions
   Depends on: Phases 11 to 13.
 
+### Owner feedback round (2026-10)
+
+- [x] **T15.1** Expenses page: pick a type first (bill, installment, loan, saving or investing), then only the fields that type needs; installments and loans are grouped apart from bills and show payments left. Core: optional `kind` on a recurring line (`regular`, `installment`, `loan`), `remainingPayments`; installments and loans count toward the installment load.
+  Note: adding, editing and removing an expense saves at once (removal has undo). Installment and loan lines carry the `installments` source label so the installment cap and health ratio see them. The queue's own installments card is renamed "Bought through the queue".
+- [x] **T15.2** Savings pots: encouragement on every deposit (milestones at 25, 50, 75 and 100%, otherwise what the month adds up to) and pots without a goal or date (`dueMonth` optional, `target` 0).
+  Note: an open pot is never "overdue" and asks nothing each month; it only gets what is left in the monthly advice.
+- [x] **T15.3** Home: the plan card now shows, per bucket, what is left of the limit and what to do about it (`kernel/limits.ts`: `limitStatuses`, `limitAdvice`).
+  Note: based on the plan limit minus commitments (recurring costs, installments, set-asides); no spending entry exists. Wants "fit" count comes from the queue scheduler.
+- [x] **T15.4** Investing basket: percentages per kind of investment, example baskets dated 2026-10 with named sources, split of a monthly amount (exact to the kuruş) either by percent or by filling the gaps against what is held; holdings can be placed in a slice.
+  Note: examples are static data (`data/basket-templates.json`), not live advice; the app makes no network call. Basket is stored in settings (optional field, included in backups).
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

@@ -3,6 +3,10 @@ import { DepositSchema } from "../../kernel/deposit";
 import { BUCKETS } from "../../kernel/bucket";
 import { MonthSchema } from "../../kernel/month";
 
+/** What a recurring line is: an ordinary cost, installments still being paid, or a loan. */
+export const EXPENSE_KINDS = ["regular", "installment", "loan"] as const;
+export type ExpenseKind = (typeof EXPENSE_KINDS)[number];
+
 export const ProfileSchema = z.object({
   incomes: z.array(
     z.object({
@@ -17,6 +21,8 @@ export const ProfileSchema = z.object({
       label: z.string(),
       monthly: z.number().int().nonnegative(),
       bucket: z.enum(BUCKETS),
+      /** Omitted reads as "regular", so expenses saved before kinds existed stay valid. */
+      kind: z.enum(EXPENSE_KINDS).optional(),
       isSubscription: z.boolean().optional(),
       /** Day of month the expense is due, 1-31. Omitted reads as the 1st (see `dueDayOf`). */
       dueDay: z.number().int().min(1).max(31).optional(),

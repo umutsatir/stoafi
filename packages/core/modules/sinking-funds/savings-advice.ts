@@ -7,7 +7,7 @@ import { sinkingFundStatus } from "./status";
 /** What a pot needs this month: its monthly set-aside, or what is still missing once it is due or overdue. */
 export function requiredThisMonth(fund: SinkingFund, month: Month): Minor {
   const status = sinkingFundStatus(fund, month);
-  if (status.state === "funded") return 0;
+  if (status.state === "funded" || status.state === "open") return 0;
   if (status.state === "active") return status.monthlySetAside;
   return status.missing;
 }
@@ -60,7 +60,8 @@ export function monthlySavingsAdvice(input: SavingsAdviceInput): SavingsAdvice {
     }
   };
   [...needs]
-    .sort((a, b) => a.fund.dueMonth.localeCompare(b.fund.dueMonth))
+    // Pots without a date come last: nothing is due, so they only get what is left.
+    .sort((a, b) => (a.fund.dueMonth ?? "9999-12").localeCompare(b.fund.dueMonth ?? "9999-12"))
     .forEach((n) => give(n.fund.id, n.need - n.deposited));
   if (input.emergency) {
     give("emergency", input.emergency.gap - input.emergency.depositedThisMonth);

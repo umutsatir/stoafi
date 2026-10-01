@@ -44,6 +44,8 @@ export interface PotView {
   neededThisMonth: number;
   depositedThisMonth: number;
   state: "funded" | "active" | "due" | "overdue" | "open";
+  /** What the picture is measured against for a pot with no target (a month of needs). */
+  openScale?: number;
 }
 
 export interface PotCardProps {
@@ -67,16 +69,27 @@ export function PotCard({ pot, index, dropKey, onDeposit, onHistory }: PotCardPr
   const t = useTranslations("savings");
   const locale = useLocale();
   const money = useMoney();
-  const fraction = pot.target > 0 ? pot.balance / pot.target : 1;
+  const hasTarget = pot.target > 0;
+  // No target to fill: the picture still grows with the balance, but never looks "full".
+  const scale = Math.max(pot.openScale ?? 0, 1);
+  const fraction = hasTarget
+    ? pot.balance / pot.target
+    : pot.balance > 0
+      ? 0.3 + 0.65 * (1 - 1 / (1 + pot.balance / scale))
+      : 0;
   const Icon = ICONS[pot.icon ?? (pot.kind === "emergency" ? "shield" : "piggy")] ?? PiggyBank;
 
-  // Confetti only when this pot crosses its target because money was just put in.
+  // Confetti when money just put in takes this pot past halfway or to its target.
   const previous = useRef(fraction);
   const [celebrate, setCelebrate] = useState(0);
   useEffect(() => {
-    if (previous.current < 1 && fraction >= 1 && dropKey > 0) setCelebrate((n) => n + 1);
+    const crossedHalf = previous.current < 0.5 && fraction >= 0.5;
+    const crossedFull = previous.current < 1 && fraction >= 1;
+    if (hasTarget && (crossedHalf || crossedFull) && dropKey > 0) {
+      setCelebrate((n) => n + 1);
+    }
     previous.current = fraction;
-  }, [fraction, dropKey]);
+  }, [fraction, dropKey, hasTarget]);
 
   return (
     <li
@@ -98,17 +111,19 @@ export function PotCard({ pot, index, dropKey, onDeposit, onHistory }: PotCardPr
             <Money value={pot.balance} animated />
           </p>
           <p className="text-sm text-muted-foreground">
-            {t("ofTarget", { target: money(pot.target) })}
+            {hasTarget ? t("ofTarget", { target: money(pot.target) }) : t("noTarget")}
             {pot.dueMonth && ` · ${formatMonth(pot.dueMonth, locale)}`}
           </p>
         </div>
       </div>
-      <ProgressBar
-        value={Math.min(pot.balance, pot.target)}
-        max={pot.target}
-        label={t("progressLabel", { name: pot.label })}
-        tone={pot.state === "overdue" ? "danger" : pot.state === "funded" ? "success" : "primary"}
-      />
+      {hasTarget && (
+        <ProgressBar
+          value={Math.min(pot.balance, pot.target)}
+          max={pot.target}
+          label={t("progressLabel", { name: pot.label })}
+          tone={pot.state === "overdue" ? "danger" : pot.state === "funded" ? "success" : "primary"}
+        />
+      )}
       {pot.neededThisMonth > 0 && (
         <p className="text-sm text-muted-foreground" data-testid={`pot-month-${pot.id}`}>
           {t("thisMonth", {

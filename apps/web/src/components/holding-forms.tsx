@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { INVESTMENT_TYPES, type Holding, type Trade } from "@stoafi/core";
+import { INVESTMENT_TYPES, type BasketEntry, type Holding, type Trade } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -176,6 +176,8 @@ export function PriceForm({ today, currency, onCancel, holding, onSubmit }: Pric
 export interface HoldingFormProps extends BaseProps {
   onSubmit: (holding: Holding) => void;
   initialTypeId?: string;
+  /** The user's basket slices; when there are any, the form offers to put the new holding in one. */
+  basket?: BasketEntry[];
 }
 
 /** Add something you own: pick a type (or make your own), name it, optionally record the first purchase. */
@@ -186,6 +188,7 @@ export function HoldingForm({
   onCancel,
   onSubmit,
   initialTypeId,
+  basket = [],
 }: HoldingFormProps) {
   const t = useTranslations("investments.add");
   const tTypes = useTranslations("investments.types");
@@ -197,6 +200,7 @@ export function HoldingForm({
   const [quantityText, setQuantityText] = useState("");
   const [unitPrice, setUnitPrice] = useState(0);
   const [date, setDate] = useState(today);
+  const [basketId, setBasketId] = useState("");
   const [error, setError] = useState<"label" | "custom" | "quantity" | "price" | null>(null);
 
   function handleSubmit(e: FormEvent) {
@@ -214,6 +218,7 @@ export function HoldingForm({
       typeId,
       ...(typeId === "custom" ? { customType: customType.trim() } : {}),
       ...(unitLabel.trim() ? { unitLabel: unitLabel.trim() } : {}),
+      ...(basketId ? { basketId } : {}),
       ...(hasPurchase && quantity !== null
         ? {
             currentPrice: unitPrice,
@@ -288,6 +293,23 @@ export function HoldingForm({
           className="w-32"
         />
       </Field>
+      {basket.length > 0 && (
+        <Field label={t("basketSlice")} htmlFor="holding-basket" hint={t("basketSliceHint")}>
+          <select
+            id="holding-basket"
+            value={basketId}
+            onChange={(e) => setBasketId(e.target.value)}
+            className="h-9 rounded-md border border-input bg-card px-3 text-sm"
+          >
+            <option value="">{t("basketAuto")}</option>
+            {basket.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.label || "—"}
+              </option>
+            ))}
+          </select>
+        </Field>
+      )}
       <fieldset className="flex flex-col gap-4 rounded-lg border border-border p-4">
         <legend className="px-1 text-sm font-medium">{t("firstPurchase")}</legend>
         <Field

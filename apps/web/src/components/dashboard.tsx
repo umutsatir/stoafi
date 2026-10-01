@@ -52,6 +52,7 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { StatusChip } from "@/components/ui/status-chip";
 import { CashFlowChart } from "./cash-flow-chart";
+import { LimitsPanel } from "./limits-panel";
 
 export interface DashboardProps {
   profile: Profile | null;
@@ -80,6 +81,7 @@ function Panel({
   hrefLabel,
   index,
   testId,
+  className,
   children,
 }: {
   title: string;
@@ -88,13 +90,14 @@ function Panel({
   hrefLabel?: string;
   index: number;
   testId?: string;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
     <Card
       aria-label={title}
       data-testid={testId}
-      className="rise-in flex flex-col"
+      className={cn("rise-in flex flex-col", className)}
       style={stagger(index)}
     >
       <CardContent className="flex h-full flex-col gap-3 pt-6">
@@ -178,6 +181,8 @@ export function Dashboard({
   const schedule =
     planState && strategy ? scheduleQueue(waiting, profile, planState, ledger, today, month) : [];
   const monthByItem = new Map(schedule.map((s) => [s.itemId, s.month]));
+  // Waiting wants the scheduler already places in this month: what the wants limit can pay for now.
+  const queueFitsNow = waiting.filter((i) => !i.isNeed && monthByItem.get(i.id) === month).length;
   const next = waiting.slice(0, nextCount);
   const planTitle = strategy
     ? (getLessonCard(strategy.lessonId, locale)?.title ?? strategy.id)
@@ -435,28 +440,12 @@ export function Dashboard({
             icon={ListChecks}
             index={5}
             testId="active-plan"
+            className="md:col-span-2"
             href="/plan"
             hrefLabel={t("changePlan")}
           >
             <p className="text-sm text-muted-foreground">{planTitle}</p>
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-              <dt className="text-muted-foreground">{t("needs")}</dt>
-              <dd data-testid="plan-needs" className="text-right font-medium">
-                {money(allocation.needs)}
-              </dd>
-              <dt className="text-muted-foreground">{t("wants")}</dt>
-              <dd data-testid="plan-wants" className="text-right font-medium">
-                {money(allocation.wants)}
-              </dd>
-              <dt className="text-muted-foreground">{t("savings")}</dt>
-              <dd data-testid="plan-savings" className="text-right font-medium">
-                {money(allocation.savings)}
-              </dd>
-              <dt className="text-muted-foreground">{t("investing")}</dt>
-              <dd data-testid="plan-investing" className="text-right font-medium">
-                {money(allocation.investing)}
-              </dd>
-            </dl>
+            <LimitsPanel projection={thisMonth} queueFits={queueFitsNow} />
           </Panel>
         )}
 

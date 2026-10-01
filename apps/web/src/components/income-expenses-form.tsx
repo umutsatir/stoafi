@@ -3,13 +3,17 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Plus, Trash2 } from "lucide-react";
-import { MonthSchema, type Bucket, type Month, type Profile } from "@stoafi/core";
+import type { Month, Profile } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayOfMonthSelect } from "@/components/ui/day-of-month-select";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { notifyUndo, useUndoLabel } from "@/components/ui/toaster";
+import { monthOf, localIsoDate } from "@/lib/clock";
+import { ExpenseEditor, type ExpenseValue } from "./expense-editor";
+import { ExpenseList } from "./expense-list";
 import { MoneyInput } from "./money-input";
 
 /** The recurring cash-flow part of the profile: what comes in and what goes out every month. */
@@ -31,25 +35,6 @@ interface SalaryRow {
   payDay?: number;
 }
 
-interface ExpenseRow {
-  key: number;
-  label: string;
-  monthly: number;
-  bucket: Bucket;
-  dueDay?: number;
-  /** undefined: recurs indefinitely. A string (possibly not yet a full YYYY-MM) while an end month is on. */
-  endMonth?: string;
-}
-
-type ExpenseBucket = Bucket;
-const EXPENSE_BUCKETS: ExpenseBucket[] = ["needs", "wants", "savings", "investing"];
-const TYPE_KEY: Record<ExpenseBucket, string> = {
-  needs: "typeNeed",
-  wants: "typeWant",
-  savings: "typeSavings",
-  investing: "typeInvesting",
-};
-
 function isBlank(row: { label: string; monthly: number }): boolean {
   return row.label.trim() === "" && row.monthly === 0;
 }
@@ -61,6 +46,8 @@ export function IncomeExpensesForm({
   onSave,
 }: IncomeExpensesFormProps) {
   const t = useTranslations("profile");
+  const undoLabel = useUndoLabel();
+  const month = currentMonth ?? monthOf(localIsoDate(new Date()));
   const nextKey = useRef(0);
   const newKey = () => nextKey.current++;
 
@@ -74,28 +61,17 @@ export function IncomeExpensesForm({
         }))
       : [{ key: newKey(), label: "", monthly: 0 }],
   );
-  const [expenses, setExpenses] = useState<ExpenseRow[]>(() =>
-    (initial?.fixedExpenses ?? []).map((e) => ({
-      key: newKey(),
-      label: e.label,
-      monthly: e.monthly,
-      bucket: e.bucket,
-      ...(e.dueDay !== undefined ? { dueDay: e.dueDay } : {}),
-      ...(e.endMonth !== undefined ? { endMonth: e.endMonth } : {}),
-    })),
-  );
+  const [expenses, setExpenses] = useState<ExpenseValue[]>(() => initial?.fixedExpenses ?? []);
+  // null: closed; -1: adding; otherwise the index being edited.
+  const [editing, setEditing] = useState<number | null>(null);
   const [livingExpenses, setLivingExpenses] = useState(initial?.livingExpenses ?? 0);
 
   function patchSalary(key: number, patch: Partial<SalaryRow>) {
     setSalaries((rows) => rows.map((r) => (r.key === key ? { ...r, ...patch } : r)));
   }
-  function patchExpense(key: number, patch: Partial<ExpenseRow>) {
-    setExpenses((rows) => rows.map((r) => (r.key === key ? { ...r, ...patch } : r)));
-  }
 
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    void onSave({
+  function buildValue(fixedExpenses: ExpenseValue[]): IncomeExpensesValue {
+    return {
       incomes: salaries
         .filter((r) => !isBlank(r))
         .map((r) => ({
@@ -103,21 +79,30 @@ export function IncomeExpensesForm({
           monthly: r.monthly,
           ...(r.payDay !== undefined ? { payDay: r.payDay } : {}),
         })),
-      fixedExpenses: expenses
-        .filter((r) => !isBlank(r))
-        .map((r) => {
-          // An end month that is still being typed is not a Month yet; leave it out.
-          const endMonth = MonthSchema.safeParse(r.endMonth);
-          return {
-            label: r.label.trim(),
-            monthly: r.monthly,
-            bucket: r.bucket,
-            ...(r.dueDay !== undefined ? { dueDay: r.dueDay } : {}),
-            ...(endMonth.success ? { endMonth: endMonth.data } : {}),
-          };
-        }),
+      fixedExpenses,
       livingExpenses,
-    });
+    };
+  }
+
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    void onSave(buildValue(expenses));
+  }
+
+  // Adding, editing and removing an expense saves straight away: there is no "forgot to save" for them.
+  function commitExpenses(next: ExpenseValue[]) {
+    setExpenses(next);
+    void onSave(buildValue(next));
+  }
+
+  function removeExpense(index: number) {
+    const previous = expenses;
+    const removed = previous[index];
+    if (!removed) return;
+    commitExpenses(previous.filter((_, i) => i !== index));
+    notifyUndo(t("expense.removed", { name: removed.label }), undoLabel, () =>
+      commitExpenses(previous),
+    );
   }
 
   return (
@@ -190,100 +175,37 @@ export function IncomeExpensesForm({
           <CardTitle>{t("expensesTitle")}</CardTitle>
           <CardDescription>{t("expensesHint")}</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {expenses.map((row, index) => {
-            const n = index + 1;
-            return (
-              <div key={row.key} className="flex flex-wrap items-center gap-2">
-                <Input
-                  type="text"
-                  className="w-full sm:w-56"
-                  aria-label={t("expenseName", { n })}
-                  placeholder={t("expenseNamePlaceholder")}
-                  value={row.label}
-                  onChange={(e) => patchExpense(row.key, { label: e.target.value })}
-                />
-                <MoneyInput
-                  id={`expense-${row.key}`}
-                  aria-label={t("expenseAmount", { n })}
-                  currency={currency}
-                  value={row.monthly}
-                  onChange={(monthly) => patchExpense(row.key, { monthly })}
-                />
-                <NativeSelect
-                  className="w-32"
-                  aria-label={t("expenseType", { n })}
-                  value={row.bucket}
-                  onChange={(e) =>
-                    patchExpense(row.key, { bucket: e.target.value as ExpenseBucket })
-                  }
-                >
-                  {EXPENSE_BUCKETS.map((bucket) => (
-                    <option key={bucket} value={bucket}>
-                      {t(TYPE_KEY[bucket])}
-                    </option>
-                  ))}
-                </NativeSelect>
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  {t("dueDayLabel")}
-                  <DayOfMonthSelect
-                    aria-label={t("expenseDueDay", { n })}
-                    value={row.dueDay ?? 1}
-                    onChange={(dueDay) => patchExpense(row.key, { dueDay })}
-                  />
-                </span>
-                <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    aria-label={t("expenseHasEnd", { n })}
-                    checked={row.endMonth !== undefined}
-                    onChange={(e) =>
-                      patchExpense(row.key, {
-                        endMonth: e.target.checked ? (currentMonth ?? "") : undefined,
-                      })
-                    }
-                  />
-                  {t("endsLabel")}
-                </label>
-                {row.endMonth !== undefined && (
-                  <Input
-                    type="month"
-                    className="w-40"
-                    aria-label={t("expenseEndMonth", { n })}
-                    value={row.endMonth}
-                    onChange={(e) => patchExpense(row.key, { endMonth: e.target.value })}
-                  />
-                )}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label={t("removeExpense", { n })}
-                  onClick={() => setExpenses((rows) => rows.filter((r) => r.key !== row.key))}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            );
-          })}
-          <div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setExpenses((rows) => [
-                  ...rows,
-                  { key: newKey(), label: "", monthly: 0, bucket: "needs" },
-                ])
-              }
-            >
-              <Plus className="h-4 w-4" />
-              {t("addExpense")}
-            </Button>
-          </div>
+        <CardContent>
+          <ExpenseList
+            expenses={expenses}
+            month={month}
+            onAdd={() => setEditing(-1)}
+            onEdit={setEditing}
+            onRemove={removeExpense}
+          />
         </CardContent>
       </Card>
+
+      <Sheet open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
+        {editing !== null && (
+          <SheetContent title={editing === -1 ? t("expense.addTitle") : t("expense.editTitle")}>
+            <ExpenseEditor
+              {...(editing >= 0 && expenses[editing] ? { initial: expenses[editing] } : {})}
+              currency={currency}
+              currentMonth={month}
+              onCancel={() => setEditing(null)}
+              onSave={(value) => {
+                commitExpenses(
+                  editing >= 0
+                    ? expenses.map((e, i) => (i === editing ? value : e))
+                    : [...expenses, value],
+                );
+                setEditing(null);
+              }}
+            />
+          </SheetContent>
+        )}
+      </Sheet>
 
       <Card>
         <CardContent className="pt-6">

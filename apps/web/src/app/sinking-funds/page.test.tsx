@@ -96,7 +96,9 @@ describe("Savings screen", () => {
       const row = (await db.sinkingFunds.get("insurance")) as SinkingFund | undefined;
       expect(row?.currentBalance).toBe(150_000);
     });
-    expect(await screen.findByText("Money added")).toBeInTheDocument();
+    expect(
+      await screen.findByText("A quarter of Car insurance is in. Good start!"),
+    ).toBeInTheDocument();
   });
 
   it("puts money into the emergency fund and keeps the profile's savings in step", async () => {
@@ -125,6 +127,33 @@ describe("Savings screen", () => {
     fireEvent.click(within(panel).getByRole("button", { name: "Take out" }));
     expect(within(panel).getByText("There is less than that in this pot.")).toBeInTheDocument();
     expect(useAppStore.getState().sinkingFunds[0]?.currentBalance).toBe(10_000);
+  });
+
+  it("cheers a smaller deposit with what the month adds up to", async () => {
+    await db.sinkingFunds.put(fund);
+    useAppStore.setState({ sinkingFunds: [fund] });
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Add money.*Car insurance/ }));
+    const panel = await screen.findByRole("dialog", { name: "Add to Car insurance" });
+    fireEvent.change(within(panel).getByLabelText("Amount"), { target: { value: "100" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Put in" }));
+    expect(
+      await screen.findByText(/added to Car insurance\. You have put .* aside this month/),
+    ).toBeInTheDocument();
+  });
+
+  it("puts money into a pot that has no goal and says what it now holds", async () => {
+    const open: SinkingFund = { id: "open", label: "Rainy day", target: 0, currentBalance: 0 };
+    await db.sinkingFunds.put(open);
+    useAppStore.setState({ sinkingFunds: [open] });
+    renderPage();
+    expect(screen.getByText("No goal or deadline: put in what you like")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Add money.*Rainy day/ }));
+    const panel = await screen.findByRole("dialog", { name: "Add to Rainy day" });
+    fireEvent.change(within(panel).getByLabelText("Amount"), { target: { value: "250" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Put in" }));
+    expect(useAppStore.getState().sinkingFunds[0]?.currentBalance).toBe(25_000);
+    expect(await screen.findByText(/added to Rainy day\. It now holds/)).toBeInTheDocument();
   });
 
   it("lists the history and removes an entry with an undo", async () => {

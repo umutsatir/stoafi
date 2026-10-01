@@ -90,3 +90,26 @@ describe("sinkingFundCommitments", () => {
     expect(sinkingFundCommitments([], "2026-10")).toEqual([]);
   });
 });
+
+describe("open pots without a due date", () => {
+  const open = {
+    id: "o",
+    label: "Rainy day",
+    target: 0,
+    currentBalance: 50_000,
+  };
+
+  it("are open: nothing is asked each month and they never become overdue", () => {
+    expect(sinkingFundStatus(open, "2026-10")).toEqual({ state: "open" });
+    expect(sinkingFundStatus(open, "2040-01")).toEqual({ state: "open" });
+  });
+
+  it("are funded once a target they do have is reached", () => {
+    expect(sinkingFundStatus({ ...open, target: 40_000 }, "2026-10").state).toBe("funded");
+    expect(sinkingFundStatus({ ...open, target: 90_000 }, "2026-10").state).toBe("open");
+  });
+
+  it("add nothing to the monthly ledger", () => {
+    expect(sinkingFundCommitments([open], "2026-10")).toEqual([]);
+  });
+});

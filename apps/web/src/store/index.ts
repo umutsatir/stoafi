@@ -3,6 +3,7 @@ import { create } from "zustand";
 import {
   installmentCommitments,
   projectSeries,
+  type BasketEntry,
   type Commitment,
   type Card,
   type Decision,
@@ -46,6 +47,8 @@ export interface AppState {
   hideAmounts: boolean;
   /** YYYY-MM-DD of the last downloaded backup, if any. */
   lastBackup: string | null;
+  /** How the user wants new investing money shared; empty until they make a basket. */
+  basket: BasketEntry[];
   /** The PIN lock, when one is set. */
   lock: PinLock | null;
   /** True while the lock screen covers the app. */
@@ -73,6 +76,7 @@ export interface AppState {
   setQuickAction: (action: QuickAction) => void;
   setHideAmounts: (hide: boolean) => void;
   setLastBackup: (date: string) => void;
+  setBasket: (basket: BasketEntry[]) => void;
   setLock: (lock: PinLock | null) => void;
   setLocked: (locked: boolean) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
@@ -96,6 +100,7 @@ export const useAppStore = create<AppState>((set) => ({
   quickAction: null,
   hideAmounts: false,
   lastBackup: null,
+  basket: [],
   lock: null,
   locked: false,
   guardThresholds: { installmentCapPct: 0.2 },
@@ -119,6 +124,7 @@ export const useAppStore = create<AppState>((set) => ({
       demo: loaded.settings.demo ?? false,
       hideAmounts: loaded.settings.hideAmounts ?? false,
       lastBackup: loaded.settings.lastBackup ?? null,
+      basket: loaded.settings.basket ?? [],
       lock: loaded.settings.lock ?? null,
       // A saved PIN covers the app from the first moment.
       locked: loaded.settings.lock !== undefined,
@@ -141,6 +147,7 @@ export const useAppStore = create<AppState>((set) => ({
   setQuickAction: (quickAction) => set({ quickAction }),
   setHideAmounts: (hideAmounts) => set({ hideAmounts }),
   setLastBackup: (lastBackup) => set({ lastBackup }),
+  setBasket: (basket) => set({ basket }),
   setLock: (lock) => set({ lock }),
   setLocked: (locked) => set({ locked }),
   toggleLessonRead: (id) =>

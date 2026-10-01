@@ -66,6 +66,7 @@ export function buildDemoData(today: string, labels: DemoLabels): DemoData {
           label: labels.car,
           monthly: 380_000,
           bucket: "needs",
+          kind: "loan",
           dueDay: 5,
           endMonth: addMonths(month, 14),
         },

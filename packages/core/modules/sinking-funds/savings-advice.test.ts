@@ -142,3 +142,21 @@ describe("monthlySavingsAdvice", () => {
     ).toEqual({ required: 0, deposited: 0, stillToSet: 0, freeAfter: 0, suggestedSplit: [] });
   });
 });
+
+describe("open pots in the advice", () => {
+  const open: SinkingFund = { id: "open", label: "Open", target: 0, currentBalance: 0 };
+
+  it("need nothing this month", () => {
+    expect(requiredThisMonth(open, "2026-10")).toBe(0);
+  });
+
+  it("only get what is left after pots with a date", () => {
+    const advice = monthlySavingsAdvice({
+      freeBeforeSaving: 500_000,
+      planSavings: 300_000,
+      funds: [open, fund({ id: "dated", target: 1_200_000, dueMonth: "2027-10" })], // 100,000 a month
+      month: "2026-10",
+    });
+    expect(advice.suggestedSplit[0]).toEqual({ id: "dated", amount: 100_000 });
+  });
+});

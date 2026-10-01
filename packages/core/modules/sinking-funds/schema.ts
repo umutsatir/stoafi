@@ -8,7 +8,8 @@ export const SinkingFundSchema = z.object({
   id: z.string(),
   label: z.string(),
   target: z.number().int().nonnegative(),
-  dueMonth: MonthSchema,
+  /** When the money is needed. Omitted for an open pot that just keeps growing (no date, maybe no target). */
+  dueMonth: MonthSchema.optional(),
   currentBalance: z.number().int().nonnegative(),
   /** Icon name and colour token for the pot; both optional. */
   icon: z.string().optional(),
@@ -24,7 +25,7 @@ export type SinkingFund = z.infer<typeof SinkingFundSchema>;
  * remaining until its due month, each computed via `monthlySetAside`.
  */
 export function toCommitment(fund: SinkingFund, fromMonth: Month): Commitment {
-  const monthsRemaining = monthsBetween(fromMonth, fund.dueMonth);
+  const monthsRemaining = fund.dueMonth ? monthsBetween(fromMonth, fund.dueMonth) : 0;
   const amount = monthlySetAside(fund.target, fund.currentBalance, monthsRemaining);
 
   const payments = Array.from({ length: monthsRemaining }, (_, index) => ({

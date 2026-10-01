@@ -10,6 +10,7 @@ import {
   marketValue,
   portfolioTotals,
   removeTrade,
+  type BasketEntry,
   type Holding,
   type Trade,
 } from "@stoafi/core";
@@ -21,6 +22,7 @@ import { StatCard } from "@/components/ui/stat-card";
 import { useMoney } from "@/lib/use-money";
 import { useQuickAction } from "@/lib/use-quick-action";
 import { cn, stagger } from "@/lib/utils";
+import { BasketPanel } from "./basket-panel";
 import { HoldingForm, PriceForm, TradeForm } from "./holding-forms";
 import { HoldingCard } from "./holding-card";
 import { InvestmentGuide } from "./investment-guide";
@@ -42,6 +44,11 @@ export interface InvestmentsBoardProps {
   createId: () => string;
   /** The user's expected yearly inflation, for the plain-language reminder. */
   annualInflation: number;
+  basket: BasketEntry[];
+  /** What the plan sets for investing this month; the basket offers it as the amount to split. */
+  suggestedMonthly: number;
+  onBasketChange: (basket: BasketEntry[]) => void;
+  onAssign: (holdingId: string, basketId: string | undefined) => void;
   onSave: (holding: Holding) => void;
   onDelete: (holding: Holding) => void;
   /** Called after a trade was removed, so the page can offer undo. */
@@ -138,6 +145,16 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
         </section>
       )}
 
+      <BasketPanel
+        basket={props.basket}
+        holdings={holdings}
+        currency={currency}
+        suggestedMonthly={props.suggestedMonthly}
+        createId={createId}
+        onChange={props.onBasketChange}
+        onAssign={props.onAssign}
+      />
+
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">{t("holdingsTitle")}</h2>
         <Button type="button" variant="outline" onClick={() => setAdding(true)}>
@@ -183,6 +200,7 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
         {adding && (
           <SheetContent title={t("addInvestment")}>
             <HoldingForm
+              basket={props.basket}
               today={today}
               currency={currency}
               createId={createId}

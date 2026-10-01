@@ -23,6 +23,8 @@ export const HoldingSchema = z.object({
   /** A preset type id (see types.ts), or "custom" together with `customType`. */
   typeId: z.string(),
   customType: z.string().optional(),
+  /** The basket slice (a `BasketEntry` id) this holding counts toward, if the user set one. */
+  basketId: z.string().optional(),
   /** What one unit is called: g, lot, share. */
   unitLabel: z.string().optional(),
   /** What one unit is worth now, typed in by the user; the app never looks prices up. */
