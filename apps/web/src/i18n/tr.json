@@ -145,7 +145,14 @@
     "confirm": "Onayla",
     "calculateWithInstallments": "Taksitle hesapla",
     "installmentLoadBeforeAfter": "Taksit yükü önce / sonra",
-    "payCashInstead": "Peşin öde"
+    "payCashInstead": "Peşin öde",
+    "suggestedMonth": "Sığdığı ilk ay: {month}",
+    "suggestedNone": "Bu ürün önümüzdeki 12 ay içinde henüz karşılanamıyor.",
+    "previewIn": "{month} için önizle",
+    "payWithCard": "Kartla öde",
+    "noCard": "Kart yok",
+    "skip": "Vazgeç",
+    "postpone": "Ertele"
   },
   "installments": {
     "title": "Taksitle hesapla",

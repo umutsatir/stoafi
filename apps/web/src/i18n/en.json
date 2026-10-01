@@ -145,7 +145,14 @@
     "confirm": "Confirm",
     "calculateWithInstallments": "Calculate with installments",
     "installmentLoadBeforeAfter": "Installment load before / after",
-    "payCashInstead": "Pay cash instead"
+    "payCashInstead": "Pay cash instead",
+    "suggestedMonth": "First month that fits: {month}",
+    "suggestedNone": "This item is not affordable yet within the next 12 months.",
+    "previewIn": "Preview in {month}",
+    "payWithCard": "Pay with card",
+    "noCard": "No card",
+    "skip": "Skip",
+    "postpone": "Postpone"
   },
   "installments": {
     "title": "Calculate with installments",

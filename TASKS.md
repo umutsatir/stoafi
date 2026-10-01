@@ -744,10 +744,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T10.1, T10.3
   Note: strategy insights were hard-coded English sentences in core (one even stated "30%" although the percentage is a parameter), so they could not be shown in Turkish. `Insight` now carries the `month` it is about; screens translate by `id` (`insights.*`, falling back to the English `message` for an unknown id) and group a finding's months into one line ("2026-10–2027-09"). The Pay Yourself First line says that only tracked set-asides (sinking funds) count, because the app does not track money the user moves to savings themselves.
 
-- [ ] **T10.5** Finish the purchase flow: skip, postpone, first fitting month, card tip
+- [x] **T10.5** Finish the purchase flow: skip, postpone, first fitting month, card tip
   Goal: the preview offers Skip and Postpone (writing `skipped`/`postponed` decisions; skip removes the item), shows and can preview "first month that fits", and lets the user pick a card and purchase date so `timingTip` can appear and shift the first payment.
   Acceptance: tests: skipping adds a `skipped` decision and the decision log's total saved rises by the price; postponing keeps the item; the suggested month equals the scheduler's; selecting a card bought after its statement day shows the tip with the right day count.
   Depends on: T10.1
+  Note: Skip removes the item and logs `skipped` at the cash price (`discountedCashPrice` when set), which is what the decision log's "saved" total sums; Postpone logs `postponed` and keeps the item (it does not restart the 30-day cooldown; revisit with the cooldown re-prompt open question). Neither needs the guard "I know". The preview's before/after now uses the chosen first-payment month (suggested month or a card-shifted one) instead of always the current month. The preview takes `cards` and a purchase date and owns the card choice, replacing the old single `card` prop that no screen ever passed (flow 4 was unreachable).
 
 - [ ] **T10.6** Sinking funds screen
   Goal: add, edit and delete sinking funds (label, target, due month, saved so far); show each one's monthly set-aside; their commitments join the ledger; overdue or due-this-month funds are handled instead of throwing; the sinking-funds lesson link moves here from the Queue page.

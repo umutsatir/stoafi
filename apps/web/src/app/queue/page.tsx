@@ -12,6 +12,7 @@ import {
   type Decision,
   type GuardBreach,
   type QueueItem,
+  scheduleQueue,
 } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,6 +38,7 @@ export default function QueuePage() {
   const queueItems = useAppStore((s) => s.queueItems);
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const currency = useAppStore((s) => s.currency);
+  const cards = useAppStore((s) => s.cards);
   const commitments = useLedger();
   const today = useAppStore((s) => s.today);
   const decisions = useAppStore((s) => s.decisions);
@@ -67,6 +69,17 @@ export default function QueuePage() {
   const editingItem = waitingItems.find((i) => i.id === editingId);
   const needs = monthlyNeeds(profile, monthOf(today));
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
+  const schedule = scheduleQueue(
+    waitingItems,
+    profile,
+    planState,
+    commitments,
+    today,
+    monthOf(today),
+  );
+  const suggestedMonth = selectedItem
+    ? (schedule.find((r) => r.itemId === selectedItem.id)?.month ?? null)
+    : undefined;
   const nextOrder = waitingItems.reduce((max, i) => Math.max(max, i.order + 1), 0);
 
   function handleSave(item: QueueItem) {
@@ -127,6 +140,24 @@ export default function QueuePage() {
     setSelectedId(null);
   }
 
+  function handleDecide(outcome: "skipped" | "postponed") {
+    if (!selectedItem) return;
+    const decision: Decision = {
+      id: `${outcome}-${selectedItem.id}-${decisions.length}`,
+      queueItemRef: selectedItem.id,
+      outcome,
+      timestamp: new Date().toISOString(),
+      // What the item would have cost in cash: the money saved when skipped.
+      amount: selectedItem.discountedCashPrice ?? selectedItem.price,
+    };
+    setDecisions([...decisions, decision]);
+    void putListItem(db, "decisions", DecisionSchema, decision).catch(
+      logFailure("save the decision"),
+    );
+    if (outcome === "skipped") handleDelete(selectedItem);
+    setSelectedId(null);
+  }
+
   return (
     <Page title={t("title")}>
       <QueueForm
@@ -172,6 +203,10 @@ export default function QueuePage() {
           income={income}
           monthlyNeeds={needs}
           installmentCapPct={0.2}
+          cards={cards}
+          purchaseDate={today}
+          suggestedMonth={suggestedMonth}
+          onDecide={handleDecide}
           onConfirm={handleConfirm}
         />
       )}

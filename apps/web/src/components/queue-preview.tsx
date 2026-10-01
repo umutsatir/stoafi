@@ -24,6 +24,8 @@ import {
 import { useMoney } from "@/lib/use-money";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { InstallmentCalculator } from "./installment-calculator";
 
@@ -40,9 +42,16 @@ export interface QueuePreviewProps {
   income: number;
   monthlyNeeds: number;
   installmentCapPct: number;
-  /** When paying by card: checks today against the statement day for a timing tip. */
-  card?: PaymentCard;
+  /** Cards to pay with; choosing one checks the purchase date against its statement day for a timing tip. */
+  cards?: PaymentCard[];
   purchaseDate?: string;
+  /**
+   * The first month the scheduler finds room for this item: a month, `null` when it fits in none
+   * of the horizon, or undefined when the caller has no suggestion.
+   */
+  suggestedMonth?: Month | null;
+  /** Skip or postpone the purchase instead of buying; the caller records the decision. */
+  onDecide?: (outcome: "skipped" | "postponed") => void;
   onConfirm: (
     activeCommitment: Commitment,
     breaches: GuardBreach[],
@@ -60,14 +69,19 @@ export function QueuePreview({
   income,
   monthlyNeeds,
   installmentCapPct,
-  card,
+  cards = [],
   purchaseDate,
+  suggestedMonth,
+  onDecide,
   onConfirm,
 }: QueuePreviewProps) {
   const bucketLimits = currentAllocation(profile, planState, strategyRegistry);
   const [shiftedMonth, setShiftedMonth] = useState<Month | null>(null);
+  const [previewMonth, setPreviewMonth] = useState<Month>(month);
+  const [cardId, setCardId] = useState("");
   const [selectedOffer, setSelectedOffer] = useState<OfferResult | null>(null);
-  const firstMonth = shiftedMonth ?? month;
+  const firstMonth = shiftedMonth ?? previewMonth;
+  const card = cards.find((c) => c.id === cardId);
   const cashPrice = item.discountedCashPrice ?? item.price;
   const offer: InstallmentOfferInput | null = selectedOffer
     ? {
@@ -80,8 +94,8 @@ export function QueuePreview({
     : toDraftCommitment(item, firstMonth);
   const tip = card && purchaseDate ? timingTip(card, purchaseDate) : null;
 
-  const before = project({ income }, commitments, month, { bucketLimits });
-  const after = project({ income }, [...commitments, draft], month, {
+  const before = project({ income }, commitments, firstMonth, { bucketLimits });
+  const after = project({ income }, [...commitments, draft], firstMonth, {
     includeDrafts: true,
     bucketLimits,
   });
@@ -139,6 +153,50 @@ export function QueuePreview({
               {t("payCashInstead")}
             </Button>
           </div>
+        )}
+
+        {suggestedMonth !== undefined && (
+          <div
+            data-testid="suggested-month"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm"
+          >
+            <span>
+              {suggestedMonth ? t("suggestedMonth", { month: suggestedMonth }) : t("suggestedNone")}
+            </span>
+            {suggestedMonth && suggestedMonth !== firstMonth && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setPreviewMonth(suggestedMonth);
+                  setShiftedMonth(null);
+                }}
+              >
+                {t("previewIn", { month: suggestedMonth })}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {cards.length > 0 && (
+          <Field label={t("payWithCard")} htmlFor="preview-card">
+            <NativeSelect
+              id="preview-card"
+              value={cardId}
+              onChange={(e) => {
+                setCardId(e.target.value);
+                setShiftedMonth(null);
+              }}
+            >
+              <option value="">{t("noCard")}</option>
+              {cards.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
+            </NativeSelect>
+          </Field>
         )}
 
         <Table>
@@ -237,6 +295,16 @@ export function QueuePreview({
           <Button type="button" variant="outline" onClick={() => setShowInstallments(true)}>
             {t("calculateWithInstallments")}
           </Button>
+          {onDecide && (
+            <>
+              <Button type="button" variant="ghost" onClick={() => onDecide("postponed")}>
+                {t("postpone")}
+              </Button>
+              <Button type="button" variant="ghost" onClick={() => onDecide("skipped")}>
+                {t("skip")}
+              </Button>
+            </>
+          )}
         </div>
 
         {showInstallments && (

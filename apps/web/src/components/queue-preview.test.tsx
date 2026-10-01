@@ -135,12 +135,13 @@ describe("QueuePreview card timing tip", () => {
         income={10000}
         monthlyNeeds={4000}
         installmentCapPct={0.2}
-        card={{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }}
+        cards={[{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }]}
         purchaseDate="2026-09-20"
         onConfirm={vi.fn()}
       />,
     );
 
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     const tip = screen.getByTestId("card-timing-tip");
     expect(tip).toHaveTextContent("31 extra float days");
     expect(tip).toHaveTextContent("2026-11");
@@ -158,12 +159,13 @@ describe("QueuePreview card timing tip", () => {
         income={10000}
         monthlyNeeds={4000}
         installmentCapPct={0.2}
-        card={{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }}
+        cards={[{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }]}
         purchaseDate="2026-09-20"
         onConfirm={onConfirm}
       />,
     );
 
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
 
@@ -317,13 +319,106 @@ describe("QueuePreview purchase method", () => {
   it("starts installments in the shifted month when the card timing tip is accepted", () => {
     const onConfirm = renderPreview({
       item: { ...item, price: 1000 },
-      card: { id: "c1", label: "Visa", statementDay: 15, dueDay: 5 },
+      cards: [{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }],
       purchaseDate: "2026-09-20",
     });
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
     pickOffer(3, "5");
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
     expect(purchase.firstMonth).toBe("2026-11");
+  });
+});
+
+describe("QueuePreview skip, postpone, first fitting month and card choice", () => {
+  function renderIt(overrides: Partial<Parameters<typeof QueuePreview>[0]> = {}) {
+    const onConfirm = vi.fn();
+    const onDecide = vi.fn();
+    renderWithIntl(
+      <QueuePreview
+        item={item}
+        profile={profile}
+        planState={planState}
+        commitments={[]}
+        month="2026-09"
+        income={10000}
+        monthlyNeeds={4000}
+        installmentCapPct={0.2}
+        onConfirm={onConfirm}
+        onDecide={onDecide}
+        {...overrides}
+      />,
+    );
+    return { onConfirm, onDecide };
+  }
+
+  it("records a skip and a postpone", () => {
+    const { onDecide } = renderIt();
+    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+    fireEvent.click(screen.getByRole("button", { name: "Postpone" }));
+    expect(onDecide.mock.calls).toEqual([["skipped"], ["postponed"]]);
+  });
+
+  it("does not need a guard acknowledgement to skip or postpone", () => {
+    const { onDecide } = renderIt({ item: { ...item, price: 10000 } });
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+    expect(onDecide).toHaveBeenCalledWith("skipped");
+  });
+
+  it("shows the first month that fits and previews that month on request", () => {
+    const { onConfirm } = renderIt({ suggestedMonth: "2026-11" });
+    expect(screen.getByTestId("suggested-month")).toHaveTextContent("2026-11");
+
+    fireEvent.click(screen.getByRole("button", { name: "Preview in 2026-11" }));
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
+    expect(purchase.firstMonth).toBe("2026-11");
+  });
+
+  it("says when nothing fits yet and offers no month to preview", () => {
+    renderIt({ suggestedMonth: null });
+    expect(screen.getByTestId("suggested-month")).toHaveTextContent("not affordable yet");
+    expect(screen.queryByRole("button", { name: /Preview in/ })).not.toBeInTheDocument();
+  });
+
+  it("offers no suggestion line when the caller has none", () => {
+    renderIt();
+    expect(screen.queryByTestId("suggested-month")).not.toBeInTheDocument();
+  });
+
+  it("offers a card choice only when there are cards, and the tip follows the choice", () => {
+    renderIt();
+    expect(screen.queryByLabelText("Pay with card")).not.toBeInTheDocument();
+  });
+
+  it("shows the timing tip only for the chosen card and clears it for no card", () => {
+    renderIt({
+      cards: [{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }],
+      purchaseDate: "2026-09-20",
+    });
+    expect(screen.queryByTestId("card-timing-tip")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
+    expect(screen.getByTestId("card-timing-tip")).toHaveTextContent("31 extra float days");
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "" } });
+    expect(screen.queryByTestId("card-timing-tip")).not.toBeInTheDocument();
+  });
+
+  it("drops an accepted shift when the card is changed back to none", () => {
+    const { onConfirm } = renderIt({
+      cards: [{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }],
+      purchaseDate: "2026-09-20",
+    });
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
+    fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+    fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
+    expect(purchase.firstMonth).toBe("2026-09");
   });
 });
