@@ -2,6 +2,7 @@
 
 import {
   ArrowLeftRight,
+  BookOpen,
   CreditCard,
   HeartPulse,
   LayoutDashboard,
@@ -25,6 +26,7 @@ const ROUTES = [
   { href: "/cards", key: "cards", icon: CreditCard },
   { href: "/health", key: "health", icon: HeartPulse },
   { href: "/decisions", key: "decisions", icon: LayoutList },
+  { href: "/lessons", key: "lessons", icon: BookOpen },
   { href: "/settings", key: "settings", icon: SettingsIcon },
 ] as const;
 

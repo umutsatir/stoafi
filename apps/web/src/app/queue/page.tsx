@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   DecisionSchema,
   activeQueueItems,
@@ -20,8 +20,7 @@ import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
 import { QueueTimeline } from "@/components/queue-timeline";
-import { getLessonCard } from "@/lessons";
-import type { Locale } from "@/i18n/messages";
+import { LessonLink } from "@/components/lesson-link";
 import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem, saveQueueOrder } from "@/storage/queue-repo";
@@ -45,10 +44,8 @@ export default function QueuePage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const t = useTranslations("queue");
-  const locale = useLocale() as Locale;
   // No dedicated sinking-funds screen exists yet; queue (dated purchase
   // planning) is the closest fit among Phase 7's screens for this lesson.
-  const sinkingFundsLesson = getLessonCard("sinking-funds", locale);
 
   if (!profile || !planState) {
     return (
@@ -155,16 +152,7 @@ export default function QueuePage() {
         startMonth={monthOf(today)}
         hourlyNetIncome={hourlyNetIncome(profile)}
       />
-      {sinkingFundsLesson && (
-        <a
-          href={`#lesson-${sinkingFundsLesson.id}`}
-          aria-label={`${sinkingFundsLesson.id} lesson`}
-          data-testid="lesson-link-sinking-funds"
-          className="text-sm font-medium text-primary underline-offset-2 hover:underline"
-        >
-          {sinkingFundsLesson.title}
-        </a>
-      )}
+      <LessonLink lessonId="sinking-funds" testId="lesson-link-sinking-funds" />
       <h2 className="text-lg font-semibold tracking-tight">{t("timelineTitle")}</h2>
       <QueueTimeline
         items={waitingItems}

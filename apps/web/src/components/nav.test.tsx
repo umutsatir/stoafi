@@ -21,6 +21,7 @@ describe("Nav", () => {
       "Cards",
       "Health",
       "Decisions",
+      "Lessons",
       "Settings",
     ]) {
       expect(screen.getByRole("link", { name: label })).toBeInTheDocument();

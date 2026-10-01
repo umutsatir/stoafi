@@ -1,10 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { compareOffers, type OfferResult } from "@stoafi/core";
-import { getLessonCard } from "@/lessons";
-import type { Locale } from "@/i18n/messages";
+import { LessonLink } from "@/components/lesson-link";
 import { Plus, Trash2 } from "lucide-react";
 import { useMoney } from "@/lib/use-money";
 import { Badge } from "@/components/ui/badge";
@@ -54,10 +53,8 @@ export function InstallmentCalculator({
     })),
   );
   const t = useTranslations("installments");
-  const locale = useLocale() as Locale;
   const money = useMoney();
   const currency = useAppStore((s) => s.currency);
-  const timeValueLesson = getLessonCard("time-value-of-money", locale);
 
   function patch(key: number, change: Partial<OfferRow>) {
     setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...change } : r)));
@@ -82,16 +79,7 @@ export function InstallmentCalculator({
         <h2 className="text-base font-semibold">{t("title")}</h2>
         <p className="text-sm text-muted-foreground">{t("hint")}</p>
       </div>
-      {timeValueLesson && (
-        <a
-          href={`#lesson-${timeValueLesson.id}`}
-          aria-label={`${timeValueLesson.id} lesson`}
-          data-testid="lesson-link-time-value-of-money"
-          className="text-sm font-medium text-primary underline-offset-2 hover:underline"
-        >
-          {timeValueLesson.title}
-        </a>
-      )}
+      <LessonLink lessonId="time-value-of-money" testId="lesson-link-time-value-of-money" />
       <Table>
         <TableHeader>
           <TableRow>

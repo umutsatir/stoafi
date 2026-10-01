@@ -28,6 +28,7 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "role",
   "dataKey", // recharts chart config, not display text
   "stackId", // recharts chart config, not display text
+  "lessonId", // a lesson card id, not display text
   "stroke",
   "fill",
   "variant", // shadcn/ui component variant props (cva), not display text

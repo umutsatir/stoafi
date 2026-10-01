@@ -38,7 +38,8 @@
     "cards": "Cards",
     "health": "Health",
     "decisions": "Decisions",
-    "settings": "Settings"
+    "settings": "Settings",
+    "lessons": "Lessons"
   },
   "incomeExpenses": {
     "title": "Income & Expenses"
@@ -92,7 +93,8 @@
     "investing": "Investing",
     "usePlan": "Use this plan",
     "activePlan": "Active plan",
-    "chartTitle": "Monthly allocation by strategy"
+    "chartTitle": "Monthly allocation by strategy",
+    "readFullLesson": "Read the full lesson"
   },
   "queue": {
     "title": "Queue",
@@ -214,5 +216,12 @@
     "row": "{amount} a month until {month}",
     "thisMonth": "Installments this month: {amount}",
     "remove": "Remove {name}"
+  },
+  "lessons": {
+    "title": "Lessons",
+    "intro": "Every recommendation in Stoafi comes from a book or an investor. These cards explain the idea in our own words, how the app uses it, who it suits and where it falls short.",
+    "formula": "How the app applies it",
+    "fitsWhen": "Who it fits",
+    "critique": "Limits and counter-arguments"
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   DndContext,
   KeyboardSensor,
@@ -31,8 +31,7 @@ import {
   type Profile,
   type QueueItem,
 } from "@stoafi/core";
-import { getLessonCard } from "@/lessons";
-import type { Locale } from "@/i18n/messages";
+import { LessonLink } from "@/components/lesson-link";
 import { useMoney } from "@/lib/use-money";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -232,10 +231,7 @@ export function QueueList({
 }: QueueListProps) {
   const t = useTranslations("queue");
   const tTimeline = useTranslations("timeline");
-  const locale = useLocale() as Locale;
   const money = useMoney();
-  const costInLifeEnergyLesson = getLessonCard("cost-in-life-energy", locale);
-  const eisenhowerLesson = getLessonCard("eisenhower-matrix", locale);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -259,30 +255,10 @@ export function QueueList({
 
   return (
     <Card>
-      {(costInLifeEnergyLesson || eisenhowerLesson) && (
-        <CardHeader className="flex flex-row flex-wrap gap-3 border-b border-border pb-4 text-xs">
-          {costInLifeEnergyLesson && (
-            <a
-              href={`#lesson-${costInLifeEnergyLesson.id}`}
-              aria-label={`${costInLifeEnergyLesson.id} lesson`}
-              data-testid="lesson-link-cost-in-life-energy"
-              className="font-medium text-primary underline-offset-2 hover:underline"
-            >
-              {costInLifeEnergyLesson.title}
-            </a>
-          )}
-          {eisenhowerLesson && (
-            <a
-              href={`#lesson-${eisenhowerLesson.id}`}
-              aria-label={`${eisenhowerLesson.id} lesson`}
-              data-testid="lesson-link-eisenhower-matrix"
-              className="font-medium text-primary underline-offset-2 hover:underline"
-            >
-              {eisenhowerLesson.title}
-            </a>
-          )}
-        </CardHeader>
-      )}
+      <CardHeader className="flex flex-row flex-wrap gap-3 border-b border-border pb-4 text-xs">
+        <LessonLink lessonId="cost-in-life-energy" testId="lesson-link-cost-in-life-energy" />
+        <LessonLink lessonId="eisenhower-matrix" testId="lesson-link-eisenhower-matrix" />
+      </CardHeader>
       <CardContent className="flex flex-col gap-2 pt-6">
         {items.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

@@ -1,10 +1,9 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { monthlyNeeds, project } from "@stoafi/core";
 import { HealthMetrics } from "@/components/health-metrics";
-import { getLessonCard } from "@/lessons";
-import type { Locale } from "@/i18n/messages";
+import { LessonLink } from "@/components/lesson-link";
 import { monthOf } from "@/lib/clock";
 import { useAppStore, useLedger } from "@/store";
 import { Page } from "@/components/ui/page";
@@ -14,8 +13,6 @@ export default function HealthPage() {
   const commitments = useLedger();
   const today = useAppStore((s) => s.today);
   const t = useTranslations("health");
-  const locale = useLocale() as Locale;
-  const roomForErrorLesson = getLessonCard("room-for-error", locale);
 
   if (!profile) {
     return (
@@ -36,16 +33,7 @@ export default function HealthPage() {
         savingsBalance={profile.savings}
         monthlyNeeds={needs}
       />
-      {roomForErrorLesson && (
-        <a
-          href={`#lesson-${roomForErrorLesson.id}`}
-          aria-label={`${roomForErrorLesson.id} lesson`}
-          data-testid="lesson-link-room-for-error"
-          className="text-sm font-medium text-primary underline-offset-2 hover:underline"
-        >
-          {roomForErrorLesson.title}
-        </a>
-      )}
+      <LessonLink lessonId="room-for-error" testId="lesson-link-room-for-error" />
     </Page>
   );
 }

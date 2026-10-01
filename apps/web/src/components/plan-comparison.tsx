@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { compareStrategies, strategyRegistry, type Profile } from "@stoafi/core";
+import { LessonLink } from "@/components/lesson-link";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { useMoney } from "@/lib/use-money";
@@ -30,7 +31,6 @@ export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComp
   const t = useTranslations("plan");
   const locale = useLocale() as Locale;
   const money = useMoney();
-  const investingLesson = getLessonCard("index-funds", locale);
 
   const chartData = results.map(({ strategyId, allocation }) => {
     const strategy = strategyRegistry[strategyId];
@@ -115,6 +115,13 @@ export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComp
                     <footer className="mt-1 italic">
                       {lesson.source.author}, {lesson.source.work}
                     </footer>
+                    <LessonLink
+                      lessonId={lesson.id}
+                      ariaLabel={`${lesson.id} full lesson`}
+                      className="mt-2 inline-block text-xs"
+                    >
+                      {t("readFullLesson")}
+                    </LessonLink>
                   </article>
                 )}
               </CardContent>
@@ -123,16 +130,7 @@ export function PlanComparison({ profile, activeStrategyId, onSelect }: PlanComp
         })}
       </div>
 
-      {investingLesson && (
-        <a
-          href={`#lesson-${investingLesson.id}`}
-          aria-label={`${investingLesson.id} lesson`}
-          data-testid="lesson-link-index-funds"
-          className="text-sm font-medium text-primary underline-offset-2 hover:underline"
-        >
-          {investingLesson.title}
-        </a>
-      )}
+      <LessonLink lessonId="index-funds" testId="lesson-link-index-funds" />
     </div>
   );
 }

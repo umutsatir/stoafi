@@ -55,31 +55,49 @@ describe("remaining lesson cards are linked from their SPEC-listed screens", () 
         hourlyNetIncome={200}
       />,
     );
-    expect(screen.getByTestId("lesson-link-cost-in-life-energy")).toBeInTheDocument();
-    expect(screen.getByTestId("lesson-link-eisenhower-matrix")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-link-cost-in-life-energy")).toHaveAttribute(
+      "href",
+      "/lessons#cost-in-life-energy",
+    );
+    expect(screen.getByTestId("lesson-link-eisenhower-matrix")).toHaveAttribute(
+      "href",
+      "/lessons#eisenhower-matrix",
+    );
   });
 
   it("guards/health -> room-for-error", () => {
     useAppStore.setState({ profile });
     renderWithIntl(<HealthPage />);
-    expect(screen.getByTestId("lesson-link-room-for-error")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-link-room-for-error")).toHaveAttribute(
+      "href",
+      "/lessons#room-for-error",
+    );
   });
 
   it("plan investing bucket -> index-funds", () => {
     renderWithIntl(<PlanComparison profile={profile} />);
-    expect(screen.getByTestId("lesson-link-index-funds")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-link-index-funds")).toHaveAttribute(
+      "href",
+      "/lessons#index-funds",
+    );
   });
 
   it("sinking-funds -> sinking-funds card (linked from queue, its closest existing screen)", () => {
     useAppStore.setState({ profile, planState, queueItems: [], decisions: [] });
     renderWithIntl(<QueuePage />);
-    expect(screen.getByTestId("lesson-link-sinking-funds")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-link-sinking-funds")).toHaveAttribute(
+      "href",
+      "/lessons#sinking-funds",
+    );
   });
 
   it("installments -> time-value-of-money", () => {
     renderWithIntl(
       <InstallmentCalculator cashPrice={1200} annualInflation={0.3} onSelect={vi.fn()} />,
     );
-    expect(screen.getByTestId("lesson-link-time-value-of-money")).toBeInTheDocument();
+    expect(screen.getByTestId("lesson-link-time-value-of-money")).toHaveAttribute(
+      "href",
+      "/lessons#time-value-of-money",
+    );
   });
 });

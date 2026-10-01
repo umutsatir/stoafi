@@ -732,10 +732,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T10.1
   Note: `settings` is a core module like the others (Zod schema, version 1, registered, included in backups) with a Dexie table added in v4 (existing rows untouched). `AppBootstrap` passes `navigator.language` to `loadAppState`, which uses it only when nothing is saved, and then saves whatever the screens change, so no screen needs its own save call. Invalid stored settings fall back to defaults instead of crashing startup.
 
-- [ ] **T10.3** Lessons screen and working source links
+- [x] **T10.3** Lessons screen and working source links
   Goal: `/lessons` lists every card for the active locale with source, principle, formula, fits-when and critique; every existing lesson link goes to `/lessons#<id>` and the target scrolls into view; nav entry added.
   Acceptance: tests: all 10 cards render with all fields in `en` and `tr`; each linked screen's link `href` matches an element id on the page.
   Depends on: T10.1
+  Note: a shared `LessonLink` replaces six dead `#lesson-<id>` anchors (they pointed at nothing); links keep their `aria-label`/test ids. The strategy cards on Plan also get a "Read the full lesson" link. The page scrolls to the hash itself because screens only mount after saved data loads, so the browser cannot do it. `LESSON_IDS` lists the ten cards in SPEC order. The sinking-funds link still sits on the Queue page until T10.6 moves it.
 
 - [ ] **T10.4** Plan insights
   Goal: the Plan screen shows the active strategy's `diagnose` insights over the next 12 months of the ledger, each with its lesson link.

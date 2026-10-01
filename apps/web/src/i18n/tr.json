@@ -38,7 +38,8 @@
     "cards": "Kartlar",
     "health": "Sağlık",
     "decisions": "Kararlar",
-    "settings": "Ayarlar"
+    "settings": "Ayarlar",
+    "lessons": "Dersler"
   },
   "incomeExpenses": {
     "title": "Gelir ve Giderler"
@@ -92,7 +93,8 @@
     "investing": "Yatırım",
     "usePlan": "Bu planı kullan",
     "activePlan": "Aktif plan",
-    "chartTitle": "Stratejiye göre aylık dağılım"
+    "chartTitle": "Stratejiye göre aylık dağılım",
+    "readFullLesson": "Dersin tamamını oku"
   },
   "queue": {
     "title": "Kuyruk",
@@ -214,5 +216,12 @@
     "row": "{month} ayına kadar ayda {amount}",
     "thisMonth": "Bu ayki taksitler: {amount}",
     "remove": "{name} sil"
+  },
+  "lessons": {
+    "title": "Dersler",
+    "intro": "Stoafi'deki her öneri bir kitaptan ya da bir yatırımcıdan gelir. Bu kartlar fikri kendi sözlerimizle, uygulamanın onu nasıl kullandığını, kime uyduğunu ve nerede yetersiz kaldığını anlatır.",
+    "formula": "Uygulama bunu nasıl kullanır",
+    "fitsWhen": "Kime uyar",
+    "critique": "Sınırları ve karşı görüşler"
   }
 }

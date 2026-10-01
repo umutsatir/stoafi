@@ -59,3 +59,24 @@ const LESSONS: Record<Locale, Record<string, LessonCard>> = {
 export function getLessonCard(lessonId: string, locale: Locale = "en"): LessonCard | undefined {
   return LESSONS[locale][lessonId];
 }
+
+/** Every lesson card id, in the order SPEC lists them. */
+export const LESSON_IDS = [
+  "fifty-thirty-twenty",
+  "pay-yourself-first",
+  "conscious-spending",
+  "baby-steps",
+  "cost-in-life-energy",
+  "room-for-error",
+  "index-funds",
+  "eisenhower-matrix",
+  "sinking-funds",
+  "time-value-of-money",
+] as const;
+
+export function listLessonCards(locale: Locale = "en"): LessonCard[] {
+  return LESSON_IDS.flatMap((id) => {
+    const card = LESSONS[locale][id];
+    return card ? [card] : [];
+  });
+}
