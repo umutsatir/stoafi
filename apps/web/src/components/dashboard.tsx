@@ -22,6 +22,7 @@ import {
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
 import { monthOf } from "@/lib/clock";
+import { buildLedger } from "@/store/ledger";
 import { useMoney } from "@/lib/use-money";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -70,13 +71,15 @@ export function Dashboard({
   const month = monthOf(today);
   const income = netMonthlyIncome(profile);
   const obligations = activeFixedExpenses(profile, month).reduce((sum, e) => sum + e.monthly, 0);
-  const commitments = installmentCommitments(queueItems);
-  const installments = project({ income }, commitments, month).installmentLoad;
-  const left = income - obligations - profile.livingExpenses - installments;
+  const installmentLedger = installmentCommitments(queueItems);
+  const ledger = buildLedger(profile, queueItems, month);
+  const thisMonth = project({ income }, ledger, month);
+  const installments = thisMonth.installmentLoad;
+  const left = thisMonth.freeCash;
 
   const cashFlow = cashFlowSeries(
     profile,
-    commitments,
+    installmentLedger,
     Array.from({ length: 12 }, (_, i) => addMonths(month, i)),
   );
   const needs = monthlyNeeds(profile, month);
@@ -88,9 +91,7 @@ export function Dashboard({
   const waiting = activeQueueItems(queueItems);
   // Without a known plan there are no bucket limits to schedule against.
   const schedule =
-    planState && strategy
-      ? scheduleQueue(waiting, profile, planState, commitments, today, month)
-      : [];
+    planState && strategy ? scheduleQueue(waiting, profile, planState, ledger, today, month) : [];
   const monthByItem = new Map(schedule.map((s) => [s.itemId, s.month]));
   const next = waiting.slice(0, nextCount);
 

@@ -8,14 +8,14 @@ import { monthOf } from "@/lib/clock";
 import { mergeProfile } from "@/lib/profile-merge";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
-import { useAppStore, useCommitments } from "@/store";
+import { useAppStore, useInstallmentCommitments } from "@/store";
 
 export default function ProfilePage() {
   const setProfile = useAppStore((s) => s.setProfile);
   const profile = useAppStore((s) => s.profile);
   const currency = useAppStore((s) => s.currency);
   const today = useAppStore((s) => s.today);
-  const commitments = useCommitments();
+  const commitments = useInstallmentCommitments();
   const t = useTranslations("profile");
 
   return (

@@ -14,7 +14,9 @@ import {
   type SinkingFund,
 } from "@stoafi/core";
 import type { Locale } from "@/i18n/messages";
+import { monthOf } from "@/lib/clock";
 import type { LoadedState } from "@/storage/bootstrap";
+import { buildLedger } from "./ledger";
 
 export interface AppState {
   profile: Profile | null;
@@ -79,10 +81,21 @@ export function deriveProjection(
 }
 
 /**
- * The ledger's active commitments, derived from queue items bought in
+ * Active installment commitments, derived from queue items bought in
  * installments. Cash purchases are decisions only and never become commitments.
  */
-export function useCommitments(): Commitment[] {
+export function useInstallmentCommitments(): Commitment[] {
   const queueItems = useAppStore((s) => s.queueItems);
   return useMemo(() => installmentCommitments(queueItems), [queueItems]);
+}
+
+/** The full ledger (recurring costs + installments) for the current month on. */
+export function useLedger(): Commitment[] {
+  const profile = useAppStore((s) => s.profile);
+  const queueItems = useAppStore((s) => s.queueItems);
+  const today = useAppStore((s) => s.today);
+  return useMemo(
+    () => buildLedger(profile, queueItems, monthOf(today)),
+    [profile, queueItems, today],
+  );
 }

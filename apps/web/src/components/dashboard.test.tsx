@@ -18,14 +18,14 @@ const profile: Profile = {
   annualInflationExpectation: 0.3,
 };
 
-function waiting(id: string, order: number, price = 10_000): QueueItem {
+function waiting(id: string, order: number, price = 10_000, isNeed = false): QueueItem {
   return {
     id,
     name: id,
     price,
     urgency: 2,
     importance: 2,
-    isNeed: true,
+    isNeed,
     expectedUses: 10,
     addedDate: "2020-01-01",
     priceUpdatedDate: "2020-01-01",
@@ -159,5 +159,19 @@ describe("Dashboard", () => {
   it("has no chart before a profile exists", () => {
     renderDashboard({ profile: null });
     expect(screen.queryByTestId("cash-flow-chart")).not.toBeInTheDocument();
+  });
+
+  it("does not schedule a need while recurring costs already fill the needs budget", () => {
+    // 50/30/20 on 10,000.00 gives needs 5,000.00; rent 2,000.00 + living 3,000.00 use all of it.
+    renderDashboard({ queueItems: [waiting("Boiler", 0, 10_000, true)] });
+    expect(screen.getByTestId("next-month-Boiler")).toHaveTextContent("not affordable yet");
+  });
+
+  it("schedules a need once recurring costs leave room for it", () => {
+    renderDashboard({
+      profile: { ...profile, livingExpenses: 100_000 },
+      queueItems: [waiting("Boiler", 0, 10_000, true)],
+    });
+    expect(screen.getByTestId("next-month-Boiler")).toHaveTextContent("2026-09");
   });
 });

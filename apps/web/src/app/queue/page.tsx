@@ -26,7 +26,7 @@ import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem, saveQueueOrder } from "@/storage/queue-repo";
 import { putListItem } from "@/storage/repo";
-import { useAppStore, useCommitments } from "@/store";
+import { useAppStore, useLedger } from "@/store";
 
 function logFailure(what: string) {
   return (error: unknown) => console.error(`Could not ${what}`, error);
@@ -38,7 +38,7 @@ export default function QueuePage() {
   const queueItems = useAppStore((s) => s.queueItems);
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const currency = useAppStore((s) => s.currency);
-  const commitments = useCommitments();
+  const commitments = useLedger();
   const today = useAppStore((s) => s.today);
   const decisions = useAppStore((s) => s.decisions);
   const setDecisions = useAppStore((s) => s.setDecisions);

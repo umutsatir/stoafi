@@ -98,3 +98,4 @@ export {
   suggestedAnnualInflation,
 } from "../modules/profile/inflation-by-country";
 export { cashFlowSeries, type CashFlowPoint } from "../modules/profile/cash-flow";
+export { recurringCommitments } from "../modules/profile/recurring-commitments";

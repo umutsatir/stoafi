@@ -720,10 +720,11 @@ Goal: close the gaps found in a full read of the repo against `docs/SPEC.md` aft
 
 Not in this phase, needs a product decision first (recorded under Open questions): what "prompts again when the cooldown ends" should look like.
 
-- [ ] **T10.1** Recurring obligations as derived commitments
+- [x] **T10.1** Recurring obligations as derived commitments
   Goal: `recurringCommitments(profile, fromMonth, horizon)` in core turns each recurring expense (respecting `endMonth`) and the living-costs line into active commitments (`source.module: "profile"`, needs/wants bucket) so `project()` counts them in bucket usage and `freeCash`. A `useLedger()` hook assembles recurring + installment (+ later sinking-fund) commitments; the queue list, timeline, preview, guards and dashboard use it.
   Acceptance: tests: projection of a profile with rent and living costs reduces `freeCash` and fills the needs bucket; an expense stops after its `endMonth`; the scheduler places a need later (or `null`) when recurring costs already fill the needs limit; dashboard "left" equals `project().freeCash`.
   Depends on: T9.15
+  Note: `recurringCommitments` (core, `profile/recurring-commitments.ts`, 24-month horizon) feeds the ledger built by `buildLedger` (`store/ledger.ts`, used by `useLedger()`); the old `useCommitments` is now `useInstallmentCommitments` (installments only, used where only the installment load matters). The dashboard's "left" is now `project().freeCash`, checked equal to `cashFlowSeries` in a test. Visible behavior change: a need no longer "fits" when recurring costs already fill the needs limit (a dashboard test that expected this was wrong and was rewritten); with 50/30/20, rent plus living costs above 50% of income leave no room for needs items.
 
 - [ ] **T10.2** Persist language and currency; correct `<html lang>`
   Goal: a `settings` module (Zod schema, version 1, registered, in backups) stored in Dexie; first run picks the browser's language (`tr`/`en`); changing language or currency saves it; `document.documentElement.lang` follows the locale.
