@@ -41,9 +41,6 @@ export interface LimitsPanelProps {
   categories?: CategoryAmount[];
   /** Money for everyday fun, shown between the bars and the advice. */
   spending?: FreeSpending;
-  /** Installments are part of the wants bucket (or needs); their own cap is shown under wants. */
-  installmentUsed?: number;
-  installmentCap?: number;
   names?: Record<string, string>;
 }
 
@@ -53,8 +50,6 @@ export function LimitsPanel({
   queueFits,
   categories = [],
   spending,
-  installmentUsed,
-  installmentCap,
   names,
 }: LimitsPanelProps) {
   const t = useTranslations("home.limits");
@@ -85,23 +80,6 @@ export function LimitsPanel({
               tone={TONE[s.state]}
             />
             <CategoryLines rows={categories} bucket={s.bucket} {...(names ? { names } : {})} />
-            {s.bucket === "wants" && installmentUsed !== undefined && installmentCap ? (
-              <div className="flex flex-col gap-1" data-testid="wants-installments">
-                <ProgressBar
-                  value={installmentUsed}
-                  max={installmentCap}
-                  label={t("installmentBar")}
-                  tone={installmentUsed > installmentCap ? "danger" : "info"}
-                  className="h-1"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("installmentsInside", {
-                    used: money(installmentUsed),
-                    cap: money(installmentCap),
-                  })}
-                </p>
-              </div>
-            ) : null}
             <p className="flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
               <span
                 data-testid={`left-${s.bucket}`}

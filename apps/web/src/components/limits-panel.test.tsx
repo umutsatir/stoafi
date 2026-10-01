@@ -54,20 +54,6 @@ describe("LimitsPanel free spending and installments", () => {
     );
     expect(screen.getByTestId("free-spending")).toHaveTextContent("The amount you set");
   });
-
-  it("shows the installment cap inside the wants bucket", () => {
-    renderWithIntl(
-      <LimitsPanel
-        projection={wants}
-        queueFits={0}
-        installmentUsed={800_000}
-        installmentCap={1_200_000}
-      />,
-    );
-    expect(screen.getByTestId("wants-installments")).toHaveTextContent(
-      "Installments are part of this: ₺8,000.00 of your ₺12,000.00 installment cap.",
-    );
-  });
 });
 
 describe("LimitsPanel", () => {

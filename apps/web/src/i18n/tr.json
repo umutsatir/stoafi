@@ -107,8 +107,6 @@
         "saving": "Birikim ve yatırım",
         "personal": "Kişisel harcama"
       },
-      "installmentBar": "Taksitler, taksit sınırına karşı",
-      "installmentsInside": "Taksitler bunun içinde: {cap} taksit sınırının {used} kadarı.",
       "spending": {
         "title": "Serbest harcama payı",
         "spread": "Eşit dağıtırsan haftada yaklaşık {weekly}, günde {daily}.",

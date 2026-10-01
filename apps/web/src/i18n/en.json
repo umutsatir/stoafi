@@ -107,8 +107,6 @@
         "saving": "Saving and investing",
         "personal": "Personal spending"
       },
-      "installmentBar": "Installments against your installment cap",
-      "installmentsInside": "Installments are part of this: {used} of your {cap} installment cap.",
       "spending": {
         "title": "Free spending",
         "spread": "About {weekly} a week, or {daily} a day, if you spread it evenly.",

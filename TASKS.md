@@ -892,8 +892,8 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T15.9** Surplus saving goes to investing: once pots with a date and the emergency fund are covered, the rest of what the plan saves is suggested for investing (`investingShare`, split id `investing`), and it becomes the default monthly amount for the basket.
   Note: pots without a target never hold money back; only a pot or the emergency fund that still needs money does.
 
-- [x] **T15.10** Free spending: an optional monthly personal spending amount (counted as wants), or else what is left of the wants limit, shown on Home as "Free spending" with a weekly and daily spread; installments are shown inside the wants bucket against the installment cap (`kernel/spending.ts`, `personalSpending` on the profile).
-  Note: no spending log, as chosen; the weekly and daily figures are the month spread evenly, not a live balance.
+- [x] **T15.10** Free spending: an optional monthly personal spending amount (counted as wants), or else what is left of the wants limit, shown on Home as "Free spending" with a weekly and daily spread; (`kernel/spending.ts`, `personalSpending` on the profile).
+  Note: installments stay in the bucket of the item (need or want); the bar that showed them under wants was removed because needs have installments too. No spending log, as chosen; the weekly and daily figures are the month spread evenly, not a live balance.
 
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 

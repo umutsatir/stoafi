@@ -467,8 +467,6 @@ export function Dashboard({
               queueFits={queueFitsNow}
               categories={categories}
               spending={spending}
-              installmentUsed={installments}
-              installmentCap={Math.round(income * installmentCapPct)}
               names={names}
             />
           </Panel>
