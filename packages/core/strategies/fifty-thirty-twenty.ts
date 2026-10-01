@@ -32,6 +32,7 @@ export function diagnose(_profile: Profile, projections: MonthProjection[]): Ins
       insights.push({
         id: "fifty-thirty-twenty:wants-over-limit",
         message: `Wants spending in ${projection.month} exceeds its 30% limit.`,
+        month: projection.month,
       });
     }
   }

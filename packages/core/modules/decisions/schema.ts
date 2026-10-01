@@ -7,6 +7,8 @@ export const DecisionSchema = z
   .object({
     id: z.string(),
     queueItemRef: z.string(),
+    /** The item's name at decision time, so the log still reads well after the item is deleted. Optional for older records. */
+    itemName: z.string().optional(),
     outcome: z.enum(DECISION_OUTCOMES),
     /** Always passed in, never generated internally. */
     timestamp: z.string(),

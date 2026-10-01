@@ -3,6 +3,10 @@ import type { ReactNode } from "react";
 import { AppBootstrap } from "@/components/app-bootstrap";
 import { IntlProvider } from "@/components/intl-provider";
 import { Nav } from "@/components/nav";
+import { PageTransition } from "@/components/page-transition";
+import { Toaster } from "@/components/ui/toaster";
+import { CONTENT_SECURITY_POLICY } from "@/lib/csp";
+import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,20 +28,34 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f172a",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f9f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a1412" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {process.env.NODE_ENV === "production" && (
+          <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
+        )}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <IntlProvider>
-          <div className="mx-auto flex min-h-screen max-w-5xl flex-col md:flex-row">
+          <div className="flex min-h-screen">
             <Nav />
-            <div className="flex-1 p-6">
-              <AppBootstrap>{children}</AppBootstrap>
+            <div className="min-w-0 flex-1 px-4 pb-24 pt-6 md:px-8 md:pb-10">
+              <div className="mx-auto max-w-5xl">
+                <AppBootstrap>
+                  <PageTransition>{children}</PageTransition>
+                </AppBootstrap>
+              </div>
             </div>
           </div>
+          <Toaster />
         </IntlProvider>
       </body>
     </html>

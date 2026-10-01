@@ -1,16 +1,25 @@
 import {
   CardSchema,
   DecisionSchema,
+  GuardThresholdsSchema,
+  HoldingSchema,
+  SnapshotSchema,
   PlanStateSchema,
   ProfileSchema,
   QueueItemSchema,
+  SettingsSchema,
   SinkingFundSchema,
   defaultPlanState,
+  defaultSettings,
   type Card,
   type Decision,
+  type GuardThresholds,
+  type Holding,
+  type Snapshot,
   type PlanStateInput,
   type Profile,
   type QueueItem,
+  type Settings,
   type SinkingFund,
 } from "@stoafi/core";
 import type { StoafiDb } from "./db";
@@ -23,6 +32,10 @@ export interface LoadedState {
   sinkingFunds: SinkingFund[];
   cards: Card[];
   decisions: Decision[];
+  settings: Settings;
+  guardThresholds: GuardThresholds;
+  holdings: Holding[];
+  snapshots: Snapshot[];
 }
 
 /** Runs one loader; a row that no longer validates is reported and skipped, not fatal. */
@@ -36,14 +49,33 @@ async function safely<T>(what: string, load: () => Promise<T>, fallback: T): Pro
 }
 
 /** Reads everything the app needs from Dexie. A fresh database yields an empty state and the default plan. */
-export async function loadAppState(db: StoafiDb): Promise<LoadedState> {
-  const [profile, planState, queueItems, sinkingFunds, cards, decisions] = await Promise.all([
+export async function loadAppState(
+  db: StoafiDb,
+  /** The browser's language (`navigator.language`), used only when nothing is saved yet. */
+  language?: string,
+): Promise<LoadedState> {
+  const [
+    profile,
+    planState,
+    queueItems,
+    sinkingFunds,
+    cards,
+    decisions,
+    settings,
+    thresholds,
+    holdings,
+    snapshots,
+  ] = await Promise.all([
     safely("profile", () => getSingleton(db, "profile", ProfileSchema), undefined),
     safely("plan", () => getSingleton(db, "plan", PlanStateSchema), undefined),
     safely("queue", () => listItems(db, "queue", QueueItemSchema), []),
     safely("sinking funds", () => listItems(db, "sinkingFunds", SinkingFundSchema), []),
     safely("cards", () => listItems(db, "cards", CardSchema), []),
     safely("decisions", () => listItems(db, "decisions", DecisionSchema), []),
+    safely("settings", () => getSingleton(db, "settings", SettingsSchema), undefined),
+    safely("guard thresholds", () => getSingleton(db, "guards", GuardThresholdsSchema), undefined),
+    safely("holdings", () => listItems(db, "holdings", HoldingSchema), []),
+    safely("snapshots", () => listItems(db, "snapshots", SnapshotSchema), []),
   ]);
 
   return {
@@ -53,5 +85,9 @@ export async function loadAppState(db: StoafiDb): Promise<LoadedState> {
     sinkingFunds,
     cards,
     decisions,
+    settings: settings ?? defaultSettings(language),
+    guardThresholds: thresholds ?? GuardThresholdsSchema.parse({}),
+    holdings,
+    snapshots: [...snapshots].sort((a, b) => a.month.localeCompare(b.month)),
   };
 }

@@ -11,6 +11,8 @@ export default tseslint.config(
       "**/.turbo/**",
       "**/node_modules/**",
       "**/coverage/**",
+      "**/test-results/**",
+      "**/playwright-report/**",
       "**/next-env.d.ts",
       "**/public/sw.js",
       "**/public/swe-worker*.js",
@@ -23,6 +25,11 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-non-null-assertion": "error",
     },
+  },
+  {
+    // Plain Node scripts (the static server for browser tests).
+    files: ["**/*.mjs"],
+    languageOptions: { globals: { process: "readonly", console: "readonly" } },
   },
   eslintConfigPrettier,
 );

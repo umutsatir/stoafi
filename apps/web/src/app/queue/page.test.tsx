@@ -1,8 +1,10 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { toast } from "sonner";
 import { beforeEach, describe, expect, it } from "vitest";
-import { installmentCommitments, type Profile, type QueueItem } from "@stoafi/core";
+import { installmentCommitments, savingsSummary, type Profile, type QueueItem } from "@stoafi/core";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
+import { Toaster } from "@/components/ui/toaster";
 import { renderWithIntl } from "@/test-utils";
 import QueuePage from "./page";
 
@@ -29,6 +31,7 @@ const item: QueueItem = {
 };
 
 beforeEach(async () => {
+  toast.dismiss();
   await db.queue.clear();
   await db.decisions.clear();
   useAppStore.setState({
@@ -36,6 +39,8 @@ beforeEach(async () => {
     planState: { strategyId: "fifty-thirty-twenty", params: {} },
     queueItems: [item],
     decisions: [],
+    cards: [],
+    guardThresholds: { installmentCapPct: 0.2 },
     today: "2026-09-15",
     hydrated: true,
   });
@@ -45,9 +50,11 @@ beforeEach(async () => {
 describe("QueuePage purchase flow", () => {
   it("adds a queue item from the form and saves it", async () => {
     renderWithIntl(<QueuePage />);
-    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Desk" } });
-    fireEvent.change(screen.getByLabelText("Price"), { target: { value: "1500" } });
-    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add item" }));
+    const panel = await screen.findByRole("dialog", { name: "Add to queue" });
+    fireEvent.change(within(panel).getByLabelText("Name"), { target: { value: "Desk" } });
+    fireEvent.change(within(panel).getByLabelText("Price"), { target: { value: "1500" } });
+    fireEvent.click(within(panel).getByRole("button", { name: "Add" }));
 
     expect(useAppStore.getState().queueItems.map((i) => i.name)).toEqual(["Headphones", "Desk"]);
     await waitFor(async () => expect(await db.queue.count()).toBe(2));
@@ -109,5 +116,146 @@ describe("QueuePage purchase flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Delete Headphones" }));
     expect(useAppStore.getState().queueItems).toEqual([]);
     await waitFor(async () => expect(await db.queue.count()).toBe(0));
+  });
+
+  it("skipping records a skipped decision, removes the item and counts as money saved", async () => {
+    renderWithIntl(<QueuePage />);
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+
+    const state = useAppStore.getState();
+    expect(state.queueItems).toEqual([]);
+    expect(state.decisions[0]).toMatchObject({
+      queueItemRef: "headphones",
+      outcome: "skipped",
+      amount: 300_000,
+    });
+    expect(savingsSummary(state.decisions).totalSaved).toBe(300_000);
+
+    await waitFor(async () => expect(await db.decisions.count()).toBe(1));
+    expect(await db.queue.count()).toBe(0);
+    expect(screen.queryByRole("button", { name: "Headphones" })).not.toBeInTheDocument();
+  });
+
+  it("saves a skip at the cash price when the item has one", async () => {
+    const withCash = { ...item, discountedCashPrice: 250_000 };
+    useAppStore.setState({ queueItems: [withCash] });
+    renderWithIntl(<QueuePage />);
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+    expect(useAppStore.getState().decisions[0]?.amount).toBe(250_000);
+  });
+
+  it("postponing records a postponed decision and keeps the item in the queue", async () => {
+    renderWithIntl(<QueuePage />);
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Postpone" }));
+
+    const state = useAppStore.getState();
+    expect(state.queueItems.map((i) => i.id)).toEqual(["headphones"]);
+    expect(state.decisions[0]).toMatchObject({ outcome: "postponed", amount: 300_000 });
+    expect(savingsSummary(state.decisions).totalSaved).toBe(0);
+    await waitFor(async () => expect(await db.decisions.count()).toBe(1));
+    expect(await db.queue.count()).toBe(1);
+    // the preview closes after the decision
+    expect(screen.queryByRole("button", { name: "Postpone" })).not.toBeInTheDocument();
+  });
+
+  it("shows the first month the scheduler finds room for the selected item", () => {
+    renderWithIntl(<QueuePage />);
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    expect(screen.getByTestId("suggested-month")).toHaveTextContent("2026-09");
+  });
+
+  it("offers the saved cards in the preview", () => {
+    useAppStore.setState({
+      cards: [{ id: "visa", label: "Visa", statementDay: 15, dueDay: 5 }],
+    });
+    renderWithIntl(<QueuePage />);
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    expect(screen.getByLabelText("Pay with card")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Visa" })).toBeInTheDocument();
+  });
+
+  describe("installment cap from settings", () => {
+    function pickThreeMonthOffer() {
+      fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+      fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+      fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    }
+
+    it("does not flag a small installment under the default 20% cap", () => {
+      renderWithIntl(<QueuePage />);
+      pickThreeMonthOffer();
+      expect(screen.queryByText(/installments would go above the cap/i)).not.toBeInTheDocument();
+    });
+
+    it("flags the same installment once the cap is lowered in settings", () => {
+      // 1,000.00 a month against an income of 100,000.00: about 1%
+      useAppStore.setState({ guardThresholds: { installmentCapPct: 0.005 } });
+      renderWithIntl(<QueuePage />);
+      pickThreeMonthOffer();
+      expect(screen.getByTestId("guard-breaches")).toHaveTextContent(
+        /installments would go above the cap/i,
+      );
+    });
+  });
+});
+
+describe("QueuePage undo", () => {
+  it("takes back a skip: the item returns and the decision disappears", async () => {
+    renderWithIntl(
+      <>
+        <QueuePage />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+    expect(useAppStore.getState().queueItems).toEqual([]);
+    expect(useAppStore.getState().decisions).toHaveLength(1);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["headphones"]);
+    expect(useAppStore.getState().decisions).toEqual([]);
+    await waitFor(async () => expect(await db.decisions.count()).toBe(0));
+    await waitFor(async () => expect(await db.queue.count()).toBe(1));
+  });
+
+  it("takes back an installment purchase: the item is a waiting item again", async () => {
+    renderWithIntl(
+      <>
+        <QueuePage />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(useAppStore.getState().queueItems[0]?.installmentPurchase).toBeDefined();
+
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().queueItems[0]?.installmentPurchase).toBeUndefined();
+    expect(useAppStore.getState().decisions).toEqual([]);
+    await waitFor(async () => {
+      const row = (await db.queue.get("headphones")) as QueueItem | undefined;
+      expect(row?.installmentPurchase).toBeUndefined();
+    });
+  });
+
+  it("takes back a postponement: the decision goes, the item stays", async () => {
+    renderWithIntl(
+      <>
+        <QueuePage />
+        <Toaster />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Postpone" }));
+    expect(useAppStore.getState().decisions).toHaveLength(1);
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().decisions).toEqual([]);
+    expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["headphones"]);
   });
 });

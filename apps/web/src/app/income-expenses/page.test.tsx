@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Profile } from "@stoafi/core";
 import { db } from "@/storage/instance";
@@ -30,10 +30,10 @@ beforeEach(async () => {
 describe("Income & Expenses and Profile screens share one profile", () => {
   it("saving income and expenses keeps savings, target and inflation", async () => {
     renderWithIntl(<IncomeExpensesPage />);
-    fireEvent.click(screen.getByRole("button", { name: "Add expense" }));
-    fireEvent.change(screen.getByLabelText("Expense 1 name"), { target: { value: "Rent" } });
-    fireEvent.change(screen.getByLabelText("Expense 1 amount"), { target: { value: "3000" } });
-    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Add expense" })[0] as HTMLElement);
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Rent" } });
+    fireEvent.change(screen.getByLabelText("Monthly amount"), { target: { value: "3000" } });
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Add" }));
 
     await waitFor(async () => expect((await stored()).fixedExpenses).toHaveLength(1));
     expect(await stored()).toMatchObject({
@@ -60,9 +60,10 @@ describe("Income & Expenses and Profile screens share one profile", () => {
     await db.profile.clear();
     useAppStore.setState({ profile: null });
     renderWithIntl(<IncomeExpensesPage />);
-    fireEvent.change(screen.getByLabelText("Salary 1 name"), { target: { value: "Job" } });
-    fireEvent.change(screen.getByLabelText("Salary 1 amount"), { target: { value: "500" } });
-    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Add income" })[0] as HTMLElement);
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Job" } });
+    fireEvent.change(screen.getByLabelText("Monthly amount"), { target: { value: "500" } });
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Add" }));
     await waitFor(async () => expect((await stored())?.incomes).toHaveLength(1));
     expect(await stored()).toMatchObject({ savings: 0, emergencyFundTargetMonths: 6 });
   });

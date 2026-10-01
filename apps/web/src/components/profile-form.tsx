@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { ShieldCheck, TrendingUp } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   INFLATION_COUNTRY_CODES,
@@ -14,17 +15,19 @@ import {
   type Profile,
 } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
+import { useMoney } from "@/lib/use-money";
+import { stagger } from "@/lib/utils";
 import { MoneyInput } from "./money-input";
 import { PercentInput } from "./percent-input";
 
 /** The settings part of the profile: savings, the emergency-fund goal and inflation. */
 export type ProfileSettings = Pick<
   Profile,
-  "savings" | "emergencyFundTargetMonths" | "annualInflationExpectation"
+  "savings" | "emergencyFundTargetMonths" | "annualInflationExpectation" | "countryCode"
 >;
 
 export interface ProfileFormProps {
@@ -46,10 +49,11 @@ export function ProfileForm({
 }: ProfileFormProps) {
   const t = useTranslations("profile");
   const locale = useLocale();
+  const money = useMoney();
   const [savings, setSavings] = useState(initial?.savings ?? 0);
   const [fundMonths, setFundMonths] = useState(initial?.emergencyFundTargetMonths ?? 6);
   const [inflation, setInflation] = useState(initial?.annualInflationExpectation ?? 0.3);
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState(initial?.countryCode ?? "");
 
   const regionNames = new Intl.DisplayNames(locale, { type: "region" });
 
@@ -73,13 +77,21 @@ export function ProfileForm({
       savings,
       emergencyFundTargetMonths: fundMonths,
       annualInflationExpectation: inflation,
+      ...(country ? { countryCode: country } : {}),
     });
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <Card>
-        <CardContent className="grid gap-4 pt-6 sm:grid-cols-2">
+      <Card className="rise-in">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
+            {t("fundTitle")}
+          </CardTitle>
+          <CardDescription>{t("fundHint")}</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
           <Field label={t("currentSavings")} htmlFor="savings">
             <MoneyInput id="savings" currency={currency} value={savings} onChange={setSavings} />
           </Field>
@@ -99,6 +111,18 @@ export function ProfileForm({
               </p>
             )}
           </Field>
+        </CardContent>
+      </Card>
+
+      <Card className="rise-in" style={stagger(1)}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
+            {t("economyTitle")}
+          </CardTitle>
+          <CardDescription>{t("economyHint")}</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
           <Field label={t("country")} htmlFor="country">
             <NativeSelect
               id="country"
@@ -128,6 +152,16 @@ export function ProfileForm({
           >
             <PercentInput id="inflation" value={inflation} onChange={setInflation} />
           </Field>
+          <p
+            data-testid="inflation-insight"
+            className="rounded-lg bg-muted p-3 text-sm text-muted-foreground sm:col-span-2"
+          >
+            {t("inflationInsight", {
+              rate: `${(inflation * 100).toFixed(0)}%`,
+              amount: money(100_000),
+              then: money(Math.round(100_000 * (1 + inflation))),
+            })}
+          </p>
         </CardContent>
       </Card>
 

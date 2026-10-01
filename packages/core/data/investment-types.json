@@ -1,0 +1,15 @@
+{
+  "note": "Preset investment types. Names and the short guides are in the app's language files; this only fixes ids and the picture used.",
+  "types": [
+    { "id": "gold", "icon": "gold" },
+    { "id": "currency", "icon": "banknotes" },
+    { "id": "stock", "icon": "certificate" },
+    { "id": "fund", "icon": "certificate" },
+    { "id": "index-fund", "icon": "certificate" },
+    { "id": "bond", "icon": "certificate" },
+    { "id": "deposit", "icon": "vault" },
+    { "id": "crypto", "icon": "coin" },
+    { "id": "real-estate", "icon": "building" },
+    { "id": "other", "icon": "box" }
+  ]
+}

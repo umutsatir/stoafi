@@ -58,6 +58,8 @@ describe("PlanComparison", () => {
 
   it("shows no plan buttons when the comparison is read-only", () => {
     renderWithIntl(<PlanComparison profile={profile} />);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /use this plan|active plan/i }),
+    ).not.toBeInTheDocument();
   });
 });

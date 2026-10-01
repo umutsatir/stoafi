@@ -5,6 +5,7 @@ import { projectSeries } from "../../kernel/project";
 import {
   activeQueueItems,
   installmentCommitments,
+  remainingInstallmentsByCard,
   toInstallmentCommitment,
 } from "./installment-purchase";
 import { QueueItemSchema, type QueueItem } from "./schema";
@@ -104,5 +105,38 @@ describe("QueueItemSchema installmentPurchase", () => {
     expect(QueueItemSchema.safeParse(zeroPayment).success).toBe(false);
     const badMonth = { ...makeItem(), installmentPurchase: { offer, firstMonth: "nov" } };
     expect(QueueItemSchema.safeParse(badMonth).success).toBe(false);
+  });
+});
+
+describe("remainingInstallmentsByCard", () => {
+  const onCard = (id: string, cardId: string | undefined, firstMonth: Month): QueueItem =>
+    makeItem({ id, installmentPurchase: { offer, firstMonth, ...(cardId ? { cardId } : {}) } });
+
+  it("adds up the payments still to be made on each card, from the given month on", () => {
+    const items = [
+      onCard("a", "visa", "2026-10"),
+      onCard("b", "visa", "2026-12"),
+      onCard("c", "amex", "2026-11"),
+    ];
+    // From 2026-11: a pays 2026-11 and 2026-12 (2 left), b all 3, c all 3.
+    expect(remainingInstallmentsByCard(items, "2026-11")).toEqual({
+      visa: 2 * 1_100_000 + 3 * 1_100_000,
+      amex: 3 * 1_100_000,
+    });
+  });
+
+  it("counts the payment due in the given month itself", () => {
+    expect(remainingInstallmentsByCard([onCard("a", "visa", "2026-11")], "2026-11")).toEqual({
+      visa: 3 * 1_100_000,
+    });
+  });
+
+  it("leaves out finished purchases, purchases with no card and items still waiting", () => {
+    const items = [
+      onCard("done", "visa", "2026-01"),
+      onCard("nocard", undefined, "2026-11"),
+      makeItem({ id: "waiting" }),
+    ];
+    expect(remainingInstallmentsByCard(items, "2026-11")).toEqual({});
   });
 });

@@ -1,29 +1,82 @@
 import { NextIntlClientProvider } from "next-intl";
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import en from "@/i18n/en.json";
 import { Nav } from "./nav";
 
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ usePathname: () => "/", useRouter: () => ({ push }) }));
+
+function renderNav() {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en} timeZone="UTC">
+      <Nav />
+    </NextIntlClientProvider>,
+  );
+}
+
 describe("Nav", () => {
   it("renders a link for every route", () => {
-    render(
-      <NextIntlClientProvider locale="en" messages={en} timeZone="UTC">
-        <Nav />
-      </NextIntlClientProvider>,
-    );
+    renderNav();
 
     for (const label of [
       "Home",
+      "Calendar",
       "Income & Expenses",
       "Profile",
       "Plan",
       "Queue",
+      "Savings",
       "Cards",
       "Health",
       "Decisions",
+      "Lessons",
       "Settings",
     ]) {
-      expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
+      // Every page is reachable from the sidebar (desktop).
+      expect(
+        within(screen.getByRole("navigation", { name: "Main" })).getByRole("link", { name: label }),
+      ).toBeInTheDocument();
     }
+  });
+
+  it("groups the sidebar under headings", () => {
+    renderNav();
+    const sidebar = within(screen.getByRole("navigation", { name: "Main" }));
+    for (const heading of ["Overview", "Money", "Plan", "Status", "Learn", "You"]) {
+      expect(sidebar.getAllByText(heading).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("gives phones a bottom bar with four tabs and a More sheet holding the rest", async () => {
+    renderNav();
+    const bar = within(screen.getByRole("navigation", { name: "Main, bottom bar" }));
+    expect(bar.getAllByRole("link").map((l) => l.textContent)).toEqual([
+      "Home",
+      "Money",
+      "Queue",
+      "Plan",
+    ]);
+    fireEvent.click(bar.getByRole("button", { name: "More" }));
+    const sheet = within(await screen.findByRole("dialog", { name: "More pages" }));
+    for (const label of [
+      "Savings",
+      "Cards",
+      "Health",
+      "Decisions",
+      "Lessons",
+      "Profile",
+      "Settings",
+    ]) {
+      expect(sheet.getByRole("link", { name: label })).toBeInTheDocument();
+    }
+  });
+
+  it("marks the current page", () => {
+    renderNav();
+    const home = within(screen.getByRole("navigation", { name: "Main" })).getByRole("link", {
+      name: "Home",
+    });
+    expect(home).toHaveAttribute("aria-current", "page");
   });
 });

@@ -29,4 +29,16 @@ describe("exportAll", () => {
     const roundTripped: unknown = JSON.parse(JSON.stringify(backup));
     expect(BackupSchema.safeParse(roundTripped).success).toBe(true);
   });
+
+  it("drops rows for a module that is not registered instead of exporting them", () => {
+    const registry = createRegistry();
+    registry.register(profileModule);
+
+    const backup = exportAll(
+      registry,
+      { profile: [{ savings: 1 }], retired: [{ anything: true }] },
+      "2026-09-20T00:00:00.000Z",
+    );
+    expect(Object.keys(backup.data)).toEqual(["profile"]);
+  });
 });

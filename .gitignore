@@ -12,3 +12,7 @@ coverage/
 apps/web/public/sw.js
 apps/web/public/sw.js.map
 apps/web/public/swe-worker*.js
+
+# browser tests
+**/test-results/
+**/playwright-report/

@@ -1,0 +1,7 @@
+{
+  "note": "Cut-offs for the health page. Tunable values live here, not in code.",
+  "savingsRate": { "good": 0.2, "watch": 0.1 },
+  "installmentRatio": { "watchFactor": 1.5 },
+  "runwayMonths": { "good": 6, "watch": 3 },
+  "emergencyFundWatchMonths": 3
+}

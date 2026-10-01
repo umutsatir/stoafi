@@ -36,6 +36,7 @@ export function diagnose(profile: Profile, projections: MonthProjection[]): Insi
       insights.push({
         id: "pay-yourself-first:savings-shortfall",
         message: `Savings in ${projection.month} fell short of the pay-yourself-first target.`,
+        month: projection.month,
       });
     }
   }

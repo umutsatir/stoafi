@@ -19,3 +19,11 @@ describe("timingTip", () => {
     expect(result?.extraFloatDays).toBe(31); // days between 2026-10-05 and 2026-11-05
   });
 });
+
+describe("timingTip with a date that has no day", () => {
+  it("counts the missing day as the 1st, which is before any statement day", () => {
+    expect(
+      timingTip({ id: "c", label: "Visa", statementDay: 15, dueDay: 5 }, "2026-10"),
+    ).toBeNull();
+  });
+});

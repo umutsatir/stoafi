@@ -3,6 +3,7 @@ import {
   formatMinorForInput,
   formatPercentForInput,
   parseMinor,
+  parseQuantity,
   parsePercent,
 } from "./amount-text";
 
@@ -86,5 +87,20 @@ describe("percent text", () => {
     expect(formatPercentForInput(0.3, "en")).toBe("30");
     expect(formatPercentForInput(0.125, "tr")).toBe("12,5");
     expect(formatPercentForInput(0, "en")).toBe("");
+  });
+});
+
+describe("parseQuantity", () => {
+  it("reads decimals with a dot or a comma", () => {
+    expect(parseQuantity("0.35", "en")).toBe(0.35);
+    expect(parseQuantity("0,35", "tr")).toBe(0.35);
+    expect(parseQuantity("12", "en")).toBe(12);
+    expect(parseQuantity("1.250,5", "tr")).toBe(1250.5);
+  });
+
+  it("refuses zero, empty text, negatives and words", () => {
+    for (const bad of ["0", "", "  ", "-1", "abc", "1.2.3x"]) {
+      expect(parseQuantity(bad, "en")).toBeNull();
+    }
   });
 });

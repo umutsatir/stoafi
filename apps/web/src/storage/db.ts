@@ -26,6 +26,9 @@ export class StoafiDb extends Dexie {
   sinkingFunds!: EntityTable<ListRow, "id">;
   cards!: EntityTable<ListRow, "id">;
   decisions!: EntityTable<ListRow, "id">;
+  settings!: EntityTable<SingletonRow, "id">;
+  holdings!: EntityTable<ListRow, "id">;
+  snapshots!: EntityTable<ListRow, "id">;
 
   constructor(name = "stoafi") {
     super(name);
@@ -64,5 +67,44 @@ export class StoafiDb extends Dexie {
         decisions: "id",
       })
       .upgrade(migrateProfileV2ToV3);
+
+    // v4 adds the settings table (language and currency); existing rows are untouched.
+    this.version(4).stores({
+      profile: "id",
+      plan: "id",
+      guards: "id",
+      queue: "id",
+      sinkingFunds: "id",
+      cards: "id",
+      decisions: "id",
+      settings: "id",
+    });
+
+    // v5 adds the holdings table (investments); existing rows are untouched.
+    this.version(5).stores({
+      profile: "id",
+      plan: "id",
+      guards: "id",
+      queue: "id",
+      sinkingFunds: "id",
+      cards: "id",
+      decisions: "id",
+      settings: "id",
+      holdings: "id",
+    });
+
+    // v6 adds the monthly snapshots table; existing rows are untouched.
+    this.version(6).stores({
+      profile: "id",
+      plan: "id",
+      guards: "id",
+      queue: "id",
+      sinkingFunds: "id",
+      cards: "id",
+      decisions: "id",
+      settings: "id",
+      holdings: "id",
+      snapshots: "id",
+    });
   }
 }

@@ -72,3 +72,49 @@ describe("importAll", () => {
     expect("errors" in result).toBe(true);
   });
 });
+
+describe("importAll with a backup from an older app version", () => {
+  const oldProfile = {
+    incomes: [{ label: "Salary", monthly: 50000, variable: false }],
+    fixedExpenses: [{ label: "Rent", monthly: 20000, bucket: "needs" }],
+    avgVariableExpenses: [{ label: "Groceries", monthly: 8000, bucket: "needs" }],
+    savings: 100,
+    emergencyFundTargetMonths: 6,
+    annualInflationExpectation: 0.3,
+  };
+
+  it("upgrades an old profile row instead of rejecting it", () => {
+    const registry = createRegistry();
+    registry.register(profileModule);
+    const result = importAll(registry, {
+      version: 1,
+      exportedAt: "2025-01-01T00:00:00.000Z",
+      data: { profile: [oldProfile] },
+    });
+    expect(result).toEqual({
+      data: {
+        profile: [
+          {
+            incomes: [{ label: "Salary", monthly: 50000 }],
+            fixedExpenses: [{ label: "Rent", monthly: 20000, bucket: "needs" }],
+            livingExpenses: 8000,
+            savings: 100,
+            emergencyFundTargetMonths: 6,
+            annualInflationExpectation: 0.3,
+          },
+        ],
+      },
+    });
+  });
+
+  it("still reports a row that is broken beyond what a migration can fix", () => {
+    const registry = createRegistry();
+    registry.register(profileModule);
+    const result = importAll(registry, {
+      version: 1,
+      exportedAt: "2025-01-01T00:00:00.000Z",
+      data: { profile: [{ ...oldProfile, savings: -5 }] },
+    });
+    expect("errors" in result).toBe(true);
+  });
+});

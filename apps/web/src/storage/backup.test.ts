@@ -20,12 +20,14 @@ describe("export/import round trip", () => {
 
     await db.profile.put({ id: SINGLETON_ID, data: validProfile });
     await db.cards.put(validCard);
+    await db.settings.put({ id: SINGLETON_ID, data: { locale: "tr", currency: "EUR" } });
 
     const json = await exportToJson(db, "2026-09-20T00:00:00.000Z");
 
     // clear data
     await db.profile.clear();
     await db.cards.clear();
+    await db.settings.clear();
     expect(await db.profile.get(SINGLETON_ID)).toBeUndefined();
     expect(await db.cards.toArray()).toEqual([]);
 
@@ -38,6 +40,9 @@ describe("export/import round trip", () => {
 
     const cards = await db.cards.toArray();
     expect(cards).toEqual([validCard]);
+
+    const settingsRow = await db.settings.get(SINGLETON_ID);
+    expect(settingsRow?.data).toEqual({ locale: "tr", currency: "EUR" });
 
     db.close();
   });

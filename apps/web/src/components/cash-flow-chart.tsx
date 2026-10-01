@@ -7,11 +7,12 @@ import { useMoney } from "@/lib/use-money";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const COLORS = {
-  obligations: "#0f172a",
-  living: "#64748b",
-  installments: "#0ea5e9",
-  income: "#22c55e",
-  left: "#f59e0b",
+  obligations: "var(--chart-needs)",
+  living: "var(--chart-wants)",
+  installments: "var(--chart-installments)",
+  setAside: "var(--chart-setaside)",
+  income: "var(--chart-income)",
+  left: "var(--chart-left)",
 };
 
 /** Income against what goes out each month, with what is left. Also readable as a table. */
@@ -51,6 +52,7 @@ export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
               stackId="costs"
               fill={COLORS.installments}
             />
+            <Bar dataKey="setAside" name={t("setAside")} stackId="costs" fill={COLORS.setAside} />
             <Line
               dataKey="income"
               name={t("income")}
@@ -74,6 +76,7 @@ export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
               <th>{t("month")}</th>
               <th>{t("left")}</th>
               <th>{t("installments")}</th>
+              <th>{t("setAside")}</th>
             </tr>
           </thead>
           <tbody>
@@ -82,6 +85,7 @@ export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
                 <td>{point.month}</td>
                 <td>{money(point.left)}</td>
                 <td>{money(point.installments)}</td>
+                <td>{money(point.setAside)}</td>
               </tr>
             ))}
           </tbody>

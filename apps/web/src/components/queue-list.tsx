@@ -23,6 +23,8 @@ import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import {
   costInWorkHours,
   costPerUse,
+  priceAgeDays,
+  priceIsStale,
   eisenhowerQuadrant,
   scheduleQueue,
   type Commitment,
@@ -31,12 +33,12 @@ import {
   type Profile,
   type QueueItem,
 } from "@stoafi/core";
-import { getLessonCard } from "@/lessons";
-import type { Locale } from "@/i18n/messages";
+import { LessonLink } from "@/components/lesson-link";
 import { useMoney } from "@/lib/use-money";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { StatusChip, type ChipTone } from "@/components/ui/status-chip";
+import { formatMonth } from "@/lib/format-month";
+import { stagger } from "@/lib/utils";
 
 const NO_COMMITMENTS: Commitment[] = [];
 
@@ -54,6 +56,8 @@ export interface QueueListProps {
   /** Existing commitments (e.g. installments already taken); they use up bucket room. */
   commitments?: Commitment[];
   hourlyNetIncome: number;
+  /** False hides the drag handle and arrows (e.g. while a filter hides some items). */
+  reorderable?: boolean;
 }
 
 /** Renumbers `order` to match array position. */
@@ -74,6 +78,17 @@ function reorder(items: QueueItem[], index: number, direction: -1 | 1): QueueIte
   return renumber(next);
 }
 
+/** One chip for the Eisenhower position: both, only one, or neither. */
+function priorityOf(q: { urgent: boolean; important: boolean }): {
+  key: "urgentImportant" | "urgentOnly" | "importantOnly" | "neither";
+  tone: ChipTone;
+} {
+  if (q.urgent && q.important) return { key: "urgentImportant", tone: "danger" };
+  if (q.urgent) return { key: "urgentOnly", tone: "warning" };
+  if (q.important) return { key: "importantOnly", tone: "info" };
+  return { key: "neither", tone: "neutral" };
+}
+
 interface QueueRowProps {
   item: QueueItem;
   index: number;
@@ -85,6 +100,9 @@ interface QueueRowProps {
   onEdit?: (item: QueueItem) => void;
   onDelete?: (item: QueueItem) => void;
   hourlyNetIncome: number;
+  reorderable: boolean;
+  today: string;
+  locale: string;
   t: (key: string, values?: Record<string, string | number>) => string;
   money: (minor: number) => string;
 }
@@ -100,6 +118,9 @@ function QueueRow({
   onEdit,
   onDelete,
   hourlyNetIncome,
+  reorderable,
+  today,
+  locale,
   t,
   money,
 }: QueueRowProps) {
@@ -107,10 +128,12 @@ function QueueRow({
     id: item.id,
   });
   const quadrant = eisenhowerQuadrant(item);
+  const priority = priorityOf(quadrant);
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    ...stagger(index),
   };
 
   return (
@@ -118,19 +141,21 @@ function QueueRow({
       ref={setNodeRef}
       style={style}
       data-testid={`queue-item-${item.id}`}
-      className={`flex items-center gap-3 rounded-md border border-border bg-card p-3 ${
+      className={`rise-in flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md ${
         isDragging ? "opacity-60 shadow-lg" : ""
       }`}
     >
-      <button
-        type="button"
-        aria-label={t("dragHandle", { name: item.name })}
-        className="cursor-grab touch-none text-muted-foreground hover:text-foreground active:cursor-grabbing"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="h-4 w-4" />
-      </button>
+      {reorderable && (
+        <button
+          type="button"
+          aria-label={t("dragHandle", { name: item.name })}
+          className="cursor-grab touch-none text-muted-foreground hover:text-foreground active:cursor-grabbing"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-5 w-5" aria-hidden="true" />
+        </button>
+      )}
 
       <div className="min-w-0 flex-1">
         {onSelect ? (
@@ -147,15 +172,24 @@ function QueueRow({
           <p className="text-sm font-medium">{item.name}</p>
         )}
         <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-          <Badge variant="secondary" data-testid={`month-${item.id}`}>
-            {month ?? notAffordableLabel}
-          </Badge>
-          <Badge variant={quadrant.urgent ? "default" : "outline"}>
-            {quadrant.urgent ? t("urgent") : t("notUrgent")}
-          </Badge>
-          <Badge variant={quadrant.important ? "default" : "outline"}>
-            {quadrant.important ? t("important") : t("notImportant")}
-          </Badge>
+          <StatusChip tone={month ? "success" : "warning"}>
+            <span data-testid={`month-${item.id}`}>
+              {month ? formatMonth(month, locale) : notAffordableLabel}
+            </span>
+          </StatusChip>
+          <StatusChip tone={priority.tone}>{t(`priority.${priority.key}`)}</StatusChip>
+          {priceIsStale(item, today) && (
+            <button
+              type="button"
+              data-testid={`stale-${item.id}`}
+              onClick={() => onEdit?.(item)}
+              className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <StatusChip tone="warning" className="cursor-pointer hover:bg-warning/25">
+                {t("priceStale", { days: priceAgeDays(item, today) })}
+              </StatusChip>
+            </button>
+          )}
           <span>
             {t("hoursSuffix", { hours: costInWorkHours(item.price, hourlyNetIncome).toFixed(1) })}
           </span>
@@ -166,30 +200,37 @@ function QueueRow({
       </div>
 
       <div className="flex items-center gap-1">
-        <div className="flex flex-col gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            disabled={index === 0}
-            aria-label={t("moveUp", { name: item.name })}
-            onClick={() => onMove(index, -1)}
-          >
-            ↑
+        {reorderable && (
+          <div className="flex flex-col gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              disabled={index === 0}
+              aria-label={t("moveUp", { name: item.name })}
+              onClick={() => onMove(index, -1)}
+            >
+              ↑
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              disabled={index === total - 1}
+              aria-label={t("moveDown", { name: item.name })}
+              onClick={() => onMove(index, 1)}
+            >
+              ↓
+            </Button>
+          </div>
+        )}
+        {onSelect && (
+          <Button type="button" size="sm" onClick={() => onSelect(item)}>
+            {t("buy")}
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            disabled={index === total - 1}
-            aria-label={t("moveDown", { name: item.name })}
-            onClick={() => onMove(index, 1)}
-          >
-            ↓
-          </Button>
-        </div>
+        )}
         {onEdit && (
           <Button
             type="button"
@@ -229,13 +270,12 @@ export function QueueList({
   startMonth,
   commitments = NO_COMMITMENTS,
   hourlyNetIncome,
+  reorderable = true,
 }: QueueListProps) {
+  const locale = useLocale();
   const t = useTranslations("queue");
   const tTimeline = useTranslations("timeline");
-  const locale = useLocale() as Locale;
   const money = useMoney();
-  const costInLifeEnergyLesson = getLessonCard("cost-in-life-energy", locale);
-  const eisenhowerLesson = getLessonCard("eisenhower-matrix", locale);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -258,57 +298,37 @@ export function QueueList({
   }
 
   return (
-    <Card>
-      {(costInLifeEnergyLesson || eisenhowerLesson) && (
-        <CardHeader className="flex flex-row flex-wrap gap-3 border-b border-border pb-4 text-xs">
-          {costInLifeEnergyLesson && (
-            <a
-              href={`#lesson-${costInLifeEnergyLesson.id}`}
-              aria-label={`${costInLifeEnergyLesson.id} lesson`}
-              data-testid="lesson-link-cost-in-life-energy"
-              className="font-medium text-primary underline-offset-2 hover:underline"
-            >
-              {costInLifeEnergyLesson.title}
-            </a>
-          )}
-          {eisenhowerLesson && (
-            <a
-              href={`#lesson-${eisenhowerLesson.id}`}
-              aria-label={`${eisenhowerLesson.id} lesson`}
-              data-testid="lesson-link-eisenhower-matrix"
-              className="font-medium text-primary underline-offset-2 hover:underline"
-            >
-              {eisenhowerLesson.title}
-            </a>
-          )}
-        </CardHeader>
-      )}
-      <CardContent className="flex flex-col gap-2 pt-6">
-        {items.length === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-            <ul className="flex flex-col gap-2">
-              {items.map((item, index) => (
-                <QueueRow
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  total={items.length}
-                  month={scheduleByItemId.get(item.id)}
-                  notAffordableLabel={tTimeline("notAffordableYet")}
-                  onMove={(i, direction) => onItemsChange(reorder(items, i, direction))}
-                  onSelect={onSelect}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  hourlyNetIncome={hourlyNetIncome}
-                  t={t}
-                  money={money}
-                />
-              ))}
-            </ul>
-          </SortableContext>
-        </DndContext>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap gap-3 text-xs">
+        <LessonLink lessonId="cost-in-life-energy" testId="lesson-link-cost-in-life-energy" />
+        <LessonLink lessonId="eisenhower-matrix" testId="lesson-link-eisenhower-matrix" />
+      </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          <ul className="flex flex-col gap-3">
+            {items.map((item, index) => (
+              <QueueRow
+                key={item.id}
+                item={item}
+                index={index}
+                total={items.length}
+                month={scheduleByItemId.get(item.id)}
+                notAffordableLabel={tTimeline("notAffordableYet")}
+                onMove={(i, direction) => onItemsChange(reorder(items, i, direction))}
+                onSelect={onSelect}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                hourlyNetIncome={hourlyNetIncome}
+                reorderable={reorderable}
+                today={today}
+                locale={locale}
+                t={t}
+                money={money}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
+    </div>
   );
 }

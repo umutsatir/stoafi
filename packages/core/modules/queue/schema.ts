@@ -24,6 +24,8 @@ export const QueueItemSchema = z.object({
     .object({
       offer: InstallmentOfferSchema,
       firstMonth: MonthSchema,
+      /** The card the purchase was made with; its remaining payments count against that card's limit. */
+      cardId: z.string().optional(),
     })
     .optional(),
   /** Manual drag-and-drop order, lower comes first. */

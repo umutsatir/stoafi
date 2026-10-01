@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { activeFixedExpenses, isExpenseActiveInMonth } from "./active-expenses";
+import {
+  activeFixedExpenses,
+  expenseKind,
+  isExpenseActiveInMonth,
+  remainingPayments,
+} from "./active-expenses";
 import type { Profile } from "./schema";
 
 describe("isExpenseActiveInMonth", () => {
@@ -39,5 +44,22 @@ describe("activeFixedExpenses", () => {
       activeFixedExpenses(profile, month).reduce((total, e) => total + e.monthly, 0);
     expect(sum("2026-06")).toBe(5500);
     expect(sum("2026-07")).toBe(4000);
+  });
+});
+
+describe("expenseKind and remainingPayments", () => {
+  it("reads a line saved before kinds existed as regular", () => {
+    expect(expenseKind({})).toBe("regular");
+    expect(expenseKind({ kind: "loan" })).toBe("loan");
+  });
+
+  it("counts this month's payment, so the last month leaves one", () => {
+    expect(remainingPayments({ endMonth: "2026-12" }, "2026-10")).toBe(3);
+    expect(remainingPayments({ endMonth: "2026-10" }, "2026-10")).toBe(1);
+  });
+
+  it("has nothing left once ended, and nothing to count for a line that never ends", () => {
+    expect(remainingPayments({ endMonth: "2026-09" }, "2026-10")).toBeNull();
+    expect(remainingPayments({}, "2026-10")).toBeNull();
   });
 });

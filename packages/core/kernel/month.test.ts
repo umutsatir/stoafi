@@ -65,3 +65,10 @@ describe("monthsBetween", () => {
     expect(monthsBetween("2025-11", "2026-02")).toBe(3);
   });
 });
+
+describe("parseMonth rejects impossible months", () => {
+  it("throws for month 00 and month 13", () => {
+    expect(() => parseMonth("2026-00")).toThrow("Invalid Month string");
+    expect(() => parseMonth("2026-13")).toThrow("Invalid Month string");
+  });
+});

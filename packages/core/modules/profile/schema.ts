@@ -1,6 +1,11 @@
 import { z } from "zod";
+import { DepositSchema } from "../../kernel/deposit";
 import { BUCKETS } from "../../kernel/bucket";
 import { MonthSchema } from "../../kernel/month";
+
+/** What a recurring line is: an ordinary cost, installments still being paid, or a loan. */
+export const EXPENSE_KINDS = ["regular", "installment", "loan"] as const;
+export type ExpenseKind = (typeof EXPENSE_KINDS)[number];
 
 export const ProfileSchema = z.object({
   incomes: z.array(
@@ -16,6 +21,10 @@ export const ProfileSchema = z.object({
       label: z.string(),
       monthly: z.number().int().nonnegative(),
       bucket: z.enum(BUCKETS),
+      /** Omitted reads as "regular", so expenses saved before kinds existed stay valid. */
+      kind: z.enum(EXPENSE_KINDS).optional(),
+      /** The card an installment is on, so it counts against that card's limit. */
+      cardId: z.string().optional(),
       isSubscription: z.boolean().optional(),
       /** Day of month the expense is due, 1-31. Omitted reads as the 1st (see `dueDayOf`). */
       dueDay: z.number().int().min(1).max(31).optional(),
@@ -25,9 +34,17 @@ export const ProfileSchema = z.object({
   ),
   /** One lump monthly line for day-to-day living costs (groceries etc.); counted as needs. */
   livingExpenses: z.number().int().nonnegative(),
+  /** A monthly amount the user sets for going out, friends and shopping; counted as wants. Omitted: the app uses what is left of the wants limit. */
+  personalSpending: z.number().int().positive().optional(),
+  /** What living costs were about a year ago, to compare the user's own price rise with expected inflation. */
+  livingExpensesYearAgo: z.number().int().positive().optional(),
   savings: z.number().int().nonnegative(),
+  /** Money put into or taken out of the emergency fund by hand; `savings` moves with it. */
+  deposits: z.array(DepositSchema).optional(),
   emergencyFundTargetMonths: z.number().nonnegative(),
   annualInflationExpectation: z.number(),
+  /** ISO 3166 country the inflation suggestion came from; remembered so the form can show it again. */
+  countryCode: z.string().optional(),
   hourlyNetIncome: z.number().int().nonnegative().optional(),
 });
 
