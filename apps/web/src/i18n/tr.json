@@ -154,7 +154,13 @@
     "payWithCard": "Kartla öde",
     "noCard": "Kart yok",
     "skip": "Vazgeç",
-    "postpone": "Ertele"
+    "postpone": "Ertele",
+    "guard": {
+      "emergency-fund-floor": "Bu alım acil durum fonunu hedefinin altına düşürür.",
+      "installment-cap": "Aylık taksitlerin belirlediğin üst sınırı aşar.",
+      "wants-limit": "Bu alım bu ayki istekler limitini aşar.",
+      "unknown": "Bu alım güvenlik kurallarından birini aşıyor."
+    }
   },
   "installments": {
     "title": "Taksitle hesapla",
@@ -192,7 +198,8 @@
     "minPct": "Asgari ödeme %",
     "minFloor": "Asgari ödeme tabanı",
     "monthsToPayoff": "Kapanma süresi: {months} ay",
-    "totalInterest": "Toplam faiz: {interest}"
+    "totalInterest": "Toplam faiz: {interest}",
+    "neverPaysOff": "Bu borç hiç bitmez: asgari ödeme faizden küçük."
   },
   "health": {
     "title": "Sağlık",
@@ -200,7 +207,8 @@
     "savingsRate": "Birikim oranı",
     "emergencyFundMonths": "Acil durum fonu ayı",
     "installmentRatio": "Taksit oranı",
-    "runway": "Dayanma süresi"
+    "runway": "Dayanma süresi",
+    "monthsValue": "{value} ay"
   },
   "decisions": {
     "title": "Kararlar",
@@ -209,7 +217,8 @@
       "bought": "alındı",
       "postponed": "ertelendi",
       "skipped": "vazgeçildi"
-    }
+    },
+    "unknownItem": "Silinmiş ürün"
   },
   "settings": {
     "title": "Ayarlar",
@@ -218,7 +227,11 @@
     "exportBackup": "Yedeği dışa aktar",
     "importBackup": "Yedeği içe aktar",
     "sampleAmountLabel": "Örnek tutar",
-    "sampleDateLabel": "Örnek tarih"
+    "sampleDateLabel": "Örnek tarih",
+    "languageNames": {
+      "en": "English",
+      "tr": "Türkçe"
+    }
   },
   "installmentExpenses": {
     "title": "Satın alımlardan taksitler",

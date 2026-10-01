@@ -3,17 +3,18 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { LOCALES, type Locale } from "@/i18n/messages";
 import { useAppStore } from "@/store";
+import { useMoney } from "@/lib/use-money";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 export function LocaleSwitcher() {
   const locale = useAppStore((s) => s.locale);
   const setLocale = useAppStore((s) => s.setLocale);
-  const currency = useAppStore((s) => s.currency);
   const t = useTranslations("settings");
   const format = useFormatter();
+  const money = useMoney();
 
-  const sampleAmount = 123456.78;
+  const sampleAmount = 12_345_678;
   const sampleDate = new Date(Date.UTC(2026, 8, 20));
 
   return (
@@ -29,7 +30,7 @@ export function LocaleSwitcher() {
           >
             {LOCALES.map((l) => (
               <option key={l} value={l}>
-                {l}
+                {t(`languageNames.${l}`)}
               </option>
             ))}
           </select>
@@ -37,7 +38,7 @@ export function LocaleSwitcher() {
 
         <div className="flex flex-col gap-1 text-sm text-muted-foreground">
           <p data-testid="sample-amount">
-            {t("sampleAmountLabel")}: {format.number(sampleAmount, { style: "currency", currency })}
+            {t("sampleAmountLabel")}: {money(sampleAmount)}
           </p>
           <p data-testid="sample-date">
             {t("sampleDateLabel")}: {format.dateTime(sampleDate, { dateStyle: "long" })}

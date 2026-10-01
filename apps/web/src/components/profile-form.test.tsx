@@ -65,6 +65,32 @@ describe("ProfileForm settings", () => {
       expect(onSave.mock.calls[0]?.[0].annualInflationExpectation).toBeCloseTo(0.45, 10);
     });
 
+    it("remembers the chosen country across reloads", () => {
+      const onSave = vi.fn();
+      const { unmount } = renderWithIntl(<ProfileForm onSave={onSave} />);
+      fireEvent.change(screen.getByLabelText("Country"), { target: { value: "TR" } });
+      fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+      const saved = onSave.mock.calls[0]?.[0];
+      expect(saved.countryCode).toBe("TR");
+      unmount();
+
+      renderWithIntl(
+        <ProfileForm
+          onSave={onSave}
+          initial={{
+            incomes: [],
+            fixedExpenses: [],
+            livingExpenses: 0,
+            savings: 0,
+            emergencyFundTargetMonths: 6,
+            annualInflationExpectation: 0.38,
+            countryCode: "TR",
+          }}
+        />,
+      );
+      expect(screen.getByLabelText("Country")).toHaveValue("TR");
+    });
+
     it("leaves inflation alone when no country is chosen", () => {
       renderWithIntl(<ProfileForm onSave={vi.fn()} />);
       fireEvent.change(screen.getByLabelText("Country"), { target: { value: "" } });

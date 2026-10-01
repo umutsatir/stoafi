@@ -32,7 +32,7 @@ export function DecisionLog({ decisions }: { decisions: Decision[] }) {
             <TableBody>
               {decisions.map((d) => (
                 <TableRow key={d.id} data-testid={`decision-${d.id}`}>
-                  <TableCell>{d.queueItemRef}</TableCell>
+                  <TableCell>{d.itemName ?? t("unknownItem")}</TableCell>
                   <TableCell>
                     <Badge variant={OUTCOME_VARIANT[d.outcome]} data-testid={`outcome-${d.id}`}>
                       {t(`outcome.${d.outcome}`)}

@@ -69,7 +69,7 @@ describe("QueuePreview", () => {
     );
 
     expect(screen.getByTestId("guard-breaches")).toBeInTheDocument();
-    expect(screen.getByText("emergency-fund-floor")).toBeInTheDocument();
+    expect(screen.getByText(/emergency fund below its target/i)).toBeInTheDocument();
   });
 
   it("calls onConfirm with an active commitment when confirmed", () => {
@@ -268,13 +268,15 @@ describe("QueuePreview purchase method", () => {
   it("previews the installment payment as load in the first month and does not spend savings", () => {
     renderPreview();
     // cash: 120.00 taken from 300.00 savings drops below the 6-month floor -> breach
-    expect(screen.getByTestId("guard-breaches")).toHaveTextContent("emergency-fund-floor");
+    expect(screen.getByTestId("guard-breaches")).toHaveTextContent(
+      /emergency fund below its target/i,
+    );
 
     pickOffer(6, "20");
     expect(screen.getByTestId("installment-load-before")).toHaveTextContent("₺0.00");
     expect(screen.getByTestId("installment-load-after")).toHaveTextContent("₺20.00");
     // installments leave savings untouched, so the emergency-fund breach is gone
-    expect(screen.queryByText("emergency-fund-floor")).not.toBeInTheDocument();
+    expect(screen.queryByText(/emergency fund below its target/i)).not.toBeInTheDocument();
   });
 
   it("confirms an installment purchase with the chosen offer and first payment month", () => {

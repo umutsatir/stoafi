@@ -112,6 +112,7 @@ export default function QueuePage() {
     const decision: Decision = {
       id: commitment.id,
       queueItemRef: selectedItem.id,
+      itemName: selectedItem.name,
       outcome: "bought",
       timestamp: new Date().toISOString(),
       amount: commitment.payments.reduce((sum, p) => sum + p.amount, 0),
@@ -143,6 +144,7 @@ export default function QueuePage() {
     const decision: Decision = {
       id: `${outcome}-${selectedItem.id}-${decisions.length}`,
       queueItemRef: selectedItem.id,
+      itemName: selectedItem.name,
       outcome,
       timestamp: new Date().toISOString(),
       // What the item would have cost in cash: the money saved when skipped.

@@ -40,7 +40,9 @@ export function HealthMetrics({ projection, savingsBalance, monthlyNeeds }: Heal
       <Metric
         label={t("emergencyFundMonths")}
         testId="emergency-fund-months"
-        value={emergencyFundMonths(savingsBalance, monthlyNeeds).toFixed(1)}
+        value={t("monthsValue", {
+          value: emergencyFundMonths(savingsBalance, monthlyNeeds).toFixed(1),
+        })}
       />
       <Metric
         label={t("installmentRatio")}
@@ -50,7 +52,9 @@ export function HealthMetrics({ projection, savingsBalance, monthlyNeeds }: Heal
       <Metric
         label={t("runway")}
         testId="runway"
-        value={runway(savingsBalance, monthlyNeeds, projection.installmentLoad).toFixed(1)}
+        value={t("monthsValue", {
+          value: runway(savingsBalance, monthlyNeeds, projection.installmentLoad).toFixed(1),
+        })}
       />
     </div>
   );

@@ -43,10 +43,16 @@ export function MinimumPaymentCalculator() {
         </div>
 
         <div className="flex flex-col gap-1 rounded-md border border-border bg-secondary p-3 text-sm">
-          <p data-testid="months-to-payoff">{t("monthsToPayoff", { months: result.months })}</p>
-          <p data-testid="total-interest">
-            {t("totalInterest", { interest: money(result.totalInterest) })}
+          <p data-testid="months-to-payoff">
+            {result.neverPaysOff
+              ? t("neverPaysOff")
+              : t("monthsToPayoff", { months: result.months })}
           </p>
+          {!result.neverPaysOff && (
+            <p data-testid="total-interest">
+              {t("totalInterest", { interest: money(result.totalInterest) })}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

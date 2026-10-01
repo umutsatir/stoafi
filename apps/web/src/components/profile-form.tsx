@@ -24,7 +24,7 @@ import { PercentInput } from "./percent-input";
 /** The settings part of the profile: savings, the emergency-fund goal and inflation. */
 export type ProfileSettings = Pick<
   Profile,
-  "savings" | "emergencyFundTargetMonths" | "annualInflationExpectation"
+  "savings" | "emergencyFundTargetMonths" | "annualInflationExpectation" | "countryCode"
 >;
 
 export interface ProfileFormProps {
@@ -49,7 +49,7 @@ export function ProfileForm({
   const [savings, setSavings] = useState(initial?.savings ?? 0);
   const [fundMonths, setFundMonths] = useState(initial?.emergencyFundTargetMonths ?? 6);
   const [inflation, setInflation] = useState(initial?.annualInflationExpectation ?? 0.3);
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState(initial?.countryCode ?? "");
 
   const regionNames = new Intl.DisplayNames(locale, { type: "region" });
 
@@ -73,6 +73,7 @@ export function ProfileForm({
       savings,
       emergencyFundTargetMonths: fundMonths,
       annualInflationExpectation: inflation,
+      ...(country ? { countryCode: country } : {}),
     });
   }
 

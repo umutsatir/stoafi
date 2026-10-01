@@ -258,7 +258,7 @@ export function QueuePreview({
             <ul data-testid="guard-breaches" className="flex flex-col gap-1">
               {breaches.map((b) => (
                 <li key={b.ruleId} className="text-sm font-medium text-destructive">
-                  {b.ruleId}
+                  {t.has(`guard.${b.ruleId}`) ? t(`guard.${b.ruleId}`) : t("guard.unknown")}
                 </li>
               ))}
             </ul>

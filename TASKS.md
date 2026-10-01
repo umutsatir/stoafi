@@ -784,10 +784,11 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
 
 ### Phase 11 — Foundation (everything later builds on it)
 
-- [ ] **T11.1** Fix the real defects found in the audit
+- [x] **T11.1** Fix the real defects found in the audit
   Goal: decisions store the item's name (additive optional field on `Decision`) instead of showing an id; guard breaches show translated sentences, never rule ids; the minimum-payment result says "never pays off" instead of "600 months"; the chosen country is saved; metrics show units; settings show language names and consistent currency formatting.
   Acceptance: a test per defect (H1, H2, H3, H4, H6, H7 in the plan); no raw id or rule id reaches the screen.
   Depends on: T10.9
+  Note: the minimum-payment payoff now counts a balance under half a minor unit as paid and exposes `neverPaysOff`; before, a percentage-only minimum showed the 600-month cap for ordinary inputs. Decisions and the profile gained optional `itemName` and `countryCode` (additive, no migration). H5 (savings rate) waits for the pots in T12.8.
 
 - [ ] **T11.2** Design tokens and theme
   Goal: brand and semantic colors, data colors per bucket, type scale, spacing, radius, light and dark themes, theme setting (system, light, dark) saved in settings.

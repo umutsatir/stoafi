@@ -182,7 +182,7 @@ describe("QueuePage purchase flow", () => {
     it("does not flag a small installment under the default 20% cap", () => {
       renderWithIntl(<QueuePage />);
       pickThreeMonthOffer();
-      expect(screen.queryByText("installment-cap")).not.toBeInTheDocument();
+      expect(screen.queryByText(/installments would go above the cap/i)).not.toBeInTheDocument();
     });
 
     it("flags the same installment once the cap is lowered in settings", () => {
@@ -190,7 +190,9 @@ describe("QueuePage purchase flow", () => {
       useAppStore.setState({ guardThresholds: { installmentCapPct: 0.005 } });
       renderWithIntl(<QueuePage />);
       pickThreeMonthOffer();
-      expect(screen.getByTestId("guard-breaches")).toHaveTextContent("installment-cap");
+      expect(screen.getByTestId("guard-breaches")).toHaveTextContent(
+        /installments would go above the cap/i,
+      );
     });
   });
 });

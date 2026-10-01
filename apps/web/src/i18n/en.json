@@ -154,7 +154,13 @@
     "payWithCard": "Pay with card",
     "noCard": "No card",
     "skip": "Skip",
-    "postpone": "Postpone"
+    "postpone": "Postpone",
+    "guard": {
+      "emergency-fund-floor": "This purchase would drop your emergency fund below its target.",
+      "installment-cap": "Your monthly installments would go above the cap you set.",
+      "wants-limit": "This purchase would push your wants above their limit for the month.",
+      "unknown": "This purchase breaks one of your safety rules."
+    }
   },
   "installments": {
     "title": "Calculate with installments",
@@ -192,7 +198,8 @@
     "minPct": "Minimum payment %",
     "minFloor": "Minimum payment floor",
     "monthsToPayoff": "Months to payoff: {months}",
-    "totalInterest": "Total interest: {interest}"
+    "totalInterest": "Total interest: {interest}",
+    "neverPaysOff": "This debt never pays off: the minimum payment is smaller than the interest."
   },
   "health": {
     "title": "Health",
@@ -200,7 +207,8 @@
     "savingsRate": "Savings rate",
     "emergencyFundMonths": "Emergency fund months",
     "installmentRatio": "Installment ratio",
-    "runway": "Runway"
+    "runway": "Runway",
+    "monthsValue": "{value} months"
   },
   "decisions": {
     "title": "Decisions",
@@ -209,7 +217,8 @@
       "bought": "bought",
       "postponed": "postponed",
       "skipped": "skipped"
-    }
+    },
+    "unknownItem": "Deleted item"
   },
   "settings": {
     "title": "Settings",
@@ -218,7 +227,11 @@
     "exportBackup": "Export backup",
     "importBackup": "Import backup",
     "sampleAmountLabel": "Sample amount",
-    "sampleDateLabel": "Sample date"
+    "sampleDateLabel": "Sample date",
+    "languageNames": {
+      "en": "English",
+      "tr": "Türkçe"
+    }
   },
   "installmentExpenses": {
     "title": "Installments from purchases",

@@ -27,10 +27,10 @@ describe("HealthMetrics", () => {
     // savingsRate = (1500+500)/10000 = 0.2 -> 20.0%
     expect(screen.getByTestId("savings-rate")).toHaveTextContent("20.0%");
     // emergencyFundMonths = 30000/5000 = 6
-    expect(screen.getByTestId("emergency-fund-months")).toHaveTextContent("6.0");
+    expect(screen.getByTestId("emergency-fund-months")).toHaveTextContent("6.0 months");
     // installmentRatio = 1000/10000 = 0.1 -> 10.0%
     expect(screen.getByTestId("installment-ratio")).toHaveTextContent("10.0%");
     // runway = 30000/(5000+1000) = 5
-    expect(screen.getByTestId("runway")).toHaveTextContent("5.0");
+    expect(screen.getByTestId("runway")).toHaveTextContent("5.0 months");
   });
 });

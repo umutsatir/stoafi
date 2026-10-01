@@ -28,6 +28,8 @@ export const ProfileSchema = z.object({
   savings: z.number().int().nonnegative(),
   emergencyFundTargetMonths: z.number().nonnegative(),
   annualInflationExpectation: z.number(),
+  /** ISO 3166 country the inflation suggestion came from; remembered so the form can show it again. */
+  countryCode: z.string().optional(),
   hourlyNetIncome: z.number().int().nonnegative().optional(),
 });
 

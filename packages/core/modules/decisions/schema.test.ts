@@ -14,6 +14,15 @@ describe("DecisionSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("keeps the item name recorded at decision time", () => {
+    const result = DecisionSchema.safeParse({
+      ...base,
+      outcome: "skipped",
+      itemName: "Headphones",
+    });
+    expect(result.success && result.data.itemName).toBe("Headphones");
+  });
+
   it("rejects an unknown outcome", () => {
     const result = DecisionSchema.safeParse({ ...base, outcome: "ignored" });
     expect(result.success).toBe(false);

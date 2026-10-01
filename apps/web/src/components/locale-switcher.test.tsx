@@ -33,4 +33,12 @@ describe("LocaleSwitcher", () => {
     expect(trAmount).not.toBe(enAmount);
     expect(trDate).not.toBe(enDate);
   });
+
+  it("lists languages by name and formats the sample amount with the currency symbol", () => {
+    renderWithLocale("en");
+    expect(screen.getByRole("option", { name: "Türkçe" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "English" })).toBeInTheDocument();
+    expect(screen.getByTestId("sample-amount")).toHaveTextContent("₺123,456.78");
+    expect(screen.getByTestId("sample-amount")).not.toHaveTextContent("TRY");
+  });
 });
