@@ -223,5 +223,16 @@
     "formula": "Uygulama bunu nasıl kullanır",
     "fitsWhen": "Kime uyar",
     "critique": "Sınırları ve karşı görüşler"
+  },
+  "insights": {
+    "title": "Planın ne diyor",
+    "allClear": "Planın önümüzdeki 12 ay için rakamlarına uyuyor.",
+    "wantsOverLimit": "İstekler harcaması bu planın istekler sınırının üstünde ({months}).",
+    "guiltFreeOverLimit": "Suçluluk duymadan harcama bütçesi aşılıyor ({months}).",
+    "savingsShortfall": "Önce kendine öde hedefinden daha az para ayrılıyor ({months}). Birikim hedefleri (ayrılan fonlar) buna sayılır.",
+    "babyStepsStep1": "1. adım: başlangıç acil durum fonunu biriktir ({months}).",
+    "babyStepsStep2": "2. adım: fazladan biriktirmeden önce borçları öde ({months}).",
+    "babyStepsStep3": "3. adım: tam acil durum fonunu biriktir ({months}).",
+    "babyStepsStep4": "4. adım ve sonrası: acil durum fonu tamam, yatırıma başla ({months})."
   }
 }

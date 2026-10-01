@@ -38,6 +38,7 @@ export function diagnose(_profile: Profile, projections: MonthProjection[]): Ins
       insights.push({
         id: "conscious-spending:guilt-free-over-limit",
         message: `Guilt-free spending in ${projection.month} exceeds its limit.`,
+        month: projection.month,
       });
     }
   }

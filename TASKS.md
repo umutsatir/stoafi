@@ -738,10 +738,11 @@ Not in this phase, needs a product decision first (recorded under Open questions
   Depends on: T10.1
   Note: a shared `LessonLink` replaces six dead `#lesson-<id>` anchors (they pointed at nothing); links keep their `aria-label`/test ids. The strategy cards on Plan also get a "Read the full lesson" link. The page scrolls to the hash itself because screens only mount after saved data loads, so the browser cannot do it. `LESSON_IDS` lists the ten cards in SPEC order. The sinking-funds link still sits on the Queue page until T10.6 moves it.
 
-- [ ] **T10.4** Plan insights
+- [x] **T10.4** Plan insights
   Goal: the Plan screen shows the active strategy's `diagnose` insights over the next 12 months of the ledger, each with its lesson link.
   Acceptance: tests: an overspent wants bucket under 50/30/20 shows its insight; no insights shows an "all clear" line.
   Depends on: T10.1, T10.3
+  Note: strategy insights were hard-coded English sentences in core (one even stated "30%" although the percentage is a parameter), so they could not be shown in Turkish. `Insight` now carries the `month` it is about; screens translate by `id` (`insights.*`, falling back to the English `message` for an unknown id) and group a finding's months into one line ("2026-10–2027-09"). The Pay Yourself First line says that only tracked set-asides (sinking funds) count, because the app does not track money the user moves to savings themselves.
 
 - [ ] **T10.5** Finish the purchase flow: skip, postpone, first fitting month, card tip
   Goal: the preview offers Skip and Postpone (writing `skipped`/`postponed` decisions; skip removes the item), shows and can preview "first month that fits", and lets the user pick a card and purchase date so `timingTip` can appear and shift the first payment.

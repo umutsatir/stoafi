@@ -223,5 +223,16 @@
     "formula": "How the app applies it",
     "fitsWhen": "Who it fits",
     "critique": "Limits and counter-arguments"
+  },
+  "insights": {
+    "title": "What your plan says",
+    "allClear": "Your plan fits your numbers for the next 12 months.",
+    "wantsOverLimit": "Wants spending is above this plan's wants limit in {months}.",
+    "guiltFreeOverLimit": "Guilt-free spending is above its limit in {months}.",
+    "savingsShortfall": "Less than the pay-yourself-first target is set aside in {months}. Savings goals (sinking funds) count toward it.",
+    "babyStepsStep1": "Step 1: build the starter emergency fund ({months}).",
+    "babyStepsStep2": "Step 2: pay off debt before saving extra ({months}).",
+    "babyStepsStep3": "Step 3: build the full emergency fund ({months}).",
+    "babyStepsStep4": "Step 4 and on: the emergency fund is complete, start investing ({months})."
   }
 }
