@@ -1,0 +1,110 @@
+{
+  "note": "Card colours are approximate shades chosen to feel like each bank, not official brand values. No logos are used. Correct any shade here; nothing else depends on the exact value.",
+  "colorsAreApproximate": true,
+  "banks": [
+    {
+      "id": "ziraat",
+      "name": "Ziraat Bankası",
+      "country": "TR",
+      "from": "#c8102e",
+      "to": "#8f0b20",
+      "text": "#ffffff"
+    },
+    {
+      "id": "is-bankasi",
+      "name": "İş Bankası",
+      "country": "TR",
+      "from": "#1b3a8c",
+      "to": "#0e2257",
+      "text": "#ffffff"
+    },
+    {
+      "id": "garanti-bbva",
+      "name": "Garanti BBVA",
+      "country": "TR",
+      "from": "#0a7d35",
+      "to": "#045a25",
+      "text": "#ffffff"
+    },
+    {
+      "id": "akbank",
+      "name": "Akbank",
+      "country": "TR",
+      "from": "#d1001f",
+      "to": "#8f0016",
+      "text": "#ffffff"
+    },
+    {
+      "id": "yapi-kredi",
+      "name": "Yapı Kredi",
+      "country": "TR",
+      "from": "#1c4fa1",
+      "to": "#0d2d66",
+      "text": "#ffffff"
+    },
+    {
+      "id": "halkbank",
+      "name": "Halkbank",
+      "country": "TR",
+      "from": "#0a5fa8",
+      "to": "#063a68",
+      "text": "#ffffff"
+    },
+    {
+      "id": "vakifbank",
+      "name": "VakıfBank",
+      "country": "TR",
+      "from": "#f2b705",
+      "to": "#d99a00",
+      "text": "#1a1400"
+    },
+    {
+      "id": "qnb",
+      "name": "QNB",
+      "country": "TR",
+      "from": "#5b1a6e",
+      "to": "#2f0d3a",
+      "text": "#ffffff"
+    },
+    {
+      "id": "denizbank",
+      "name": "DenizBank",
+      "country": "TR",
+      "from": "#0072bc",
+      "to": "#004a7c",
+      "text": "#ffffff"
+    },
+    {
+      "id": "teb",
+      "name": "TEB",
+      "country": "TR",
+      "from": "#00843d",
+      "to": "#005a29",
+      "text": "#ffffff"
+    },
+    {
+      "id": "ing",
+      "name": "ING",
+      "country": "TR",
+      "from": "#c24a00",
+      "to": "#8a3200",
+      "text": "#ffffff"
+    },
+    {
+      "id": "enpara",
+      "name": "Enpara",
+      "country": "TR",
+      "from": "#7a1fa2",
+      "to": "#4a1062",
+      "text": "#ffffff"
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "country": "ANY",
+      "from": "#334155",
+      "to": "#0f172a",
+      "text": "#ffffff"
+    }
+  ]
+}

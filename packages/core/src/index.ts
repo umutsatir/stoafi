@@ -55,7 +55,26 @@ export type { Strategy, Insight } from "../strategies/types";
 export { GuardThresholdsSchema, type GuardThresholds } from "../modules/guards/schema";
 export { QueueItemSchema, type QueueItem } from "../modules/queue/schema";
 export { SinkingFundSchema, type SinkingFund } from "../modules/sinking-funds/schema";
-export { CardSchema, type Card } from "../modules/cards/schema";
+export { CARD_NETWORKS, CardSchema, type Card, type CardNetwork } from "../modules/cards/schema";
+export {
+  limitUsage,
+  mainCards,
+  removeCardFromSet,
+  supplementariesOf,
+  validateCardSet,
+  type CardSetProblem,
+  type LimitUsage,
+  type RemoveResult,
+  type SupplementaryChoice,
+} from "../modules/cards/card-set";
+export {
+  BANKS,
+  BANKS_ARE_APPROXIMATE,
+  bankById,
+  cardColors,
+  type BankPreset,
+  type CardColors,
+} from "../modules/cards/banks";
 export { DecisionSchema, type Decision } from "../modules/decisions/schema";
 
 export { costInWorkHours, costPerUse, eisenhowerQuadrant } from "../modules/queue/selectors";
@@ -64,6 +83,7 @@ export { toDraftCommitment } from "../modules/queue/to-commitment";
 export {
   activeQueueItems,
   installmentCommitments,
+  remainingInstallmentsByCard,
   toInstallmentCommitment,
 } from "../modules/queue/installment-purchase";
 export { scheduleQueue, type ScheduleResult } from "../modules/queue/scheduler";

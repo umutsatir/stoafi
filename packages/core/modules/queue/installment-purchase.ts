@@ -46,6 +46,28 @@ export function installmentCommitments(items: QueueItem[]): Commitment[] {
   );
 }
 
+/**
+ * What is still to be paid on installment purchases, per card id, counting the payment due in
+ * `fromMonth`. Purchases that name no card are left out; they use no card limit.
+ */
+export function remainingInstallmentsByCard(
+  items: QueueItem[],
+  fromMonth: Month,
+): Record<string, number> {
+  const remaining: Record<string, number> = {};
+  for (const item of items) {
+    const purchase = item.installmentPurchase;
+    if (!purchase?.cardId) continue;
+    const left = purchase.offer.payments.reduce(
+      (sum, amount, index) =>
+        addMonths(purchase.firstMonth, index) >= fromMonth ? sum + amount : sum,
+      0,
+    );
+    if (left > 0) remaining[purchase.cardId] = (remaining[purchase.cardId] ?? 0) + left;
+  }
+  return remaining;
+}
+
 /** Items still waiting to be bought (bought-in-installments items live in expenses, not the queue). */
 export function activeQueueItems(items: QueueItem[]): QueueItem[] {
   return items.filter((item) => !item.installmentPurchase);
