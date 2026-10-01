@@ -161,6 +161,40 @@ Yeni bağımlılıklar (shadcn/ui'nin standart yapı taşları): `@radix-ui/reac
 - **Hata:** satır içi, çözüm önerisiyle.
 - **Klavye:** tüm eylemler klavye ile; ⌘K; Esc panel kapatır.
 
+### 3.6 Hazır bileşenler ve "göz alıcı" tasarım (21st.dev ve benzerleri)
+
+**İstek:** modern, göz alan, kullanası gelen bir tasarım; hazır bileşen kütüphanelerinden (21st.dev gibi) yararlanılabilir. Evet, yapacağız. Önce dürüst durum:
+
+- **Ben bu sandbox'tan 21st.dev ve Magic UI gibi sitelere erişemiyorum** (ağ engelli). Orada neyin göründüğünü göremem, bileşenleri doğrudan çekemem ve görünüşünü önceden doğrulayamam.
+- Arama sonuçlarından öğrendiğim: 21st.dev, **shadcn/ui tabanlı topluluk bileşenlerinin kayıt defteri**; kod depoya **kopyalanıyor** (paket olarak içe aktarılmıyor). Ücretsiz katmanda günlük kopya sınırı var (arama sonucuna göre günde 2; değişebilir). **Lisans:** bir kaynak "her dosya MIT" diyor, başka bir kaynak "her bileşen katkıda bulunanın seçtiği lisansı taşır" diyor. Çelişkili, o yüzden **her bileşenin lisansını tek tek kontrol edeceğiz**.
+- Diğer benzer kaynaklar (Magic UI, Aceternity UI, shadcn/ui blocks, Origin UI): bildiğim kadarıyla hepsi "kopyala-yapıştır" mantığında ve çoğu `motion` (framer-motion'ın yeni adı) kullanıyor; **bunlar benim bilgim, doğrulamadım**.
+
+**Nasıl çalışacağız (iki yol, ikisini karıştırabiliriz):**
+
+1. **Sen seç, ben uyarlayayım.** 21st.dev'de beğendiğin bileşenin **bağlantısını ya da kodunu** bana yapıştır. Ben depoya şunlarla alırım: tasarım jetonlarımıza bağlama (renkler, koyu tema), metinleri i18n'e taşıma (TR/EN), erişilebilirlik (klavye, ekran okuyucu, hareket azaltma), testler, dosya başına **lisans ve kaynak yorumu** ve `docs/THIRD-PARTY.md` kaydı.
+2. **Ben yazayım.** Aynı hissi veren bileşenleri shadcn parçaları + `motion` ile **kendi kodumuzla** yazarım: lisans belirsizliği olmaz, tema/i18n baştan uyumlu olur. Dezavantaj: senin gözünle seçilmiş hazır görünümü birebir tutturamayabilirim.
+
+**21st.dev'de arayacağın şeyler** (arama kelimeleri, beğendiklerini bana at):
+
+| İhtiyaç | Arama | Nerede kullanılır |
+| --- | --- | --- |
+| Kredi kartı görseli / kart yığını | `credit card`, `card stack`, `wallet cards` | Kartlar, kuyruk ödeme seçimi |
+| Sayaç animasyonu | `number ticker`, `count up`, `animated counter` | Ana sayfa kahraman sayı, kumbara |
+| Dolan kumbara / ilerleme halkası | `progress ring`, `circular progress`, `piggy bank`, `coin` | Kumbaralar, acil durum fonu |
+| Sidebar | `sidebar`, `app sidebar` | Uygulama kabuğu |
+| Alt sekme çubuğu (mobil) | `bottom navigation`, `tab bar` | Telefon gezinme |
+| İstatistik kartı | `stat card`, `metric card`, `kpi` | Sağlık, Ana sayfa |
+| Boş durum | `empty state` | tüm listeler |
+| Adım adım sihirbaz | `stepper`, `onboarding`, `wizard` | Onboarding |
+| Zaman çizelgesi / takvim şeridi | `timeline`, `calendar strip`, `date picker` | Takvim, kuyruk zaman görünümü |
+| Komut paleti | `command menu`, `command palette` | ⌘K |
+| Animasyonlu sekmeler / segment | `animated tabs`, `segmented control` | Plan, Kuyruk görünümleri |
+| Kısa grafik (sparkline) | `sparkline`, `mini chart` | Sağlık eğilimleri |
+| Toast | `toast`, `sonner` | geri bildirim |
+| Konfeti | `confetti` | hedef tamamlandı |
+
+**Yeni bağımlılıklar (onay istiyorum):** `motion` (animasyon), isteğe bağlı küçük bir konfeti paketi (veya kendi canvas kodumuz), 3.4'te sayılanlar. Bunların hepsi bundle'a yük bindirir; ölçeriz (performans bütçesi, Faz 14).
+
 ---
 
 ## 4. Bilgi mimarisi ve gezinme
@@ -224,6 +258,7 @@ Kabul: yeni kullanıcı, kılavuzu bitirince ana sayfada dolu bir durum görür;
 5. **Sıradaki alım:** kuyruğun ilk öğesi, hangi ay sığıyor, "İncele" düğmesi (önizleme panelini açar).
 6. **Acil durum fonu:** halka (3,5 / 6 ay), "hedefe ulaşma ayı", ⓘ.
 7. **Plan özeti:** aktif plan adı + mini dağılım şeridi, "Planı değiştir".
+7b. **Birikim kumbaraları** 🆕: "Bu ay ayırman gereken ₺Y, ayırdığın ₺A" çubuğu ve en yakın vadeli kumbaranın dolan görseli, hızlı `+ Para ekle` (5.6).
 8. **12 aylık nakit akışı grafiği:** mevcut grafik, ama tek renk dili, telefonda yatay kaydırma yerine sığan hali, dokunmatik ipucu.
 9. **Uyarılar:** her uyarı bir düğmeyle birlikte ("Acil durum fonun hedefin altında → Hedefi düzenle").
 
@@ -342,24 +377,35 @@ Kabul: yeni kullanıcı, kılavuzu bitirince ana sayfada dolu bir durum görür;
 **Bağlantılar:** Plan (kova limitleri), Gelir-Gider (düzenli giderler zamanlayıcıyı etkiler), Kartlar (ödeme), Kararlar (kayıt), Profil (saatlik değer), Ledger (taksit).
 **Kabul:** ekleme formu liste üstünü kaplamaz; önizleme seçimle birlikte görünür; ham kural kimliği hiçbir yerde görünmez.
 
-### 5.6 Birikim hedefleri
+### 5.6 Birikim kumbaraları (eski adı: Birikim hedefleri)
 
-**Amaç:** bilinen büyük gideri aylara bölmek ve ilerlemeyi görmek.
-**Şimdi:** form sayfa tepesinde; liste satırı tek ilerleme çubuğu; "Sinking funds" düz metin bağlantı.
+**Amaç:** para biriktirmek **görünür, keyifli ve alışkanlık** olmalı. Kullanıcı biriktirdikçe parayı **kendisi ekler**; uygulama her ay **ne kadar ayırması gerektiğini** söyler ve kalan parayı gösterir (2 Ekim kararı).
+**Şimdi:** sayfa tepesinde form; altında satır başına tek ilerleme çubuğu; "Sinking funds" düz metin bağlantı. Para eklemenin yolu yok (kaydı baştan düzenlemek gerekiyor), animasyon yok.
 
-**Hedef:** "kumbara/pot" kartları (Revolut/Monzo esinli):
+**Hedef:**
 
-- Kart: ad, **ilerleme halkası**, `₺0 / ₺12.000`, "5 ay kaldı", aylık ayırma tutarı, durum çipi (Yolunda / Geride / Süresi doldu / Tamam).
-- **`+ Para ekle`** hızlı düğmesi (birikmişi artırır; şu an elle düzenleme gerekiyor).
-- `Aylık ayırmayı yeniden hesapla` otomatik; "bu ay ödenecek" vurgusu.
-- `+ Hedef ekle` yan panel; hazır şablonlar: Araba sigortası, Vergi, Tatil, Okul, Acil durum.
-- 12 aylık şeritte vade ayları işaretli (`MonthTrack`).
-- "Sinking funds" dersi sayfa içinde ⓘ.
+1. **"Bu ay birikim planın" özeti (sayfanın kahramanı):**
+   - Gelirinden **kalan:** ₺X (Ana sayfadaki sayıyla aynı kaynak).
+   - Hedeflere **ayırman gereken:** ₺Y (kumbaraların bu ayki gereken tutarlarının toplamı).
+   - Planın **önerdiği birikim:** ₺Z (aktif stratejiden, ör. 50/30/20'de gelirin %20'si).
+   - Bu ay **ayırdığın:** ₺A (bu ayın para eklemelerinden).
+   - Yığılı çubuk: `ayırdığın | hâlâ ayırman gereken | serbest kalan`.
+   - Cümle: "Planına uymak için bu ay **₺B daha** ayırmalısın. Ayırdıktan sonra serbest harcayabileceğin **₺C** kalır."
+   - `Önerilen dağılım` düğmesi: acil durum fonu hedefin altındaysa önce ona, sonra vadesi yakın hedeflere (Bebek Adımları mantığı); öneri, kullanıcı değiştirebilir.
+2. **Kumbara kartları (ızgara):** her kart: ad, ikon/renk, **dolan kumbara görseli** (doluluk seviyesi), `₺3.500 / ₺12.000`, kalan süre, "bu ay gereken ₺2.400 · eklenen ₺1.000", durum çipi (Yolunda / Geride / Süresi doldu / Tamam), hızlı düğmeler `+ Para ekle`, `Para çek`, `⋯`.
+3. **`+ Para ekle`** küçük panel: tutar (hızlı çipler: ₺100 · ₺500 · ₺1.000 · "bu ay kalan gereken"), tarih (varsayılan bugün), not (isteğe bağlı) → `Ekle`.
+   - **Animasyon:** sikke kumbaraya düşer, doluluk seviyesi yükselir, sayı aşağıdan yukarı sayar, kısa titreşim; hedef %100 olunca kısa konfeti. **`prefers-reduced-motion` açıksa** animasyon yok, yalnızca renk/değer geçişi.
+   - 5 saniyelik **geri al** toast'ı (yanlış tutar için).
+4. **Para çek:** aynı panel; bakiyeden fazlası reddedilir ("Kumbarada yalnızca ₺X var").
+5. **Geçmiş paneli:** kumbaraya tıklayınca: para ekleme/çekme listesi (tarih, tutar, not, düzenle/sil), birikim eğrisi ve hedef çizgisi, "bu hızla hedefe X ayda ulaşırsın".
+6. **Acil durum fonu ilk kumbaradır:** sabit (silinmez), hedefi = aylık ihtiyaç × hedef ay (Profil'den); bakiyesi Profil'deki "acil durum birikimi" ile **aynı sayı**. Para eklenince Sağlık ve Ana sayfa anında güncellenir.
+7. `+ Kumbara ekle` yan panel: şablon çipleri (Araba sigortası, Vergi, Tatil, Okul, Düğün...), ikon ve renk seçimi.
 
-**Düğmeler:** `+ Hedef ekle`, `+ Para ekle`, `Düzenle`, `Sil (geri al)`, şablon çipleri.
-**Boş durum:** "Yıllık sigorta, vergi, tatil gibi giderleri aylara bölerek stresini azalt." + şablon çipleri.
-**Bağlantılar:** Ledger (aylık ayırma Plan'ın birikim kovasına ve Ana sayfaya girer), Takvim (vade), Sağlık.
-**Kabul:** hedefe tek dokunuşla para eklenir; vade yaklaşınca uyarı.
+**Düğmeler:** `+ Kumbara ekle`, `+ Para ekle`, `Para çek`, `Önerilen dağılımı uygula`, `Düzenle`, `Sil (geri al)`, şablon çipleri, hızlı tutar çipleri.
+**Boş durum:** "İlk kumbaran acil durum fonun. Bildiğin büyük giderler için de kumbara aç; her ay ne kadar ayıracağını hesaplayayım." + `Acil durum fonunu kur` + şablon çipleri.
+**Telefon:** özet üstte, kumbaralar tek sütun, `+ Para ekle` büyük dokunma hedefi (44 px).
+**Bağlantılar:** Ledger (aylık gereken tutar Plan'ın birikim kovasına ve Ana sayfaya girer), Sağlık (birikim oranı, acil durum), Plan (önerilen birikim), Takvim (vade), Kararlar (isteğe bağlı: "Vazgeçerek biriktirdiğini kumbaraya ekle" önerisi), AI dışa aktarma.
+**Kabul:** para eklemek 2 dokunuş; ekleme anında animasyon çalışır (hareket azaltma açıkken çalışmaz); "ayırman gereken" ve "serbest kalan" sayıları Ana sayfa ile tutarlı; veri modeli ve hesaplar için bkz. 6.4.
 
 ### 5.7 Kartlar (+ ek kart, banka widget'ları)
 
@@ -389,7 +435,7 @@ Kabul: yeni kullanıcı, kılavuzu bitirince ana sayfada dolu bir durum görür;
 
 1. **Durum özeti:** "Genel olarak: **Dikkat** (acil durum fonun hedefin altında)" + tek cümle neden + `Düzelt` düğmesi. *Yapay bir "puan" üretmeyeceğiz*, gerekçesiz sayı güvensizlik yaratır.
 2. **Dört metrik kartı**, her biri: değer + **birim** ("3,5 ay"), **durum çipi** (iyi/dikkat/risk eşikleri veri olarak), **eğilim** (bkz. aylık anlık görüntüler), ⓘ (ne demek, nasıl hesaplanıyor, hangi ders), "ne yapmalı" tek satır.
-   - Birikim oranı (H5 çözümü: formül, takip edilen birikim/yatırım kalemleri + "kalan" ayrımıyla; bkz. 11. soru 5).
+   - Birikim oranı (H5 çözümü, 2 Ekim kararı): bu ayki **kumbara eklemeleri + düzenli birikim/yatırım kalemleri** ÷ net gelir. Artan para ayrıca "kalan" olarak gösterilir, birikim sayılmaz (bkz. 6.4).
    - Acil durum fonu (ay): halka.
    - Taksit yükü oranı: taksit/net gelir, **sınır çizgisi** (ayardaki üst sınır).
    - Pist (runway): "Gelirin durursa X ay dayanırsın".
@@ -531,7 +577,66 @@ interface Card {
 5. **Logolar:** düğmelerde marka simgesi kullanmak istiyorsun. **Her firmanın marka kullanım kuralına uymak gerek** (özellikle ürün içinde logo kullanımı). Önerim: önce nötr ikon + ad ile çıkalım; logoyu, ilgili marka kurallarını doğruladıktan sonra ekleyelim. (Bkz. 11. soru 7.)
 6. **Ağ ve ilkeler:** uygulama kendisi **hiçbir istek atmaz**; yeni sekme açmak kullanıcının eylemi. SPEC'in "AI rakam üretmez" ilkesi uygulamanın **kendi hesapları** için geçerli; dışarıda kullanıcının yaptığı sohbet onun tercihi, prompt "sayıları Stoafi hesapladı" der. Bu yorumu **sen onaylamalısın** (CLAUDE.md "ağ çağrısı yok" kuralı; bkz. 11. soru 4).
 7. **Güvenlik uyarısı:** "Bu veriler seçtiğin yapay zekâ servisine gidecek, orası kendi gizlilik politikasına tabi" metni her seferinde.
+**Nasıl görünür (örnek, kısaltılmış):**
+
+```text
+Rolün: Sakin, Stoacı bir kişisel finans danışmanı gibi konuş. Düzenlemeye tabi bir yatırım danışmanı değilsin.
+Kurallar: Aşağıdaki rakamları Stoafi uygulaması hesapladı; yeni rakam uydurma. Kendi hesabını yapman
+gerekirse varsayımını söyle. Emin olmadığın yerde söyle. Önce 2-3 netleştirici soru sor, sonra en fazla 3 öneri ver.
+Para birimi: TRY. Tutarlar lira cinsindendir (kuruş değil).
+
+--- STOAFI VERİLERİM (Yuvarlanmış seviye) ---
+Net gelir: 45.000 (Maaş 1)
+Düzenli giderler: Kira 14.000 (ihtiyaç), Abonelik 300 (istek)
+Yaşam gideri: 9.000
+Acil durum birikimi: 80.000 (hedef 6 ay, şu an 3,5 ay)
+Bu ay kalan: 21.700
+Plan: 50/30/20 (kaynak: Elizabeth Warren, All Your Worth)
+Kuyruk: Kulaklık 2.500 (Kasım'da sığıyor), Laptop 32.000 (12 ay içinde sığmıyor)
+Son kararlar: Mont 4.000 vazgeçildi
+--- SORUM ---
+Bu ay neyi kısmalıyım?
+```
+
+**Ne olur:** `Claude'a sor`a basarsın → uygulama yukarıdaki metni panoya kopyalar ve Claude'un sohbet sayfasını yeni sekmede açar → sen **Yapıştır + Gönder** dersin → yapay zekâ, senin gerçek durumunu bilerek sohbet eder. Uygulama kendisi hiçbir şey **göndermez**; metni sen yapıştırıp gönderirsin ve ne gittiğini önceden tam olarak görürsün.
+
 8. **Test:** prompt üretimi saf bir fonksiyon (`buildAiExport`) olarak çekirdekte, her gizlilik seviyesi için testli; birimlerin ana birim olduğu, hassas alanların seviyeye göre elendiği doğrulanır.
+
+### 6.4 Kumbara veri modeli ve hesaplar 🆕
+
+**Model (geriye uyumlu: eski kayıtlar geçerli kalır):**
+
+```ts
+interface SinkingFund {
+  id: string;
+  label: string;
+  target: Minor;
+  dueMonth: Month;
+  currentBalance: Minor;        // toplam bakiye (var)
+  // yeni, hepsi isteğe bağlı:
+  icon?: string;                // ikon adı
+  color?: string;               // renk jetonu
+  kind?: 'goal' | 'emergency';  // 'emergency' tek ve silinemez; yoksa 'goal'
+  deposits?: { id: string; date: string /* yyyy-mm-dd */; amount: Minor /* + ekleme, - çekme */; note?: string }[];
+}
+```
+
+- `currentBalance` toplam olarak kalır. Para ekleme/çekme tek bir saf işlemle hem `deposits`'e kayıt ekler hem bakiyeyi günceller (`addDeposit`, `removeDeposit`, `editDeposit`). **Bakiye eksiye düşemez.** Çekme bakiyeden fazlaysa reddedilir.
+- **Acil durum kumbarası** tek kaynaktır: bakiyesi `Profile.savings` ile aynıdır; ikisi **tek işlemde birlikte** yazılır ve ayrışamaz (test: ekle, çek, düzenle, içe aktar sonrası eşit kalır). Profil formundaki "birikim" alanı bu kumbaranın bakiyesini gösterir.
+
+**Hesaplar (çekirdekte, saf ve testli):**
+
+| Fonksiyon | Ne yapar |
+| --- | --- |
+| `requiredThisMonth(fund, month)` | aktif: aylık ayırma; vadesi bu ay: eksik tutar; tamam/geçmiş: 0 |
+| `depositedInMonth(fund, month)` | o ayın para eklemeleri − çekmeler |
+| `monthlySavingsAdvice({ left, planSavings, funds, month })` | `{ required, deposited, stillToSet, freeAfter, suggestedSplit }` |
+| `suggestedSplit` | önce acil durum hedefin altındaysa ona, sonra vadesi en yakın hedeflere; toplam `stillToSet`'i geçmez |
+| `savingsRate(...)` (Sağlık) | (ayın eklemeleri + düzenli birikim/yatırım kalemleri) ÷ net gelir |
+
+**Kenar durumlar (testle):** hiç kumbara yok; hedef zaten tamam; vadesi bu ay/geçmiş; bu ay hiç eklenmemiş; eklenen gereken tutarı aşmış (taşan para "ekstra"); çok büyük tutar; kuruş yuvarlama; aynı gün birden fazla ekleme; çekme sonrası bakiye 0; içe aktarılan eski kayıtlarda `deposits` yok.
+
+**Animasyon (davranıştan ayrı):** mantık animasyondan bağımsızdır; animasyon yalnızca görsel katmandır, kapatılabilir ve test edilebilirliği bozmaz.
 
 ---
 
@@ -604,12 +709,16 @@ Her birine **E / H / sonra** diyebilirsin. Tahmini yük: S küçük, M orta, L b
 | S10 | **İsteğe bağlı hesap bakiyesi** → "maaş gününe yeter mi?" günlük görünüm | YNAB benzeri güçlü özellik; ama veri girişi yükü getirir (ilke 4) | L |
 | S11 | **Abonelik denetimi** (yıllık maliyet, "hâlâ kullanıyor musun?") | SPEC geri listesi; `isSubscription` alanı zaten var | M |
 | S12 | **Senaryo simülatörü** ("maaşım düşerse / zam gelirse") | SPEC geri listesi; çekirdek hesaba hazır | L |
-| S13 | **Her PR için önizleme sitesi** (ör. Cloudflare Pages/Vercel) | **Benim çalışmamı canlıda görmenin yolu**; ayrıca müşteri demosu | S |
-| S14 | **Repo içinde tarayıcı testleri (Playwright) + CI'da çalıştırma + erişilebilirlik taraması (axe)** | Bu turdaki "ekran kötü ama testler yeşil" sorununu bitirir | M |
+| S13 | ~~Her PR için önizleme sitesi~~ **Vazgeçildi** (2 Ekim: yerelde açıyorsun; değişiklikleri `git fetch` ile alırsın) | – | – |
+| S14 | **Kabul (küçük tutulur):** repo içinde tarayıcı testleri (Playwright) + CI'da çalıştırma + erişilebilirlik taraması (axe)** | Bu turdaki "ekran kötü ama testler yeşil" sorununu bitirir | M |
 | S15 | **Yedek hatırlatması** ("son yedek 30 gün önce") | Veri yalnızca cihazda; kaybı önler | S |
 | S16 | **Paylaşılabilir "plan özeti" görseli/PDF** | Danışmana/eşe göstermek için | M |
 | S17 | **Hanehalkı/çoklu profil** | Eşle ortak kullanım | L (ertelemeyi öneririm) |
 | ✖ | **Bildirimler** (vade hatırlatma) | Sunucusuz güvenilir yerel bildirim bugün tarayıcılarda sağlam değil; sunucu gerektirir. **Önermiyorum**, takvim (S1) ve PWA ekranı yeterli | – |
+
+**Karar durumu (2 Ekim):** S1, S2, S3, S4, S5, S7, S14 **kabul**. S13 **vazgeçildi**. S6, S8, S9, S11, S15, S16 **kabul, Faz 14 / Faz 13'te** (önceki sıramdaki yerleri). S10, S12, S17 **şimdi yok**, istersen eklerim.
+
+**Tarayıcı testleri (S14), "lazımsa ekle" sorusuna cevabım: lazım, ama küçük.** Bu turda "ekranlar kötü ama bütün testler yeşil" durumuna düştük, çünkü birim testleri ekranın telefonda taşıp taşmadığını ya da boş sayfanın ölü görünüp görünmediğini bilmez. Önerim: her sayfa için **tek bir duman testi** (açılıyor mu, konsol hatası var mı, telefonda yatay kayma var mı, ana düğme çalışıyor mu) + **erişilebilirlik taraması**. Yaklaşık 15 kısa test, CI'a 1-2 dakika ekler. Uzun senaryolar yok. Beğenmezsen sonra kaldırılır, ama bence en çok bu turdaki türden hataları önler.
 
 ---
 
@@ -659,11 +768,10 @@ Her birine **E / H / sonra** diyebilirsin. Tahmini yük: S küçük, M orta, L b
 
 1. **T11.1** Gerçek hataları düzelt (H1–H3, H5–H7 kısmen): karar kaydında ürün adı, kural uyarılarının çevirisi, asgari ödemede "asla bitmez", ülke saklama, birimler, ayar etiketleri.
 2. **T11.2** Tasarım jetonları (renk, tipografi, boşluk, koyu tema) ve tema seçici.
-3. **T11.3** Ortak bileşen kütüphanesi (3.4'teki liste).
+3. **T11.3** Ortak bileşen kütüphanesi (3.4'teki liste) + hareket altyapısı (`motion`, hareket azaltma) + hazır bileşen kaynağı kararı (3.6).
 4. **T11.4** Uygulama kabuğu: gruplu kenar çubuğu, telefon alt sekme çubuğu, sayfa başlık çubuğu, atla bağlantısı.
 5. **T11.5** Geri bildirim kalıbı: toast, geri al, onay penceresi, otomatik kaydet.
-6. **T11.6** Playwright e2e + axe CI'da; temel akış duman testleri (S14).
-7. **T11.7** Önizleme dağıtımı (S13): kararı ver.
+6. **T11.6** Küçük tarayıcı duman testleri (Playwright) + erişilebilirlik taraması (axe), CI'da (S14).
 
 ### Faz 12: Sayfa sayfa (her biri ayrı onay)
 
@@ -676,7 +784,7 @@ Her birine **E / H / sonra** diyebilirsin. Tahmini yük: S küçük, M orta, L b
 5. **Plan** (5.4): kova kullanımı, ders paneli, yatırım bağlamı
 6. **Sağlık** (5.8): durum, birimler, eğilim (S3)
 7. **Kararlar** (5.9)
-8. **Birikim hedefleri** (5.6)
+8. **Birikim kumbaraları** (5.6, 6.4): para ekle, animasyon, "ayırman gereken"
 9. **Dersler** (5.10)
 10. **Ayarlar + AI'ya sor** (5.11, 6.3)
 11. **Onboarding + demo** (5.0, S5)
@@ -691,19 +799,37 @@ Güvenlik/gizlilik (S9, CSP), hata sınırı, migrasyon fixture'ları, eski yede
 
 ---
 
-## 11. Karar bekleyen sorular
+## 11. Kararlar ve kalan sorular
 
-Lütfen numarasıyla cevapla. Cevap vermediğin yerde **önerimle** ilerlerim.
+### 11.1 Verdiğin kararlar (2 Ekim)
 
-1. **Marka rengi ve ton:** derin yeşil-turkuaz + kehribar vurgu, sakin/Stoacı ton. Uygun mu, yoksa başka bir yön (mor, lacivert, siyah-altın...) mı istersin? *(önerim: yeşil-turkuaz)*
-2. **Koyu tema:** ilk günden olsun mu? *(önerim: evet)*
-3. **Yazı tipleri ve yeni bağımlılıklar:** self-host yazı tipi (Inter + bir serif) ve shadcn yapı taşları (`@radix-ui/react-dialog`, `react-tabs`, `sonner`, `cmdk`) eklensin mi? CLAUDE.md "listede olmayan bağımlılık eklemeden önce sor" diyor. *(önerim: evet; yazı tipi için `@fontsource-variable/inter` + serif)*
-4. **AI'ya sor ve "ağ çağrısı yok" kuralı:** uygulama istek atmaz, yeni sekme açmak kullanıcı eylemidir; prompt "sayıları Stoafi hesapladı" der. Bu yorumu kabul ediyor musun? Ve SPEC'te "AI explanations" geri listesinde: bu özelliği SPEC'e yeni madde olarak ekleyeyim mi? *(önerim: evet, SPEC'e "Export for AI chat" olarak eklenir)*
-5. **Birikim oranı tanımı (H5):** (a) takip edilen birikim/yatırım kalemleri + yeni "düzenli birikim" gider türü (S2), ya da (b) "gelir − tüm giderler" yani artan para birikim sayılsın. *(önerim: önce (a), artan parayı ayrı "kalan" olarak göster)*
-6. **Banka renkleri:** resmi marka rehberlerinden mi alayım (uzun iş, doğru), yoksa "yaklaşık renk" etiketiyle hızlıca mı? Logo yok, yalnızca renk ve ad. Hangi bankalar öncelikli? *(önerim: yaklaşık renkler + etiket, sonra doğrulama; öncelik listesini sen ver)*
-7. **Claude/ChatGPT logoları:** marka kurallarını doğrulayana kadar nötr ikon + ad, sonra resmi logolar. Uygun mu? *(önerim: evet)*
-8. **Açık sorular:** 30 günlük bekleme bitince "Hâlâ istiyor musun?" sorusu ve "Ertele" bekleme süresini sıfırlasın mı? *(önerim: ikisi de evet)*
-9. **Önizleme dağıtımı (S13):** hangi servis (Cloudflare Pages / Vercel / GitHub Pages)? Hesabın var mı? Ben bağlayamam, bunu sen kurarsın, ben yapılandırmayı hazırlarım.
-10. **Öneriler S1–S17:** hangilerini kabul ediyorsun? *(önerim: S1, S2, S3, S4, S5, S7, S13, S14, S15 şimdi; S6, S8, S9, S11, S16 Faz 14'e; S10, S12, S17 sonraya)*
-11. **Telefon önceliği:** alt sekme çubuğu 5 öğe ve "Daha fazla" sayfası. Uygun mu?
-12. **Sayfa sırası:** Faz 12'deki sıra uygun mu, yoksa önce başka bir sayfayla mı başlayalım? *(önerim: Ana sayfa → Kartlar → Kuyruk)*
+| # | Karar | Plana nasıl girdi |
+| --- | --- | --- |
+| 2 | Daha tatlı, çok daha güzel UI/UX; hazır bileşen kütüphanelerinden yararlanılabilir (21st.dev vb.) | 3.6 (dürüst durum + iki yol + arama listesi), tasarım jetonları ve koyu tema |
+| 3 | Birikim: kullanıcı biriktikçe **kendisi ekler** (kumbara); uygulama **kalan parayı ve ayırması gereken tutarı** gösterir; ekleme **animasyonlu**; kartlar gerçek kart gibi | 5.6, 6.4, 5.7, 5.8 (birikim oranı tanımı), 5.1 |
+| 10 | Öneriler kabul (S13 vazgeçildi, S14 küçük) | 8. bölüm "Karar durumu" |
+| – | Önizleme sitesi gereksiz (yerelde açıyorsun) | T11.7 kalktı |
+
+### 11.2 Açıkladığım soru (1): "AI'ya sor"
+
+Tam anlamadığın şey büyük ihtimalle şuydu: **uygulamaya yapay zekâ koymuyoruz.** Eklediğimiz şey bir **hazır metin üretici**. 6.3'te örneği var. Özet: tıklayınca, durumunu ve iyi yazılmış talimatları içeren bir metin hazırlıyor, panoya kopyalıyor, Claude/ChatGPT sayfasını yeni sekmede açıyor; sen yapıştırıp gönderiyorsun ve gerçek durumunu bilen bir yapay zekâyla sohbet ediyorsun.
+
+**Senden net bir cevap lazım (E/H):** bu, "ağ çağrısı yok" kuralımızı bozmuyor mu? Benim yorumum: bozmuyor, çünkü **uygulama kendisi hiçbir istek atmıyor**; yeni sekmeyi açan ve metni gönderen sensin ve neyin gittiğini önceden tam görüyorsun. Kabul edersen SPEC'e "Export for AI chat" olarak eklerim.
+
+### 11.3 Hâlâ cevap bekleyenler (cevap vermezsen **önerimle** ilerlerim)
+
+| # | Soru | Önerim |
+| --- | --- | --- |
+| 1 | Marka yönü: derin yeşil-turkuaz + kehribar vurgu, sakin/Stoacı ton | evet |
+| 4 | AI'ya sor: yukarıdaki E/H | evet |
+| 6 | Banka renkleri: "yaklaşık renk" etiketi, sonra doğrulama; logo yok; öncelikli bankaları sen söyle | evet |
+| 7 | Claude/ChatGPT düğmeleri: önce nötr ikon + ad, marka kurallarını doğrulayınca resmi logo | evet |
+| 8 | 30 günlük bekleme bitince "Hâlâ istiyor musun?" ve "Ertele" beklemeyi sıfırlasın | ikisi de evet |
+| 11 | Telefonda alt sekme çubuğu (5 öğe + Daha fazla) | evet |
+| 12 | Sayfa sırası: Ana sayfa → Kartlar → Kuyruk | evet |
+| 13 🆕 | **Tarihsiz kumbara** (tatil gibi, vadesi yok): şimdi her kumbaranın vade ayı zorunlu. Vadesiz olunca "aylık hedef" kullanıcıdan istenir | evet (Faz 12'de) |
+| 14 🆕 | Acil durum birikimi, "Birikim" alanı olarak değil, **ilk kumbara** olarak görünsün (bakiye aynı sayı, tek kaynak) | evet |
+| 15 🆕 | Yeni bağımlılıklar: `motion`, küçük konfeti, shadcn yapı taşları (`dialog`, `tabs`, `sonner`, `cmdk`), self-host yazı tipleri | evet |
+| 16 🆕 | Bileşen kaynağı: iki yolun karışımı (3.6): sen 21st.dev'den seçersen ben uyarlarım, seçmediğin yerleri ben yazarım | evet |
+
+**Başlamak için** yalnızca "başla" demen yeter. Önerimle **Faz 11'in T11.1'i** (gerçek hataların düzeltilmesi) ile giriyorum, sonra tasarım temeli, sonra sayfa sayfa.

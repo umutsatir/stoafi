@@ -794,8 +794,8 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
   Acceptance: both themes pass contrast checks; theme survives reload; no hard-coded colors outside the tokens.
   Depends on: T11.1
 
-- [ ] **T11.3** Shared component library
-  Goal: `Money`, `StatCard`, `ProgressBar`, `ProgressRing`, `Sheet`, `Dialog`/`ConfirmDialog`, `Toast` with undo, `Tabs`/`SegmentedControl`, `EmptyState`, `Skeleton`, `InfoPopover`, `StatusChip`, `MonthTrack`.
+- [ ] **T11.3** Shared component library and motion
+  Goal: motion foundation (`motion`, respects reduced-motion), a decision on community components (own code vs copied from a registry such as 21st.dev, license checked per component and recorded in `docs/THIRD-PARTY.md`), and `Money`, `StatCard`, `ProgressBar`, `ProgressRing`, `Sheet`, `Dialog`/`ConfirmDialog`, `Toast` with undo, `Tabs`/`SegmentedControl`, `EmptyState`, `Skeleton`, `InfoPopover`, `StatusChip`, `MonthTrack`.
   Acceptance: each component has a test and is used by at least one screen before the phase ends.
   Depends on: T11.2
 
@@ -809,15 +809,11 @@ Source: `docs/PRODUCT-PLAN.md` (honest audit of the current UI, design system, e
   Acceptance: no save or delete happens silently.
   Depends on: T11.3
 
-- [ ] **T11.6** Browser tests in the repo
-  Goal: Playwright smoke tests for every page (desktop and phone, empty and filled) and an axe accessibility scan, run in CI.
+- [ ] **T11.6** Small browser smoke tests in the repo
+  Goal: one Playwright smoke test per page (opens, no console error, no horizontal scroll on a phone, main action works) plus an axe accessibility scan, run in CI. Kept deliberately small (about 15 short tests); no long scenarios.
   Acceptance: CI fails on a console error, a horizontal scroll on a phone, or a serious axe violation.
   Depends on: T11.4
-
-- [ ] **T11.7** Preview deployments
-  Goal: every pull request gets a preview URL (service chosen by the owner).
-  Acceptance: a PR shows a working preview link.
-  Depends on: T11.6
+  Note: preview deployments were dropped (the owner runs branches locally).
 
 ### Phase 12 — Page by page (each page needs its own approval before the next starts)
 
@@ -830,7 +826,10 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [ ] **T12.5** Plan: bucket usage, lessons in a panel, investing context (5.4)
 - [ ] **T12.6** Health: status, units, thresholds, next steps (5.8)
 - [ ] **T12.7** Decisions: feed, filters, stats (5.9)
-- [ ] **T12.8** Savings goals as pots (5.6)
+- [ ] **T12.8** Savings pots (5.6, 6.4)
+  Goal: the owner adds money as they save; each pot shows a filling piggy bank with an animation (off under reduced motion); deposit and withdraw with history and undo; a monthly summary shows what is left, what must be set aside, what was set aside and what is free afterwards, with a suggested split; the emergency fund is the first, undeletable pot sharing one balance with `Profile.savings`.
+  Core first (tests before code): `addDeposit`/`removeDeposit`/`editDeposit` (no negative balance), `requiredThisMonth`, `depositedInMonth`, `monthlySavingsAdvice`, savings rate from deposits, emergency pot and `Profile.savings` never diverging. `SinkingFund` gains optional `icon`, `color`, `kind`, `deposits` (additive, no migration).
+  Acceptance: depositing is two taps; the monthly numbers equal Home's; all edge cases in 6.4 are tested.
 - [ ] **T12.9** Lessons reading experience (5.10)
 - [ ] **T12.10** Settings and "Ask AI" export with privacy levels (5.11, 6.3)
 - [ ] **T12.11** Onboarding and demo mode (5.0)
@@ -885,7 +884,7 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 
 ## Open questions
 
-- [ ] Product and interface decisions 1 to 12 in `docs/PRODUCT-PLAN.md` section 11 (brand direction, dark theme, fonts and new dependencies, "Ask AI" export vs the no-network rule, savings-rate definition, bank colors, AI logos, cooldown re-prompt, preview hosting, which suggestions S1 to S17, phone navigation, page order). Phases 11 to 14 wait on these.
+- [ ] Remaining product decisions in `docs/PRODUCT-PLAN.md` section 11.3 (brand direction, "Ask AI" export vs the no-network rule, bank colors, AI logos, cooldown re-prompt, phone navigation, page order, dateless pots, emergency fund as the first pot, new dependencies, component sourcing). Answered on 2026-10-02: higher UI polish with ready-made components, manual savings deposits with animation, suggestions accepted (preview deployments dropped, browser tests kept small). Phases 11 to 14 start when the owner says go.
 - [ ] Cooldown re-prompt: SPEC says a want's 30-day cooldown "prompts again when it ends". Today the timeline only shows the countdown. Proposed: once the cooldown has ended, the queue card asks "Still want it?" with Keep / Skip, remembering the answer on the item. Needs confirmation before it is built (adds an optional field to the queue item).
 - [ ] Default installment cap: 20% of net income, or lower? (SPEC backlog) — blocks final default value in T4.6's `defaultGuardRules`; task can proceed with 20% as a placeholder default since it's data, not code, but the number needs confirmation before Phase 8's acceptance pass.
 - [ ] Legal installment limits by category: keep as an editable data file, and who updates it? (SPEC backlog) — no MVP task currently owns "legal limits by category"; if this is in scope for guards (T4.6), it needs its own task added before Phase 4 starts. Currently treated as out of MVP scope pending confirmation.
