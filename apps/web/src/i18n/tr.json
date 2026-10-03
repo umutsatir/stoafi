@@ -127,7 +127,8 @@
       "canTake": "Ayda {amount} daha taksit alabilirsin.",
       "overBy": "Sınırını {amount} aşıyorsun.",
       "used": "({amount} kullanılıyor)"
-    }
+    },
+    "personalSpending": "Kişisel harcama"
   },
   "nav": {
     "ariaLabel": "Ana",

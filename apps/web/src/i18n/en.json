@@ -127,7 +127,8 @@
       "canTake": "You can take on {amount} more a month.",
       "overBy": "You are {amount} over your cap.",
       "used": "({amount} used)"
-    }
+    },
+    "personalSpending": "Personal spending"
   },
   "nav": {
     "ariaLabel": "Main",

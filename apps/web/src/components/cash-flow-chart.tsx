@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const COLORS = {
   obligations: "var(--chart-needs)",
   living: "var(--chart-wants)",
+  personal: "var(--chart-investing)",
   installments: "var(--chart-installments)",
   setAside: "var(--chart-setaside)",
   income: "var(--chart-income)",
@@ -46,6 +47,12 @@ export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
               fill={COLORS.obligations}
             />
             <Bar dataKey="living" name={t("living")} stackId="costs" fill={COLORS.living} />
+            <Bar
+              dataKey="personal"
+              name={t("personalSpending")}
+              stackId="costs"
+              fill={COLORS.personal}
+            />
             <Bar
               dataKey="installments"
               name={t("installments")}

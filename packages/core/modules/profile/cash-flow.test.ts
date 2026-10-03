@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { Commitment } from "../../kernel/commitment";
 import type { Month } from "../../kernel/month";
+import { project } from "../../kernel/project";
 import { cashFlowSeries } from "./cash-flow";
+import { recurringCommitments } from "./recurring-commitments";
 import type { Profile } from "./schema";
 
 const profile: Profile = {
@@ -42,6 +44,7 @@ describe("cashFlowSeries", () => {
       income: 1_000_000,
       obligations: 300_000,
       living: 300_000,
+      personal: 0,
       installments: 100_000,
       setAside: 0,
       left: 300_000,
@@ -59,6 +62,21 @@ describe("cashFlowSeries", () => {
     const tight = { ...profile, livingExpenses: 900_000 };
     const [first] = cashFlowSeries(tight, [], months);
     expect(first?.left).toBe(-200_000);
+  });
+
+  it("subtracts personal spending, so the chart agrees with the month's free cash", () => {
+    const withPersonal = { ...profile, personalSpending: 50_000 };
+    const [first] = cashFlowSeries(withPersonal, [installment], months);
+    expect(first?.personal).toBe(50_000);
+    expect(first?.left).toBe(250_000);
+  });
+
+  it("matches the projection's free cash when personal spending is set", () => {
+    const withPersonal = { ...profile, personalSpending: 50_000 };
+    const ledger = [...recurringCommitments(withPersonal, "2026-10", 3), installment];
+    const free = project({ income: 1_000_000 }, ledger, "2026-10").freeCash;
+    const [first] = cashFlowSeries(withPersonal, [installment], ["2026-10"]);
+    expect(first?.left).toBe(free);
   });
 
   it("ignores draft commitments", () => {
