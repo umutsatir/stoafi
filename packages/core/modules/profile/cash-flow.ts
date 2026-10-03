@@ -12,11 +12,13 @@ export interface CashFlowPoint {
   /** Recurring expenses still active that month. */
   obligations: Minor;
   living: Minor;
+  /** What the user set aside for going out and shopping; zero when they set no amount. */
+  personal: Minor;
   /** Installment payments due that month (from active commitments). */
   installments: Minor;
   /** Sinking-fund set-asides due that month. */
   setAside: Minor;
-  /** income - obligations - living - installments - set-asides; negative when the month is overspent. */
+  /** income - obligations - living - personal - installments - set-asides; negative when the month is overspent. */
   left: Minor;
 }
 
@@ -36,14 +38,16 @@ export function cashFlowSeries(
   return projections.map((projection) => {
     const { month, installmentLoad: installments, sinkingSetAside: setAside } = projection;
     const obligations = activeFixedExpenses(profile, month).reduce((sum, e) => sum + e.monthly, 0);
+    const personal = profile.personalSpending ?? 0;
     return {
       month,
       income,
       obligations,
       living: profile.livingExpenses,
+      personal,
       installments,
       setAside,
-      left: income - obligations - profile.livingExpenses - installments - setAside,
+      left: income - obligations - profile.livingExpenses - personal - installments - setAside,
     };
   });
 }
