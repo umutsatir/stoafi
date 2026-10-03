@@ -265,3 +265,14 @@ describe("Dashboard", () => {
     );
   });
 });
+
+describe("Dashboard cash-flow chart and personal spending", () => {
+  it("takes personal spending off the chart's first month as it does off the headline figure", () => {
+    renderDashboard({
+      profile: { ...profile, personalSpending: 100_000 },
+    });
+    const left = screen.getByTestId("left").textContent;
+    const firstRow = within(screen.getByTestId("cash-flow-chart")).getAllByRole("row")[1];
+    expect(firstRow).toHaveTextContent(left ?? "never");
+  });
+});
