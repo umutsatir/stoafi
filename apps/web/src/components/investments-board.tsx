@@ -51,6 +51,7 @@ export interface InvestmentsBoardProps {
   suggestedMonthly: number;
   onBasketChange: (basket: BasketEntry[]) => void;
   savedMonthly?: number | null;
+  emergencyFirst?: boolean;
   onMonthlyChange?: (amount: number) => void;
   basketLog?: BasketLogEntry[];
   month?: Month;
@@ -158,6 +159,7 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
         currency={currency}
         suggestedMonthly={props.suggestedMonthly}
         {...(props.savedMonthly !== undefined ? { savedMonthly: props.savedMonthly } : {})}
+        {...(props.emergencyFirst ? { emergencyFirst: true } : {})}
         {...(props.onMonthlyChange ? { onMonthlyChange: props.onMonthlyChange } : {})}
         {...(props.basketLog ? { log: props.basketLog } : {})}
         {...(props.month ? { month: props.month } : {})}

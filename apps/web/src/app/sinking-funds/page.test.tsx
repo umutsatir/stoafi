@@ -274,6 +274,19 @@ describe("Savings screen basket ticks", () => {
   });
 });
 
+describe("Savings screen with the emergency fund still short", () => {
+  it("suggests nothing for investing and says why", async () => {
+    useAppStore.setState({
+      basket: [{ id: "gold", label: "Gold", typeId: "gold", percent: 100 }],
+      basketMonthly: null,
+    });
+    renderPage(); // savings 9,000 of a much larger target
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Investments" }));
+    expect(await screen.findByLabelText("Amount to invest")).toHaveValue("");
+    expect(screen.getByText(/nothing is suggested for investing this month/)).toBeInTheDocument();
+  });
+});
+
 describe("Savings screen once the emergency fund is full", () => {
   it("suggests the rest of the plan's saving for investing, and offers it to the basket", async () => {
     useAppStore.setState({
