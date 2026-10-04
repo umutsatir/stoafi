@@ -895,6 +895,9 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T15.10** Free spending: an optional monthly personal spending amount (counted as wants), or else what is left of the wants limit, shown on Home as "Free spending" with a weekly and daily spread; (`kernel/spending.ts`, `personalSpending` on the profile).
   Note: installments stay in the bucket of the item (need or want); the bar that showed them under wants was removed because needs have installments too. No spending log, as chosen; the weekly and daily figures are the month spread evenly, not a live balance.
 
+- [x] **T15.11** Emergency fund first: while the emergency fund is below its target, what the plan would invest goes to savings (`strategies/emergency-first.ts`, applied in `currentAllocation`), the savings advice sends everything left to the emergency fund, and nothing is suggested for the basket until it is full.
+  Note: an amount typed into the basket is still honoured; the app only stops suggesting. The comparison of strategies on the Plan page still shows each plan as written.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

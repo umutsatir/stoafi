@@ -136,7 +136,7 @@ describe("monthlySavingsAdvice", () => {
     expect(advice.suggestedSplit).toEqual([{ id: "investing", amount: 1_000_000 }]);
   });
 
-  it("keeps the money in savings while the emergency fund or a pot still needs it", () => {
+  it("puts everything left into the emergency fund while it is short, and nothing into investing", () => {
     const advice = monthlySavingsAdvice({
       freeBeforeSaving: 5_000_000,
       planSavings: 1_000_000,
@@ -144,11 +144,10 @@ describe("monthlySavingsAdvice", () => {
       emergency: { gap: 400_000, depositedThisMonth: 0 },
       month: "2026-10",
     });
-    // pot 300,000, emergency 400,000, the remaining 300,000 is free for investing
+    // pots with a date come first, then the rest goes to the emergency fund, even beyond its gap
     expect(advice.suggestedSplit).toEqual([
       { id: "near", amount: 300_000 },
-      { id: "emergency", amount: 400_000 },
-      { id: "investing", amount: 300_000 },
+      { id: "emergency", amount: 700_000 },
     ]);
   });
 
@@ -163,21 +162,20 @@ describe("monthlySavingsAdvice", () => {
     expect(advice.suggestedSplit).toEqual([{ id: "investing", amount: 1_000_000 }]);
   });
 
-  it("reports the part of the plan that is meant for investing, whatever was already put in", () => {
+  it("reports the part of the plan that is meant for investing, only once the emergency fund is full", () => {
     const input = {
       freeBeforeSaving: 5_000_000,
       planSavings: 1_000_000,
       funds: [fund({ id: "near", target: 600_000, dueMonth: "2026-12" })], // 300,000 a month
-      emergency: { gap: 400_000, depositedThisMonth: 0 },
       month: "2026-10" as const,
     };
-    expect(monthlySavingsAdvice(input).investingShare).toBe(300_000);
     expect(
-      monthlySavingsAdvice({ ...input, emergency: { gap: 400_000, depositedThisMonth: 400_000 } })
+      monthlySavingsAdvice({ ...input, emergency: { gap: 0, depositedThisMonth: 0 } })
         .investingShare,
-    ).toBe(300_000);
+    ).toBe(700_000);
+    expect(monthlySavingsAdvice(input).investingShare).toBe(700_000);
     expect(
-      monthlySavingsAdvice({ ...input, emergency: { gap: 5_000_000, depositedThisMonth: 0 } })
+      monthlySavingsAdvice({ ...input, emergency: { gap: 1, depositedThisMonth: 0 } })
         .investingShare,
     ).toBe(0);
   });

@@ -112,7 +112,8 @@
         "spread": "Eşit dağıtırsan haftada yaklaşık {weekly}, günde {daily}.",
         "fixed": "Kişisel harcama için senin belirlediğin tutar.",
         "auto": "Aboneliklerden ve taksitlerden sonra isteklerinde kalan."
-      }
+      },
+      "emergencyFirst": "Acil durum fonun henüz dolmadı; bu ay planın yatırım payı birikime gidiyor. Fon dolunca yatırım başlar."
     },
     "installmentRoom": {
       "title": "Taksit payı",
@@ -1278,7 +1279,8 @@
       "willRecord": "İşaretlemek bu alımı {name} yatırımına da güncel fiyatıyla ekler.",
       "willLog": "İşaretlemek sadece not alır. Toplamların güncellensin istiyorsan alımı bir yatırıma ekle.",
       "cheerDone": "{name} için {amount} işaretlendi. İstikrar kazandırır.",
-      "monthlyHintNone": "Planın yatırım için pay ayırmıyor; her ay yatırmak istediğin tutarı kendin yaz."
+      "monthlyHintNone": "Planın yatırım için pay ayırmıyor; her ay yatırmak istediğin tutarı kendin yaz.",
+      "monthlyHintEmergency": "Acil durum fonun henüz dolmadığı için bu ay yatırım önerilmiyor: para önce birikime gidiyor. Yine de yatırmak istersen tutarı kendin yaz."
     }
   },
   "calendar": {

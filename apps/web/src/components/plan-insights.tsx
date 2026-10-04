@@ -51,7 +51,7 @@ export function PlanInsights({
 
   const months = Array.from({ length: horizonMonths }, (_, i) => addMonths(month, i));
   const projections = projectSeries({ income: netMonthlyIncome(profile) }, ledger, months, {
-    bucketLimits: currentAllocation(profile, planState, strategyRegistry),
+    bucketLimits: currentAllocation(profile, planState, strategyRegistry, month),
   });
 
   // One line per finding, listing every month it applies to, instead of twelve repeats.

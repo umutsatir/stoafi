@@ -112,7 +112,8 @@
         "spread": "About {weekly} a week, or {daily} a day, if you spread it evenly.",
         "fixed": "The amount you set for personal spending.",
         "auto": "What is left of your wants after subscriptions and installments."
-      }
+      },
+      "emergencyFirst": "Your emergency fund is not full yet, so this month the plan's investing money goes to savings. Investing starts once the fund is full."
     },
     "installmentRoom": {
       "title": "Installment room",
@@ -1278,7 +1279,8 @@
       "willRecord": "Ticking also adds this purchase to {name}, at its current price.",
       "willLog": "Ticking only notes it. Add the purchase to a holding to update your totals.",
       "cheerDone": "{amount} into {name} ticked off. Steady wins.",
-      "monthlyHintNone": "Your plan sets nothing aside for investing, so type the amount you want to invest each month."
+      "monthlyHintNone": "Your plan sets nothing aside for investing, so type the amount you want to invest each month.",
+      "monthlyHintEmergency": "Your emergency fund is not full yet, so nothing is suggested for investing this month: the money goes to savings first. Type an amount if you want to invest anyway."
     }
   },
   "calendar": {

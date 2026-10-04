@@ -276,3 +276,19 @@ describe("Dashboard cash-flow chart and personal spending", () => {
     expect(firstRow).toHaveTextContent(left ?? "never");
   });
 });
+
+describe("Dashboard with the emergency fund first", () => {
+  const conscious = { strategyId: "conscious-spending", params: {} };
+
+  it("puts the plan's investing money into savings while the emergency fund is short", () => {
+    renderDashboard({ planState: conscious }); // savings 18,000 of a 30,000 target
+    expect(screen.getByTestId("emergency-first-note")).toBeInTheDocument();
+    expect(screen.getByTestId("plan-investing")).toHaveTextContent("₺0.00");
+  });
+
+  it("invests as the plan says once the emergency fund is full", () => {
+    renderDashboard({ planState: conscious, profile: { ...profile, savings: 3_000_000 } });
+    expect(screen.queryByTestId("emergency-first-note")).not.toBeInTheDocument();
+    expect(screen.getByTestId("plan-investing")).not.toHaveTextContent("₺0.00");
+  });
+});

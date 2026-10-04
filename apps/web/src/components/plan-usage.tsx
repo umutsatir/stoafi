@@ -59,7 +59,7 @@ export function PlanUsage({
   const t = useTranslations("plan.usage");
   const locale = useLocale() as Locale;
   const strategy = strategyRegistry[planState.strategyId];
-  const limits = currentAllocation(profile, planState, strategyRegistry);
+  const limits = currentAllocation(profile, planState, strategyRegistry, month);
   const projection = project({ income: netMonthlyIncome(profile) }, ledger, month, {
     bucketLimits: limits,
   });

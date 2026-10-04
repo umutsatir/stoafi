@@ -50,7 +50,7 @@ export function buildAiExportData(state: AiExportState): AiExportData {
   const strategy = state.planState ? strategyRegistry[state.planState.strategyId] : undefined;
   const limits =
     state.planState && strategy
-      ? currentAllocation(profile, state.planState, strategyRegistry)
+      ? currentAllocation(profile, state.planState, strategyRegistry, month)
       : undefined;
   const projection = project(
     { income },

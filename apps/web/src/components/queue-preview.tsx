@@ -79,7 +79,7 @@ export function QueuePreview({
   onDecide,
   onConfirm,
 }: QueuePreviewProps) {
-  const bucketLimits = currentAllocation(profile, planState, strategyRegistry);
+  const bucketLimits = currentAllocation(profile, planState, strategyRegistry, month);
   const [shiftedMonth, setShiftedMonth] = useState<Month | null>(null);
   const [previewMonth, setPreviewMonth] = useState<Month>(month);
   const [cardId, setCardId] = useState("");

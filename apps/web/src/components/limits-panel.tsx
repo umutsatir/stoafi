@@ -41,6 +41,8 @@ export interface LimitsPanelProps {
   categories?: CategoryAmount[];
   /** Money for everyday fun, shown between the bars and the advice. */
   spending?: FreeSpending;
+  /** The emergency fund is below its target, so the plan's investing money was moved to savings. */
+  emergencyFirst?: boolean;
   names?: Record<string, string>;
 }
 
@@ -50,6 +52,7 @@ export function LimitsPanel({
   queueFits,
   categories = [],
   spending,
+  emergencyFirst = false,
   names,
 }: LimitsPanelProps) {
   const t = useTranslations("home.limits");
@@ -96,6 +99,12 @@ export function LimitsPanel({
           </li>
         ))}
       </ul>
+
+      {emergencyFirst && (
+        <p className="text-sm text-muted-foreground" data-testid="emergency-first-note">
+          {t("emergencyFirst")}
+        </p>
+      )}
 
       {spending && (
         <div className="flex flex-col gap-1 rounded-xl bg-muted/60 p-4" data-testid="free-spending">

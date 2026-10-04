@@ -39,6 +39,8 @@ export interface BasketPanelProps {
   suggestedMonthly: number;
   /** The amount the user set to split each month, if they ever changed it. */
   savedMonthly?: number | null;
+  /** The emergency fund is short, so the plan invests nothing this month; the hint says why. */
+  emergencyFirst?: boolean;
   onMonthlyChange?: (amount: number) => void;
   /** What was ticked off in each slice, and the month it counts for. */
   log?: BasketLogEntry[];
@@ -58,6 +60,7 @@ export function BasketPanel({
   currency,
   suggestedMonthly,
   savedMonthly = null,
+  emergencyFirst = false,
   onMonthlyChange,
   log = [],
   month,
@@ -331,7 +334,13 @@ export function BasketPanel({
             <Field
               label={t("monthlyAmount")}
               htmlFor="basket-monthly"
-              hint={suggestedMonthly > 0 || savedMonthly ? t("monthlyHint") : t("monthlyHintNone")}
+              hint={
+                suggestedMonthly > 0 || savedMonthly
+                  ? t("monthlyHint")
+                  : emergencyFirst
+                    ? t("monthlyHintEmergency")
+                    : t("monthlyHintNone")
+              }
             >
               <MoneyInput
                 id="basket-monthly"
