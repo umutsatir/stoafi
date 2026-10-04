@@ -1,5 +1,7 @@
 import type { Bucket } from "../../kernel/bucket";
+import type { Month } from "../../kernel/month";
 import type { Minor } from "../../kernel/money";
+import { emergencyFirst } from "../../strategies/emergency-first";
 import type { Strategy } from "../../strategies/types";
 import type { Profile } from "../profile/schema";
 import { strategies as defaultStrategies } from "./strategies-registry";
@@ -9,17 +11,23 @@ export interface PlanState {
   params: unknown;
 }
 
+/**
+ * The active plan's limits for each bucket. While the emergency fund is below its target, what the plan
+ * would invest is added to savings instead (see `emergencyFirst`). `month` picks the month whose needs
+ * set that target.
+ */
 export function currentAllocation(
   profile: Profile,
   planState: PlanState,
   registry: Record<string, Strategy> = defaultStrategies,
+  month?: Month,
 ): Record<Bucket, Minor> {
   const strategy = registry[planState.strategyId];
   if (!strategy) {
     throw new Error(`Unknown strategy id: ${planState.strategyId}`);
   }
   const params = strategy.params.parse(planState.params);
-  return strategy.allocate(profile, params);
+  return emergencyFirst(strategy.allocate(profile, params), profile, month);
 }
 
 export interface StrategyComparison {
