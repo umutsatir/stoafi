@@ -784,7 +784,9 @@
       "aiHint": "Kendi durumunu, kendi şartlarınla bir yapay zekâ sohbetine götür.",
       "about": "Hakkında",
       "privacy": "Gizlilik",
-      "privacyHint": "Paranı gözden uzak tut."
+      "privacyHint": "Paranı gözden uzak tut.",
+      "safety": "Veri güvenliği",
+      "safetyHint": "Verilerin yalnızca bu cihazda duruyor. Bunlar kaybolmasını önler."
     },
     "about": {
       "privacy": "Verilerin bu cihazdan çıkmaz. Stoafi'nin hesabı ve sunucusu yoktur, rakamlarını hiçbir yere göndermez.",
@@ -831,7 +833,44 @@
     },
     "lastBackupNever": "Henüz yedek indirilmedi.",
     "lastBackupToday": "Son yedek: bugün.",
-    "lastBackupDays": "Son yedek: {days} gün önce."
+    "lastBackupDays": "Son yedek: {days} gün önce.",
+    "safety": {
+      "persist": {
+        "title": "Tarayıcı verini koruyor mu?",
+        "state": {
+          "persisted": "Korunuyor",
+          "not-persisted": "Korunmuyor",
+          "unsupported": "Bilinmiyor"
+        },
+        "okText": "Tarayıcı, yer azalınca verini silmeyeceğine söz verdi. Yine de site verilerini silersen ya da cihaz değiştirirsen kaybedebilirsin, bu yüzden yedek al.",
+        "riskText": "Tarayıcı yer azalınca ya da uygulama ana ekrana eklenmemişse bir süre sonra verini silebilir. Güvenli yol yedek almak.",
+        "ask": "Tarayıcıdan verimi korumasını iste"
+      },
+      "file": {
+        "title": "Dosyaya otomatik yedek",
+        "text": "Bir dosya seç, Stoafi her değişiklikten sonra onu güncel tutsun. Dosya Google Drive, iCloud ya da Dropbox’ın senkron klasöründeyse sunucu olmadan ikinci bir kopyan olur.",
+        "unsupported": "Tarayıcın kendi başına dosya yazamıyor. Yukarıdaki “Yedeği dışa aktar”ı ara sıra kullanıp senkron bir klasöre kaydet. Bilgisayarda Chrome ya da Edge bunu otomatik yapabilir.",
+        "choose": "Yedek dosyası seç",
+        "needsPermission": "Tarayıcı dosyaya yazma iznini yeniden istiyor.",
+        "allow": "Yeniden izin ver",
+        "on": "Her değişiklikten sonra dosyaya yedekleniyor.",
+        "onWritten": "Her değişiklikten sonra dosyaya yedekleniyor. Son yazılan: {time}.",
+        "stop": "Otomatik yedeği durdur"
+      },
+      "copies": {
+        "title": "Bu tarayıcıda tutulan kopyalar",
+        "text": "Stoafi son 3 günün verisini ve her içe aktarmadan önceki kopyayı tutar. Yanlışlıkla bir şeyi değiştirirsen ya da yanlış dosyayı içe aktarırsan işe yarar. Tarayıcı site verilerini silerse işe yaramaz, çünkü kopyalar da orada duruyor.",
+        "none": "Henüz kopya yok.",
+        "of": "{date} tarihli kopya",
+        "beforeImport": "Son içe aktarmadan önce",
+        "restore": "Geri yükle",
+        "restoreLabel": "{name} kopyasını geri yükle",
+        "confirm": "Evet, verilerimin yerine koy",
+        "cancel": "Vazgeç",
+        "restored": "Geri yüklendi.",
+        "failed": "Bu kopya geri yüklenemedi."
+      }
+    }
   },
   "installmentExpenses": {
     "title": "Kuyruktan aldıkların",
@@ -1442,5 +1481,16 @@
     "cancel": "Vazgeç",
     "saved": "PIN kaydedildi",
     "removed": "PIN kaldırıldı"
+  },
+  "dataLost": {
+    "title": "Verilerin silinmiş görünüyor",
+    "text": "Bu cihazda daha önce verilerin vardı ama şimdi yok. Tarayıcı silmiş olabilir. Yedek dosyan varsa buradan geri yükle. Hiçbir yere gönderilmediği için tek yol yedek dosyası (ya da bu tarayıcıda tutulan bir kopya).",
+    "fromFile": "Yedek dosyasından geri yükle",
+    "fileInput": "Yedek dosyası",
+    "copiesTitle": "Bu tarayıcıda tutulan kopyalar",
+    "copyOf": "{date} tarihli kopya",
+    "beforeImport": "Son içe aktarmadan önceki kopya",
+    "startFresh": "Sıfırdan başla",
+    "failed": "Geri yüklenemedi."
   }
 }

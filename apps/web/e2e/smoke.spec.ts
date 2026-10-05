@@ -216,3 +216,29 @@ test("the home page says what is left in each limit and what to do", async ({ pa
   await expect(page.getByTestId("limit-needs")).toBeVisible();
   await expect(page.getByTestId("limit-advice")).toBeVisible();
 });
+
+test("when the browser lost the data, the app says so and offers a way back", async ({
+  browser,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.addInitScript(() => localStorage.setItem("stoafi:data-since", "2026-09-01"));
+    await page.goto("/");
+    await expect(page.getByTestId("data-lost")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Restore from a backup file" })).toBeVisible();
+    expect(await serious(page), `${colorScheme} lost-data screen`).toEqual([]);
+    await page.getByRole("button", { name: "Start again with nothing" }).click();
+    await expect(page.getByTestId("onboarding-welcome")).toBeVisible();
+    await context.close();
+  }
+});
+
+test("settings show the three layers of data safety", async ({ page }) => {
+  await page.goto("/settings");
+  const section = page.getByTestId("safety-section");
+  await expect(section).toBeVisible();
+  await expect(section.getByText("Does the browser keep your data?")).toBeVisible();
+  await expect(section.getByText("Automatic backup to a file")).toBeVisible();
+  await expect(section.getByText("Copies kept in this browser")).toBeVisible();
+});

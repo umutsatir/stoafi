@@ -784,7 +784,9 @@
       "aiHint": "Take your own situation to an AI chat, on your terms.",
       "about": "About",
       "privacy": "Privacy",
-      "privacyHint": "Keep your money out of sight."
+      "privacyHint": "Keep your money out of sight.",
+      "safety": "Data safety",
+      "safetyHint": "Your data lives only on this device. These keep it from being lost."
     },
     "about": {
       "privacy": "Your data never leaves this device. Stoafi has no account and no server, and it never sends your figures anywhere.",
@@ -831,7 +833,44 @@
     },
     "lastBackupNever": "No backup downloaded yet.",
     "lastBackupToday": "Last backup: today.",
-    "lastBackupDays": "Last backup: {days} days ago."
+    "lastBackupDays": "Last backup: {days} days ago.",
+    "safety": {
+      "persist": {
+        "title": "Does the browser keep your data?",
+        "state": {
+          "persisted": "Protected",
+          "not-persisted": "Not protected",
+          "unsupported": "Unknown"
+        },
+        "okText": "The browser has promised not to clear your data when it runs low on space. You can still lose it if you clear the site's data or change device, so keep a backup.",
+        "riskText": "The browser may clear your data when it runs low on space, or after a while if the app is not installed to your home screen. A backup is the safe way.",
+        "ask": "Ask the browser to keep my data"
+      },
+      "file": {
+        "title": "Automatic backup to a file",
+        "text": "Pick a file once and Stoafi keeps it up to date after every change. If the file sits in a folder that Google Drive, iCloud or Dropbox syncs, you have a second copy without any server.",
+        "unsupported": "Your browser cannot write files by itself. Use \"Export backup\" above now and then and save it to a synced folder. Chrome or Edge on a computer can do this automatically.",
+        "choose": "Choose a backup file",
+        "needsPermission": "The browser asks you to allow writing to the file again.",
+        "allow": "Allow again",
+        "on": "Backing up to the file after every change.",
+        "onWritten": "Backing up to the file after every change. Last written: {time}.",
+        "stop": "Stop automatic backup"
+      },
+      "copies": {
+        "title": "Copies kept in this browser",
+        "text": "Stoafi keeps your data from the last 3 days, and a copy from before each import. They help if you change something by mistake or import the wrong file. They do not help if the browser clears the site's data, because they are kept there too.",
+        "none": "No copies yet.",
+        "of": "Copy from {date}",
+        "beforeImport": "Before the last import",
+        "restore": "Restore",
+        "restoreLabel": "Restore {name}",
+        "confirm": "Yes, replace my data",
+        "cancel": "Cancel",
+        "restored": "Restored.",
+        "failed": "That copy could not be restored."
+      }
+    }
   },
   "installmentExpenses": {
     "title": "Bought through the queue",
@@ -1442,5 +1481,16 @@
     "cancel": "Cancel",
     "saved": "PIN saved",
     "removed": "PIN removed"
+  },
+  "dataLost": {
+    "title": "Your data seems to be gone",
+    "text": "This device used to hold your data, but there is none now. The browser may have cleared it. If you saved a backup file, restore it here. Nothing was sent anywhere, so a backup file (or a copy kept in this browser) is the only way back.",
+    "fromFile": "Restore from a backup file",
+    "fileInput": "Backup file",
+    "copiesTitle": "Copies kept in this browser",
+    "copyOf": "Copy from {date}",
+    "beforeImport": "Copy from before the last import",
+    "startFresh": "Start again with nothing",
+    "failed": "That could not be restored."
   }
 }

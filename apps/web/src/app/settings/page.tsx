@@ -1,9 +1,18 @@
 "use client";
 
-import { Database, EyeOff, Info, Settings2, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  Database,
+  EyeOff,
+  HardDriveDownload,
+  Info,
+  Settings2,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GuardThresholdsSchema } from "@stoafi/core";
 import { AiExportPanel } from "@/components/ai-export-panel";
+import { DataSafetySettings } from "@/components/data-safety-settings";
 import { GuardSettings } from "@/components/guard-settings";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { PrivacySettings } from "@/components/privacy-settings";
@@ -12,7 +21,7 @@ import { SettingsSection } from "@/components/settings-section";
 import { Page } from "@/components/ui/page";
 import { monthOf, localIsoDate } from "@/lib/clock";
 import { buildAiExportData } from "@/lib/ai-export-input";
-import { exportToJson, importFromJson } from "@/storage/backup";
+import { exportToJson, importWithSafetyCopy } from "@/storage/backup";
 import { loadAppState } from "@/storage/bootstrap";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
@@ -93,10 +102,24 @@ export default function SettingsPage() {
             return json;
           }}
           onImport={async (json) => {
-            const result = await importFromJson(db, json);
+            const result = await importWithSafetyCopy(db, json, new Date().toISOString());
             // The store mirrors Dexie, so an imported backup must be loaded back in.
             if (!("errors" in result)) hydrate(await loadAppState(db), localIsoDate(new Date()));
             return result;
+          }}
+        />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t("sections.safety")}
+        description={t("sections.safetyHint")}
+        icon={HardDriveDownload}
+        index={3}
+        testId="safety-section"
+      >
+        <DataSafetySettings
+          onRestored={() => {
+            void loadAppState(db).then((loaded) => hydrate(loaded, localIsoDate(new Date())));
           }}
         />
       </SettingsSection>

@@ -898,6 +898,9 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T15.11** Emergency fund first: while the emergency fund is below its target, what the plan would invest goes to savings (`strategies/emergency-first.ts`, applied in `currentAllocation`), the savings advice sends everything left to the emergency fund, and nothing is suggested for the basket until it is full.
   Note: an amount typed into the basket is still honoured; the app only stops suggesting. The comparison of strategies on the Plan page still shows each plan as written.
 
+- [x] **T16.1** Data safety: asks the browser to keep the data (and shows whether it promised), notes that the device holds data and shows a restore screen if the database is later empty, keeps a copy per day (3 days) and a copy before each import inside the browser (Dexie v7 `backups`, not part of exports), automatic backup to a chosen file where the browser allows it (File System Access API, handle kept in its own small database), and a backup reminder after 3 days (never backed up) or 14 days.
+  Note: the copies inside the browser help against mistakes and bad imports, not against the browser clearing the site's data, since they live there too; the Settings text says so. The automatic file backup is what covers that, in Chrome and Edge on a computer. A server-side encrypted backup stays an open product decision.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

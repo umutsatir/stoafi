@@ -335,6 +335,7 @@ These extend the modules above; the rules in "Design principles" still hold (int
 - **Basket log.** A tick per slice and month; may also record one purchase at the holding's current price.
 - **Free spending** (`kernel/spending.ts`). The amount for going out and shopping: the user's personal spending amount (counted as wants) or what is left of the wants limit; spread over weeks and days for a sense of scale.
 - **Emergency fund first.** While the emergency fund is below its target (needs times target months), the plan's investing limit is added to savings and no investing is suggested; once it is full the plan applies as written and leftover saving goes to investing.
+- **Data safety.** The app asks the browser to persist storage; keeps a "had data since" mark outside the database to detect loss and offer restore; keeps daily internal copies (last 3) and a copy before each import (table `backups`, never exported); optional automatic backup to a user-chosen file; reminders after 3 days without any backup and every 14 days after.
 - **Quality budget** in `docs/QUALITY-BUDGET.md`.
 
 ## Acceptance criteria
