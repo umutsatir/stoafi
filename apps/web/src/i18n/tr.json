@@ -129,7 +129,17 @@
       "overBy": "Sınırını {amount} aşıyorsun.",
       "used": "({amount} kullanılıyor)"
     },
-    "personalSpending": "Kişisel harcama"
+    "personalSpending": "Kişisel harcama",
+    "summary": {
+      "title": "Bu ayın özeti",
+      "freeSpending": "Serbest harcama",
+      "perDay": "günde yaklaşık {daily}",
+      "nextPayment": "Sıradaki ödeme",
+      "nothingDue": "Önümüzdeki 14 günde ödeme yok",
+      "todo": "Bu ay yapman gereken",
+      "showDetails": "Detayları göster",
+      "hideDetails": "Detayları gizle"
+    }
   },
   "nav": {
     "ariaLabel": "Ana",

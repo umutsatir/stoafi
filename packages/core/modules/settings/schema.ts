@@ -25,6 +25,8 @@ export const SettingsSchema = z.object({
     .optional(),
   /** The user's investing basket: how new investing money should be shared. Optional; none until they make one. */
   basket: z.array(BasketEntrySchema).optional(),
+  /** Whether Home shows its details under the short summary. Missing reads as hidden. */
+  homeDetails: z.boolean().optional(),
   /** What was put into each basket slice, month by month. */
   basketLog: z.array(BasketLogEntrySchema).optional(),
   /** The amount the user splits across the basket each month, when it differs from what the plan suggests. */
