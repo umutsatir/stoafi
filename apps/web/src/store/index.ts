@@ -20,6 +20,7 @@ import {
   type ThemePreference,
 } from "@stoafi/core";
 import type { Locale } from "@/i18n/messages";
+import type { AutoBackupStatus } from "@/lib/auto-backup";
 import { monthOf } from "@/lib/clock";
 import type { LoadedState } from "@/storage/bootstrap";
 import type { PinLock } from "@/lib/pin";
@@ -53,6 +54,8 @@ export interface AppState {
   /** What was put into each slice, by month; and the amount the user splits each month, if they set one. */
   basketLog: BasketLogEntry[];
   basketMonthly: number | null;
+  /** Automatic backup to a file: whether it is on, and when it last wrote. Not saved; read from the browser. */
+  autoBackup: { status: AutoBackupStatus; lastWritten: string | null };
   /** The PIN lock, when one is set. */
   lock: PinLock | null;
   /** True while the lock screen covers the app. */
@@ -83,6 +86,7 @@ export interface AppState {
   setBasket: (basket: BasketEntry[]) => void;
   setBasketLog: (log: BasketLogEntry[]) => void;
   setBasketMonthly: (amount: number | null) => void;
+  setAutoBackup: (autoBackup: Partial<AppState["autoBackup"]>) => void;
   setLock: (lock: PinLock | null) => void;
   setLocked: (locked: boolean) => void;
   setGuardThresholds: (thresholds: GuardThresholds) => void;
@@ -109,6 +113,7 @@ export const useAppStore = create<AppState>((set) => ({
   basket: [],
   basketLog: [],
   basketMonthly: null,
+  autoBackup: { status: "unsupported", lastWritten: null },
   lock: null,
   locked: false,
   guardThresholds: { installmentCapPct: 0.2 },
@@ -160,6 +165,7 @@ export const useAppStore = create<AppState>((set) => ({
   setBasket: (basket) => set({ basket }),
   setBasketLog: (basketLog) => set({ basketLog }),
   setBasketMonthly: (basketMonthly) => set({ basketMonthly }),
+  setAutoBackup: (change) => set((s) => ({ autoBackup: { ...s.autoBackup, ...change } })),
   setLock: (lock) => set({ lock }),
   setLocked: (locked) => set({ locked }),
   toggleLessonRead: (id) =>

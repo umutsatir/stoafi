@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "@/storage/instance";
 import { useAppStore } from "@/store";
@@ -157,5 +157,68 @@ describe("AppBootstrap", () => {
       });
       expect(useAppStore.getState()).toBe(before);
     });
+  });
+});
+
+describe("AppBootstrap data safety", () => {
+  const profile = {
+    incomes: [{ label: "Job", monthly: 100_000 }],
+    fixedExpenses: [],
+    livingExpenses: 0,
+    savings: 0,
+    emergencyFundTargetMonths: 6,
+    annualInflationExpectation: 0.3,
+  };
+
+  beforeEach(async () => {
+    localStorage.removeItem("stoafi:data-since");
+    await db.profile.clear();
+    await db.backups.clear();
+    useAppStore.setState({ hydrated: false, profile: null });
+  });
+
+  it("shows the lost-data screen when this device had data and the database is empty", async () => {
+    localStorage.setItem("stoafi:data-since", "2026-09-01");
+    renderWithIntl(
+      <AppBootstrap>
+        <p>app ready</p>
+      </AppBootstrap>,
+    );
+    expect(await screen.findByTestId("data-lost")).toBeInTheDocument();
+    expect(screen.queryByText("app ready")).not.toBeInTheDocument();
+  });
+
+  it("carries on as a new start after the user chooses to begin again", async () => {
+    localStorage.setItem("stoafi:data-since", "2026-09-01");
+    renderWithIntl(
+      <AppBootstrap>
+        <p>app ready</p>
+      </AppBootstrap>,
+    );
+    fireEvent.click(await screen.findByRole("button", { name: "Start again with nothing" }));
+    expect(await screen.findByText("app ready")).toBeInTheDocument();
+    expect(localStorage.getItem("stoafi:data-since")).toBeNull();
+  });
+
+  it("does not worry a brand-new device that never had data", async () => {
+    renderWithIntl(
+      <AppBootstrap>
+        <p>app ready</p>
+      </AppBootstrap>,
+    );
+    expect(await screen.findByText("app ready")).toBeInTheDocument();
+    expect(screen.queryByTestId("data-lost")).not.toBeInTheDocument();
+  });
+
+  it("notes that there is data, and keeps today's copy inside the browser", async () => {
+    await db.profile.put({ id: "singleton", data: profile });
+    renderWithIntl(
+      <AppBootstrap>
+        <p>app ready</p>
+      </AppBootstrap>,
+    );
+    await screen.findByText("app ready");
+    await waitFor(() => expect(localStorage.getItem("stoafi:data-since")).not.toBeNull());
+    await waitFor(async () => expect(await db.backups.count()).toBe(1));
   });
 });
