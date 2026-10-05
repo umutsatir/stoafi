@@ -1,15 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { SettingsSchema } from "@stoafi/core";
 import { localIsoDate } from "@/lib/clock";
 import { loadAppState } from "@/storage/bootstrap";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
+import { DataLostScreen } from "@/components/data-lost-screen";
 import { LockGate } from "@/components/lock-gate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { applyTheme } from "@/lib/theme";
+import { dataLooksLost, forgetData } from "@/lib/had-data";
+import { useDataSafety } from "@/lib/use-data-safety";
 import { useSnapshotRecorder } from "@/lib/use-snapshot-recorder";
 import { useAppStore } from "@/store";
 
@@ -17,6 +20,9 @@ import { useAppStore } from "@/store";
 export function AppBootstrap({ children }: { children: ReactNode }) {
   const t = useTranslations("app");
   useSnapshotRecorder();
+  useDataSafety();
+  const [startedFresh, setStartedFresh] = useState(false);
+  const hasProfile = useAppStore((s) => s.profile !== null);
   const hydrated = useAppStore((s) => s.hydrated);
   const hydrate = useAppStore((s) => s.hydrate);
   const setToday = useAppStore((s) => s.setToday);
@@ -97,6 +103,21 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
     };
   }, [hydrated, setToday]);
 
+  if (hydrated && !startedFresh && dataLooksLost(hasProfile)) {
+    return (
+      <DataLostScreen
+        onRestored={() => {
+          void loadAppState(db, navigator.language).then((loaded) =>
+            hydrate(loaded, localIsoDate(new Date())),
+          );
+        }}
+        onStartFresh={() => {
+          forgetData();
+          setStartedFresh(true);
+        }}
+      />
+    );
+  }
   if (hydrated) return <LockGate>{children}</LockGate>;
   return (
     <div role="status" aria-label={t("loading")} className="flex flex-col gap-4">

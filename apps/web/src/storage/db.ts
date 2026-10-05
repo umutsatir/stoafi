@@ -18,6 +18,15 @@ export interface ListRow {
   [key: string]: unknown;
 }
 
+export interface BackupRow {
+  /** A date (YYYY-MM-DD) for the daily copies, or "before-import". */
+  id: string;
+  /** When the copy was taken (ISO timestamp). */
+  createdAt: string;
+  /** The same JSON a backup file holds. */
+  json: string;
+}
+
 export class StoafiDb extends Dexie {
   profile!: EntityTable<SingletonRow, "id">;
   plan!: EntityTable<SingletonRow, "id">;
@@ -29,6 +38,8 @@ export class StoafiDb extends Dexie {
   settings!: EntityTable<SingletonRow, "id">;
   holdings!: EntityTable<ListRow, "id">;
   snapshots!: EntityTable<ListRow, "id">;
+  /** Rolling copies of the whole data kept inside the browser; not part of exports. */
+  backups!: EntityTable<BackupRow, "id">;
 
   constructor(name = "stoafi") {
     super(name);
@@ -105,6 +116,21 @@ export class StoafiDb extends Dexie {
       settings: "id",
       holdings: "id",
       snapshots: "id",
+    });
+
+    // v7 adds the rolling internal copies; existing rows are untouched.
+    this.version(7).stores({
+      profile: "id",
+      plan: "id",
+      guards: "id",
+      queue: "id",
+      sinkingFunds: "id",
+      cards: "id",
+      decisions: "id",
+      settings: "id",
+      holdings: "id",
+      snapshots: "id",
+      backups: "id",
     });
   }
 }

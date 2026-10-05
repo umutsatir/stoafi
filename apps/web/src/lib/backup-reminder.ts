@@ -1,5 +1,7 @@
-/** After this many days without a backup, the app asks for one. */
-export const BACKUP_REMINDER_DAYS = 30;
+/** After this many days since the last backup, the app asks for one. */
+export const BACKUP_REMINDER_DAYS = 14;
+/** A new user is asked after this many days of having data, if they never backed up. */
+export const FIRST_BACKUP_DAYS = 3;
 
 const day = (iso: string): number =>
   Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) / 86_400_000;
@@ -23,7 +25,7 @@ export function backupDue(
   if (!hasData) return false;
   const since = daysSinceBackup(lastBackup, today);
   if (since !== null) return since >= BACKUP_REMINDER_DAYS;
-  // Never backed up: give a new user a month before asking.
+  // Never backed up: a few days to settle in, then ask.
   if (!firstDataDate) return false;
-  return Math.round(day(today) - day(firstDataDate)) >= BACKUP_REMINDER_DAYS;
+  return Math.round(day(today) - day(firstDataDate)) >= FIRST_BACKUP_DAYS;
 }
