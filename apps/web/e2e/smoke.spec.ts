@@ -210,11 +210,22 @@ test("a pot with no goal takes money and cheers, and the basket can be built fro
   }
 });
 
-test("the home page says what is left in each limit and what to do", async ({ page }) => {
+test("the home page opens with a short summary, and shows the limits and advice on request", async ({
+  page,
+}) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Look around with sample data" }).click();
+  await expect(page.getByTestId("month-summary")).toBeVisible();
+  await expect(page.getByTestId("summary-free-spending")).toBeVisible();
+  await expect(page.getByTestId("limit-needs")).toBeHidden();
+
+  await page.getByRole("button", { name: "Show details" }).click();
   await expect(page.getByTestId("limit-needs")).toBeVisible();
   await expect(page.getByTestId("limit-advice")).toBeVisible();
+
+  // the choice is remembered
+  await page.reload();
+  await expect(page.getByTestId("limit-needs")).toBeVisible();
 });
 
 test("when the browser lost the data, the app says so and offers a way back", async ({

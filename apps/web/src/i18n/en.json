@@ -129,7 +129,17 @@
       "overBy": "You are {amount} over your cap.",
       "used": "({amount} used)"
     },
-    "personalSpending": "Personal spending"
+    "personalSpending": "Personal spending",
+    "summary": {
+      "title": "This month at a glance",
+      "freeSpending": "Free spending",
+      "perDay": "about {daily} a day",
+      "nextPayment": "Next payment",
+      "nothingDue": "Nothing due in the next 14 days",
+      "todo": "What to do this month",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details"
+    }
   },
   "nav": {
     "ariaLabel": "Main",

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowDownLeft,
@@ -22,6 +23,7 @@ import {
   emergencyFundMonths,
   emergencyGap,
   freeSpending,
+  limitAdvice,
   healthSummary,
   installmentCommitments,
   monthlyNeeds,
@@ -55,7 +57,7 @@ import { ProgressRing } from "@/components/ui/progress-ring";
 import { StatusChip } from "@/components/ui/status-chip";
 import { CashFlowChart } from "./cash-flow-chart";
 import { InstallmentRoom } from "./installment-room";
-import { LimitsPanel } from "./limits-panel";
+import { AdviceItem, LimitsPanel } from "./limits-panel";
 
 export interface DashboardProps {
   profile: Profile | null;
@@ -73,6 +75,10 @@ export interface DashboardProps {
   onboarding?: React.ReactNode;
   /** Shown above everything, e.g. the sample-data banner. */
   banner?: React.ReactNode;
+  /** Whether the details under the short summary are shown at first; they are by default. */
+  detailsOpen?: boolean;
+  /** Called when the user shows or hides the details, so the choice can be remembered. */
+  onDetailsChange?: (open: boolean) => void;
 }
 
 const EVENT_ICON = { income: ArrowDownLeft, expense: ArrowUpRight, card: CreditCard } as const;
@@ -130,7 +136,10 @@ export function Dashboard({
   nextCount = 3,
   onboarding,
   banner,
+  detailsOpen = true,
+  onDetailsChange,
 }: DashboardProps) {
+  const [showDetails, setShowDetails] = useState(detailsOpen);
   const t = useTranslations("home");
   const tTimeline = useTranslations("timeline");
   const locale = useLocale() as Locale;
@@ -211,8 +220,11 @@ export function Dashboard({
     Date.UTC(Number(today.slice(0, 4)), Number(today.slice(5, 7)), 0),
   ).getUTCDate();
 
+  // The one thing to do this month: overs come first in the advice, so its first entry is the most pressing.
+  const todo = limitAdvice(thisMonth, queueFitsNow)[0] as ReturnType<typeof limitAdvice>[number]; // never empty: "allGood" when nothing else
   const rules = dayRulesFor(profile, cards);
   const events = upcomingEvents(rules, today, 14).slice(0, 6);
+  const nextPayment = events.find((event) => event.kind !== "income");
   const dayFormat = new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
@@ -324,204 +336,274 @@ export function Dashboard({
         </ProgressRing>
       </section>
 
-      <div className="grid gap-4 md:grid-flow-dense md:grid-cols-2">
-        <Panel
-          title={t("upcoming")}
-          icon={CalendarClock}
-          index={1}
-          testId="upcoming"
-          href="/calendar"
-          hrefLabel={t("openCalendar")}
-        >
-          {events.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("upcomingNone")}</p>
+      <section
+        aria-label={t("summary.title")}
+        data-testid="month-summary"
+        className="rise-in flex flex-col divide-y divide-border rounded-2xl border border-border bg-card shadow-sm"
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 p-4">
+          <span className="text-sm text-muted-foreground">{t("summary.freeSpending")}</span>
+          <span className="text-right">
+            <span className="text-lg font-semibold" data-testid="summary-free-spending">
+              {money(spending.monthly)}
+            </span>
+            <span className="block text-xs text-muted-foreground">
+              {t("summary.perDay", { daily: money(spending.daily) })}
+            </span>
+          </span>
+        </div>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 p-4">
+          <span className="text-sm text-muted-foreground">{t("summary.nextPayment")}</span>
+          {nextPayment ? (
+            <span className="text-right" data-testid="summary-next-payment">
+              <span className="font-semibold">{nextPayment.label}</span>
+              <span className="block text-xs text-muted-foreground">
+                {nextPayment.daysAway === 0
+                  ? t("today")
+                  : nextPayment.daysAway === 1
+                    ? t("tomorrow")
+                    : dayFormat.format(new Date(`${nextPayment.date}T00:00:00Z`))}
+                {nextPayment.amount !== undefined && ` · ${money(nextPayment.amount)}`}
+              </span>
+            </span>
           ) : (
-            <ul className="flex flex-col divide-y divide-border">
-              {events.map((event) => {
-                const Icon = EVENT_ICON[event.kind];
-                return (
-                  <li
-                    key={`${event.id}-${event.date}`}
-                    data-testid={`event-${event.id}`}
-                    className="flex items-center gap-3 py-2 text-sm"
-                  >
-                    <Icon
-                      className={cn(
-                        "h-4 w-4 shrink-0",
-                        event.kind === "income" ? "text-success" : "text-muted-foreground",
-                      )}
-                      aria-hidden="true"
-                    />
-                    <span className="min-w-0 flex-1 truncate font-medium">{event.label}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {event.daysAway === 0
-                        ? t("today")
-                        : event.daysAway === 1
-                          ? t("tomorrow")
-                          : dayFormat.format(new Date(`${event.date}T00:00:00Z`))}
-                    </span>
-                    {event.amount !== undefined && (
-                      <span
-                        className={cn("w-24 text-right", event.kind === "income" && "text-success")}
-                      >
-                        {event.kind === "income" ? "+" : "−"}
-                        {money(event.amount)}
-                      </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+            <span className="text-sm" data-testid="summary-next-payment">
+              {t("summary.nothingDue")}
+            </span>
           )}
-        </Panel>
-
-        <Panel
-          title={t("savingTitle")}
-          icon={PiggyBank}
-          index={2}
-          testId="saving-widget"
-          href="/sinking-funds"
-          hrefLabel={t("openSavings")}
-        >
-          <ProgressBar
-            value={advice.deposited}
-            max={Math.max(advice.required, 1)}
-            label={t("savingBar")}
-            tone={advice.stillToSet === 0 ? "success" : "primary"}
-          />
-          <p className="text-sm" data-testid="saving-sentence">
-            {advice.stillToSet > 0
-              ? t("savingMore", { more: money(advice.stillToSet), added: money(advice.deposited) })
-              : t("savingDone", { added: money(advice.deposited) })}
+        </div>
+        <div className="flex flex-col gap-1 p-4" data-testid="summary-todo">
+          <span className="text-sm text-muted-foreground">{t("summary.todo")}</span>
+          <p className="flex flex-wrap gap-x-2 text-sm">
+            <AdviceItem advice={todo} />
           </p>
-        </Panel>
+        </div>
+      </section>
 
-        <Panel
-          title={t("emergencyFund")}
-          icon={HeartPulse}
-          index={3}
-          href="/profile"
-          hrefLabel={t("editTarget")}
+      <div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          aria-expanded={showDetails}
+          aria-controls="home-details"
+          onClick={() => {
+            setShowDetails(!showDetails);
+            onDetailsChange?.(!showDetails);
+          }}
         >
-          <div className="flex items-center gap-4">
-            <ProgressRing
-              value={savedMonths}
-              max={Math.max(profile.emergencyFundTargetMonths, 0.01)}
-              label={t("fundRing")}
-              tone={fundLow ? "warning" : "success"}
-              size={72}
-            >
-              {Math.min(
-                100,
-                Math.round((savedMonths / Math.max(profile.emergencyFundTargetMonths, 0.01)) * 100),
-              )}
-              %
-            </ProgressRing>
-            <p data-testid="emergency-fund" className="text-sm">
-              {t("emergencyFundLine", {
-                saved: savedMonths.toFixed(1),
-                target: profile.emergencyFundTargetMonths,
-              })}
-            </p>
-          </div>
-        </Panel>
+          {showDetails ? t("summary.hideDetails") : t("summary.showDetails")}
+        </Button>
+      </div>
 
-        <Panel
-          title={t("healthTitle")}
-          icon={HeartPulse}
-          index={4}
-          href="/health"
-          hrefLabel={t("openHealth")}
-        >
-          <p>
-            <StatusChip
-              tone={
-                health.overall === "good"
-                  ? "success"
-                  : health.overall === "watch"
-                    ? "warning"
-                    : "danger"
-              }
-            >
-              <span data-testid="home-health">{t(`health.${health.overall}`)}</span>
-            </StatusChip>
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {health.steps[0] ? t(`healthWhy.${health.steps[0].id}`) : t("healthAllGood")}
-          </p>
-        </Panel>
-
-        {planTitle && allocation && (
+      <div id="home-details" hidden={!showDetails} className="flex flex-col gap-6">
+        <div className="grid gap-4 md:grid-flow-dense md:grid-cols-2">
           <Panel
-            title={t("activePlan")}
-            icon={ListChecks}
-            index={5}
-            testId="active-plan"
-            className="md:col-span-2"
-            href="/plan"
-            hrefLabel={t("changePlan")}
+            title={t("upcoming")}
+            icon={CalendarClock}
+            index={1}
+            testId="upcoming"
+            href="/calendar"
+            hrefLabel={t("openCalendar")}
           >
-            <p className="text-sm text-muted-foreground">{planTitle}</p>
-            <LimitsPanel
-              projection={thisMonth}
-              queueFits={queueFitsNow}
-              categories={categories}
-              spending={spending}
-              emergencyFirst={
-                emergencyGap(profile.savings, needs, profile.emergencyFundTargetMonths) > 0
-              }
-              names={names}
-            />
-          </Panel>
-        )}
-
-        <Panel title={t("nextInQueue")} icon={ListChecks} index={6}>
-          {next.length === 0 ? (
-            <Link href="/queue" className="text-sm font-medium text-primary hover:underline">
-              {t("addToQueue")}
-            </Link>
-          ) : (
-            <>
-              <ul data-testid="next-items" className="flex flex-col divide-y divide-border">
-                {next.map((item) => {
-                  const scheduled = monthByItem.get(item.id);
+            {events.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("upcomingNone")}</p>
+            ) : (
+              <ul className="flex flex-col divide-y divide-border">
+                {events.map((event) => {
+                  const Icon = EVENT_ICON[event.kind];
                   return (
                     <li
-                      key={item.id}
-                      className="flex items-center justify-between gap-2 py-2 text-sm"
+                      key={`${event.id}-${event.date}`}
+                      data-testid={`event-${event.id}`}
+                      className="flex items-center gap-3 py-2 text-sm"
                     >
-                      <span className="font-medium">{item.name}</span>
-                      <StatusChip tone={scheduled ? "success" : "warning"}>
-                        <span data-testid={`next-month-${item.id}`}>
-                          {scheduled ?? tTimeline("notAffordableYet")}
+                      <Icon
+                        className={cn(
+                          "h-4 w-4 shrink-0",
+                          event.kind === "income" ? "text-success" : "text-muted-foreground",
+                        )}
+                        aria-hidden="true"
+                      />
+                      <span className="min-w-0 flex-1 truncate font-medium">{event.label}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {event.daysAway === 0
+                          ? t("today")
+                          : event.daysAway === 1
+                            ? t("tomorrow")
+                            : dayFormat.format(new Date(`${event.date}T00:00:00Z`))}
+                      </span>
+                      {event.amount !== undefined && (
+                        <span
+                          className={cn(
+                            "w-24 text-right",
+                            event.kind === "income" && "text-success",
+                          )}
+                        >
+                          {event.kind === "income" ? "+" : "−"}
+                          {money(event.amount)}
                         </span>
-                      </StatusChip>
+                      )}
                     </li>
                   );
                 })}
               </ul>
-              <Link
-                href="/queue"
-                className="mt-auto text-sm font-medium text-primary hover:underline"
-              >
-                {t("openQueue")}
-              </Link>
-            </>
-          )}
-        </Panel>
+            )}
+          </Panel>
 
-        <Panel
-          title={t("installmentRoom.title")}
-          icon={CreditCard}
-          index={7}
-          testId="installment-room-panel"
-          href="/income-expenses"
-          hrefLabel={t("installmentRoom.manage")}
-        >
-          <InstallmentRoom income={income} capPct={installmentCapPct} used={installments} />
-        </Panel>
+          <Panel
+            title={t("savingTitle")}
+            icon={PiggyBank}
+            index={2}
+            testId="saving-widget"
+            href="/sinking-funds"
+            hrefLabel={t("openSavings")}
+          >
+            <ProgressBar
+              value={advice.deposited}
+              max={Math.max(advice.required, 1)}
+              label={t("savingBar")}
+              tone={advice.stillToSet === 0 ? "success" : "primary"}
+            />
+            <p className="text-sm" data-testid="saving-sentence">
+              {advice.stillToSet > 0
+                ? t("savingMore", {
+                    more: money(advice.stillToSet),
+                    added: money(advice.deposited),
+                  })
+                : t("savingDone", { added: money(advice.deposited) })}
+            </p>
+          </Panel>
+
+          <Panel
+            title={t("emergencyFund")}
+            icon={HeartPulse}
+            index={3}
+            href="/profile"
+            hrefLabel={t("editTarget")}
+          >
+            <div className="flex items-center gap-4">
+              <ProgressRing
+                value={savedMonths}
+                max={Math.max(profile.emergencyFundTargetMonths, 0.01)}
+                label={t("fundRing")}
+                tone={fundLow ? "warning" : "success"}
+                size={72}
+              >
+                {Math.min(
+                  100,
+                  Math.round(
+                    (savedMonths / Math.max(profile.emergencyFundTargetMonths, 0.01)) * 100,
+                  ),
+                )}
+                %
+              </ProgressRing>
+              <p data-testid="emergency-fund" className="text-sm">
+                {t("emergencyFundLine", {
+                  saved: savedMonths.toFixed(1),
+                  target: profile.emergencyFundTargetMonths,
+                })}
+              </p>
+            </div>
+          </Panel>
+
+          <Panel
+            title={t("healthTitle")}
+            icon={HeartPulse}
+            index={4}
+            href="/health"
+            hrefLabel={t("openHealth")}
+          >
+            <p>
+              <StatusChip
+                tone={
+                  health.overall === "good"
+                    ? "success"
+                    : health.overall === "watch"
+                      ? "warning"
+                      : "danger"
+                }
+              >
+                <span data-testid="home-health">{t(`health.${health.overall}`)}</span>
+              </StatusChip>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {health.steps[0] ? t(`healthWhy.${health.steps[0].id}`) : t("healthAllGood")}
+            </p>
+          </Panel>
+
+          {planTitle && allocation && (
+            <Panel
+              title={t("activePlan")}
+              icon={ListChecks}
+              index={5}
+              testId="active-plan"
+              className="md:col-span-2"
+              href="/plan"
+              hrefLabel={t("changePlan")}
+            >
+              <p className="text-sm text-muted-foreground">{planTitle}</p>
+              <LimitsPanel
+                projection={thisMonth}
+                queueFits={queueFitsNow}
+                categories={categories}
+                spending={spending}
+                emergencyFirst={
+                  emergencyGap(profile.savings, needs, profile.emergencyFundTargetMonths) > 0
+                }
+                names={names}
+              />
+            </Panel>
+          )}
+
+          <Panel title={t("nextInQueue")} icon={ListChecks} index={6}>
+            {next.length === 0 ? (
+              <Link href="/queue" className="text-sm font-medium text-primary hover:underline">
+                {t("addToQueue")}
+              </Link>
+            ) : (
+              <>
+                <ul data-testid="next-items" className="flex flex-col divide-y divide-border">
+                  {next.map((item) => {
+                    const scheduled = monthByItem.get(item.id);
+                    return (
+                      <li
+                        key={item.id}
+                        className="flex items-center justify-between gap-2 py-2 text-sm"
+                      >
+                        <span className="font-medium">{item.name}</span>
+                        <StatusChip tone={scheduled ? "success" : "warning"}>
+                          <span data-testid={`next-month-${item.id}`}>
+                            {scheduled ?? tTimeline("notAffordableYet")}
+                          </span>
+                        </StatusChip>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <Link
+                  href="/queue"
+                  className="mt-auto text-sm font-medium text-primary hover:underline"
+                >
+                  {t("openQueue")}
+                </Link>
+              </>
+            )}
+          </Panel>
+
+          <Panel
+            title={t("installmentRoom.title")}
+            icon={CreditCard}
+            index={7}
+            testId="installment-room-panel"
+            href="/income-expenses"
+            hrefLabel={t("installmentRoom.manage")}
+          >
+            <InstallmentRoom income={income} capPct={installmentCapPct} used={installments} />
+          </Panel>
+        </div>
+        <CashFlowChart series={cashFlow} />
       </div>
-      <CashFlowChart series={cashFlow} />
     </Page>
   );
 }

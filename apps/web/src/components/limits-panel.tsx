@@ -126,17 +126,27 @@ export function LimitsPanel({
         <ul className="flex flex-col gap-1.5 text-sm">
           {advice.map((a) => (
             <li key={a.id} data-testid={`advice-${a.id}`} className="flex flex-wrap gap-x-2">
-              <AdviceText advice={a} />
-              {a.id !== "allGood" && (
-                <Link href={HREF[a.id]} className="font-medium text-primary hover:underline">
-                  {t(`action.${a.id}`)}
-                </Link>
-              )}
+              <AdviceItem advice={a} />
             </li>
           ))}
         </ul>
       </div>
     </div>
+  );
+}
+
+/** One piece of advice as a sentence, with the link that goes where it can be acted on. */
+export function AdviceItem({ advice }: { advice: LimitAdvice }) {
+  const t = useTranslations("home.limits");
+  return (
+    <>
+      <AdviceText advice={advice} />
+      {advice.id !== "allGood" && (
+        <Link href={HREF[advice.id]} className="font-medium text-primary hover:underline">
+          {t(`action.${advice.id}`)}
+        </Link>
+      )}
+    </>
   );
 }
 

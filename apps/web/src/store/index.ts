@@ -54,6 +54,8 @@ export interface AppState {
   /** What was put into each slice, by month; and the amount the user splits each month, if they set one. */
   basketLog: BasketLogEntry[];
   basketMonthly: number | null;
+  /** Whether Home shows its details under the short summary. */
+  homeDetails: boolean;
   /** Automatic backup to a file: whether it is on, and when it last wrote. Not saved; read from the browser. */
   autoBackup: { status: AutoBackupStatus; lastWritten: string | null };
   /** The PIN lock, when one is set. */
@@ -86,6 +88,7 @@ export interface AppState {
   setBasket: (basket: BasketEntry[]) => void;
   setBasketLog: (log: BasketLogEntry[]) => void;
   setBasketMonthly: (amount: number | null) => void;
+  setHomeDetails: (open: boolean) => void;
   setAutoBackup: (autoBackup: Partial<AppState["autoBackup"]>) => void;
   setLock: (lock: PinLock | null) => void;
   setLocked: (locked: boolean) => void;
@@ -113,6 +116,7 @@ export const useAppStore = create<AppState>((set) => ({
   basket: [],
   basketLog: [],
   basketMonthly: null,
+  homeDetails: false,
   autoBackup: { status: "unsupported", lastWritten: null },
   lock: null,
   locked: false,
@@ -140,6 +144,7 @@ export const useAppStore = create<AppState>((set) => ({
       basket: loaded.settings.basket ?? [],
       basketLog: loaded.settings.basketLog ?? [],
       basketMonthly: loaded.settings.basketMonthly ?? null,
+      homeDetails: loaded.settings.homeDetails ?? false,
       lock: loaded.settings.lock ?? null,
       // A saved PIN covers the app from the first moment.
       locked: loaded.settings.lock !== undefined,
@@ -165,6 +170,7 @@ export const useAppStore = create<AppState>((set) => ({
   setBasket: (basket) => set({ basket }),
   setBasketLog: (basketLog) => set({ basketLog }),
   setBasketMonthly: (basketMonthly) => set({ basketMonthly }),
+  setHomeDetails: (homeDetails) => set({ homeDetails }),
   setAutoBackup: (change) => set((s) => ({ autoBackup: { ...s.autoBackup, ...change } })),
   setLock: (lock) => set({ lock }),
   setLocked: (locked) => set({ locked }),
