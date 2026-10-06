@@ -76,27 +76,29 @@ export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
             />
           </ComposedChart>
         </div>
-        <table className="sr-only">
-          <caption>{t("cashFlowTitle")}</caption>
-          <thead>
-            <tr>
-              <th>{t("month")}</th>
-              <th>{t("left")}</th>
-              <th>{t("installments")}</th>
-              <th>{t("setAside")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {series.map((point) => (
-              <tr key={point.month}>
-                <td>{point.month}</td>
-                <td>{money(point.left)}</td>
-                <td>{money(point.installments)}</td>
-                <td>{money(point.setAside)}</td>
+        <div className="sr-only">
+          <table>
+            <caption>{t("cashFlowTitle")}</caption>
+            <thead>
+              <tr>
+                <th>{t("month")}</th>
+                <th>{t("left")}</th>
+                <th>{t("installments")}</th>
+                <th>{t("setAside")}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {series.map((point) => (
+                <tr key={point.month}>
+                  <td>{point.month}</td>
+                  <td>{money(point.left)}</td>
+                  <td>{money(point.installments)}</td>
+                  <td>{money(point.setAside)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </CardContent>
     </Card>
   );

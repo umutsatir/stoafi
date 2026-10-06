@@ -41,6 +41,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {process.env.NODE_ENV === "production" && (
           <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
         )}
+        <link
+          rel="preload"
+          href="/fonts/inter-latin-wght-normal.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">

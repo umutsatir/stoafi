@@ -253,3 +253,57 @@ test("settings show the three layers of data safety", async ({ page }) => {
   await expect(section.getByText("Automatic backup to a file")).toBeVisible();
   await expect(section.getByText("Copies kept in this browser")).toBeVisible();
 });
+
+test("the page is set in Inter from our own files, and Turkish letters use it too", async ({
+  page,
+}) => {
+  const requested: string[] = [];
+  page.on("request", (r) => requested.push(r.url()));
+  await page.goto("/");
+  await expect(page.locator("h1")).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  const loaded = await page.evaluate(() =>
+    [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/"/g, "")),
+  );
+  expect(loaded).toContain("Inter");
+  expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).toMatch(/^"?Inter/);
+  // the second file is only fetched when a Turkish letter is asked for
+  expect(
+    await page.evaluate(async () => {
+      await document.fonts.load("16px Inter", "ğşİıçöü");
+      return document.fonts.check("16px Inter", "ğşİıçöü");
+    }),
+  ).toBe(true);
+  // every request stays on the site itself
+  const origin = new URL(page.url()).origin;
+  expect(requested.filter((u) => u.startsWith("http") && !u.startsWith(origin))).toEqual([]);
+});
+
+test("no page scrolls sideways on a phone in Turkish with sample data", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const context = await browser.newContext({
+    viewport: { width: 360, height: 740 },
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, "language", { get: () => "tr-TR" }),
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: "Örnek verilerle gez" }).click();
+  await expect(page.getByTestId("demo-banner")).toBeVisible();
+  const wide: string[] = [];
+  for (const path of [...PAGES, "/calendar"]) {
+    await page.goto(path);
+    await expect(page.locator("h1")).toBeVisible();
+    // the home page keeps its details behind a button; open them so the whole page is measured
+    const show = page.getByRole("button", { name: "Detayları göster" });
+    if (await show.count()) await show.click();
+    const overflows = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth,
+    );
+    if (overflows) wide.push(path);
+  }
+  await context.close();
+  expect(wide).toEqual([]);
+});
