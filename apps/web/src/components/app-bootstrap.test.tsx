@@ -160,6 +160,29 @@ describe("AppBootstrap", () => {
   });
 });
 
+describe("AppBootstrap home details", () => {
+  it("loads the saved choice, and saves a new one with the other settings", async () => {
+    await db.settings.put({
+      id: "singleton",
+      data: { locale: "en", currency: "TRY", homeDetails: true },
+    });
+    useAppStore.setState({ hydrated: false, homeDetails: false });
+    renderWithIntl(
+      <AppBootstrap>
+        <p>app ready</p>
+      </AppBootstrap>,
+    );
+    await screen.findByText("app ready");
+    expect(useAppStore.getState().homeDetails).toBe(true);
+
+    act(() => useAppStore.getState().setHomeDetails(false));
+    await waitFor(async () => {
+      const row = await db.settings.get("singleton");
+      expect((row?.data as { homeDetails?: boolean }).homeDetails).toBeUndefined();
+    });
+  });
+});
+
 describe("AppBootstrap data safety", () => {
   const profile = {
     incomes: [{ label: "Job", monthly: 100_000 }],

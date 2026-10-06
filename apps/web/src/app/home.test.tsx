@@ -94,3 +94,23 @@ describe("Home backup nudge", () => {
     expect(screen.queryByTestId("backup-nudge")).not.toBeInTheDocument();
   });
 });
+
+describe("Home details choice", () => {
+  const profile = {
+    incomes: [{ label: "Job", monthly: 10_000_000 }],
+    fixedExpenses: [],
+    livingExpenses: 0,
+    savings: 0,
+    emergencyFundTargetMonths: 6,
+    annualInflationExpectation: 0.3,
+  };
+
+  it("starts with the details hidden, and remembers when the user shows them", () => {
+    useAppStore.setState({ profile, lastBackup: null, homeDetails: false });
+    renderWithIntl(<Home />);
+    expect(document.getElementById("home-details")).toHaveAttribute("hidden");
+    fireEvent.click(screen.getByRole("button", { name: "Show details" }));
+    expect(useAppStore.getState().homeDetails).toBe(true);
+    expect(document.getElementById("home-details")).not.toHaveAttribute("hidden");
+  });
+});

@@ -901,6 +901,9 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T16.1** Data safety: asks the browser to keep the data (and shows whether it promised), notes that the device holds data and shows a restore screen if the database is later empty, keeps a copy per day (3 days) and a copy before each import inside the browser (Dexie v7 `backups`, not part of exports), automatic backup to a chosen file where the browser allows it (File System Access API, handle kept in its own small database), and a backup reminder after 3 days (never backed up) or 14 days.
   Note: the copies inside the browser help against mistakes and bad imports, not against the browser clearing the site's data, since they live there too; the Settings text says so. The automatic file backup is what covers that, in Chrome and Edge on a computer. A server-side encrypted backup stays an open product decision.
 
+- [x] **T16.2** Calm Home: under the greeting, the month's left-over figure and a four-line summary (free spending with a daily figure, the next payment that is not income, the one thing to do this month); everything else sits under "Show details", and the choice is remembered (`homeDetails` in settings).
+  Note: details are hidden by default for the app and shown by default for the `Dashboard` component itself, so tests and other users of it are unchanged.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

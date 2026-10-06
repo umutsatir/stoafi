@@ -44,6 +44,8 @@ export default function Home() {
   const today = useAppStore((s) => s.today);
   const demo = useAppStore((s) => s.demo);
   const lastBackup = useAppStore((s) => s.lastBackup);
+  const homeDetails = useAppStore((s) => s.homeDetails);
+  const setHomeDetails = useAppStore((s) => s.setHomeDetails);
   const snapshots = useAppStore((s) => s.snapshots);
   const hydrate = useAppStore((s) => s.hydrate);
   const setDemo = useAppStore((s) => s.setDemo);
@@ -82,6 +84,8 @@ export default function Home() {
       cards={cards}
       installmentCapPct={guardThresholds.installmentCapPct}
       today={today}
+      detailsOpen={homeDetails}
+      onDetailsChange={setHomeDetails}
       onboarding={<Onboarding onDemo={() => void startDemo()} />}
       banner={
         showBackupNudge ? (
