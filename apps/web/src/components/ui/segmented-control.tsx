@@ -30,7 +30,7 @@ export function SegmentedControl<T extends string>({
     <div
       role="radiogroup"
       aria-label={label}
-      className={cn("inline-flex rounded-lg bg-muted p-1", className)}
+      className={cn("inline-flex max-w-full flex-wrap rounded-lg bg-muted p-1", className)}
     >
       {options.map((option) => (
         <label

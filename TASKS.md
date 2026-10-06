@@ -904,6 +904,10 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T16.2** Calm Home: under the greeting, the month's left-over figure and a four-line summary (free spending with a daily figure, the next payment that is not income, the one thing to do this month); everything else sits under "Show details", and the choice is remembered (`homeDetails` in settings).
   Note: details are hidden by default for the app and shown by default for the `Dashboard` component itself, so tests and other users of it are unchanged.
 
+- [x] **T16.3** Self-hosted font: Inter (variable, latin and latin-ext, SIL OFL) from `apps/web/public/fonts`, `font-display: swap`, the main file preloaded, licence in `docs/THIRD-PARTY.md`; a test checks the files, the Turkish letter coverage and that nothing points to another site, and the size budget now counts fonts.
+  Note: the wider letters showed three real overflows on a 360 px phone in Turkish (the backup import row, the lesson filter, the chart's screen-reader table); they are fixed and a browser test now checks every page in Turkish at 360 px.
+- [ ] **T16.4** Still to do from the plan: drag between Eisenhower quadrants, before/after bars and a cash/installment switch in the queue preview, changing a decision's outcome.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---
