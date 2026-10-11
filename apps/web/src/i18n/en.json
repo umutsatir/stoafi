@@ -1054,6 +1054,26 @@
       "m50": "Halfway to {name}. Keep going!",
       "m75": "Three quarters of {name} done. Almost there!",
       "m100": "{name} is fully funded. Well done!"
+    },
+    "heldIn": {
+      "label": "Kept in",
+      "hint": "What the money is kept in. It does not change the amount; it tells you what to watch.",
+      "notSet": "Not set",
+      "cash": "Plain cash (lira in an account)",
+      "other": "Something else…",
+      "customLabel": "Name it",
+      "customPlaceholder": "e.g. Gram gold account",
+      "chip": "Kept in {name}",
+      "change": "Change",
+      "choose": "Choose what it is kept in",
+      "emergencyTitle": "Where is your emergency fund kept?",
+      "emergencyText": "Pick what the money sits in. This is only a note and a hint: the amount stays what you typed.",
+      "done": "Done",
+      "fit": {
+        "good": "Easy to reach and it keeps its value well: a good fit for an emergency fund.",
+        "ok": "Reachable, but its price can swing or it loses value over time. Plain cash loses to inflation; gold and currency swing. Consider keeping part of the fund somewhere steadier.",
+        "risky": "Its price can swing a lot or it is hard to sell fast. That is rarely wise for an emergency fund, which you need at the worst moment."
+      }
     }
   },
   "investments": {

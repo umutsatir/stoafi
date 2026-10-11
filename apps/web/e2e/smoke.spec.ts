@@ -307,3 +307,65 @@ test("no page scrolls sideways on a phone in Turkish with sample data", async ({
   await context.close();
   expect(wide).toEqual([]);
 });
+
+test("the search box opens in the middle and stays there, with no jump at the end of the animation", async ({
+  browser,
+}) => {
+  // motion on: the bug only showed while the entrance animation ran
+  const context = await browser.newContext({
+    viewport: { width: 1200, height: 800 },
+    reducedMotion: "no-preference",
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator("h1")).toBeVisible();
+  await page.evaluate(() => {
+    const samples: number[] = [];
+    (window as unknown as { __samples: number[] }).__samples = samples;
+    const watch = () => {
+      const box = document.querySelector('[role="dialog"]');
+      if (box) {
+        const r = box.getBoundingClientRect();
+        samples.push(r.left + r.width / 2);
+      }
+      if (samples.length < 40) requestAnimationFrame(watch);
+    };
+    requestAnimationFrame(watch);
+  });
+  await page
+    .getByRole("button", { name: /search/i })
+    .first()
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.waitForTimeout(700);
+  const samples = await page.evaluate(
+    () => (window as unknown as { __samples: number[] }).__samples,
+  );
+  expect(samples.length).toBeGreaterThan(5);
+  const final = samples[samples.length - 1] ?? 0;
+  const worst = Math.max(...samples.map((x) => Math.abs(x - final)));
+  expect(worst, "the box moved sideways while opening").toBeLessThan(8);
+  await context.close();
+});
+
+test("the emergency fund can be marked as kept in something, with a clean panel in both themes", async ({
+  browser,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto("/");
+    await page.getByRole("button", { name: "Look around with sample data" }).click();
+    await expect(page.getByTestId("demo-banner")).toBeVisible();
+    await page.goto("/sinking-funds");
+    await page.getByTestId("held-in-choose-emergency").click();
+    const panel = page.getByRole("dialog", { name: "Where is your emergency fund kept?" });
+    await panel.getByLabel("Kept in").selectOption("gold");
+    await expect(panel.getByTestId("emergency-fit")).toContainText("Reachable");
+    expect(await serious(page), `${colorScheme} panel`).toEqual([]);
+    await panel.getByRole("button", { name: "Done" }).click();
+    await expect(page.getByTestId("held-in-emergency")).toContainText("Kept in Gold");
+    expect(await serious(page), `${colorScheme} card`).toEqual([]);
+    await context.close();
+  }
+});

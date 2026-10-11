@@ -219,6 +219,15 @@ export default function SavingsPage() {
     });
   }
 
+  function handleEmergencyHeldIn(value: string | undefined) {
+    const current = useAppStore.getState().profile;
+    if (!current) return;
+    const next = { ...current };
+    if (value) next.emergencyHeldIn = value;
+    else delete next.emergencyHeldIn;
+    persistProfile(next);
+  }
+
   function handleSaveFund(fund: SinkingFund) {
     const exists = funds.some((f) => f.id === fund.id);
     setFunds(exists ? funds.map((f) => (f.id === fund.id ? fund : f)) : [...funds, fund]);
@@ -322,6 +331,7 @@ export default function SavingsPage() {
             onDeleteDeposit={handleDeleteDeposit}
             onSaveFund={handleSaveFund}
             onDeleteFund={handleDeleteFund}
+            onSetEmergencyHeldIn={handleEmergencyHeldIn}
           />
         </TabsContent>
         <TabsContent value="investments">

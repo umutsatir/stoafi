@@ -252,24 +252,29 @@ body {
     transform: translateY(100%);
   }
 }
+/*
+ * The dialog is centred with Tailwind's -translate-x/y-1/2, which sets the `translate` property. These
+ * keyframes animate `transform`, which stacks on top of it: they must not move the box themselves, or it
+ * flies in from the top left and then snaps to the middle when the animation ends.
+ */
 @keyframes dialog-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
+    transform: translateY(2%) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: none;
   }
 }
 @keyframes dialog-out {
   from {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: none;
   }
   to {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
+    transform: translateY(2%) scale(0.96);
   }
 }
 @keyframes pop {

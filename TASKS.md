@@ -911,6 +911,10 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T16.5** One purchase, one record: deleting a "bought" decision that was bought in installments also removes the installments, and removing the installments from Expenses also removes the "bought" entry; undo restores both. Skipped, postponed and cash decisions are untouched.
   Note: the link is `queueItemRef`; a purchase that was removed on one side before this change stays as it was.
 
+- [x] **T16.6** Search box opened off-centre and then jumped: the dialog is centred with Tailwind's `translate`, and its entrance keyframes also moved it with `transform`, so the two stacked. The keyframes now only fade and scale; a test guards the keyframes and a browser test samples the box while it opens.
+- [x] **T16.7** What a pot is kept in: each pot and the emergency fund can be marked as kept in plain cash or one of the investment types (or something the user names), shown on the card; the emergency fund also says how well that suits it (`data/held-in.json`, `emergencyFit`). It is a label and a hint: the amount stays what the user typed.
+  Note: linking a pot to a holding so its value follows the price is not done; that would change how pot balances work.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---
