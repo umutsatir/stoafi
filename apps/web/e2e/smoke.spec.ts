@@ -299,9 +299,28 @@ test("no page scrolls sideways on a phone in Turkish with sample data", async ({
     // the home page keeps its details behind a button; open them so the whole page is measured
     const show = page.getByRole("button", { name: "Detayları göster" });
     if (await show.count()) await show.click();
-    const overflows = await page.evaluate(
-      () => document.documentElement.scrollWidth > window.innerWidth,
-    );
+    // Measure after the font has swapped in and the page has settled; before that the widths are not final.
+    await page.evaluate(async () => {
+      await document.fonts.load("16px Inter", "ğşİıçöü");
+      await document.fonts.ready;
+    });
+    await page.waitForTimeout(400);
+    // Strict on purpose: no element may poke out past the screen's right edge, unless it sits in a box
+    // that scrolls or clips by itself. The page-level scroll width alone hides small overshoots that
+    // show up on other machines.
+    const overflows = await page.evaluate(() => {
+      const width = window.innerWidth;
+      if (document.documentElement.scrollWidth > width) return true;
+      return [...document.querySelectorAll("body *")].some((el) => {
+        if (el.getBoundingClientRect().right <= width + 1) return false;
+        if (getComputedStyle(el).position === "fixed") return false;
+        for (let a = el.parentElement; a; a = a.parentElement) {
+          const overflow = getComputedStyle(a).overflowX;
+          if (overflow === "auto" || overflow === "scroll" || overflow === "hidden") return false;
+        }
+        return true;
+      });
+    });
     if (overflows) wide.push(path);
   }
   await context.close();
