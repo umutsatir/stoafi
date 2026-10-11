@@ -96,3 +96,63 @@ describe("Decisions screen", () => {
     await waitFor(async () => expect(await db.decisions.count()).toBe(1));
   });
 });
+
+describe("deleting a purchase bought in installments", () => {
+  const phone = {
+    id: "phone",
+    name: "Phone",
+    price: 100_000,
+    urgency: 2,
+    importance: 2,
+    isNeed: false,
+    expectedUses: 10,
+    addedDate: "2026-01-01",
+    priceUpdatedDate: "2026-01-01",
+    order: 0,
+    installmentPurchase: {
+      offer: { months: 2, payments: [50_000, 50_000] },
+      firstMonth: "2026-10" as const,
+    },
+  };
+  const bought: Decision = {
+    id: "b1",
+    queueItemRef: "phone",
+    itemName: "Phone",
+    outcome: "bought",
+    timestamp: "2026-09-30T10:00:00.000Z",
+    amount: 100_000,
+  };
+
+  beforeEach(async () => {
+    await db.queue.put(phone);
+    await db.decisions.put(bought);
+    useAppStore.setState({ decisions: [bought], queueItems: [phone] });
+  });
+
+  it("removes its installments too, so they stop counting, and says so", async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: "Delete decision Phone" }));
+    expect(useAppStore.getState().decisions).toEqual([]);
+    expect(useAppStore.getState().queueItems).toEqual([]);
+    await waitFor(async () => expect(await db.queue.count()).toBe(0));
+    expect(await screen.findByText("Removed “Phone” and its installments")).toBeInTheDocument();
+  });
+
+  it("brings both back with undo", async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: "Delete decision Phone" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+    expect(useAppStore.getState().decisions).toHaveLength(1);
+    expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["phone"]);
+    await waitFor(async () => expect(await db.queue.count()).toBe(1));
+  });
+
+  it("leaves the queue alone when a skipped decision is deleted", () => {
+    const skippedPhone: Decision = { ...bought, id: "s1", outcome: "skipped" };
+    useAppStore.setState({ decisions: [skippedPhone] });
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: "Delete decision Phone" }));
+    expect(useAppStore.getState().decisions).toEqual([]);
+    expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["phone"]);
+  });
+});

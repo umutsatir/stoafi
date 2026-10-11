@@ -1,4 +1,6 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Profile } from "@stoafi/core";
 import { db } from "@/storage/instance";
@@ -91,5 +93,66 @@ describe("Income & Expenses and Profile screens share one profile", () => {
     });
     renderWithIntl(<IncomeExpensesPage />);
     expect(screen.getByTestId("installment-expense-fridge")).toBeInTheDocument();
+  });
+
+  describe("removing an installment purchase", () => {
+    const fridge = {
+      id: "fridge",
+      name: "Fridge",
+      price: 600_000,
+      urgency: 2,
+      importance: 2,
+      isNeed: true,
+      expectedUses: 1,
+      addedDate: "2026-01-01",
+      priceUpdatedDate: "2026-01-01",
+      order: 0,
+      installmentPurchase: {
+        offer: { months: 3, payments: [200_000, 200_000, 200_000] },
+        firstMonth: "2026-09" as const,
+      },
+    };
+    const bought = {
+      id: "b1",
+      queueItemRef: "fridge",
+      itemName: "Fridge",
+      outcome: "bought" as const,
+      timestamp: "2026-09-01T10:00:00.000Z",
+      amount: 600_000,
+    };
+
+    beforeEach(async () => {
+      toast.dismiss();
+      await db.queue.put(fridge);
+      await db.decisions.put(bought);
+      useAppStore.setState({ queueItems: [fridge], decisions: [bought] });
+    });
+
+    it("also removes its 'bought' entry from the decision log, and undo brings both back", async () => {
+      renderWithIntl(
+        <>
+          <IncomeExpensesPage />
+          <Toaster />
+        </>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Remove Fridge" }));
+      expect(useAppStore.getState().queueItems).toEqual([]);
+      expect(useAppStore.getState().decisions).toEqual([]);
+      await waitFor(async () => expect(await db.decisions.count()).toBe(0));
+      expect(await screen.findByText("Removed “Fridge” and its installments")).toBeInTheDocument();
+
+      fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
+      expect(useAppStore.getState().queueItems).toHaveLength(1);
+      expect(useAppStore.getState().decisions).toHaveLength(1);
+      await waitFor(async () => expect(await db.decisions.count()).toBe(1));
+    });
+
+    it("leaves the log alone when there was no 'bought' entry", () => {
+      useAppStore.setState({ decisions: [] });
+      renderWithIntl(<IncomeExpensesPage />);
+      fireEvent.click(screen.getByRole("button", { name: "Remove Fridge" }));
+      expect(useAppStore.getState().queueItems).toEqual([]);
+      expect(useAppStore.getState().decisions).toEqual([]);
+    });
   });
 });

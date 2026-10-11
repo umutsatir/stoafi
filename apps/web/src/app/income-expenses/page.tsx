@@ -1,6 +1,6 @@
 "use client";
 
-import { ProfileSchema, installmentCommitments } from "@stoafi/core";
+import { DecisionSchema, ProfileSchema, installmentCommitments } from "@stoafi/core";
 import { useTranslations } from "next-intl";
 import { MoneyFlowSummary } from "@/components/money-flow-summary";
 import { IncomeExpensesForm } from "@/components/income-expenses-form";
@@ -9,9 +9,10 @@ import { Page } from "@/components/ui/page";
 import { notify, notifyUndo } from "@/components/ui/toaster";
 import { monthOf } from "@/lib/clock";
 import { mergeProfile } from "@/lib/profile-merge";
+import { boughtDecisionsOf } from "@/lib/purchase-links";
 import { db } from "@/storage/instance";
 import { removeQueueItem, saveQueueItem } from "@/storage/queue-repo";
-import { putSingleton } from "@/storage/repo";
+import { putListItem, putSingleton } from "@/storage/repo";
 import { useAppStore } from "@/store";
 
 export default function IncomeExpensesPage() {
@@ -19,6 +20,8 @@ export default function IncomeExpensesPage() {
   const setProfile = useAppStore((s) => s.setProfile);
   const currency = useAppStore((s) => s.currency);
   const queueItems = useAppStore((s) => s.queueItems);
+  const decisions = useAppStore((s) => s.decisions);
+  const setDecisions = useAppStore((s) => s.setDecisions);
   const cards = useAppStore((s) => s.cards);
   const setQueueItems = useAppStore((s) => s.setQueueItems);
   const today = useAppStore((s) => s.today);
@@ -58,17 +61,42 @@ export default function IncomeExpensesPage() {
         items={queueItems}
         month={monthOf(today)}
         onRemove={(item) => {
+          // The "bought" entry in the decision log is the same purchase: it goes too, and undo restores both.
+          const bought = boughtDecisionsOf(item, decisions);
           setQueueItems(queueItems.filter((i) => i.id !== item.id));
           void removeQueueItem(db, item.id).catch((error: unknown) =>
             console.error("Could not remove the installment purchase", error),
           );
-          notifyUndo(tc("deletedItem", { name: item.name }), tc("undo"), () => {
-            const current = useAppStore.getState();
-            current.setQueueItems([...current.queueItems, item]);
-            void saveQueueItem(db, item).catch((error: unknown) =>
-              console.error("Could not restore the installment purchase", error),
-            );
-          });
+          if (bought.length > 0) {
+            const gone = new Set(bought.map((d) => d.id));
+            setDecisions(decisions.filter((d) => !gone.has(d.id)));
+            for (const d of bought) {
+              void db.decisions
+                .delete(d.id)
+                .catch((error: unknown) => console.error("Could not remove the decision", error));
+            }
+          }
+          notifyUndo(
+            bought.length > 0
+              ? tc("deletedPurchase", { name: item.name })
+              : tc("deletedItem", { name: item.name }),
+            tc("undo"),
+            () => {
+              const current = useAppStore.getState();
+              current.setQueueItems([...current.queueItems, item]);
+              void saveQueueItem(db, item).catch((error: unknown) =>
+                console.error("Could not restore the installment purchase", error),
+              );
+              if (bought.length > 0) {
+                current.setDecisions([...current.decisions, ...bought]);
+                for (const d of bought) {
+                  void putListItem(db, "decisions", DecisionSchema, d).catch((error: unknown) =>
+                    console.error("Could not restore the decision", error),
+                  );
+                }
+              }
+            },
+          );
         }}
       />
     </Page>

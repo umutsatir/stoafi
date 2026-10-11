@@ -908,6 +908,9 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
   Note: the wider letters showed three real overflows on a 360 px phone in Turkish (the backup import row, the lesson filter, the chart's screen-reader table); they are fixed and a browser test now checks every page in Turkish at 360 px.
 - [ ] **T16.4** Still to do from the plan: drag between Eisenhower quadrants, before/after bars and a cash/installment switch in the queue preview, changing a decision's outcome.
 
+- [x] **T16.5** One purchase, one record: deleting a "bought" decision that was bought in installments also removes the installments, and removing the installments from Expenses also removes the "bought" entry; undo restores both. Skipped, postponed and cash decisions are untouched.
+  Note: the link is `queueItemRef`; a purchase that was removed on one side before this change stays as it was.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

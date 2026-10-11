@@ -11,7 +11,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Page } from "@/components/ui/page";
 import { notify, notifyUndo } from "@/components/ui/toaster";
 import { db } from "@/storage/instance";
-import { saveQueueItem } from "@/storage/queue-repo";
+import { installmentOfDecision } from "@/lib/purchase-links";
+import { removeQueueItem, saveQueueItem } from "@/storage/queue-repo";
 import { putListItem } from "@/storage/repo";
 import { useAppStore } from "@/store";
 import { DecisionSchema } from "@stoafi/core";
@@ -31,10 +32,18 @@ export default function DecisionsPage() {
   const tc = useTranslations("common");
 
   function handleDelete(decision: Decision) {
+    // A purchase bought in installments is one thing in two places: deleting its entry in the log also
+    // removes the installments, so they stop counting. Undo brings both back.
+    const installment = installmentOfDecision(decision, queueItems);
     setDecisions(decisions.filter((d) => d.id !== decision.id));
     void db.decisions.delete(decision.id).catch(logFailure("delete the decision"));
+    if (installment) {
+      setQueueItems(queueItems.filter((i) => i.id !== installment.id));
+      void removeQueueItem(db, installment.id).catch(logFailure("remove the installments"));
+    }
+    const name = decision.itemName ?? t("unknownItem");
     notifyUndo(
-      tc("deletedItem", { name: decision.itemName ?? t("unknownItem") }),
+      installment ? tc("deletedPurchase", { name }) : tc("deletedItem", { name }),
       tc("undo"),
       () => {
         const current = useAppStore.getState();
@@ -42,6 +51,10 @@ export default function DecisionsPage() {
         void putListItem(db, "decisions", DecisionSchema, decision).catch(
           logFailure("restore the decision"),
         );
+        if (installment) {
+          current.setQueueItems([...current.queueItems, installment]);
+          void saveQueueItem(db, installment).catch(logFailure("restore the installments"));
+        }
       },
     );
   }

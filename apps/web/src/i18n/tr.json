@@ -972,7 +972,8 @@
       "bought": "alındı olarak işaretlendi",
       "postponed": "ertelendi",
       "skipped": "vazgeçildi"
-    }
+    },
+    "deletedPurchase": "“{name}” ve taksitleri silindi"
   },
   "savings": {
     "title": "Birikim",

@@ -972,7 +972,8 @@
       "bought": "marked as bought",
       "postponed": "postponed",
       "skipped": "skipped"
-    }
+    },
+    "deletedPurchase": "Removed “{name}” and its installments"
   },
   "savings": {
     "title": "Savings",
