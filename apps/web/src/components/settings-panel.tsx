@@ -79,7 +79,7 @@ export function SettingsPanel({
             {t("exportBackup")}
           </Button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
             <Label
               htmlFor="import-file"
               className="flex cursor-pointer items-center gap-2 text-sm font-medium"
@@ -92,7 +92,7 @@ export function SettingsPanel({
               type="file"
               accept="application/json"
               onChange={handleFileChange}
-              className="text-sm text-muted-foreground file:mr-2 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium"
+              className="w-full min-w-0 max-w-full text-sm text-muted-foreground file:mr-2 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium"
             />
           </div>
         </div>

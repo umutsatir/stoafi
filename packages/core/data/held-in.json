@@ -1,0 +1,16 @@
+{
+  "note": "Where a pot's money can be kept. Ids match the investment types (plus plain cash); the names and one-line guidance are in the app's language files. `emergencyFit` says how well each suits an emergency fund: good = easy to reach and keeps its value, ok = reachable but its price swings or it loses value over time, risky = can swing a lot or be hard to sell fast. A rule of thumb of ours, not advice.",
+  "options": [
+    { "id": "cash", "icon": "banknotes", "emergencyFit": "ok" },
+    { "id": "deposit", "icon": "vault", "emergencyFit": "good" },
+    { "id": "fund", "icon": "certificate", "emergencyFit": "good" },
+    { "id": "bond", "icon": "certificate", "emergencyFit": "ok" },
+    { "id": "gold", "icon": "gold", "emergencyFit": "ok" },
+    { "id": "currency", "icon": "banknotes", "emergencyFit": "ok" },
+    { "id": "index-fund", "icon": "certificate", "emergencyFit": "risky" },
+    { "id": "stock", "icon": "certificate", "emergencyFit": "risky" },
+    { "id": "crypto", "icon": "coin", "emergencyFit": "risky" },
+    { "id": "real-estate", "icon": "building", "emergencyFit": "risky" },
+    { "id": "other", "icon": "box", "emergencyFit": "ok" }
+  ]
+}

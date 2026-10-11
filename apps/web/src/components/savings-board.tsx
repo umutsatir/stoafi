@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { PiggyBank, Plus } from "lucide-react";
 import {
   depositedInMonth,
+  emergencyFit,
   emergencyGap,
   monthlySavingsAdvice,
   requiredThisMonth,
@@ -19,6 +20,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useQuickAction } from "@/lib/use-quick-action";
 import { DepositForm } from "./deposit-form";
+import { HeldInSelect } from "./held-in-select";
 import { PotCard, type PotView } from "./pot-card";
 import { PotHistory } from "./pot-history";
 import { SavingsSummary } from "./savings-summary";
@@ -39,6 +41,8 @@ export interface SavingsBoardProps {
   onDeleteDeposit: (potId: string, depositId: string) => void;
   onSaveFund: (fund: SinkingFund) => void;
   onDeleteFund: (fund: SinkingFund) => void;
+  /** Saves what the emergency fund is kept in; undefined clears it. */
+  onSetEmergencyHeldIn: (value: string | undefined) => void;
 }
 
 const QUICK = [10_000, 50_000, 100_000, 500_000];
@@ -50,6 +54,7 @@ export function SavingsBoard(props: SavingsBoardProps) {
   const [historyOf, setHistoryOf] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
+  const [choosingHeldIn, setChoosingHeldIn] = useState(false);
   const [drops, setDrops] = useState<Record<string, number>>({});
   useQuickAction("addPot", () => setAdding(true));
 
@@ -72,6 +77,7 @@ export function SavingsBoard(props: SavingsBoardProps) {
       balance: profile.savings,
       target: emergencyTarget,
       deposits: profile.deposits ?? [],
+      ...(profile.emergencyHeldIn ? { heldIn: profile.emergencyHeldIn } : {}),
       neededThisMonth: 0,
       depositedThisMonth: emergencyDeposited,
       state: profile.savings >= emergencyTarget && emergencyTarget > 0 ? "funded" : "open",
@@ -87,6 +93,7 @@ export function SavingsBoard(props: SavingsBoardProps) {
         ...(fund.dueMonth ? { dueMonth: fund.dueMonth } : {}),
         openScale: props.monthlyNeeds,
         ...(fund.icon ? { icon: fund.icon } : {}),
+        ...(fund.heldIn ? { heldIn: fund.heldIn } : {}),
         deposits: fund.deposits ?? [],
         neededThisMonth: requiredThisMonth(fund, month),
         depositedThisMonth: depositedInMonth(fund.deposits, month),
@@ -124,6 +131,9 @@ export function SavingsBoard(props: SavingsBoardProps) {
             dropKey={drops[pot.id] ?? 0}
             onDeposit={(p) => setDepositTo(p.id)}
             onHistory={(p) => setHistoryOf(p.id)}
+            onChooseHeldIn={() =>
+              pot.kind === "emergency" ? setChoosingHeldIn(true) : setEditing(pot.id)
+            }
           />
         ))}
       </ul>
@@ -164,6 +174,28 @@ export function SavingsBoard(props: SavingsBoardProps) {
                 }
               }}
             />
+          </SheetContent>
+        )}
+      </Sheet>
+
+      <Sheet open={choosingHeldIn} onOpenChange={(open) => !open && setChoosingHeldIn(false)}>
+        {choosingHeldIn && (
+          <SheetContent title={t("heldIn.emergencyTitle")} description={t("heldIn.emergencyText")}>
+            <HeldInSelect
+              value={profile.emergencyHeldIn}
+              onChange={props.onSetEmergencyHeldIn}
+              id="emergency-held-in"
+            />
+            {emergencyFit(profile.emergencyHeldIn) && (
+              <p className="text-sm text-muted-foreground" data-testid="emergency-fit">
+                {t(`heldIn.fit.${emergencyFit(profile.emergencyHeldIn)}`)}
+              </p>
+            )}
+            <div>
+              <Button type="button" onClick={() => setChoosingHeldIn(false)}>
+                {t("heldIn.done")}
+              </Button>
+            </div>
           </SheetContent>
         )}
       </Sheet>

@@ -972,7 +972,8 @@
       "bought": "alındı olarak işaretlendi",
       "postponed": "ertelendi",
       "skipped": "vazgeçildi"
-    }
+    },
+    "deletedPurchase": "“{name}” ve taksitleri silindi"
   },
   "savings": {
     "title": "Birikim",
@@ -1053,6 +1054,26 @@
       "m50": "{name} hedefinin yarısına geldin. Devam!",
       "m75": "{name} hedefinin dörtte üçü tamam. Az kaldı!",
       "m100": "{name} hedefine ulaştın. Tebrikler!"
+    },
+    "heldIn": {
+      "label": "Nerede tutuluyor",
+      "hint": "Paranın neyle tutulduğu. Tutarı değiştirmez; neye dikkat edeceğini söyler.",
+      "notSet": "Seçilmedi",
+      "cash": "Düz nakit (hesapta lira)",
+      "other": "Başka bir şey…",
+      "customLabel": "Adını yaz",
+      "customPlaceholder": "örn. Gram altın hesabı",
+      "chip": "{name} olarak tutuluyor",
+      "change": "Değiştir",
+      "choose": "Neyle tutulduğunu seç",
+      "emergencyTitle": "Acil durum fonun nerede duruyor?",
+      "emergencyText": "Paranın neyin içinde durduğunu seç. Bu sadece bir not ve ipucu: tutar yazdığın gibi kalır.",
+      "done": "Tamam",
+      "fit": {
+        "good": "Kolay ulaşılır ve değerini iyi korur: acil durum fonu için uygun.",
+        "ok": "Ulaşılır, ama fiyatı oynayabilir ya da zamanla değer kaybeder. Düz nakit enflasyona yenilir, altın ve döviz oynar. Fonun bir kısmını daha sakin bir yerde tutmayı düşün.",
+        "risky": "Fiyatı çok oynayabilir ya da çabuk satılamaz. Tam en kötü anda ihtiyaç duyacağın acil durum fonu için nadiren akıllıca."
+      }
     }
   },
   "investments": {

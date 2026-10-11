@@ -253,3 +253,138 @@ test("settings show the three layers of data safety", async ({ page }) => {
   await expect(section.getByText("Automatic backup to a file")).toBeVisible();
   await expect(section.getByText("Copies kept in this browser")).toBeVisible();
 });
+
+test("the page is set in Inter from our own files, and Turkish letters use it too", async ({
+  page,
+}) => {
+  const requested: string[] = [];
+  page.on("request", (r) => requested.push(r.url()));
+  await page.goto("/");
+  await expect(page.locator("h1")).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  const loaded = await page.evaluate(() =>
+    [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/"/g, "")),
+  );
+  expect(loaded).toContain("Inter");
+  expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).toMatch(/^"?Inter/);
+  // the second file is only fetched when a Turkish letter is asked for
+  expect(
+    await page.evaluate(async () => {
+      await document.fonts.load("16px Inter", "ğşİıçöü");
+      return document.fonts.check("16px Inter", "ğşİıçöü");
+    }),
+  ).toBe(true);
+  // every request stays on the site itself
+  const origin = new URL(page.url()).origin;
+  expect(requested.filter((u) => u.startsWith("http") && !u.startsWith(origin))).toEqual([]);
+});
+
+test("no page scrolls sideways on a phone in Turkish with sample data", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const context = await browser.newContext({
+    viewport: { width: 360, height: 740 },
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, "language", { get: () => "tr-TR" }),
+  );
+  await page.goto("/");
+  await page.getByRole("button", { name: "Örnek verilerle gez" }).click();
+  await expect(page.getByTestId("demo-banner")).toBeVisible();
+  const wide: string[] = [];
+  for (const path of [...PAGES, "/calendar"]) {
+    await page.goto(path);
+    await expect(page.locator("h1")).toBeVisible();
+    // the home page keeps its details behind a button; open them so the whole page is measured
+    const show = page.getByRole("button", { name: "Detayları göster" });
+    if (await show.count()) await show.click();
+    // Measure after the font has swapped in and the page has settled; before that the widths are not final.
+    await page.evaluate(async () => {
+      await document.fonts.load("16px Inter", "ğşİıçöü");
+      await document.fonts.ready;
+    });
+    await page.waitForTimeout(400);
+    // Strict on purpose: no element may poke out past the screen's right edge, unless it sits in a box
+    // that scrolls or clips by itself. The page-level scroll width alone hides small overshoots that
+    // show up on other machines.
+    const overflows = await page.evaluate(() => {
+      const width = window.innerWidth;
+      if (document.documentElement.scrollWidth > width) return true;
+      return [...document.querySelectorAll("body *")].some((el) => {
+        if (el.getBoundingClientRect().right <= width + 1) return false;
+        if (getComputedStyle(el).position === "fixed") return false;
+        for (let a = el.parentElement; a; a = a.parentElement) {
+          const overflow = getComputedStyle(a).overflowX;
+          if (overflow === "auto" || overflow === "scroll" || overflow === "hidden") return false;
+        }
+        return true;
+      });
+    });
+    if (overflows) wide.push(path);
+  }
+  await context.close();
+  expect(wide).toEqual([]);
+});
+
+test("the search box opens in the middle and stays there, with no jump at the end of the animation", async ({
+  browser,
+}) => {
+  // motion on: the bug only showed while the entrance animation ran
+  const context = await browser.newContext({
+    viewport: { width: 1200, height: 800 },
+    reducedMotion: "no-preference",
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator("h1")).toBeVisible();
+  await page.evaluate(() => {
+    const samples: number[] = [];
+    (window as unknown as { __samples: number[] }).__samples = samples;
+    const watch = () => {
+      const box = document.querySelector('[role="dialog"]');
+      if (box) {
+        const r = box.getBoundingClientRect();
+        samples.push(r.left + r.width / 2);
+      }
+      if (samples.length < 40) requestAnimationFrame(watch);
+    };
+    requestAnimationFrame(watch);
+  });
+  await page
+    .getByRole("button", { name: /search/i })
+    .first()
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.waitForTimeout(700);
+  const samples = await page.evaluate(
+    () => (window as unknown as { __samples: number[] }).__samples,
+  );
+  expect(samples.length).toBeGreaterThan(5);
+  const final = samples[samples.length - 1] ?? 0;
+  const worst = Math.max(...samples.map((x) => Math.abs(x - final)));
+  expect(worst, "the box moved sideways while opening").toBeLessThan(8);
+  await context.close();
+});
+
+test("the emergency fund can be marked as kept in something, with a clean panel in both themes", async ({
+  browser,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto("/");
+    await page.getByRole("button", { name: "Look around with sample data" }).click();
+    await expect(page.getByTestId("demo-banner")).toBeVisible();
+    await page.goto("/sinking-funds");
+    await page.getByTestId("held-in-choose-emergency").click();
+    const panel = page.getByRole("dialog", { name: "Where is your emergency fund kept?" });
+    await panel.getByLabel("Kept in").selectOption("gold");
+    await expect(panel.getByTestId("emergency-fit")).toContainText("Reachable");
+    expect(await serious(page), `${colorScheme} panel`).toEqual([]);
+    await panel.getByRole("button", { name: "Done" }).click();
+    await expect(page.getByTestId("held-in-emergency")).toContainText("Kept in Gold");
+    expect(await serious(page), `${colorScheme} card`).toEqual([]);
+    await context.close();
+  }
+});

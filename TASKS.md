@@ -904,6 +904,17 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T16.2** Calm Home: under the greeting, the month's left-over figure and a four-line summary (free spending with a daily figure, the next payment that is not income, the one thing to do this month); everything else sits under "Show details", and the choice is remembered (`homeDetails` in settings).
   Note: details are hidden by default for the app and shown by default for the `Dashboard` component itself, so tests and other users of it are unchanged.
 
+- [x] **T16.3** Self-hosted font: Inter (variable, latin and latin-ext, SIL OFL) from `apps/web/public/fonts`, `font-display: swap`, the main file preloaded, licence in `docs/THIRD-PARTY.md`; a test checks the files, the Turkish letter coverage and that nothing points to another site, and the size budget now counts fonts.
+  Note: the wider letters showed three real overflows on a 360 px phone in Turkish (the backup import row, the lesson filter, the chart's screen-reader table); they are fixed and a browser test now checks every page in Turkish at 360 px.
+- [ ] **T16.4** Still to do from the plan: drag between Eisenhower quadrants, before/after bars and a cash/installment switch in the queue preview, changing a decision's outcome.
+
+- [x] **T16.5** One purchase, one record: deleting a "bought" decision that was bought in installments also removes the installments, and removing the installments from Expenses also removes the "bought" entry; undo restores both. Skipped, postponed and cash decisions are untouched.
+  Note: the link is `queueItemRef`; a purchase that was removed on one side before this change stays as it was.
+
+- [x] **T16.6** Search box opened off-centre and then jumped: the dialog is centred with Tailwind's `translate`, and its entrance keyframes also moved it with `transform`, so the two stacked. The keyframes now only fade and scale; a test guards the keyframes and a browser test samples the box while it opens.
+- [x] **T16.7** What a pot is kept in: each pot and the emergency fund can be marked as kept in plain cash or one of the investment types (or something the user names), shown on the card; the emergency fund also says how well that suits it (`data/held-in.json`, `emergencyFit`). It is a label and a hint: the amount stays what the user typed.
+  Note: linking a pot to a holding so its value follows the price is not done; that would change how pot balances work.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---

@@ -337,6 +337,7 @@ These extend the modules above; the rules in "Design principles" still hold (int
 - **Emergency fund first.** While the emergency fund is below its target (needs times target months), the plan's investing limit is added to savings and no investing is suggested; once it is full the plan applies as written and leftover saving goes to investing.
 - **Data safety.** The app asks the browser to persist storage; keeps a "had data since" mark outside the database to detect loss and offer restore; keeps daily internal copies (last 3) and a copy before each import (table `backups`, never exported); optional automatic backup to a user-chosen file; reminders after 3 days without any backup and every 14 days after.
 - **Calm Home.** A short summary (left this month, free spending per day, next payment, what to do) with the rest of the dashboard behind "Show details"; the choice is saved in settings.
+- **What a pot is kept in.** Optional `heldIn` on a pot and `emergencyHeldIn` on the profile: plain cash, an investment type, or `custom:Name`. The emergency fund gets a plain-language note on how well that suits it (good, ok, risky). The balance is still what the user typed.
 - **Quality budget** in `docs/QUALITY-BUDGET.md`.
 
 ## Acceptance criteria
