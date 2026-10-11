@@ -301,3 +301,11 @@ export {
   type CostCategory,
 } from "../modules/profile/category-breakdown";
 export { freeSpending, type FreeSpending, type FreeSpendingInput } from "../kernel/spending";
+export {
+  HELD_IN_OPTIONS,
+  emergencyFit,
+  heldInValue,
+  parseHeldIn,
+  type EmergencyFit,
+  type HeldInOption,
+} from "../modules/sinking-funds/held-in";

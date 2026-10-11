@@ -99,3 +99,19 @@ describe("colours come from tokens", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("dialog animation", () => {
+  const dialog = readFileSync(join(__dirname, "../components/ui/dialog.tsx"), "utf8");
+
+  it("does not move a dialog that is centred with translate classes, or it flies in from a corner and snaps", () => {
+    const centredWithClasses =
+      dialog.includes("-translate-x-1/2") && dialog.includes("-translate-y-1/2");
+    expect(centredWithClasses).toBe(true);
+    for (const name of ["dialog-in", "dialog-out"]) {
+      const frames = css.match(new RegExp(`@keyframes ${name} \\{[\\s\\S]*?\\n\\}`))?.[0] ?? "";
+      expect(frames, name).not.toBe("");
+      expect(frames, name).not.toMatch(/translate\(\s*-?\d+%\s*,\s*-?\d+%/);
+      expect(frames, name).not.toMatch(/translateX\(-50%\)/);
+    }
+  });
+});

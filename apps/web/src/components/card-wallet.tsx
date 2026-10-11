@@ -143,7 +143,7 @@ export function CardWallet({
         <Button
           type="button"
           variant="outline"
-          className="w-fit"
+          className="h-auto min-h-9 w-fit max-w-full whitespace-normal py-2 text-left"
           aria-expanded={toolsOpen}
           aria-controls="card-tools"
           onClick={() => setToolsOpen((open) => !open)}

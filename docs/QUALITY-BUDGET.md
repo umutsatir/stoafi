@@ -11,6 +11,7 @@ Gzip bytes, summed over the whole static export. Limits live in `apps/web/qualit
 | All JavaScript, every page | 706 KB | 820 KB |
 | Largest single JavaScript file | 109 KB | 130 KB |
 | All CSS | 8 KB | 16 KB |
+| Font files (woff2, loaded only when a character needs them) | 133 KB | 150 KB |
 
 Raising a limit needs a line in the commit message saying what was added and why.
 

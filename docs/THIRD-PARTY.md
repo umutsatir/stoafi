@@ -11,6 +11,7 @@ Stoafi is built on open-source packages. All are used under permissive licences 
 | zustand | In-memory app state | MIT |
 | tailwindcss, tailwind-merge, class-variance-authority, clsx | Styling | MIT |
 | @radix-ui/* (dialog, popover, tabs, select, label, slot) | Accessible dialogs, tabs and menus | MIT |
+| Inter (font files in `apps/web/public/fonts`, licence in `OFL.txt`) | Typeface, served from our own files | SIL Open Font License 1.1 |
 | lucide-react | Icons | ISC |
 | motion | Animation | MIT |
 | sonner | Toasts | MIT |

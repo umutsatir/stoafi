@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { HeldInSelect } from "./held-in-select";
 import { MoneyInput } from "./money-input";
 
 export interface SinkingFundFormProps {
@@ -41,6 +42,7 @@ export function SinkingFundForm({
   const [mode, setMode] = useState<"goal" | "open">(initial && !initial.dueMonth ? "open" : "goal");
   const [dueMonth, setDueMonth] = useState<string>(initial?.dueMonth ?? "");
   const [saved, setSaved] = useState(initial?.currentBalance ?? 0);
+  const [heldIn, setHeldIn] = useState<string | undefined>(initial?.heldIn);
   const [error, setError] = useState<FieldError>(null);
 
   function handleSubmit(event: FormEvent) {
@@ -56,6 +58,7 @@ export function SinkingFundForm({
     // Keep what the form does not edit: the deposit log, icon and colour. An open pot has no date.
     const kept: Partial<SinkingFund> = { ...initial };
     delete kept.dueMonth;
+    delete kept.heldIn;
     onSubmit({
       ...kept,
       id: initial?.id ?? createId(),
@@ -63,6 +66,7 @@ export function SinkingFundForm({
       target: open ? 0 : target,
       ...(!open && due.success ? { dueMonth: due.data } : {}),
       currentBalance: saved,
+      ...(heldIn ? { heldIn } : {}),
     });
     if (!initial) {
       setLabel("");
@@ -136,6 +140,7 @@ export function SinkingFundForm({
           </Field>
         )}
       </div>
+      <HeldInSelect value={heldIn} onChange={setHeldIn} />
       <div className="flex gap-2">
         <Button type="submit">{initial ? t("saveChanges") : t("add")}</Button>
         {onCancel && (
