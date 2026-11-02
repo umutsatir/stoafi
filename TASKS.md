@@ -895,6 +895,19 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T15.10** Free spending: an optional monthly personal spending amount (counted as wants), or else what is left of the wants limit, shown on Home as "Free spending" with a weekly and daily spread; installments are shown inside the wants bucket against the installment cap (`kernel/spending.ts`, `personalSpending` on the profile).
   Note: no spending log, as chosen; the weekly and daily figures are the month spread evenly, not a live balance.
 
+## Phase 16: Yörünge redesign (branch `feat/redesign`, source: `docs/design/Stoafi.dc.html`)
+
+- [x] **T16.1** Tokens (light and dark), Sora self-hosted (`public/fonts`), floating dock nav and phone bottom bar, lift and press motion, restyled primitives.
+  Note: pastel chart fills cannot reach 3:1 on the card; the token test now asks 1.7:1 for chart fills and 4.5:1 for the ink on them. `--primary-ink` is the text-safe coral.
+- [x] **T16.2** Home: orbit ring, todo card, fund and health tiles, 12-month bars (with a hidden table), 14-day list, plan, queue, installment room.
+- [x] **T16.3** Calendar (day picking, side cards). **T16.4** Income and expenses (two columns, grouped rows).
+- [x] **T16.5** Profile (four tiles). **T16.6** Plan (stacked bars per strategy, lesson details).
+- [x] **T16.7** Queue rows with rank badges; large radii everywhere. **T16.8** Settings in two columns plus offline and install section.
+- [x] **T16.9** Data-lost screen (`lib/had-data.ts`), lock, error and onboarding restyled.
+- [ ] **T16.10** Not recomposed yet, only restyled through shared primitives: Savings (pots and basket), Cards, Health, Decisions, Lessons, queue detail/Eisenhower/timeline views.
+- [ ] **T16.11** Needs an owner decision: cooldown re-prompt ("Still want it?") needs an optional field on the queue item; "Where is it held?" on the profile needs a new profile field. Both are in the design, neither exists in the data model.
+- [ ] **T16.12** Run `npx playwright install` then `pnpm --filter @stoafi/web test:e2e`; browsers were not installed here, so e2e was not run.
+
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
 ---
