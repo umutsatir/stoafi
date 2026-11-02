@@ -27,7 +27,7 @@ export function SettingsSection({
     >
       <div>
         <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
+          <Icon className="h-5 w-5 text-primary-ink" aria-hidden="true" />
           {title}
         </h2>
         {description && <p className="text-sm text-muted-foreground">{description}</p>}

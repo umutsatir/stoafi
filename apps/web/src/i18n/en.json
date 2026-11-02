@@ -157,7 +157,9 @@
       "you": "You"
     },
     "calendar": "Calendar",
-    "search": "Search"
+    "search": "Search",
+    "add": "Add",
+    "toggleTheme": "Switch light or dark"
   },
   "incomeExpenses": {
     "title": "Income & Expenses",

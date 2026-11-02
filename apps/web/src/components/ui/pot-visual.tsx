@@ -41,7 +41,7 @@ export function PotVisual({
         animate={{ height: `${level * 100}%` }}
         transition={{ type: "spring", stiffness: 120, damping: 20 }}
       />
-      <Icon className="relative h-12 w-12 text-primary" strokeWidth={1.5} />
+      <Icon className="relative h-12 w-12 text-primary-ink" strokeWidth={1.5} />
       <AnimatePresence>
         {dropKey > 0 && !reduced && (
           <motion.span

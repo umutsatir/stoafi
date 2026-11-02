@@ -105,12 +105,12 @@ function Panel({
     >
       <CardContent className="flex h-full flex-col gap-3 pt-6">
         <h2 className="flex items-center gap-2 text-base font-semibold">
-          <Icon className="h-4 w-4 text-primary" aria-hidden="true" />
+          <Icon className="h-4 w-4 text-primary-ink" aria-hidden="true" />
           {title}
         </h2>
         {children}
         {href && hrefLabel && (
-          <Link href={href} className="mt-auto text-sm font-medium text-primary hover:underline">
+          <Link href={href} className="mt-auto text-sm font-medium text-primary-ink hover:underline">
             {hrefLabel}
           </Link>
         )}
@@ -476,7 +476,7 @@ export function Dashboard({
 
         <Panel title={t("nextInQueue")} icon={ListChecks} index={6}>
           {next.length === 0 ? (
-            <Link href="/queue" className="text-sm font-medium text-primary hover:underline">
+            <Link href="/queue" className="text-sm font-medium text-primary-ink hover:underline">
               {t("addToQueue")}
             </Link>
           ) : (
@@ -501,7 +501,7 @@ export function Dashboard({
               </ul>
               <Link
                 href="/queue"
-                className="mt-auto text-sm font-medium text-primary hover:underline"
+                className="mt-auto text-sm font-medium text-primary-ink hover:underline"
               >
                 {t("openQueue")}
               </Link>

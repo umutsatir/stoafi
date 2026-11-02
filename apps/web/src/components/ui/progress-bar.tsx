@@ -3,11 +3,11 @@ import { cn } from "@/lib/utils";
 export type Tone = "primary" | "success" | "warning" | "danger" | "info";
 
 export const TONE_BAR: Record<Tone, string> = {
-  primary: "bg-primary",
-  success: "bg-success",
-  warning: "bg-warning",
-  danger: "bg-destructive",
-  info: "bg-info",
+  primary: "bg-c4",
+  success: "bg-c4",
+  warning: "bg-c2",
+  danger: "bg-c3",
+  info: "bg-c1",
 };
 
 export interface ProgressBarProps {
@@ -28,7 +28,7 @@ export function ProgressBar({ value, max, label, tone = "primary", className }: 
       aria-valuemin={0}
       aria-valuemax={max}
       aria-valuenow={Math.min(Math.max(value, 0), max)}
-      className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
+      className={cn("h-2.5 w-full overflow-hidden rounded-full bg-muted", className)}
     >
       <div
         className={cn("h-full rounded-full transition-[width] duration-500", TONE_BAR[tone])}

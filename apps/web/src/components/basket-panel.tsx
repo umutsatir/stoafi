@@ -118,7 +118,7 @@ export function BasketPanel({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="flex items-center gap-2 text-lg font-semibold">
-            <Layers className="h-4 w-4 text-primary" aria-hidden="true" />
+            <Layers className="h-4 w-4 text-primary-ink" aria-hidden="true" />
             {t("title")}
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">{t("intro")}</p>

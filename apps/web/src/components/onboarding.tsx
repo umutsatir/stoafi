@@ -120,7 +120,7 @@ export function Onboarding({ onDemo }: OnboardingProps) {
         data-testid="onboarding-welcome"
         className="rise-in flex flex-col items-start gap-5 rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-card p-8 shadow-sm"
       >
-        <Sparkles className="h-8 w-8 text-primary" aria-hidden="true" />
+        <Sparkles className="h-8 w-8 text-primary-ink" aria-hidden="true" />
         <div>
           <h2 className="text-title font-semibold">{t("welcomeTitle")}</h2>
           <p className="mt-1 max-w-prose text-muted-foreground">{t("welcomeText")}</p>
@@ -298,7 +298,7 @@ export function Onboarding({ onDemo }: OnboardingProps) {
                 >
                   <span className="flex items-center gap-2 font-medium">
                     {strategyId === id && (
-                      <Check className="h-4 w-4 text-primary" aria-hidden="true" />
+                      <Check className="h-4 w-4 text-primary-ink" aria-hidden="true" />
                     )}
                     {lesson?.title ?? id}
                   </span>

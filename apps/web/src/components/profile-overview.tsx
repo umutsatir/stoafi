@@ -40,7 +40,7 @@ export function ProfileOverview({ profile, month }: ProfileOverviewProps) {
       <p className="text-sm text-muted-foreground">{t("title")}</p>
       <div className="mt-4 grid gap-6 sm:grid-cols-3">
         <div className="rise-in flex items-start gap-3" style={stagger(1)}>
-          <Wallet className="mt-1 h-6 w-6 text-primary" aria-hidden="true" />
+          <Wallet className="mt-1 h-6 w-6 text-primary-ink" aria-hidden="true" />
           <div>
             <p className="text-sm text-muted-foreground">{t("income")}</p>
             <p className="text-2xl font-semibold" data-testid="overview-income">
@@ -50,7 +50,7 @@ export function ProfileOverview({ profile, month }: ProfileOverviewProps) {
           </div>
         </div>
         <div className="rise-in flex items-start gap-3" style={stagger(2)}>
-          <Clock className="mt-1 h-6 w-6 text-primary" aria-hidden="true" />
+          <Clock className="mt-1 h-6 w-6 text-primary-ink" aria-hidden="true" />
           <div>
             <p className="text-sm text-muted-foreground">{t("hour")}</p>
             <p className="text-2xl font-semibold" data-testid="overview-hour">
@@ -79,7 +79,7 @@ export function ProfileOverview({ profile, month }: ProfileOverviewProps) {
             </p>
             <Link
               href="/sinking-funds"
-              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary-ink hover:underline"
             >
               <PiggyBank className="h-3.5 w-3.5" aria-hidden="true" />
               {t("addMoney")}

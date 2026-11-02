@@ -45,10 +45,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <IntlProvider>
-          <div className="flex min-h-screen">
+          <div className="min-h-screen">
             <Nav />
-            <div className="min-w-0 flex-1 px-4 pb-24 pt-6 md:px-8 md:pb-10">
-              <div className="mx-auto max-w-5xl">
+            <div className="min-w-0 px-4 pb-28 pt-2 md:px-8 md:pb-16">
+              <div className="mx-auto max-w-[1240px]">
                 <AppBootstrap>
                   <PageTransition>{children}</PageTransition>
                 </AppBootstrap>

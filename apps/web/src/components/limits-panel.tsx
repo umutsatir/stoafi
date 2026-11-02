@@ -141,7 +141,7 @@ export function LimitsPanel({
             <li key={a.id} data-testid={`advice-${a.id}`} className="flex flex-wrap gap-x-2">
               <AdviceText advice={a} />
               {a.id !== "allGood" && (
-                <Link href={HREF[a.id]} className="font-medium text-primary hover:underline">
+                <Link href={HREF[a.id]} className="font-medium text-primary-ink hover:underline">
                   {t(`action.${a.id}`)}
                 </Link>
               )}

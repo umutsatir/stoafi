@@ -86,7 +86,7 @@ export function ProfileForm({
       <Card className="rise-in">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" />
+            <ShieldCheck className="h-5 w-5 text-primary-ink" aria-hidden="true" />
             {t("fundTitle")}
           </CardTitle>
           <CardDescription>{t("fundHint")}</CardDescription>
@@ -117,7 +117,7 @@ export function ProfileForm({
       <Card className="rise-in" style={stagger(1)}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
+            <TrendingUp className="h-5 w-5 text-primary-ink" aria-hidden="true" />
             {t("economyTitle")}
           </CardTitle>
           <CardDescription>{t("economyHint")}</CardDescription>

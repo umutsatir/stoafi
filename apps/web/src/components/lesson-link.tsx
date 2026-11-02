@@ -28,7 +28,7 @@ export function LessonLink({ lessonId, testId, className, children, ariaLabel }:
       aria-label={ariaLabel ?? `${lesson.id} lesson`}
       data-testid={testId}
       className={cn(
-        "text-sm font-medium text-primary underline-offset-2 hover:underline",
+        "text-sm font-medium text-primary-ink underline-offset-2 hover:underline",
         className,
       )}
     >

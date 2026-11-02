@@ -27,7 +27,7 @@ export function Sparkline({ points, label, className }: SparklineProps) {
       role="img"
       aria-label={label}
       viewBox={`0 0 ${width} ${height}`}
-      className={cn("h-9 w-full text-primary", className)}
+      className={cn("h-9 w-full text-primary-ink", className)}
     >
       <polyline
         points={coords.join(" ")}

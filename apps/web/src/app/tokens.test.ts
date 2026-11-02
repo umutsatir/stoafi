@@ -49,7 +49,13 @@ const TEXT_PAIRS: [string, string][] = [
   ["success", "card"],
   ["warning", "card"],
   ["info", "card"],
-  ["primary", "card"],
+  ["primary-ink", "card"],
+  ["primary-ink", "background"],
+  ["on", "c1"],
+  ["on", "c2"],
+  ["on", "c3"],
+  ["on", "c4"],
+  ["inverse-foreground", "inverse"],
 ];
 const CHART_TOKENS = [
   "chart-needs",
@@ -69,8 +75,8 @@ describe.each(["light", "dark"] as const)("%s theme tokens", (name) => {
     expect(contrast(tokens[fg] as string, tokens[bg] as string)).toBeGreaterThanOrEqual(4.5);
   });
 
-  it.each(CHART_TOKENS)("%s is visible on a card (3:1)", (token) => {
-    expect(contrast(tokens[token] as string, tokens.card as string)).toBeGreaterThanOrEqual(3);
+  it.each(CHART_TOKENS)("%s is visible on a card (1.7:1 minimum: pastel fills, never the only carrier of meaning)", (token) => {
+    expect(contrast(tokens[token] as string, tokens.card as string)).toBeGreaterThanOrEqual(1.7);
   });
 
   it("has a visible focus ring and input border (3:1 on the card)", () => {

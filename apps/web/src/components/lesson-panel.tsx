@@ -53,7 +53,7 @@ export function LessonPanelLink({
         {...(ariaLabel ? { "aria-label": ariaLabel } : {})}
         onClick={() => setOpen(true)}
         className={cn(
-          "text-sm font-medium text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          "text-sm font-medium text-primary-ink underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           className,
         )}
       >
@@ -70,7 +70,7 @@ export function LessonPanelLink({
           <Section label={t("critique")} text={lesson.critique} />
           <Link
             href={`/lessons#${lesson.id}`}
-            className="text-sm font-medium text-primary underline-offset-2 hover:underline"
+            className="text-sm font-medium text-primary-ink underline-offset-2 hover:underline"
           >
             {t("openInLessons")}
           </Link>

@@ -65,7 +65,7 @@ export function LockGate({ children }: { children: ReactNode }) {
       data-testid="lock-screen"
       className="mx-auto flex min-h-[60vh] max-w-sm flex-col items-center justify-center gap-5 text-center"
     >
-      <Lock className="h-10 w-10 text-primary" aria-hidden="true" />
+      <Lock className="h-10 w-10 text-primary-ink" aria-hidden="true" />
       <h1 className="text-title font-semibold">{t("title")}</h1>
       <form onSubmit={submit} className="flex w-full flex-col gap-3">
         <label htmlFor="lock-pin" className="sr-only">

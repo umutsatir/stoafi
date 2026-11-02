@@ -121,7 +121,7 @@ export default function LessonsPage() {
                 onClick={() => setOpenId(open ? null : card.id)}
                 className="flex w-full items-start gap-3 rounded-2xl p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <BookOpen className="mt-1 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                <BookOpen className="mt-1 h-5 w-5 shrink-0 text-primary-ink" aria-hidden="true" />
                 <span className="min-w-0 flex-1">
                   <span className="flex flex-wrap items-center gap-2">
                     <span className="text-lg font-semibold">{card.title}</span>

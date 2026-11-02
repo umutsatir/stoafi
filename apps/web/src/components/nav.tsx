@@ -8,20 +8,23 @@ import {
   Ellipsis,
   Eye,
   EyeOff,
-  Search,
   HeartPulse,
   LayoutDashboard,
   LayoutList,
   ListChecks,
+  Moon,
   PiggyBank,
+  Plus,
+  Search,
   Settings as SettingsIcon,
+  Sun,
   UserRound,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/command-palette";
@@ -35,46 +38,27 @@ interface Route {
   href: string;
   key: string;
   icon: LucideIcon;
+  /** A thin divider is drawn before this item in the dock. */
+  divider?: boolean;
 }
 
-/** Sidebar order and grouping (desktop). */
-const GROUPS: { key: string; routes: Route[] }[] = [
-  {
-    key: "overview",
-    routes: [
-      { href: "/", key: "home", icon: LayoutDashboard },
-      { href: "/calendar", key: "calendar", icon: CalendarDays },
-    ],
-  },
-  {
-    key: "money",
-    routes: [
-      { href: "/income-expenses", key: "incomeExpenses", icon: ArrowLeftRight },
-      { href: "/sinking-funds", key: "sinkingFunds", icon: PiggyBank },
-      { href: "/cards", key: "cards", icon: CreditCard },
-    ],
-  },
-  {
-    key: "plan",
-    routes: [
-      { href: "/plan", key: "plan", icon: Wallet },
-      { href: "/queue", key: "queue", icon: ListChecks },
-      { href: "/decisions", key: "decisions", icon: LayoutList },
-    ],
-  },
-  { key: "status", routes: [{ href: "/health", key: "health", icon: HeartPulse }] },
-  { key: "learn", routes: [{ href: "/lessons", key: "lessons", icon: BookOpen }] },
-  {
-    key: "you",
-    routes: [
-      { href: "/profile", key: "profile", icon: UserRound },
-      { href: "/settings", key: "settings", icon: SettingsIcon },
-    ],
-  },
+/** Dock order (desktop): the order and grouping of the design. */
+const ROUTES: Route[] = [
+  { href: "/", key: "home", icon: LayoutDashboard },
+  { href: "/calendar", key: "calendar", icon: CalendarDays },
+  { href: "/income-expenses", key: "incomeExpenses", icon: ArrowLeftRight, divider: true },
+  { href: "/sinking-funds", key: "sinkingFunds", icon: PiggyBank },
+  { href: "/cards", key: "cards", icon: CreditCard },
+  { href: "/plan", key: "plan", icon: Wallet, divider: true },
+  { href: "/queue", key: "queue", icon: ListChecks },
+  { href: "/decisions", key: "decisions", icon: LayoutList },
+  { href: "/health", key: "health", icon: HeartPulse, divider: true },
+  { href: "/lessons", key: "lessons", icon: BookOpen, divider: true },
+  { href: "/profile", key: "profile", icon: UserRound, divider: true },
+  { href: "/settings", key: "settings", icon: SettingsIcon },
 ];
 
-const ALL_ROUTES = GROUPS.flatMap((g) => g.routes);
-const route = (href: string): Route => ALL_ROUTES.find((r) => r.href === href) as Route; // hrefs below are all in GROUPS
+const route = (href: string): Route => ROUTES.find((r) => r.href === href) as Route; // hrefs below are all in ROUTES
 
 /** The four always-visible phone tabs; "More" holds every other page. */
 const TAB_ROUTES: { route: Route; labelKey: string }[] = [
@@ -83,11 +67,14 @@ const TAB_ROUTES: { route: Route; labelKey: string }[] = [
   { route: route("/queue"), labelKey: "queue" },
   { route: route("/plan"), labelKey: "plan" },
 ];
-const MORE_ROUTES = ALL_ROUTES.filter((r) => !TAB_ROUTES.some((tab) => tab.route.href === r.href));
+const MORE_ROUTES = ROUTES.filter((r) => !TAB_ROUTES.some((tab) => tab.route.href === r.href));
 
 function isActive(pathname: string, href: string): boolean {
   return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 }
+
+const ROUND_BUTTON =
+  "press flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-card text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export function Nav() {
   const t = useTranslations("nav");
@@ -95,11 +82,20 @@ export function Nav() {
   const tPalette = useTranslations("palette");
   const tPrivacy = useTranslations("privacy");
   const pathname = usePathname();
+  const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [dark, setDark] = useState(false);
   const hideAmounts = useAppStore((s) => s.hideAmounts);
   const setHideAmounts = useAppStore((s) => s.setHideAmounts);
+  const theme = useAppStore((s) => s.theme);
+  const setTheme = useAppStore((s) => s.setTheme);
+  const setQuickAction = useAppStore((s) => s.setQuickAction);
   const moreActive = MORE_ROUTES.some((r) => isActive(pathname, r.href));
+
+  useEffect(() => {
+    setDark(document.documentElement.dataset.theme === "dark");
+  }, [theme]);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -112,74 +108,113 @@ export function Nav() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  function addToQueue() {
+    setQuickAction("addQueueItem");
+    router.push("/queue");
+  }
+
   return (
     <>
-      <nav
-        aria-label={t("ariaLabel")}
-        className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border bg-card px-3 py-5 md:flex"
-      >
-        <div className="flex items-center justify-between px-3">
-          <span className="text-lg font-semibold tracking-tight">{tApp("name")}</span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={hideAmounts}
-            aria-label={tPrivacy("hideToggle")}
-            onClick={() => setHideAmounts(!hideAmounts)}
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <header className="sticky top-0 z-30 bg-background/90 px-4 py-3 backdrop-blur md:px-8 md:py-4">
+        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3">
+          <Link href="/" className="press flex flex-none items-center gap-2.5" aria-label={tApp("name")}>
+            <span
+              aria-hidden="true"
+              className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-foreground text-[17px] font-extrabold text-background"
+            >
+              {tApp("name").charAt(0).toUpperCase()}
+            </span>
+            <span className="text-xl font-extrabold tracking-[-0.03em]">{tApp("name")}</span>
+          </Link>
+
+          <nav
+            aria-label={t("ariaLabel")}
+            className="order-last hidden w-full min-w-0 flex-1 justify-center md:order-none md:flex md:w-auto"
           >
-            {hideAmounts ? (
-              <EyeOff className="h-4 w-4" aria-hidden="true" />
-            ) : (
-              <Eye className="h-4 w-4" aria-hidden="true" />
-            )}
-          </button>
-        </div>
-        <button
-          type="button"
-          onClick={() => setPaletteOpen(true)}
-          aria-label={tPalette("open")}
-          className="mx-1 flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Search className="h-4 w-4" aria-hidden="true" />
-          <span className="flex-1 text-left">{t("search")}</span>
-          <kbd className="rounded bg-muted px-1.5 py-0.5 text-xs">{SHORTCUT_HINT}</kbd>
-        </button>
-        {GROUPS.map((group) => (
-          <div key={group.key} className="flex flex-col gap-1">
-            <p className="px-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {t(`groups.${group.key}`)}
-            </p>
-            <ul className="flex flex-col gap-0.5">
-              {group.routes.map((r) => {
+            <ul className="flex items-center gap-0.5 rounded-full bg-card p-1.5">
+              {ROUTES.map((r) => {
                 const Icon = r.icon;
                 const active = isActive(pathname, r.href);
                 return (
-                  <li key={r.href}>
+                  <li key={r.href} className="flex items-center">
+                    {r.divider && (
+                      <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />
+                    )}
                     <Link
                       href={r.href}
+                      title={t(r.key)}
+                      aria-label={t(r.key)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        "press flex items-center gap-2 rounded-full p-2.5 text-[13px] font-extrabold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         active
-                          ? "bg-primary text-primary-foreground dark:bg-primary/15 dark:text-primary"
-                          : "text-muted-foreground hover:bg-secondary hover:text-foreground",
+                          ? "bg-primary px-4 text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground",
                       )}
                     >
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                      {t(r.key)}
+                      <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                      {active && <span>{t(r.key)}</span>}
                     </Link>
                   </li>
                 );
               })}
             </ul>
+          </nav>
+
+          <div className="flex flex-none items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(true)}
+              aria-label={tPalette("open")}
+              className="press flex h-10 items-center gap-2 rounded-full bg-card px-3.5 text-[13px] font-bold text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline">{t("search")}</span>
+              <kbd className="hidden rounded-full bg-muted px-2 py-0.5 text-xs lg:inline">
+                {SHORTCUT_HINT}
+              </kbd>
+            </button>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={hideAmounts}
+              aria-label={tPrivacy("hideToggle")}
+              onClick={() => setHideAmounts(!hideAmounts)}
+              className={ROUND_BUTTON}
+            >
+              {hideAmounts ? (
+                <EyeOff className="h-[18px] w-[18px]" aria-hidden="true" />
+              ) : (
+                <Eye className="h-[18px] w-[18px]" aria-hidden="true" />
+              )}
+            </button>
+            <button
+              type="button"
+              aria-label={t("toggleTheme")}
+              onClick={() => setTheme(dark ? "light" : "dark")}
+              className={ROUND_BUTTON}
+            >
+              {dark ? (
+                <Sun className="h-[18px] w-[18px]" aria-hidden="true" />
+              ) : (
+                <Moon className="h-[18px] w-[18px]" aria-hidden="true" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={addToQueue}
+              className="press flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-[13px] font-extrabold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline">{t("add")}</span>
+            </button>
           </div>
-        ))}
-      </nav>
+        </div>
+      </header>
 
       <nav
         aria-label={t("mobileAriaLabel")}
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="fixed inset-x-3 bottom-3 z-40 rounded-full bg-card px-1 pb-[env(safe-area-inset-bottom)] shadow-[0_10px_30px_rgb(20_40_40/0.18)] md:hidden"
       >
         <ul className="grid grid-cols-5">
           {TAB_ROUTES.map(({ route: r, labelKey }) => {
@@ -191,8 +226,8 @@ export function Nav() {
                   href={r.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-medium",
-                    active ? "text-primary" : "text-muted-foreground",
+                    "m-1 flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-extrabold",
+                    active ? "bg-primary text-primary-foreground" : "text-muted-foreground",
                   )}
                 >
                   <Icon className="h-5 w-5" aria-hidden="true" />
@@ -206,8 +241,8 @@ export function Nav() {
               type="button"
               onClick={() => setMoreOpen(true)}
               className={cn(
-                "flex min-h-14 w-full flex-col items-center justify-center gap-0.5 text-xs font-medium",
-                moreActive ? "text-primary" : "text-muted-foreground",
+                "m-1 flex min-h-12 w-[calc(100%-0.5rem)] flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-extrabold",
+                moreActive ? "bg-primary text-primary-foreground" : "text-muted-foreground",
               )}
             >
               <Ellipsis className="h-5 w-5" aria-hidden="true" />
@@ -230,7 +265,7 @@ export function Nav() {
                     href={r.href}
                     onClick={() => setMoreOpen(false)}
                     aria-current={isActive(pathname, r.href) ? "page" : undefined}
-                    className="flex min-h-12 items-center gap-2 rounded-lg border border-border px-3 text-sm font-medium hover:bg-secondary"
+                    className="press flex min-h-12 items-center gap-2 rounded-2xl bg-muted px-3 text-sm font-bold"
                   >
                     <Icon className="h-4 w-4" aria-hidden="true" />
                     {t(r.key)}

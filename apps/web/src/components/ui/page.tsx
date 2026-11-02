@@ -13,7 +13,7 @@ export function Page({
   return (
     <main className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-title font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-title font-extrabold tracking-[-0.03em]">{title}</h1>
         {action}
       </div>
       {children}

@@ -33,18 +33,10 @@ describe("Nav", () => {
       "Lessons",
       "Settings",
     ]) {
-      // Every page is reachable from the sidebar (desktop).
+      // Every page is reachable from the top dock (desktop).
       expect(
         within(screen.getByRole("navigation", { name: "Main" })).getByRole("link", { name: label }),
       ).toBeInTheDocument();
-    }
-  });
-
-  it("groups the sidebar under headings", () => {
-    renderNav();
-    const sidebar = within(screen.getByRole("navigation", { name: "Main" }));
-    for (const heading of ["Overview", "Money", "Plan", "Status", "Learn", "You"]) {
-      expect(sidebar.getAllByText(heading).length).toBeGreaterThan(0);
     }
   });
 

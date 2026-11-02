@@ -157,7 +157,9 @@
       "you": "Sen"
     },
     "calendar": "Takvim",
-    "search": "Ara"
+    "search": "Ara",
+    "add": "Ekle",
+    "toggleTheme": "Açık / koyu"
   },
   "incomeExpenses": {
     "title": "Gelir ve Giderler",

@@ -72,7 +72,7 @@ export function PrivacySettings() {
       <div className="flex flex-col gap-3 border-t border-border pt-5">
         <div>
           <p className="flex items-center gap-2 font-medium">
-            <KeyRound className="h-4 w-4 text-primary" aria-hidden="true" />
+            <KeyRound className="h-4 w-4 text-primary-ink" aria-hidden="true" />
             {t("pinTitle")}
           </p>
           <p className="text-sm text-muted-foreground">{lock ? t("pinOn") : t("pinOff")}</p>
