@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, CreditCard, Plus } from "lucide-react";
-import { BANKS, limitUsage, mainCards, type Card, type SupplementaryChoice } from "@stoafi/core";
+import { CreditCard, Plus } from "lucide-react";
+import { BANKS, cardColors, type Card, type SupplementaryChoice } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useQuickAction } from "@/lib/use-quick-action";
+import { Money } from "@/components/ui/money";
 import { cn } from "@/lib/utils";
 import { CardDeleteDialog } from "./card-delete-dialog";
 import { CardDetail } from "./card-detail";
 import { CardForm } from "./card-form";
-import { CardStack } from "./card-stack";
 import { MinimumPaymentCalculator } from "./minimum-payment-calculator";
 import { useBankName } from "./bank-card";
 
@@ -26,8 +26,7 @@ export interface CardWalletProps {
   onRemove: (card: Card, choice: SupplementaryChoice) => void;
 }
 
-type Panel =
-  { kind: "detail"; cardId: string } | { kind: "form"; editing?: Card; parentId?: string } | null;
+type Panel = { kind: "form"; editing?: Card; parentId?: string } | null;
 
 function BankSwatch({ bankId, onPick }: { bankId: string; onPick: () => void }) {
   const bank = BANKS.find((b) => b.id === bankId);
@@ -56,7 +55,7 @@ export function CardWallet({
   const t = useTranslations("cards");
   const [panel, setPanel] = useState<Panel>(null);
   const [deleting, setDeleting] = useState<Card | null>(null);
-  const [toolsOpen, setToolsOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [calculatorBalance, setCalculatorBalance] = useState<number | undefined>(undefined);
   const [presetBank, setPresetBank] = useState<string | undefined>(undefined);
   useQuickAction("addCard", () => {
@@ -64,19 +63,16 @@ export function CardWallet({
     setPanel({ kind: "form" });
   });
 
-  const detailCard =
-    panel?.kind === "detail" ? cards.find((c) => c.id === panel.cardId) : undefined;
-  const mains = mainCards(cards);
+  const selected = cards.find((c) => c.id === selectedId) ?? cards[0];
+  const owedOn = (card: Card) => (card.currentDebt ?? 0) + (remainingInstallments[card.id] ?? 0);
 
   function openMinimumOnly(card: Card) {
-    const owed = (card.currentDebt ?? 0) + (remainingInstallments[card.id] ?? 0);
+    const owed = owedOn(card);
     setCalculatorBalance(owed > 0 ? owed : undefined);
-    setToolsOpen(true);
-    setPanel(null);
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
       {cards.length === 0 ? (
         <EmptyState
           icon={<CreditCard className="h-8 w-8" />}
@@ -117,52 +113,99 @@ export function CardWallet({
               {t("add")}
             </Button>
           </div>
-          <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {mains.map((main) => {
-              const usage = limitUsage(cards, main.id, remainingInstallments);
+          <ul className="-mx-4 flex gap-8 overflow-x-auto px-4 pb-8 pt-12 md:-mx-8 md:px-8">
+            {cards.map((card, i) => {
+              const colors = cardColors(card);
+              const on = selected?.id === card.id;
+              const supplementary = card.kind === "supplementary";
+              const main = supplementary ? cards.find((c) => c.id === card.parentId) : undefined;
               return (
-                <li key={main.id} className="flex flex-col gap-2">
-                  <CardStack
-                    main={main}
-                    cards={cards}
-                    onOpen={(card) => setPanel({ kind: "detail", cardId: card.id })}
-                  />
-                  {usage && (
-                    <p className="text-xs text-muted-foreground" data-testid={`usage-${main.id}`}>
-                      {usage.overLimit ? t("detail.overLimitShort") : t("detail.availableShort")}
-                    </p>
-                  )}
+                <li key={card.id} className="flex-none">
+                  <button
+                    type="button"
+                    data-testid={`card-${card.id}`}
+                    aria-pressed={on}
+                    aria-label={
+                      main
+                        ? t("openSupplementary", { name: card.label, main: main.label })
+                        : t("openCard", { name: card.label })
+                    }
+                    onClick={() => setSelectedId(card.id)}
+                    style={{
+                      background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
+                      color: colors.text,
+                      animationDelay: `${i * 80}ms`,
+                    }}
+                    className={cn(
+                      "pop-in relative flex h-[208px] w-[300px] flex-col overflow-hidden rounded-[28px] px-[26px] py-6 text-left transition-[transform,opacity,filter] duration-500 [transition-timing-function:cubic-bezier(.3,1.6,.5,1)] hover:-translate-y-3.5 hover:-rotate-[1.5deg] hover:scale-[1.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-[330px]",
+                      on ? "-translate-y-2 opacity-100" : "opacity-80 saturate-75",
+                    )}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="absolute -right-[50px] -top-[50px] h-[170px] w-[170px] rounded-full bg-white/20"
+                    />
+                    <span className="relative flex items-start justify-between gap-2">
+                      <span className="text-lg font-extrabold tracking-[-0.03em]">
+                        {card.label}
+                      </span>
+                      {supplementary && (
+                        <span className="rounded-full bg-white/40 px-2.5 py-1 text-[11px] font-extrabold">
+                          {t("supplementaryBadge")}
+                        </span>
+                      )}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="mt-[22px] h-[30px] w-[42px] rounded-lg bg-white/45"
+                    />
+                    <span className="relative mt-auto flex items-end justify-between gap-2">
+                      <span>
+                        <span className="block text-xs font-bold opacity-75">
+                          <BankName bankId={card.bankId} />
+                        </span>
+                        <span className="mt-0.5 block text-[17px] font-extrabold tracking-[0.14em]">
+                          •••• {card.last4 ?? "0000"}
+                        </span>
+                      </span>
+                      <span className="text-right">
+                        <span className="block text-[11px] font-bold opacity-75">
+                          {t("detail.usedLabel")}
+                        </span>
+                        <span className="block text-base font-extrabold">
+                          <Money value={owedOn(card)} />
+                        </span>
+                      </span>
+                    </span>
+                  </button>
                 </li>
               );
             })}
           </ul>
+
+          {selected && (
+            <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+              <CardDetail
+                card={selected}
+                cards={cards}
+                remainingInstallments={remainingInstallments}
+                onEdit={() => setPanel({ kind: "form", editing: selected })}
+                onDelete={() => setDeleting(selected)}
+                onAddSupplementary={() => setPanel({ kind: "form", parentId: selected.id })}
+                onMinimumOnly={() => openMinimumOnly(selected)}
+              />
+              <div id="card-tools">
+                <MinimumPaymentCalculator
+                  key={calculatorBalance ?? "default"}
+                  {...(calculatorBalance !== undefined
+                    ? { initialBalance: calculatorBalance }
+                    : {})}
+                />
+              </div>
+            </div>
+          )}
         </>
       )}
-
-      <section className="flex flex-col gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          className="w-fit"
-          aria-expanded={toolsOpen}
-          aria-controls="card-tools"
-          onClick={() => setToolsOpen((open) => !open)}
-        >
-          {toolsOpen ? t("tools.hide") : t("tools.show")}
-          <ChevronDown
-            className={cn("h-4 w-4 transition-transform", toolsOpen && "rotate-180")}
-            aria-hidden="true"
-          />
-        </Button>
-        {toolsOpen && (
-          <div id="card-tools">
-            <MinimumPaymentCalculator
-              key={calculatorBalance ?? "default"}
-              {...(calculatorBalance !== undefined ? { initialBalance: calculatorBalance } : {})}
-            />
-          </div>
-        )}
-      </section>
 
       <Sheet open={panel !== null} onOpenChange={(open) => !open && setPanel(null)}>
         {panel?.kind === "form" && (
@@ -185,25 +228,10 @@ export function CardWallet({
               createId={createId}
               onSubmit={(card) => {
                 onSave(card);
+                setSelectedId(card.id);
                 setPanel(null);
               }}
               onCancel={() => setPanel(null)}
-            />
-          </SheetContent>
-        )}
-        {detailCard && (
-          <SheetContent title={detailCard.label}>
-            <CardDetail
-              card={detailCard}
-              cards={cards}
-              remainingInstallments={remainingInstallments}
-              onEdit={() => setPanel({ kind: "form", editing: detailCard })}
-              onDelete={() => {
-                setDeleting(detailCard);
-                setPanel(null);
-              }}
-              onAddSupplementary={() => setPanel({ kind: "form", parentId: detailCard.id })}
-              onMinimumOnly={() => openMinimumOnly(detailCard)}
             />
           </SheetContent>
         )}
@@ -214,8 +242,15 @@ export function CardWallet({
         cards={cards}
         currency={currency}
         onCancel={() => setDeleting(null)}
-        onConfirm={onRemove}
+        onConfirm={(card, choice) => {
+          setSelectedId(null);
+          onRemove(card, choice);
+        }}
       />
     </div>
   );
+}
+
+function BankName({ bankId }: { bankId: string | undefined }) {
+  return <>{useBankName(bankId)}</>;
 }

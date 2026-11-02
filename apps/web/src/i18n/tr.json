@@ -619,7 +619,8 @@
       "owedHere": "Bu kartta borç",
       "supplementaryTitle": "Ek kartlar",
       "availableShort": "Limit takip ediliyor",
-      "overLimitShort": "Limit aşıldı"
+      "overLimitShort": "Limit aşıldı",
+      "usedLabel": "Kullanılan"
     },
     "deleteDialog": {
       "title": "{name} silinsin mi?",
@@ -914,7 +915,9 @@
       "investing": "Yatırım",
       "thinking": "Düşünme"
     },
-    "subtitle": "Stoafi’deki her öneri bir kitaptan ya da bir yatırımcıdan gelir. Bu kartlar fikri kendi sözlerimizle, uygulamanın onu nasıl kullandığını, kime uyduğunu ve nerede yetersiz kaldığını anlatır."
+    "subtitle": "Stoafi’deki her öneri bir kitaptan ya da bir yatırımcıdan gelir. Bu kartlar fikri kendi sözlerimizle, uygulamanın onu nasıl kullandığını, kime uyduğunu ve nerede yetersiz kaldığını anlatır.",
+    "showDetails": "Ayrıntılar",
+    "hideDetails": "Ayrıntıyı gizle"
   },
   "insights": {
     "title": "Planın ne diyor",

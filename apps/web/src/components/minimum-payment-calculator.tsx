@@ -28,7 +28,7 @@ export function MinimumPaymentCalculator({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">{t("title")}</CardTitle>
+        <CardTitle className="text-[22px]">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">

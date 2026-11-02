@@ -619,7 +619,8 @@
       "owedHere": "Owed on this card",
       "supplementaryTitle": "Supplementary cards",
       "availableShort": "Limit tracked",
-      "overLimitShort": "Over the limit"
+      "overLimitShort": "Over the limit",
+      "usedLabel": "Used"
     },
     "deleteDialog": {
       "title": "Delete {name}?",
@@ -914,7 +915,9 @@
       "investing": "Investing",
       "thinking": "Thinking"
     },
-    "subtitle": "Every suggestion in Stoafi comes from a book or an investor. These cards explain the idea in our own words, how the app uses it, who it suits and where it falls short."
+    "subtitle": "Every suggestion in Stoafi comes from a book or an investor. These cards explain the idea in our own words, how the app uses it, who it suits and where it falls short.",
+    "showDetails": "Details",
+    "hideDetails": "Hide details"
   },
   "insights": {
     "title": "What your plan says",
