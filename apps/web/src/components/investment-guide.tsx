@@ -20,10 +20,7 @@ export function InvestmentGuide() {
       <ul className="flex flex-col gap-2">
         {INVESTMENT_TYPES.map((type) => (
           <li key={type.id}>
-            <details
-              className="group rounded-xl bg-card"
-              data-testid={`guide-${type.id}`}
-            >
+            <details className="group rounded-xl bg-card" data-testid={`guide-${type.id}`}>
               <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 {tTypes(`${type.id}.name`)}
                 <ChevronDown

@@ -120,9 +120,16 @@ export function Onboarding({ onDemo }: OnboardingProps) {
         data-testid="onboarding-welcome"
         className="rise-in flex flex-col items-start gap-5 rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-card p-8 shadow-sm"
       >
-        <Sparkles className="h-8 w-8 text-primary-ink" aria-hidden="true" />
+        <span
+          aria-hidden="true"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground"
+        >
+          <Sparkles className="h-7 w-7" />
+        </span>
         <div>
-          <h2 className="text-title font-semibold">{t("welcomeTitle")}</h2>
+          <h2 className="text-[32px] font-extrabold leading-tight tracking-[-0.04em]">
+            {t("welcomeTitle")}
+          </h2>
           <p className="mt-1 max-w-prose text-muted-foreground">{t("welcomeText")}</p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -152,7 +159,9 @@ export function Onboarding({ onDemo }: OnboardingProps) {
           {t("step", { n: step + 1, total: STEPS.length })}
         </p>
         <ProgressBar value={step + 1} max={STEPS.length} label={t("progress")} />
-        <h2 className="text-xl font-semibold">{t(`steps.${STEPS[step]}.title`)}</h2>
+        <h2 className="text-2xl font-extrabold tracking-[-0.03em]">
+          {t(`steps.${STEPS[step]}.title`)}
+        </h2>
         <p className="text-sm text-muted-foreground">{t(`steps.${STEPS[step]}.hint`)}</p>
       </div>
 

@@ -1,15 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { SettingsSchema } from "@stoafi/core";
 import { localIsoDate } from "@/lib/clock";
 import { loadAppState } from "@/storage/bootstrap";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
+import { DataLost } from "@/components/data-lost";
 import { LockGate } from "@/components/lock-gate";
 import { Skeleton } from "@/components/ui/skeleton";
+import { clearHadData, hadData, markHadData } from "@/lib/had-data";
 import { applyTheme } from "@/lib/theme";
+import { importFromJson } from "@/storage/backup";
 import { useSnapshotRecorder } from "@/lib/use-snapshot-recorder";
 import { useAppStore } from "@/store";
 
@@ -19,6 +22,8 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
   useSnapshotRecorder();
   const hydrated = useAppStore((s) => s.hydrated);
   const hydrate = useAppStore((s) => s.hydrate);
+  const profile = useAppStore((s) => s.profile);
+  const [lost, setLost] = useState(false);
   const setToday = useAppStore((s) => s.setToday);
   const locale = useAppStore((s) => s.locale);
   const currency = useAppStore((s) => s.currency);
@@ -41,6 +46,13 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [hydrate]);
+
+  // Remember that this browser held real data, so an empty database later is noticed instead of ignored.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (profile && !demo) markHadData();
+    else if (!profile && !demo && hadData()) setLost(true);
+  }, [hydrated, profile, demo]);
 
   // Whatever the screens change, the saved preferences and the page language follow.
   useEffect(() => {
@@ -97,6 +109,27 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
     };
   }, [hydrated, setToday]);
 
+  if (hydrated && lost) {
+    return (
+      <DataLost
+        onStartFresh={() => {
+          clearHadData();
+          setLost(false);
+        }}
+        onRestore={async (json) => {
+          try {
+            const result = await importFromJson(db, json);
+            if ("errors" in result) return result.errors.map((e) => String(e));
+            hydrate(await loadAppState(db, navigator.language), localIsoDate(new Date()));
+            setLost(false);
+            return null;
+          } catch {
+            return [t("restoreFailed")];
+          }
+        }}
+      />
+    );
+  }
   if (hydrated) return <LockGate>{children}</LockGate>;
   return (
     <div role="status" aria-label={t("loading")} className="flex flex-col gap-4">

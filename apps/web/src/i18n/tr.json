@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Stoafi",
-    "loading": "Verilerin yükleniyor"
+    "loading": "Verilerin yükleniyor",
+    "restoreFailed": "Bu dosya Stoafi yedeği olarak okunamadı."
   },
   "home": {
     "title": "Ana sayfa",
@@ -1494,5 +1495,11 @@
     "cancel": "Vazgeç",
     "saved": "PIN kaydedildi",
     "removed": "PIN kaldırıldı"
+  },
+  "dataLost": {
+    "title": "Verilerin silinmiş görünüyor",
+    "text": "Bu cihazda daha önce verilerin vardı ama şimdi yok. Tarayıcı silmiş olabilir. Yedek dosyan varsa buradan geri yükle. Hiçbir yere gönderilmediği için tek yol yedek dosyası.",
+    "restore": "Yedek dosyasından geri yükle",
+    "startFresh": "Sıfırdan başla"
   }
 }

@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Stoafi",
-    "loading": "Loading your data"
+    "loading": "Loading your data",
+    "restoreFailed": "That file could not be read as a Stoafi backup."
   },
   "home": {
     "title": "Home",
@@ -1494,5 +1495,11 @@
     "cancel": "Cancel",
     "saved": "PIN saved",
     "removed": "PIN removed"
+  },
+  "dataLost": {
+    "title": "Your data looks gone",
+    "text": "This browser held your data before, but now it is empty. The browser may have cleared it. If you have a backup file, restore it here. Nothing was sent anywhere, so a backup file is the only way back.",
+    "restore": "Restore from a backup file",
+    "startFresh": "Start from scratch"
   }
 }
