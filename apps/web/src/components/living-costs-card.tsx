@@ -55,7 +55,7 @@ export function LivingCostsCard({
         <CardDescription>{t("hint")}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4">
           <Field label={t("amount")} htmlFor="living-expenses" hint={t("amountHint")}>
             <MoneyInput
               id="living-expenses"
@@ -76,7 +76,7 @@ export function LivingCostsCard({
 
         {living > 0 && (
           <div
-            className="flex flex-col gap-3 rounded-xl bg-muted/60 p-4"
+            className="flex flex-col gap-3 rounded-2xl bg-muted p-4"
             data-testid="living-check"
           >
             {check.band && check.share !== null && (

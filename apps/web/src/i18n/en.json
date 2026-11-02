@@ -193,7 +193,8 @@
       "outHint": "Recurring expenses, living costs and installments",
       "leftHint": "What you can save or spend freely",
       "leftNegative": "You spend more than you earn this month"
-    }
+    },
+    "subtitle": "Money in, money out, and what is left. A few minutes each month is enough; you do not need to enter every cent."
   },
   "profile": {
     "title": "Profile",
@@ -1324,7 +1325,9 @@
       "title": "See your month on a calendar",
       "text": "Add your salary, bills and cards with their days and they appear here.",
       "action": "Add income and expenses"
-    }
+    },
+    "subtitle": "Pay days, bills and card due dates, by day.",
+    "all": "All"
   },
   "onboarding": {
     "title": "Set up Stoafi",

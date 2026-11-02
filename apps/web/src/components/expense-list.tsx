@@ -11,6 +11,12 @@ import { stagger } from "@/lib/utils";
 import { tileOf, type ExpenseTile, type ExpenseValue } from "./expense-editor";
 
 const GROUPS: ExpenseTile[] = ["regular", "installment", "loan", "saving"];
+const TILE_BG: Record<ExpenseTile, string> = {
+  regular: "bg-c1",
+  installment: "bg-c3",
+  loan: "bg-c2",
+  saving: "bg-c4",
+};
 
 export interface ExpenseListProps {
   expenses: ExpenseValue[];
@@ -54,13 +60,13 @@ export function ExpenseList({ expenses, month, onAdd, onEdit, onRemove }: Expens
             aria-label={t(`group.${group}`)}
             data-testid={`expense-group-${group}`}
           >
-            <h3 className="mb-1 flex items-baseline justify-between gap-2 text-sm font-semibold">
+            <h3 className="mb-1 flex items-baseline justify-between gap-2 text-xl font-extrabold tracking-[-0.03em]">
               <span>{t(`group.${group}`)}</span>
-              <span className="font-normal text-muted-foreground">
+              <span className="text-[15px] font-extrabold text-muted-foreground">
                 <Money value={total} />
               </span>
             </h3>
-            <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
+            <ul className="flex flex-col">
               {rows.map(({ expense, index }, i) => {
                 const left = remainingPayments(expense, month);
                 return (
@@ -68,10 +74,16 @@ export function ExpenseList({ expenses, month, onAdd, onEdit, onRemove }: Expens
                     key={index}
                     data-testid={`expense-row-${index}`}
                     style={stagger(i)}
-                    className="rise-in flex flex-wrap items-center gap-x-3 gap-y-1 p-3"
+                    className="rise-in mt-3.5 flex flex-wrap items-center gap-x-3.5 gap-y-1 border-t border-border pt-3.5"
                   >
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-11 w-11 flex-none items-center justify-center rounded-2xl text-[13px] font-extrabold text-on ${TILE_BG[group]}`}
+                    >
+                      {expense.dueDay ?? ""}
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{expense.label}</p>
+                      <p className="truncate text-[15px] font-bold">{expense.label}</p>
                       <p className="text-xs text-muted-foreground">
                         {[
                           expense.dueDay ? t("row.day", { day: expense.dueDay }) : null,
@@ -88,7 +100,7 @@ export function ExpenseList({ expenses, month, onAdd, onEdit, onRemove }: Expens
                           .join(" · ")}
                       </p>
                     </div>
-                    <span className="text-sm font-semibold">
+                    <span className="text-base font-extrabold">
                       <Money value={expense.monthly} />
                     </span>
                     <Button

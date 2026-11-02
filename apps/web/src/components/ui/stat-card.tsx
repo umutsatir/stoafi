@@ -33,15 +33,15 @@ export function StatCard({
 }: StatCardProps) {
   return (
     <Card className={cn("h-full", className)} style={style}>
-      <CardContent className="flex h-full flex-col gap-2 pt-6">
+      <CardContent className="flex h-full flex-col gap-1 pt-6">
         <div className="flex items-center justify-between gap-2">
-          <p className="flex items-center gap-1 text-sm text-muted-foreground">
+          <p className="flex items-center gap-1 text-[13px] font-bold text-muted-foreground">
             {label}
             {info}
           </p>
           {status && <StatusChip tone={status.tone}>{status.label}</StatusChip>}
         </div>
-        <p className="text-2xl font-semibold tracking-tight" data-testid={testId}>
+        <p className="text-[34px] font-extrabold tracking-[-0.05em]" data-testid={testId}>
           {value}
         </p>
         {hint && <p className="text-caption text-muted-foreground">{hint}</p>}

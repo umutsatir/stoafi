@@ -193,7 +193,8 @@
       "outHint": "Düzenli giderler, yaşam masrafı ve taksitler",
       "leftHint": "Biriktirebileceğin ya da serbest harcayabileceğin",
       "leftNegative": "Bu ay kazandığından fazla harcıyorsun"
-    }
+    },
+    "subtitle": "Giren para, çıkan para ve geriye kalan. Her ay birkaç dakikalık bir bakış yeter; her kuruşu girmen gerekmez."
   },
   "profile": {
     "title": "Profil",
@@ -1324,7 +1325,9 @@
       "title": "Ayını takvimde gör",
       "text": "Maaşını, faturalarını ve kartlarını günleriyle ekle, burada görünsünler.",
       "action": "Gelir ve gider ekle"
-    }
+    },
+    "subtitle": "Maaş günleri, faturalar ve kart son ödemeleri, günleriyle.",
+    "all": "Hepsi"
   },
   "onboarding": {
     "title": "Stoafi'yi kur",

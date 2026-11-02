@@ -31,7 +31,7 @@ export default function IncomeExpensesPage() {
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       {profile && (
         <MoneyFlowSummary
           profile={profile}
