@@ -129,7 +129,29 @@
       "canTake": "Ayda {amount} daha taksit alabilirsin.",
       "overBy": "Sınırını {amount} aşıyorsun.",
       "used": "({amount} kullanılıyor)"
-    }
+    },
+    "orbit": {
+      "title": "{month} yörüngesi",
+      "hint": "Bir dilime gel, içinde ne olduğunu gör",
+      "innerRing": "İç halka: gün {day} / {days}",
+      "fixed": "Sabit giderler",
+      "living": "Yaşam giderleri",
+      "installments": "Taksitler",
+      "left": "Kalan",
+      "ofIncome": "gelirin %{pct}’i",
+      "fixedNote": "Her ay aynı gün çıkan, pazarlık konusu olmayan yükler.",
+      "livingNote": "Tek bir kalem olarak izlenir; her harcamayı girmen gerekmez.",
+      "installmentsNote": "Gelirinin %{pct}’i; sınırın (%{cap}) {state, select, under {rahatça altında.} other {üstünde.}}",
+      "freeSpending": "Serbest harcama (istekler)",
+      "needsRoom": "İhtiyaç payı",
+      "savingRoom": "Birikim ve yatırım payı",
+      "leftNote": "Serbest harcama payın günde yaklaşık {daily}."
+    },
+    "todoTitle": "Bu ay yapman gereken",
+    "todoAddMoney": "Para ekle",
+    "todoLookQueue": "Kuyruğa bak",
+    "fundMonths": "{target} ay",
+    "activePlanNamed": "Aktif plan · {name}"
   },
   "nav": {
     "ariaLabel": "Ana",

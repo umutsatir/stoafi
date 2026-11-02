@@ -117,7 +117,11 @@ export function Nav() {
     <>
       <header className="sticky top-0 z-30 bg-background/90 px-4 py-3 backdrop-blur md:px-8 md:py-4">
         <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3">
-          <Link href="/" className="press flex flex-none items-center gap-2.5" aria-label={tApp("name")}>
+          <Link
+            href="/"
+            className="press flex flex-none items-center gap-2.5"
+            aria-label={tApp("name")}
+          >
             <span
               aria-hidden="true"
               className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-foreground text-[17px] font-extrabold text-background"
@@ -137,9 +141,7 @@ export function Nav() {
                 const active = isActive(pathname, r.href);
                 return (
                   <li key={r.href} className="flex items-center">
-                    {r.divider && (
-                      <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />
-                    )}
+                    {r.divider && <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />}
                     <Link
                       href={r.href}
                       title={t(r.key)}

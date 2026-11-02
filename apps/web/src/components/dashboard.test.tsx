@@ -244,14 +244,14 @@ describe("Dashboard", () => {
     renderDashboard();
     expect(screen.getByTestId("saving-sentence")).toHaveTextContent(/Set aside .* more/);
     expect(
-      within(screen.getByTestId("saving-widget")).getByRole("link", { name: "Open savings" }),
+      within(screen.getByTestId("saving-widget")).getByRole("link", { name: "Add money" }),
     ).toHaveAttribute("href", "/sinking-funds");
   });
 
   it("gives the overall health in a word, with the reason", () => {
     renderDashboard();
     expect(screen.getByTestId("home-health")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "See the details" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Financial health" })).toHaveAttribute(
       "href",
       "/health",
     );

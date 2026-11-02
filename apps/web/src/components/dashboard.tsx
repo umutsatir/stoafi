@@ -3,15 +3,6 @@
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  ArrowDownLeft,
-  ArrowUpRight,
-  CalendarClock,
-  CreditCard,
-  HeartPulse,
-  ListChecks,
-  PiggyBank,
-} from "lucide-react";
-import {
   activeFixedExpenses,
   activeQueueItems,
   addMonths,
@@ -24,6 +15,7 @@ import {
   freeSpending,
   healthSummary,
   installmentCommitments,
+  limitAdvice,
   monthlyNeeds,
   monthlySavingsAdvice,
   netMonthlyIncome,
@@ -48,12 +40,10 @@ import { useMoney } from "@/lib/use-money";
 import { cn, stagger } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Money } from "@/components/ui/money";
 import { Page } from "@/components/ui/page";
-import { ProgressBar } from "@/components/ui/progress-bar";
-import { ProgressRing } from "@/components/ui/progress-ring";
 import { StatusChip } from "@/components/ui/status-chip";
-import { CashFlowChart } from "./cash-flow-chart";
+import { MonthBars } from "./month-bars";
+import { OrbitRing, type OrbitSegment } from "./orbit-ring";
 import { InstallmentRoom } from "./installment-room";
 import { LimitsPanel } from "./limits-panel";
 
@@ -75,11 +65,18 @@ export interface DashboardProps {
   banner?: React.ReactNode;
 }
 
-const EVENT_ICON = { income: ArrowDownLeft, expense: ArrowUpRight, card: CreditCard } as const;
+/** Where each kind of advice sends the user to act on it. */
+const ADVICE_HREF = {
+  needsOver: "/income-expenses",
+  wantsOver: "/income-expenses",
+  wantsRoom: "/queue",
+  wantsSpare: "/queue",
+  savingsToSet: "/sinking-funds",
+  investingToSet: "/sinking-funds",
+} as const;
 
 function Panel({
   title,
-  icon: Icon,
   href,
   hrefLabel,
   index,
@@ -88,7 +85,6 @@ function Panel({
   children,
 }: {
   title: string;
-  icon: typeof PiggyBank;
   href?: string;
   hrefLabel?: string;
   index: number;
@@ -100,21 +96,21 @@ function Panel({
     <Card
       aria-label={title}
       data-testid={testId}
-      className={cn("rise-in flex flex-col", className)}
+      className={cn("pop-in flex flex-col px-7 py-6", className)}
       style={stagger(index)}
     >
-      <CardContent className="flex h-full flex-col gap-3 pt-6">
-        <h2 className="flex items-center gap-2 text-base font-semibold">
-          <Icon className="h-4 w-4 text-primary-ink" aria-hidden="true" />
-          {title}
-        </h2>
-        {children}
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="text-base font-extrabold">{title}</h2>
         {href && hrefLabel && (
-          <Link href={href} className="mt-auto text-sm font-medium text-primary-ink hover:underline">
-            {hrefLabel}
+          <Link
+            href={href}
+            className="text-[12.5px] font-extrabold text-muted-foreground hover:text-foreground"
+          >
+            {hrefLabel} →
           </Link>
         )}
-      </CardContent>
+      </div>
+      <div className="mt-3 flex flex-1 flex-col gap-3">{children}</div>
     </Card>
   );
 }
@@ -133,6 +129,9 @@ export function Dashboard({
 }: DashboardProps) {
   const t = useTranslations("home");
   const tTimeline = useTranslations("timeline");
+  const tOrbit = useTranslations("home.orbit");
+  const tAdvice = useTranslations("home.limits.advice");
+  const tAction = useTranslations("home.limits.action");
   const locale = useLocale() as Locale;
   const money = useMoney();
 
@@ -213,11 +212,12 @@ export function Dashboard({
 
   const rules = dayRulesFor(profile, cards);
   const events = upcomingEvents(rules, today, 14).slice(0, 6);
-  const dayFormat = new Intl.DateTimeFormat(locale, {
+  const todayLabel = new Intl.DateTimeFormat(locale, {
+    weekday: "long",
     day: "numeric",
-    month: "short",
+    month: "long",
     timeZone: "UTC",
-  });
+  }).format(new Date(`${today}T00:00:00Z`));
 
   const depositedThisMonth =
     depositedInMonth(profile.deposits, month) +
@@ -245,17 +245,102 @@ export function Dashboard({
     installmentCapPct,
   });
 
+  const advice0 = limitAdvice(thisMonth, queueFitsNow)[0];
+  const adviceLine = advice0
+    ? advice0.id === "allGood"
+      ? tAdvice("allGood")
+      : tAdvice(advice0.id, {
+          amount: money(advice0.amount),
+          count: advice0.id === "wantsRoom" ? advice0.count : 0,
+        })
+    : "";
+
+  const share = (amount: number) => (income > 0 ? Math.round((amount / income) * 100) : 0);
+  const installmentRows = ledger
+    .filter((c) => c.source.module === "installments" && c.status !== "cancelled")
+    .map((c) => ({
+      label: names[c.source.refId] ?? c.source.refId,
+      amount: c.payments.filter((p) => p.month === month).reduce((sum, p) => sum + p.amount, 0),
+    }))
+    .filter((row) => row.amount > 0);
+  const needsRoom = allocation
+    ? thisMonth.byBucket.needs.limit - thisMonth.byBucket.needs.committed
+    : 0;
+  const wantsRoom = allocation
+    ? thisMonth.byBucket.wants.limit - thisMonth.byBucket.wants.committed
+    : 0;
+  const rowOf = (label: string, amount: number) => ({ label, amount, amountText: money(amount) });
+  const segments: OrbitSegment[] = [
+    {
+      id: "fixed",
+      label: tOrbit("fixed"),
+      amount: obligations,
+      amountText: money(obligations),
+      color: "var(--c1)",
+      shareText: tOrbit("ofIncome", { pct: share(obligations) }),
+      rows: activeFixedExpenses(profile, month).map((e) => rowOf(e.label, e.monthly)),
+      note: tOrbit("fixedNote"),
+    },
+    {
+      id: "living",
+      label: tOrbit("living"),
+      amount: profile.livingExpenses,
+      amountText: money(profile.livingExpenses),
+      color: "var(--c2)",
+      shareText: tOrbit("ofIncome", { pct: share(profile.livingExpenses) }),
+      rows: [rowOf(tOrbit("living"), profile.livingExpenses)],
+      note: tOrbit("livingNote"),
+    },
+    {
+      id: "installments",
+      label: tOrbit("installments"),
+      amount: installments,
+      amountText: money(installments),
+      color: "var(--c3)",
+      shareText: tOrbit("ofIncome", { pct: share(installments) }),
+      rows: installmentRows.map((row) => rowOf(row.label, row.amount)),
+      note: tOrbit("installmentsNote", {
+        pct: share(installments),
+        cap: Math.round(installmentCapPct * 100),
+        state: installments <= income * installmentCapPct ? "under" : "over",
+      }),
+    },
+    {
+      id: "left",
+      label: tOrbit("left"),
+      amount: Math.max(0, left),
+      amountText: money(left),
+      color: "var(--c4)",
+      shareText: tOrbit("ofIncome", { pct: share(Math.max(0, left)) }),
+      rows: allocation
+        ? [
+            rowOf(tOrbit("freeSpending"), Math.max(0, wantsRoom)),
+            rowOf(tOrbit("needsRoom"), Math.max(0, needsRoom)),
+            rowOf(tOrbit("savingRoom"), allocation.savings + allocation.investing),
+          ]
+        : [rowOf(tOrbit("left"), Math.max(0, left))],
+      note: tOrbit("leftNote", { daily: money(spending.daily) }),
+    },
+  ];
+
+  const bars = cashFlow.map((point) => ({
+    key: point.month,
+    short: formatMonth(point.month, locale).slice(0, 3),
+    long: formatMonth(point.month, locale),
+    value: point.left,
+    valueText: money(point.left),
+  }));
+  const fundPct = Math.min(1, savedMonths / Math.max(profile.emergencyFundTargetMonths, 0.01));
+  const eventRows = events.slice(0, 4);
+
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} hideTitle>
       {banner}
-      <p className="-mt-3 text-sm text-muted-foreground">
-        {t("greeting", { month: formatMonth(month, locale) })}
-      </p>
 
       {(overspent || fundLow) && (
         <div
           role="alert"
-          className="rise-in flex flex-col gap-2 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm font-medium text-destructive"
+          className="rise-in flex flex-col gap-2 rounded-[28px] bg-destructive/10 px-6 py-4 text-sm font-semibold text-destructive"
         >
           {overspent && (
             <p className="flex flex-wrap items-center gap-3">
@@ -276,192 +361,218 @@ export function Dashboard({
         </div>
       )}
 
-      <section
-        aria-label={t("thisMonth")}
-        data-testid="this-month"
-        className="rise-in flex flex-wrap items-center gap-6 rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-card p-6 shadow-sm"
-      >
-        <div className="min-w-0 flex-1">
-          <p className="text-sm text-muted-foreground">{t("left")}</p>
-          <p
-            data-testid="left"
-            className={cn(
-              "text-hero font-semibold tracking-tight",
-              overspent && "text-destructive",
-            )}
-          >
-            <Money value={left} animated />
-          </p>
-          <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
-            <div className="flex gap-1.5">
+      <div className="flex flex-wrap items-stretch gap-4">
+        <Card
+          aria-label={t("thisMonth")}
+          data-testid="this-month"
+          className="pop-in flex min-w-0 flex-[2_1_640px] flex-col px-6 pb-6 pt-7 md:px-[34px]"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-extrabold tracking-[-0.03em]">
+                {tOrbit("title", { month: formatMonth(month, locale) })}
+              </h2>
+              <p className="mt-1 text-[13px] text-muted-foreground">{tOrbit("hint")}</p>
+            </div>
+            <span className="rounded-full bg-muted px-3.5 py-[7px] text-[13px] font-bold text-muted-foreground">
+              {todayLabel}
+            </span>
+          </div>
+          <OrbitRing
+            segments={segments}
+            income={income}
+            day={dayOfMonth}
+            days={daysInMonth}
+            innerLabel={tOrbit("innerRing", { day: dayOfMonth, days: daysInMonth })}
+            ariaLabel={t("monthProgress")}
+          />
+          <dl className="sr-only">
+            <div>
+              <dt>{t("left")}</dt>
+              <dd data-testid="left">{money(left)}</dd>
+            </div>
+            <div>
               <dt>{t("income")}</dt>
-              <dd data-testid="income" className="font-medium text-foreground">
-                {money(income)}
-              </dd>
+              <dd data-testid="income">{money(income)}</dd>
             </div>
-            <div className="flex gap-1.5">
+            <div>
               <dt>{t("obligations")}</dt>
-              <dd data-testid="obligations" className="font-medium text-foreground">
-                {money(obligations)}
-              </dd>
+              <dd data-testid="obligations">{money(obligations)}</dd>
             </div>
-            <div className="flex gap-1.5">
+            <div>
               <dt>{t("living")}</dt>
-              <dd data-testid="living" className="font-medium text-foreground">
-                {money(profile.livingExpenses)}
-              </dd>
+              <dd data-testid="living">{money(profile.livingExpenses)}</dd>
             </div>
-            <div className="flex gap-1.5">
+            <div>
               <dt>{t("installments")}</dt>
-              <dd data-testid="installments" className="font-medium text-foreground">
-                {money(installments)}
-              </dd>
+              <dd data-testid="installments">{money(installments)}</dd>
             </div>
           </dl>
-        </div>
-        <ProgressRing value={dayOfMonth} max={daysInMonth} label={t("monthProgress")} size={88}>
-          {dayOfMonth}/{daysInMonth}
-        </ProgressRing>
-      </section>
+        </Card>
 
-      <div className="grid gap-4 md:grid-flow-dense md:grid-cols-2">
-        <Panel
-          title={t("upcoming")}
-          icon={CalendarClock}
-          index={1}
-          testId="upcoming"
-          href="/calendar"
-          hrefLabel={t("openCalendar")}
-        >
-          {events.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("upcomingNone")}</p>
-          ) : (
-            <ul className="flex flex-col divide-y divide-border">
-              {events.map((event) => {
-                const Icon = EVENT_ICON[event.kind];
-                return (
+        <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-4">
+          <Card
+            data-testid="saving-widget"
+            className="pop-in bg-inverse px-[26px] py-6 text-inverse-foreground"
+            style={stagger(2)}
+          >
+            <p className="text-[12.5px] font-bold opacity-70">{t("todoTitle")}</p>
+            <p
+              data-testid="saving-sentence"
+              className="mt-2 text-[22px] font-extrabold leading-tight tracking-[-0.03em]"
+            >
+              {advice.stillToSet > 0
+                ? t("savingMore", {
+                    more: money(advice.stillToSet),
+                    added: money(advice.deposited),
+                  })
+                : adviceLine}
+            </p>
+            <Link
+              href={
+                advice.stillToSet > 0
+                  ? "/sinking-funds"
+                  : advice0 && advice0.id !== "allGood"
+                    ? ADVICE_HREF[advice0.id]
+                    : "/queue"
+              }
+              className="press mt-4 inline-flex rounded-full bg-primary px-[22px] py-3 text-sm font-extrabold text-primary-foreground"
+            >
+              {advice.stillToSet > 0
+                ? t("todoAddMoney")
+                : advice0 && advice0.id !== "allGood"
+                  ? tAction(advice0.id)
+                  : t("todoLookQueue")}
+            </Link>
+          </Card>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Link
+              href="/profile"
+              aria-label={t("emergencyFund")}
+              className="lift pop-in rounded-card bg-c2 p-5 text-on"
+              style={stagger(3)}
+            >
+              <div className="text-[13px] font-bold">{t("emergencyFund")}</div>
+              <div
+                data-testid="emergency-fund"
+                className="mt-1.5 text-[34px] font-extrabold leading-[1.1] tracking-[-0.05em]"
+              >
+                {savedMonths.toFixed(1)}
+                <span className="text-sm tracking-normal">
+                  {" "}
+                  / {t("fundMonths", { target: profile.emergencyFundTargetMonths })}
+                </span>
+              </div>
+              <div
+                role="progressbar"
+                aria-label={t("fundRing")}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(fundPct * 100)}
+                className="mt-3 h-[7px] rounded-full bg-black/20"
+              >
+                <div
+                  className="h-[7px] rounded-full bg-on"
+                  style={{ width: `${fundPct * 100}%` }}
+                />
+              </div>
+            </Link>
+            <Link
+              href="/health"
+              aria-label={t("healthTitle")}
+              className="lift pop-in rounded-card bg-c4 p-5 text-on"
+              style={stagger(4)}
+            >
+              <div className="text-[13px] font-bold">{t("healthTitle")}</div>
+              <div className="mt-1.5 text-[34px] font-extrabold leading-[1.1] tracking-[-0.05em]">
+                <span data-testid="home-health">{t(`health.${health.overall}`)}</span>
+              </div>
+              <p className="mt-2.5 text-xs font-semibold leading-snug">
+                {health.steps[0] ? t(`healthWhy.${health.steps[0].id}`) : t("healthAllGood")}
+              </p>
+            </Link>
+          </div>
+
+          <Card
+            className="pop-in px-6 py-5"
+            style={stagger(5)}
+            data-testid="cash-flow-chart"
+            data-points={bars.length}
+          >
+            <MonthBars
+              bars={bars}
+              title={t("cashFlowTitle")}
+              monthHeader={t("month")}
+              valueHeader={t("left")}
+            />
+          </Card>
+
+          <Card
+            aria-label={t("upcoming")}
+            data-testid="upcoming"
+            className="pop-in flex-1 px-6 py-[18px]"
+            style={stagger(6)}
+          >
+            <div className="mb-1 flex items-baseline justify-between gap-2">
+              <h2 className="text-base font-extrabold">{t("upcoming")}</h2>
+              <Link
+                href="/calendar"
+                className="text-[12.5px] font-extrabold text-muted-foreground hover:text-foreground"
+              >
+                {t("openCalendar")} →
+              </Link>
+            </div>
+            {eventRows.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("upcomingNone")}</p>
+            ) : (
+              <ul>
+                {eventRows.map((event) => (
                   <li
                     key={`${event.id}-${event.date}`}
                     data-testid={`event-${event.id}`}
-                    className="flex items-center gap-3 py-2 text-sm"
+                    className="flex items-center gap-3 border-t border-border py-2"
                   >
-                    <Icon
-                      className={cn(
-                        "h-4 w-4 shrink-0",
-                        event.kind === "income" ? "text-success" : "text-muted-foreground",
+                    <span className="flex h-[34px] w-[34px] flex-none items-center justify-center rounded-full bg-muted text-[13px] font-extrabold">
+                      {Number(event.date.slice(8, 10))}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">
+                      {event.label}
+                      {event.daysAway <= 1 && (
+                        <span className="sr-only">
+                          {" "}
+                          {event.daysAway === 0 ? t("today") : t("tomorrow")}
+                        </span>
                       )}
-                      aria-hidden="true"
-                    />
-                    <span className="min-w-0 flex-1 truncate font-medium">{event.label}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {event.daysAway === 0
-                        ? t("today")
-                        : event.daysAway === 1
-                          ? t("tomorrow")
-                          : dayFormat.format(new Date(`${event.date}T00:00:00Z`))}
                     </span>
                     {event.amount !== undefined && (
                       <span
-                        className={cn("w-24 text-right", event.kind === "income" && "text-success")}
+                        className={cn(
+                          "text-[13.5px] font-extrabold",
+                          event.kind === "income" && "text-success",
+                        )}
                       >
                         {event.kind === "income" ? "+" : "−"}
                         {money(event.amount)}
                       </span>
                     )}
                   </li>
-                );
-              })}
-            </ul>
-          )}
-        </Panel>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
+      </div>
 
-        <Panel
-          title={t("savingTitle")}
-          icon={PiggyBank}
-          index={2}
-          testId="saving-widget"
-          href="/sinking-funds"
-          hrefLabel={t("openSavings")}
-        >
-          <ProgressBar
-            value={advice.deposited}
-            max={Math.max(advice.required, 1)}
-            label={t("savingBar")}
-            tone={advice.stillToSet === 0 ? "success" : "primary"}
-          />
-          <p className="text-sm" data-testid="saving-sentence">
-            {advice.stillToSet > 0
-              ? t("savingMore", { more: money(advice.stillToSet), added: money(advice.deposited) })
-              : t("savingDone", { added: money(advice.deposited) })}
-          </p>
-        </Panel>
-
-        <Panel
-          title={t("emergencyFund")}
-          icon={HeartPulse}
-          index={3}
-          href="/profile"
-          hrefLabel={t("editTarget")}
-        >
-          <div className="flex items-center gap-4">
-            <ProgressRing
-              value={savedMonths}
-              max={Math.max(profile.emergencyFundTargetMonths, 0.01)}
-              label={t("fundRing")}
-              tone={fundLow ? "warning" : "success"}
-              size={72}
-            >
-              {Math.min(
-                100,
-                Math.round((savedMonths / Math.max(profile.emergencyFundTargetMonths, 0.01)) * 100),
-              )}
-              %
-            </ProgressRing>
-            <p data-testid="emergency-fund" className="text-sm">
-              {t("emergencyFundLine", {
-                saved: savedMonths.toFixed(1),
-                target: profile.emergencyFundTargetMonths,
-              })}
-            </p>
-          </div>
-        </Panel>
-
-        <Panel
-          title={t("healthTitle")}
-          icon={HeartPulse}
-          index={4}
-          href="/health"
-          hrefLabel={t("openHealth")}
-        >
-          <p>
-            <StatusChip
-              tone={
-                health.overall === "good"
-                  ? "success"
-                  : health.overall === "watch"
-                    ? "warning"
-                    : "danger"
-              }
-            >
-              <span data-testid="home-health">{t(`health.${health.overall}`)}</span>
-            </StatusChip>
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {health.steps[0] ? t(`healthWhy.${health.steps[0].id}`) : t("healthAllGood")}
-          </p>
-        </Panel>
-
-        {planTitle && allocation && (
+      <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr]">
+        {planTitle && allocation ? (
           <Panel
-            title={t("activePlan")}
-            icon={ListChecks}
-            index={5}
+            title={t("activePlanNamed", { name: planTitle })}
+            index={7}
             testId="active-plan"
-            className="md:col-span-2"
             href="/plan"
             hrefLabel={t("changePlan")}
           >
-            <p className="text-sm text-muted-foreground">{planTitle}</p>
             <LimitsPanel
               projection={thisMonth}
               queueFits={queueFitsNow}
@@ -472,47 +583,44 @@ export function Dashboard({
               names={names}
             />
           </Panel>
+        ) : (
+          <div />
         )}
 
-        <Panel title={t("nextInQueue")} icon={ListChecks} index={6}>
+        <Panel
+          title={t("nextInQueue")}
+          index={8}
+          {...(next.length > 0 ? { href: "/queue", hrefLabel: t("openQueue") } : {})}
+        >
           {next.length === 0 ? (
-            <Link href="/queue" className="text-sm font-medium text-primary-ink hover:underline">
+            <Link href="/queue" className="text-sm font-extrabold text-primary-ink hover:underline">
               {t("addToQueue")}
             </Link>
           ) : (
-            <>
-              <ul data-testid="next-items" className="flex flex-col divide-y divide-border">
-                {next.map((item) => {
-                  const scheduled = monthByItem.get(item.id);
-                  return (
-                    <li
-                      key={item.id}
-                      className="flex items-center justify-between gap-2 py-2 text-sm"
-                    >
-                      <span className="font-medium">{item.name}</span>
-                      <StatusChip tone={scheduled ? "success" : "warning"}>
-                        <span data-testid={`next-month-${item.id}`}>
-                          {scheduled ?? tTimeline("notAffordableYet")}
-                        </span>
-                      </StatusChip>
-                    </li>
-                  );
-                })}
-              </ul>
-              <Link
-                href="/queue"
-                className="mt-auto text-sm font-medium text-primary-ink hover:underline"
-              >
-                {t("openQueue")}
-              </Link>
-            </>
+            <ul data-testid="next-items">
+              {next.map((item) => {
+                const scheduled = monthByItem.get(item.id);
+                return (
+                  <li
+                    key={item.id}
+                    className="flex items-center justify-between gap-2 border-t border-border py-3"
+                  >
+                    <span className="text-sm font-bold">{item.name}</span>
+                    <StatusChip tone={scheduled ? "success" : "neutral"}>
+                      <span data-testid={`next-month-${item.id}`}>
+                        {scheduled ?? tTimeline("notAffordableYet")}
+                      </span>
+                    </StatusChip>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </Panel>
 
         <Panel
           title={t("installmentRoom.title")}
-          icon={CreditCard}
-          index={7}
+          index={9}
           testId="installment-room-panel"
           href="/income-expenses"
           hrefLabel={t("installmentRoom.manage")}
@@ -520,7 +628,6 @@ export function Dashboard({
           <InstallmentRoom income={income} capPct={installmentCapPct} used={installments} />
         </Panel>
       </div>
-      <CashFlowChart series={cashFlow} />
     </Page>
   );
 }
