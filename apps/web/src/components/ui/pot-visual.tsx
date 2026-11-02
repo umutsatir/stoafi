@@ -15,6 +15,8 @@ export interface PotVisualProps {
   /** What falls in. Defaults to a coin. */
   dropIcon?: LucideIcon;
   className?: string;
+  /** Colour of the level, a `bg-c1`..`bg-c4` class. */
+  fillClass?: string;
 }
 
 /** A pot that fills up as you save. Under reduced motion the level changes without the coin. */
@@ -24,6 +26,7 @@ export function PotVisual({
   dropKey = 0,
   dropIcon: DropIcon = Coins,
   className,
+  fillClass = "bg-c4",
 }: PotVisualProps) {
   const reduced = useReducedMotion();
   const level = Math.min(1, Math.max(0, fraction));
@@ -31,17 +34,17 @@ export function PotVisual({
     <div
       aria-hidden="true"
       className={cn(
-        "relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-muted",
+        "relative flex h-[92px] w-[68px] shrink-0 items-center justify-center overflow-hidden rounded-[18px] bg-muted shadow-[inset_0_0_0_2px_var(--border)]",
         className,
       )}
     >
       <motion.div
-        className="absolute inset-x-0 bottom-0 bg-primary/25"
+        className={cn("absolute inset-x-0 bottom-0", fillClass)}
         initial={false}
         animate={{ height: `${level * 100}%` }}
         transition={{ type: "spring", stiffness: 120, damping: 20 }}
       />
-      <Icon className="relative h-12 w-12 text-primary-ink" strokeWidth={1.5} />
+      <Icon className="relative h-7 w-7 text-on/70" strokeWidth={1.75} />
       <AnimatePresence>
         {dropKey > 0 && !reduced && (
           <motion.span

@@ -100,7 +100,7 @@ export function SavingsBoard(props: SavingsBoardProps) {
   const potNames = Object.fromEntries(pots.map((p) => [p.id, p.label]));
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
       <SavingsSummary
         advice={advice}
         freeBeforeSaving={props.freeBeforeSaving}
@@ -108,7 +108,7 @@ export function SavingsBoard(props: SavingsBoardProps) {
       />
 
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">{t("potsTitle")}</h2>
+        <h2 className="sr-only">{t("potsTitle")}</h2>
         <Button type="button" variant="outline" onClick={() => setAdding(true)}>
           <Plus className="h-4 w-4" aria-hidden="true" />
           {t("addPot")}
