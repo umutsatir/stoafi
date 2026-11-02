@@ -134,8 +134,12 @@ export default function SettingsPage() {
           </SettingsSection>
         )}
 
-        <SettingsSection title={t("sections.about")} icon={Info} index={4}>
-          <div className="rounded-xl bg-card p-4 text-sm text-muted-foreground">
+        <SettingsSection title={t("sections.offline")} icon={WifiOff} index={4}>
+          <OfflineInstall />
+        </SettingsSection>
+
+        <SettingsSection title={t("sections.about")} icon={Info} index={5}>
+          <div className="text-sm text-muted-foreground">
             <p>{t("about.privacy")}</p>
             <p className="mt-2">{t("about.notAdvice")}</p>
             <p className="mt-2">{t("about.data")}</p>
