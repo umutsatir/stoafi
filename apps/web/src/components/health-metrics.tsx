@@ -101,7 +101,7 @@ export function HealthMetrics({
       <section
         aria-label={t("summary.title")}
         data-testid="health-summary"
-        className="rise-in flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
+        className="rise-in flex flex-wrap items-center gap-4 rounded-2xl bg-card p-5 shadow-sm"
       >
         {summary.overall === "good" ? (
           <CircleCheck className="h-10 w-10 text-success" aria-hidden="true" />
@@ -182,7 +182,7 @@ export function HealthMetrics({
                   key={key}
                   data-testid={`trend-${key}`}
                   style={stagger(i)}
-                  className="rise-in flex flex-col gap-1 rounded-xl border border-border bg-card p-4"
+                  className="rise-in flex flex-col gap-1 rounded-xl bg-card p-4"
                 >
                   <p className="text-sm text-muted-foreground">{t(`trends.${key}`)}</p>
                   <p className="text-lg font-semibold">
@@ -227,7 +227,7 @@ export function HealthMetrics({
                 key={step.id}
                 data-testid={`step-${step.id}`}
                 style={stagger(i)}
-                className="rise-in flex flex-col gap-2 rounded-xl border border-border bg-card p-4"
+                className="rise-in flex flex-col gap-2 rounded-xl bg-card p-4"
               >
                 <p className="font-medium">{t(`steps.${step.id}.title`)}</p>
                 <p className="text-sm text-muted-foreground">{t(`steps.${step.id}.why`)}</p>

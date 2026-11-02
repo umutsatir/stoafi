@@ -21,7 +21,7 @@ export function InvestmentGuide() {
         {INVESTMENT_TYPES.map((type) => (
           <li key={type.id}>
             <details
-              className="group rounded-xl border border-border bg-card"
+              className="group rounded-xl bg-card"
               data-testid={`guide-${type.id}`}
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">

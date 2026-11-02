@@ -54,7 +54,7 @@ export function QueueTimeView({ items, monthByItemId, today, onSelect }: QueueTi
             key={month}
             data-testid={`time-month-${month}`}
             style={stagger(monthIndex)}
-            className="rise-in flex flex-col gap-2 rounded-xl border border-border bg-card p-4"
+            className="rise-in flex flex-col gap-2 rounded-xl bg-card p-4"
           >
             <h3 className="flex items-center gap-2 font-semibold">
               {formatMonth(month, locale)}

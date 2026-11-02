@@ -95,7 +95,7 @@ export function PotCard({ pot, index, dropKey, onDeposit, onHistory }: PotCardPr
     <li
       data-testid={`pot-${pot.id}`}
       style={stagger(index)}
-      className="rise-in relative flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
+      className="rise-in relative flex flex-col gap-4 rounded-2xl bg-card p-5 shadow-sm"
     >
       {celebrate > 0 && <Confetti key={celebrate} />}
       <div className="flex gap-4">

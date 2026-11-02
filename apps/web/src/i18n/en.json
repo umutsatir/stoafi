@@ -822,7 +822,8 @@
       "aiHint": "Take your own situation to an AI chat, on your terms.",
       "about": "About",
       "privacy": "Privacy",
-      "privacyHint": "Keep your money out of sight."
+      "privacyHint": "Keep your money out of sight.",
+      "offline": "Offline and install"
     },
     "about": {
       "privacy": "Your data never leaves this device. Stoafi has no account and no server, and it never sends your figures anywhere.",
@@ -870,7 +871,16 @@
     "lastBackupNever": "No backup downloaded yet.",
     "lastBackupToday": "Last backup: today.",
     "lastBackupDays": "Last backup: {days} days ago.",
-    "subtitle": "Everything stays on this device. Back up so you do not lose it."
+    "subtitle": "Everything stays on this device. Back up so you do not lose it.",
+    "offline": {
+      "works": "Works offline",
+      "offlineNow": "You are offline, and Stoafi still works",
+      "hint": "It opens and runs without the internet; nothing goes to a server.",
+      "install": "Install the app",
+      "installed": "Installed",
+      "installHelp": "Your browser has not offered to install it. In Safari use Share, then Add to Home Screen.",
+      "localNote": "Your data lives only on this device. If you change device or clear the browser data, it is gone; take a backup now and then."
+    }
   },
   "installmentExpenses": {
     "title": "Bought through the queue",

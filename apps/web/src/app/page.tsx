@@ -84,7 +84,7 @@ export default function Home() {
           <div
             role="status"
             data-testid="backup-nudge"
-            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3 text-sm"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-card p-3 text-sm"
           >
             <span>{t("backupNudge")}</span>
             <Button asChild size="sm" variant="outline">

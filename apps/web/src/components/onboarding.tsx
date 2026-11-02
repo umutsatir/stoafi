@@ -145,7 +145,7 @@ export function Onboarding({ onDemo }: OnboardingProps) {
     <section
       aria-label={t("title")}
       data-testid="onboarding"
-      className="rise-in flex flex-col gap-5 rounded-3xl border border-border bg-card p-6 shadow-sm"
+      className="rise-in flex flex-col gap-5 rounded-3xl bg-card p-6 shadow-sm"
     >
       <div className="flex flex-col gap-2">
         <p className="text-sm text-muted-foreground" data-testid="onboarding-step">

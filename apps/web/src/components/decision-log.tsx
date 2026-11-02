@@ -94,7 +94,7 @@ export function DecisionLog({ decisions, hourlyNetIncome, onDelete, onAddBack }:
                   key={d.id}
                   data-testid={`decision-${d.id}`}
                   style={stagger(rowIndex)}
-                  className="rise-in flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
+                  className="rise-in flex flex-wrap items-center gap-3 rounded-xl bg-card p-4 shadow-sm"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{name}</p>

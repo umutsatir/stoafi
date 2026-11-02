@@ -822,7 +822,8 @@
       "aiHint": "Kendi durumunu, kendi şartlarınla bir yapay zekâ sohbetine götür.",
       "about": "Hakkında",
       "privacy": "Gizlilik",
-      "privacyHint": "Paranı gözden uzak tut."
+      "privacyHint": "Paranı gözden uzak tut.",
+      "offline": "Çevrimdışı ve kurulum"
     },
     "about": {
       "privacy": "Verilerin bu cihazdan çıkmaz. Stoafi'nin hesabı ve sunucusu yoktur, rakamlarını hiçbir yere göndermez.",
@@ -870,7 +871,16 @@
     "lastBackupNever": "Henüz yedek indirilmedi.",
     "lastBackupToday": "Son yedek: bugün.",
     "lastBackupDays": "Son yedek: {days} gün önce.",
-    "subtitle": "Her şey bu cihazda kalır. Kaybetmemek için yedekle."
+    "subtitle": "Her şey bu cihazda kalır. Kaybetmemek için yedekle.",
+    "offline": {
+      "works": "Çevrimdışı çalışır",
+      "offlineNow": "Çevrimdışısın ve Stoafi hâlâ çalışıyor",
+      "hint": "İnternet olmadan da açılır ve çalışır; hiçbir şey sunucuya gitmez.",
+      "install": "Uygulamayı yükle",
+      "installed": "Yüklendi",
+      "installHelp": "Tarayıcın yüklemeyi önermedi. Safari’de Paylaş, sonra Ana Ekrana Ekle’yi kullan.",
+      "localNote": "Verilerin yalnızca bu cihazda duruyor. Cihaz değiştirir ya da tarayıcı verisini silersen kaybolur; ara sıra yedek al."
+    }
   },
   "installmentExpenses": {
     "title": "Kuyruktan aldıkların",

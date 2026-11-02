@@ -38,7 +38,7 @@ export function SelectContent({
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          "relative z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-card text-card-foreground shadow-md",
+          "relative z-50 min-w-[8rem] overflow-hidden rounded-md bg-card text-card-foreground shadow-md",
           className,
         )}
         {...props}
