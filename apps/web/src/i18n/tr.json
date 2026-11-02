@@ -231,7 +231,9 @@
       "fund": "Acil durum fonu",
       "fundMonths": "{target} aydan {months} ay",
       "fundRing": "Acil durum fonu ilerlemesi",
-      "addMoney": "Ona para ekle"
+      "addMoney": "Ona para ekle",
+      "needsTitle": "İhtiyaçların",
+      "needsHint": "Her ay kira, faturalar, yaşam giderleri ve taksitler"
     },
     "fundTitle": "Acil durum fonu",
     "fundHint": "Kötü bir ayın borca dönüşmemesi için kenara ayrılan para. Biriktirdikçe Birikim sayfasından ekle.",
@@ -368,7 +370,8 @@
       "hint": "Dışarı çıkma, arkadaşlar, kahve, alışveriş: sadece sana ayrılan para.",
       "amount": "Aylık kişisel harcama (isteğe bağlı)",
       "amountHint": "Boş bırakırsan Stoafi, aboneliklerden ve taksitlerden sonra isteklerinde kalanı kullanır."
-    }
+    },
+    "subtitle": "Paran bir bakışta. Rakamlar değiştikçe plan, sağlık ve kuyruk kendiliğinden güncellenir."
   },
   "plan": {
     "title": "Plan",
@@ -400,7 +403,13 @@
       "investingWhere": "Bu para nereye gidebilir?",
       "learnInvesting": "Endeks fonları ve maliyetleri öğren",
       "installmentRoomTitle": "Taksit payı"
-    }
+    },
+    "subtitle": "Paranı dört kovaya bölen strateji. Birini seç; her öneri bir kitaptan ya da yatırımcıdan gelir.",
+    "showLesson": "Ayrıntı",
+    "hideLesson": "Gizle",
+    "idea": "Fikir.",
+    "fits": "Kime uyar.",
+    "limits": "Sınırları."
   },
   "queue": {
     "title": "Kuyruk",
@@ -496,7 +505,8 @@
       "title": "Kuyruğun boş",
       "text": "Almayı düşündüğün bir şey ekle. Karar vermeden önce biraz beklemek işin özü."
     },
-    "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?"
+    "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?",
+    "subtitle": "Almayı düşündüğün şeyler, sırayla. Bir kabarcığa dokun; sonra bir aya tıklayıp taşı. Etkisi anında görünür."
   },
   "queuePreview": {
     "wantsBeforeAfter": "İstekler önce / sonra",
@@ -621,7 +631,8 @@
       "limitFor": "{name} limiti",
       "deleteAndKeep": "Sil, diğerlerini koru"
     },
-    "openCard": "{name} aç"
+    "openCard": "{name} aç",
+    "subtitle": "Hesap kesim ve son ödeme günlerini, limitini takip et; alışverişte en iyi günü söyleyeyim."
   },
   "minimumPayment": {
     "title": "Asgari ödeme tuzağı hesaplayıcısı",
@@ -740,7 +751,8 @@
       "points": "puan",
       "better": "daha iyi",
       "worse": "daha kötü"
-    }
+    },
+    "subtitle": "Paranın ne kadar sağlıklı olduğu: dört ölçü, tek bakışta. Eşikler senin kurallarından gelir."
   },
   "decisions": {
     "title": "Kararlar",
@@ -775,7 +787,8 @@
     "addBack": "Geri ekle",
     "addBackNamed": "{name} ürününü kuyruğa geri ekle",
     "deleteNamed": "{name} kararını sil",
-    "addedBack": "{name} kuyruğuna geri eklendi"
+    "addedBack": "{name} kuyruğuna geri eklendi",
+    "subtitle": "Aldıkların, ertelediklerin ve vazgeçtiklerin. Bir istek için 30 gün beklemek bu sayfanın ödüllendirdiği alışkanlık."
   },
   "settings": {
     "title": "Ayarlar",
@@ -856,7 +869,8 @@
     },
     "lastBackupNever": "Henüz yedek indirilmedi.",
     "lastBackupToday": "Son yedek: bugün.",
-    "lastBackupDays": "Son yedek: {days} gün önce."
+    "lastBackupDays": "Son yedek: {days} gün önce.",
+    "subtitle": "Her şey bu cihazda kalır. Kaybetmemek için yedekle."
   },
   "installmentExpenses": {
     "title": "Kuyruktan aldıkların",
@@ -887,7 +901,8 @@
       "saving": "Biriktirme",
       "investing": "Yatırım",
       "thinking": "Düşünme"
-    }
+    },
+    "subtitle": "Stoafi’deki her öneri bir kitaptan ya da bir yatırımcıdan gelir. Bu kartlar fikri kendi sözlerimizle, uygulamanın onu nasıl kullandığını, kime uyduğunu ve nerede yetersiz kaldığını anlatır."
   },
   "insights": {
     "title": "Planın ne diyor",
@@ -1029,7 +1044,8 @@
       "m50": "{name} hedefinin yarısına geldin. Devam!",
       "m75": "{name} hedefinin dörtte üçü tamam. Az kaldı!",
       "m100": "{name} hedefine ulaştın. Tebrikler!"
-    }
+    },
+    "subtitle": "Biriktirdikçe parayı kumbaralara ekle ve dolduğunu izle. Stoafi bu ay ne kaldığını ve ne kadar ayırman gerektiğini gösterir."
   },
   "investments": {
     "types": {

@@ -41,7 +41,7 @@ export default function SettingsPage() {
   const tTypes = useTranslations("investments.types");
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       <SettingsSection
         title={t("sections.general")}
         description={t("sections.generalHint")}

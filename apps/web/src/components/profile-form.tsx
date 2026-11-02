@@ -82,7 +82,7 @@ export function ProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="grid items-stretch gap-4 lg:grid-cols-[1.1fr_1fr]">
       <Card className="rise-in">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export function ProfileForm({
           </CardTitle>
           <CardDescription>{t("fundHint")}</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
+        <CardContent className="grid gap-4">
           <Field label={t("currentSavings")} htmlFor="savings">
             <MoneyInput id="savings" currency={currency} value={savings} onChange={setSavings} />
           </Field>
@@ -101,7 +101,7 @@ export function ProfileForm({
               type="number"
               min={0}
               step="any"
-              className="w-40"
+              className="w-full"
               value={fundMonths}
               onChange={(e) => setFundMonths(Math.max(0, Number(e.target.value)))}
             />
@@ -122,7 +122,7 @@ export function ProfileForm({
           </CardTitle>
           <CardDescription>{t("economyHint")}</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
+        <CardContent className="grid gap-4">
           <Field label={t("country")} htmlFor="country">
             <NativeSelect
               id="country"
@@ -154,7 +154,7 @@ export function ProfileForm({
           </Field>
           <p
             data-testid="inflation-insight"
-            className="rounded-lg bg-muted p-3 text-sm text-muted-foreground sm:col-span-2"
+            className="rounded-[18px] bg-muted px-[18px] py-4 text-sm font-semibold leading-relaxed"
           >
             {t("inflationInsight", {
               rate: `${(inflation * 100).toFixed(0)}%`,
@@ -165,8 +165,10 @@ export function ProfileForm({
         </CardContent>
       </Card>
 
-      <div>
-        <Button type="submit">{t("save")}</Button>
+      <div className="lg:col-span-2">
+        <Button type="submit" size="lg">
+          {t("save")}
+        </Button>
       </div>
     </form>
   );

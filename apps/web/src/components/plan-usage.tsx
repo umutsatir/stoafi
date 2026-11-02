@@ -74,15 +74,20 @@ export function PlanUsage({
     <section
       aria-label={t("title")}
       data-testid="plan-usage"
-      className="rise-in flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
+      className="lift pop-in flex flex-col gap-4 rounded-card bg-card px-8 py-7"
     >
       <div>
-        <p className="text-sm text-muted-foreground">{t("title")}</p>
-        <p className="text-title font-semibold" data-testid="active-plan-name">
-          {title ?? planState.strategyId}
-        </p>
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="text-[22px] font-extrabold tracking-[-0.03em]">{t("title")}</p>
+          <span
+            className="rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-extrabold text-primary-foreground"
+            data-testid="active-plan-name"
+          >
+            {title ?? planState.strategyId}
+          </span>
+        </div>
       </div>
-      <ul className="grid gap-4 sm:grid-cols-2">
+      <ul className="grid gap-5">
         {BUCKET_LIST.map((bucket, i) => {
           const { committed, limit } = projection.byBucket[bucket];
           return (

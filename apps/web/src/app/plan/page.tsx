@@ -23,26 +23,28 @@ export default function PlanPage() {
   const t = useTranslations("plan");
 
   return (
-    <Page title={t("title")}>
-      {profile && planState && (
-        <PlanUsage
-          profile={profile}
-          planState={planState}
-          ledger={ledger}
-          month={monthOf(today)}
-          queueItems={queueItems}
-          sinkingFunds={sinkingFunds}
-          installmentCapPct={guardThresholds.installmentCapPct}
-        />
-      )}
-      {profile && planState && (
-        <PlanInsights
-          profile={profile}
-          planState={planState}
-          ledger={ledger}
-          month={monthOf(today)}
-        />
-      )}
+    <Page title={t("title")} subtitle={t("subtitle")}>
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+        {profile && planState && (
+          <PlanUsage
+            profile={profile}
+            planState={planState}
+            ledger={ledger}
+            month={monthOf(today)}
+            queueItems={queueItems}
+            sinkingFunds={sinkingFunds}
+            installmentCapPct={guardThresholds.installmentCapPct}
+          />
+        )}
+        {profile && planState && (
+          <PlanInsights
+            profile={profile}
+            planState={planState}
+            ledger={ledger}
+            month={monthOf(today)}
+          />
+        )}
+      </div>
       {profile ? (
         <PlanComparison
           profile={profile}

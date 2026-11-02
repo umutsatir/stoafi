@@ -66,7 +66,7 @@ export default function DecisionsPage() {
   }
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       {decisions.length === 0 ? (
         <EmptyState
           icon={<LayoutList className="h-8 w-8" />}

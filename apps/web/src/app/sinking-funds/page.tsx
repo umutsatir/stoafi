@@ -76,7 +76,7 @@ export default function SavingsPage() {
 
   if (!profile) {
     return (
-      <Page title={t("title")}>
+      <Page title={t("title")} subtitle={t("subtitle")}>
         <Card>
           <CardContent className="flex flex-col items-start gap-4 pt-6">
             <p className="text-sm text-muted-foreground">{t("needProfile")}</p>
@@ -297,7 +297,7 @@ export default function SavingsPage() {
   }
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       <p className="max-w-prose text-sm text-muted-foreground">{t("intro")}</p>
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>

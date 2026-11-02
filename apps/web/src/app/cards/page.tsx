@@ -57,7 +57,7 @@ export default function CardsPage() {
   }
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       <CardWallet
         cards={cards}
         remainingInstallments={remaining}

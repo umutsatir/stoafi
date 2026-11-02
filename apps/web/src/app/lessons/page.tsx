@@ -57,7 +57,7 @@ export default function LessonsPage() {
   const readCount = cards.filter((c) => readLessons.includes(c.id)).length;
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       <p className="max-w-prose text-sm text-muted-foreground">{t("intro")}</p>
 
       <div className="flex flex-col gap-2">

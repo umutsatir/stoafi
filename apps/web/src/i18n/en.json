@@ -231,7 +231,9 @@
       "fund": "Emergency fund",
       "fundMonths": "{months} of {target} months",
       "fundRing": "Emergency fund progress",
-      "addMoney": "Add money to it"
+      "addMoney": "Add money to it",
+      "needsTitle": "Your needs",
+      "needsHint": "Rent, bills, living costs and installments each month"
     },
     "fundTitle": "Emergency fund",
     "fundHint": "Money kept aside so a bad month never turns into debt. Add to it from the Savings page as you save.",
@@ -368,7 +370,8 @@
       "hint": "Going out, friends, coffee, shopping: the money that is just for you.",
       "amount": "Monthly personal spending (optional)",
       "amountHint": "Leave it empty and Stoafi uses what is left of your wants after subscriptions and installments."
-    }
+    },
+    "subtitle": "Your money at a glance. As the numbers change, the plan, health and queue update by themselves."
   },
   "plan": {
     "title": "Plan",
@@ -400,7 +403,13 @@
       "investingWhere": "Where can this money go?",
       "learnInvesting": "Learn about index funds and costs",
       "installmentRoomTitle": "Installment room"
-    }
+    },
+    "subtitle": "Strategies that split your money into four buckets. Pick one; every suggestion comes from a book or an investor.",
+    "showLesson": "Details",
+    "hideLesson": "Hide",
+    "idea": "Idea.",
+    "fits": "Who it suits.",
+    "limits": "Its limits."
   },
   "queue": {
     "title": "Queue",
@@ -496,7 +505,8 @@
       "title": "Your queue is empty",
       "text": "Add something you are thinking of buying. Waiting a little before deciding is the whole idea."
     },
-    "priceStale": "Price is {days} days old: still right?"
+    "priceStale": "Price is {days} days old: still right?",
+    "subtitle": "What you are thinking of buying, in order. Touch a bubble, then click a month to move it. The effect shows at once."
   },
   "queuePreview": {
     "wantsBeforeAfter": "Wants before / after",
@@ -621,7 +631,8 @@
       "limitFor": "Limit for {name}",
       "deleteAndKeep": "Delete and keep the rest"
     },
-    "openCard": "Open {name}"
+    "openCard": "Open {name}",
+    "subtitle": "Track statement and due days and limits; Stoafi tells you the best day to buy."
   },
   "minimumPayment": {
     "title": "Minimum-payment trap calculator",
@@ -740,7 +751,8 @@
       "points": "points",
       "better": "better",
       "worse": "worse"
-    }
+    },
+    "subtitle": "How healthy your money is: four measures at a glance. The thresholds come from your own rules."
   },
   "decisions": {
     "title": "Decisions",
@@ -775,7 +787,8 @@
     "addBack": "Add back",
     "addBackNamed": "Add {name} back to the queue",
     "deleteNamed": "Delete decision {name}",
-    "addedBack": "{name} is back in your queue"
+    "addedBack": "{name} is back in your queue",
+    "subtitle": "What you bought, postponed and skipped. Waiting 30 days on a want is the habit this page rewards."
   },
   "settings": {
     "title": "Settings",
@@ -856,7 +869,8 @@
     },
     "lastBackupNever": "No backup downloaded yet.",
     "lastBackupToday": "Last backup: today.",
-    "lastBackupDays": "Last backup: {days} days ago."
+    "lastBackupDays": "Last backup: {days} days ago.",
+    "subtitle": "Everything stays on this device. Back up so you do not lose it."
   },
   "installmentExpenses": {
     "title": "Bought through the queue",
@@ -887,7 +901,8 @@
       "saving": "Saving",
       "investing": "Investing",
       "thinking": "Thinking"
-    }
+    },
+    "subtitle": "Every suggestion in Stoafi comes from a book or an investor. These cards explain the idea in our own words, how the app uses it, who it suits and where it falls short."
   },
   "insights": {
     "title": "What your plan says",
@@ -1029,7 +1044,8 @@
       "m50": "Halfway to {name}. Keep going!",
       "m75": "Three quarters of {name} done. Almost there!",
       "m100": "{name} is fully funded. Well done!"
-    }
+    },
+    "subtitle": "Add money to your pots as you save and watch them fill. Stoafi shows what is left this month and how much to set aside."
   },
   "investments": {
     "types": {

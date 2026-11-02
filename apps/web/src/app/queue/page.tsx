@@ -239,6 +239,7 @@ export default function QueuePage() {
   return (
     <Page
       title={t("title")}
+      subtitle={t("subtitle")}
       action={
         <Button type="button" onClick={() => setAdding(true)}>
           <Plus className="h-4 w-4" aria-hidden="true" />
