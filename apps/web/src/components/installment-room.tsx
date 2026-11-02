@@ -24,11 +24,11 @@ export function InstallmentRoom({ income, capPct, used }: InstallmentRoomProps) 
 
   return (
     <div className="flex flex-col gap-3" data-testid="installment-room">
-      <div className="flex items-center justify-between gap-2 text-sm">
+      <div className="flex items-start justify-between gap-2 text-[12.5px]">
         <span className="text-muted-foreground">
           {t("cap", { pct: Math.round(capPct * 100), amount: money(cap) })}
         </span>
-        <StatusChip tone={over ? "danger" : tight ? "warning" : "success"}>
+        <StatusChip tone={over ? "danger" : tight ? "warning" : "success"} className="shrink-0">
           <span data-testid="installment-room-state">
             {over ? t("state.over") : tight ? t("state.tight") : t("state.ok")}
           </span>

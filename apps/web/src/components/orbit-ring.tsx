@@ -48,8 +48,8 @@ export function OrbitRing({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="mt-2 flex flex-wrap items-center gap-8">
-        <div className="relative mx-auto aspect-square w-[min(420px,100%)] flex-none">
+      <div className="mt-2 flex flex-wrap items-center gap-6">
+        <div className="relative mx-auto aspect-square w-[min(360px,100%)] flex-none">
           <svg
             role="img"
             aria-label={ariaLabel}
@@ -104,7 +104,7 @@ export function OrbitRing({
           </div>
         </div>
 
-        <div key={current.id} className="min-w-0 flex-1 basis-[260px] [animation:fade_0.5s_both]">
+        <div key={current.id} className="min-w-0 flex-1 basis-[240px] [animation:fade_0.5s_both]">
           <div className="flex items-center gap-2.5">
             <span
               aria-hidden="true"

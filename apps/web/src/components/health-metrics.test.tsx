@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import {
   healthSummary,
@@ -61,10 +61,9 @@ describe("HealthMetrics", () => {
   it("gives an overall status, the reason, and a fix button to the first step", () => {
     render({ savingsBalance: 5000, projection: { ...projection, installmentLoad: 3500 } });
     expect(screen.getByTestId("overall-status")).toHaveTextContent("At risk");
-    expect(screen.getByRole("link", { name: /Fix this/ })).toHaveAttribute(
-      "href",
-      "/sinking-funds",
-    );
+    expect(
+      within(screen.getByTestId("step-build-emergency-fund")).getByRole("link"),
+    ).toHaveAttribute("href", "/sinking-funds");
     expect(screen.getByTestId("step-build-emergency-fund")).toBeInTheDocument();
     expect(screen.getByTestId("step-reduce-installments")).toBeInTheDocument();
   });
@@ -75,8 +74,8 @@ describe("HealthMetrics", () => {
       projection: { ...projection, installmentLoad: 0 },
     });
     expect(screen.getByTestId("overall-status")).toHaveTextContent("Good");
-    expect(screen.getByText("Everything is on track. Keep going.")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /Fix this/ })).not.toBeInTheDocument();
+    expect(screen.getAllByText("Everything is on track. Keep going.").length).toBeGreaterThan(0);
+    expect(screen.queryByTestId("step-build-emergency-fund")).not.toBeInTheDocument();
   });
 
   it("explains each metric in an (i) popover", () => {

@@ -12,14 +12,14 @@ export const DialogTrigger = DialogPrimitive.Trigger;
 export const DialogClose = DialogPrimitive.Close;
 
 const OVERLAY =
-  "fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm data-[state=closed]:animate-[overlay-out_160ms_ease-in_forwards] data-[state=open]:animate-[overlay-in_200ms_ease-out]";
+  "fixed inset-0 z-50 bg-black/45 data-[state=closed]:animate-[overlay-out_160ms_ease-in_forwards] data-[state=open]:animate-[overlay-in_200ms_ease-out]";
 
 function CloseButton() {
   const t = useTranslations("common");
   return (
     <DialogPrimitive.Close
       aria-label={t("close")}
-      className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="absolute right-5 top-5 rounded-full bg-muted p-2 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <X className="h-4 w-4" aria-hidden="true" />
     </DialogPrimitive.Close>
@@ -40,12 +40,14 @@ export function DialogContent({ title, description, children, className }: Dialo
       <DialogPrimitive.Content
         {...(description ? {} : { "aria-describedby": undefined })}
         className={cn(
-          "data-[state=open]:animate-[dialog-in_220ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[dialog-out_160ms_ease-in_forwards] fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-y-auto rounded-xl bg-card p-6 shadow-lg",
+          "data-[state=open]:animate-[dialog-pop_450ms_cubic-bezier(.2,.8,.2,1)] data-[state=closed]:animate-[dialog-out_160ms_ease-in_forwards] fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 -translate-y-1/2 flex-col gap-[18px] overflow-y-auto rounded-card bg-card px-6 py-7 shadow-2xl sm:px-[34px] sm:py-8",
           className,
         )}
       >
         <div className="flex flex-col gap-1.5 pr-6">
-          <DialogPrimitive.Title className="text-lg font-semibold">{title}</DialogPrimitive.Title>
+          <DialogPrimitive.Title className="text-2xl font-extrabold tracking-[-0.03em]">
+            {title}
+          </DialogPrimitive.Title>
           {description && (
             <DialogPrimitive.Description className="text-sm text-muted-foreground">
               {description}

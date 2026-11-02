@@ -7,7 +7,6 @@ import {
   activeQueueItems,
   addMonths,
   cashFlowSeries,
-  committedByCategory,
   currentAllocation,
   depositedInMonth,
   emergencyFundMonths,
@@ -16,6 +15,7 @@ import {
   healthSummary,
   installmentCommitments,
   limitAdvice,
+  limitStatuses,
   monthlyNeeds,
   monthlySavingsAdvice,
   netMonthlyIncome,
@@ -45,7 +45,6 @@ import { StatusChip } from "@/components/ui/status-chip";
 import { MonthBars } from "./month-bars";
 import { OrbitRing, type OrbitSegment } from "./orbit-ring";
 import { InstallmentRoom } from "./installment-room";
-import { LimitsPanel } from "./limits-panel";
 
 export interface DashboardProps {
   profile: Profile | null;
@@ -132,6 +131,7 @@ export function Dashboard({
   const tOrbit = useTranslations("home.orbit");
   const tAdvice = useTranslations("home.limits.advice");
   const tAction = useTranslations("home.limits.action");
+  const tLimits = useTranslations("home.limits");
   const locale = useLocale() as Locale;
   const money = useMoney();
 
@@ -178,7 +178,6 @@ export function Dashboard({
   const fundLow = savedMonths < profile.emergencyFundTargetMonths;
   const overspent = left < 0;
 
-  const categories = committedByCategory(profile, ledger, month);
   const daysInThisMonth = new Date(
     Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0),
   ).getUTCDate();
@@ -564,7 +563,7 @@ export function Dashboard({
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr]">
+      <div className="grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr]">
         {planTitle && allocation ? (
           <Panel
             title={t("activePlanNamed", { name: planTitle })}
@@ -573,19 +572,77 @@ export function Dashboard({
             href="/plan"
             hrefLabel={t("changePlan")}
           >
-            <LimitsPanel
-              projection={thisMonth}
-              queueFits={queueFitsNow}
-              categories={categories}
-              spending={spending}
-              installmentUsed={installments}
-              installmentCap={Math.round(income * installmentCapPct)}
-              names={names}
-            />
+            <ul className="flex flex-col gap-4">
+              {limitStatuses(thisMonth)
+                .filter((row) => row.limit > 0 || row.committed > 0)
+                .map((row) => (
+                  <li key={row.bucket} data-testid={`limit-${row.bucket}`}>
+                    <div className="flex items-baseline justify-between gap-2 text-[13.5px] font-semibold">
+                      <span>{tLimits(`bucket.${row.bucket}`)}</span>
+                      <span>
+                        <span className="font-extrabold">{money(row.committed)}</span>{" "}
+                        <span className="text-muted-foreground">
+                          / <span data-testid={`plan-${row.bucket}`}>{money(row.limit)}</span>
+                        </span>
+                      </span>
+                    </div>
+                    <div
+                      role="progressbar"
+                      aria-label={tLimits("barLabel", { bucket: tLimits(`bucket.${row.bucket}`) })}
+                      aria-valuemin={0}
+                      aria-valuemax={row.limit}
+                      aria-valuenow={Math.min(row.committed, row.limit)}
+                      className="mt-1.5 h-[9px] rounded-full bg-muted"
+                    >
+                      <div
+                        className={cn(
+                          "h-[9px] rounded-full transition-[width] duration-500",
+                          row.state === "over"
+                            ? "bg-destructive"
+                            : row.state === "tight"
+                              ? "bg-c2"
+                              : "bg-c4",
+                        )}
+                        style={{
+                          width: `${row.limit > 0 ? Math.min(100, (row.committed / row.limit) * 100) : 100}%`,
+                        }}
+                      />
+                    </div>
+                    <p
+                      data-testid={`limit-state-${row.bucket}`}
+                      className={cn(
+                        "mt-1 text-xs font-bold",
+                        row.state === "over" ? "text-destructive" : "text-muted-foreground",
+                      )}
+                    >
+                      <span data-testid={`left-${row.bucket}`}>
+                        {row.state === "over"
+                          ? tLimits("overBy", { amount: money(row.overBy) })
+                          : tLimits("left", { amount: money(row.remaining) })}
+                      </span>
+                    </p>
+                  </li>
+                ))}
+            </ul>
+            <div
+              data-testid="free-spending"
+              className="mt-auto rounded-[18px] bg-muted px-4 py-3 text-[12.5px] leading-relaxed"
+            >
+              <p className="font-bold">
+                {tLimits("spending.title")}:{" "}
+                <span data-testid="free-spending-monthly" className="font-extrabold">
+                  {money(spending.monthly)}
+                </span>
+              </p>
+              <p data-testid="free-spending-spread" className="text-muted-foreground">
+                {tLimits("spending.spread", {
+                  weekly: money(spending.weekly),
+                  daily: money(spending.daily),
+                })}
+              </p>
+            </div>
           </Panel>
-        ) : (
-          <div />
-        )}
+        ) : null}
 
         <Panel
           title={t("nextInQueue")}

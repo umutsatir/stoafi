@@ -738,7 +738,8 @@
         "title": "Stretch your runway",
         "why": "Your savings would not cover many months of needs. Lowering fixed costs helps most.",
         "action": "Review expenses"
-      }
+      },
+      "allGood": "All is well. Keep it up."
     },
     "trends": {
       "title": "How it is changing",

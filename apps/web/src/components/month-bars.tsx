@@ -48,7 +48,7 @@ export function MonthBars({
               onClick={() => setActive(i)}
               className={cn(
                 "w-full rounded-t-lg rounded-b-[3px] transition-[background,height] duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                i === active ? "bg-foreground" : i === 0 ? "bg-primary" : "bg-muted",
+                i === active ? "bg-foreground" : i === 0 ? "bg-primary" : "bg-secondary",
               )}
               style={{ height: `${Math.max(5, (Math.max(0, bar.value) / max) * 100)}%` }}
             />

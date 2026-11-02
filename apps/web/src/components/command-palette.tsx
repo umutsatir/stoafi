@@ -68,10 +68,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent title={t("title")} description={t("hint")} className="max-w-lg">
+      <DialogContent title={t("title")} description={t("hint")} className="max-w-[600px]">
         <div className="relative">
           <Search
-            className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"
+            className="pointer-events-none absolute left-3.5 top-4 h-4 w-4 text-muted-foreground"
             aria-hidden="true"
           />
           <input
@@ -96,7 +96,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 run(results[active]);
               }
             }}
-            className="h-10 w-full rounded-md border border-input bg-card pl-9 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-12 w-full rounded-2xl border-0 bg-muted pl-10 pr-3 text-[15px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
         {results.length === 0 ? (
@@ -117,7 +117,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 onMouseEnter={() => setActive(index)}
                 onClick={() => run(command)}
                 className={cn(
-                  "flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm",
+                  "flex cursor-pointer items-center justify-between rounded-[14px] px-3 py-3 text-sm font-semibold",
                   index === active ? "bg-accent" : "",
                 )}
               >

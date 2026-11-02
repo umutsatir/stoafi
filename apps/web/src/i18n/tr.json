@@ -738,7 +738,8 @@
         "title": "Dayanma süreni uzat",
         "why": "Birikimin birkaç aylık ihtiyacını karşılamaz. En çok sabit giderleri azaltmak yardım eder.",
         "action": "Giderleri gözden geçir"
-      }
+      },
+      "allGood": "Her şey yolunda. Böyle devam."
     },
     "trends": {
       "title": "Nasıl değişiyor",
