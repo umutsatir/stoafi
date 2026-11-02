@@ -141,7 +141,7 @@ function QueueRow({
       ref={setNodeRef}
       style={style}
       data-testid={`queue-item-${item.id}`}
-      className={`rise-in flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md ${
+      className={`rise-in flex items-center gap-4 rounded-[20px] bg-card px-5 py-4 transition-[transform,box-shadow] duration-300 hover:translate-x-[5px] ${
         isDragging ? "opacity-60 shadow-lg" : ""
       }`}
     >
@@ -157,6 +157,20 @@ function QueueRow({
         </button>
       )}
 
+      <span
+        aria-hidden="true"
+        className={`flex h-11 w-11 flex-none items-center justify-center rounded-[15px] text-[17px] font-extrabold text-on ${
+          priority.key === "urgentImportant"
+            ? "bg-c3"
+            : priority.key === "importantOnly"
+              ? "bg-c1"
+              : priority.key === "urgentOnly"
+                ? "bg-c2"
+                : "bg-muted"
+        }`}
+      >
+        {index + 1}
+      </span>
       <div className="min-w-0 flex-1">
         {onSelect ? (
           <Button

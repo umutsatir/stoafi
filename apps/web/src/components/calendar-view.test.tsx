@@ -30,7 +30,10 @@ describe("CalendarView", () => {
 
   it("marks today and starts weeks on Monday", () => {
     renderWithIntl(<CalendarView profile={profile} cards={[]} today="2026-10-20" />);
-    expect(within(screen.getByTestId("day-20")).getByRole("button")).toHaveAttribute("aria-current", "date");
+    expect(within(screen.getByTestId("day-20")).getByRole("button")).toHaveAttribute(
+      "aria-current",
+      "date",
+    );
     expect(screen.getByTestId("day-1")).toBeInTheDocument();
     expect(screen.getByTestId("day-31")).toBeInTheDocument();
     expect(screen.queryByTestId("day-32")).not.toBeInTheDocument();
