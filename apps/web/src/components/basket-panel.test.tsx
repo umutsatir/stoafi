@@ -60,13 +60,13 @@ describe("BasketPanel", () => {
     renderWithIntl(<Harness onChange={onChange} />);
     fireEvent.click(screen.getByRole("button", { name: "Use the Balanced basket" }));
     expect(screen.queryByTestId("basket-templates")).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("S&P 500 index fund");
-    expect(screen.getByLabelText("Slice 1 percent")).toHaveValue(30);
+    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("Global index fund");
+    expect(screen.getByLabelText("Slice 1 percent")).toHaveValue(40);
     expect(screen.getByTestId("basket-total")).toHaveTextContent("Adds up to 100%");
 
-    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "40" } });
+    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "50" } });
     expect(screen.getByTestId("basket-total")).toHaveTextContent("Adds up to 110%: 10% too much");
-    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "20" } });
+    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "30" } });
     expect(screen.getByTestId("basket-total")).toHaveTextContent(
       "Adds up to 90%: 10% still to place",
     );
@@ -134,11 +134,25 @@ describe("BasketPanel", () => {
     expect(onAssign).toHaveBeenCalledWith("crypto", "gold");
   });
 
-  it("can restart from an example, and undo is offered when it replaces a basket", () => {
+  it("asks before an example replaces a basket you already have", async () => {
     renderWithIntl(<Harness initial={mine} />);
     fireEvent.click(screen.getByRole("button", { name: "Start from an example" }));
     fireEvent.click(screen.getByRole("button", { name: "Use the Careful basket" }));
-    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("Deposit or money market");
+    expect(await screen.findByRole("dialog")).toHaveTextContent(
+      "You are about to change your basket",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Change basket" }));
+    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("Deposit");
+  });
+
+  it("starts an empty basket you fill in one slice at a time", () => {
+    renderWithIntl(<Harness />);
+    fireEvent.click(screen.getByRole("button", { name: "Start empty" }));
+    expect(screen.queryByTestId("basket-templates")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Slice 1 name")).not.toBeInTheDocument();
+    expect(screen.getByTestId("basket-total")).toHaveTextContent("Adds up to 0%");
+    fireEvent.click(screen.getByRole("button", { name: "Add slice" }));
+    expect(screen.getByLabelText("Slice 1 name")).toBeInTheDocument();
   });
 
   it("states that it is not a recommendation", () => {

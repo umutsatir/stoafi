@@ -10,10 +10,21 @@
         "Vanguard: principles for investing success"
       ],
       "entries": [
-        { "key": "deposit", "typeId": "deposit", "percent": 40 },
-        { "key": "bond", "typeId": "bond", "percent": 20 },
-        { "key": "gold", "typeId": "gold", "percent": 20 },
-        { "key": "world", "typeId": "index-fund", "percent": 20 }
+        {
+          "key": "deposit",
+          "typeId": "deposit",
+          "percent": 50
+        },
+        {
+          "key": "gold",
+          "typeId": "gold",
+          "percent": 30
+        },
+        {
+          "key": "indexFund",
+          "typeId": "index-fund",
+          "percent": 20
+        }
       ]
     },
     {
@@ -24,11 +35,26 @@
         "Vanguard: principles for investing success"
       ],
       "entries": [
-        { "key": "sp500", "typeId": "index-fund", "percent": 30 },
-        { "key": "nasdaq", "typeId": "index-fund", "percent": 10 },
-        { "key": "gold", "typeId": "gold", "percent": 20 },
-        { "key": "bond", "typeId": "bond", "percent": 20 },
-        { "key": "deposit", "typeId": "deposit", "percent": 20 }
+        {
+          "key": "indexFund",
+          "typeId": "index-fund",
+          "percent": 40
+        },
+        {
+          "key": "gold",
+          "typeId": "gold",
+          "percent": 25
+        },
+        {
+          "key": "deposit",
+          "typeId": "deposit",
+          "percent": 20
+        },
+        {
+          "key": "currency",
+          "typeId": "currency",
+          "percent": 15
+        }
       ]
     },
     {
@@ -39,11 +65,26 @@
         "Vanguard: principles for investing success"
       ],
       "entries": [
-        { "key": "sp500", "typeId": "index-fund", "percent": 40 },
-        { "key": "nasdaq", "typeId": "index-fund", "percent": 25 },
-        { "key": "gold", "typeId": "gold", "percent": 15 },
-        { "key": "world", "typeId": "index-fund", "percent": 10 },
-        { "key": "deposit", "typeId": "deposit", "percent": 10 }
+        {
+          "key": "sp500",
+          "typeId": "index-fund",
+          "percent": 60
+        },
+        {
+          "key": "stock",
+          "typeId": "stock",
+          "percent": 20
+        },
+        {
+          "key": "gold",
+          "typeId": "gold",
+          "percent": 10
+        },
+        {
+          "key": "crypto",
+          "typeId": "crypto",
+          "percent": 10
+        }
       ]
     }
   ]

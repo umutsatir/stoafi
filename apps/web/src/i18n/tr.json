@@ -132,9 +132,18 @@
       "used": "({amount} kullanılıyor)"
     },
     "orbit": {
-      "quote1": { "text": "Az şeye sahip olan değil, daha çoğunu isteyen yoksuldur.", "by": "Seneca · serbest çeviri" },
-      "quote2": { "text": "Zenginlik, çok şeye sahip olmak değil, az şeye ihtiyaç duymaktır.", "by": "Epiktetos · serbest çeviri" },
-      "quote3": { "text": "Hayatın, düşüncelerinin rengini alır.", "by": "Marcus Aurelius · serbest çeviri" },
+      "quote1": {
+        "text": "Az şeye sahip olan değil, daha çoğunu isteyen yoksuldur.",
+        "by": "Seneca · serbest çeviri"
+      },
+      "quote2": {
+        "text": "Zenginlik, çok şeye sahip olmak değil, az şeye ihtiyaç duymaktır.",
+        "by": "Epiktetos · serbest çeviri"
+      },
+      "quote3": {
+        "text": "Hayatın, düşüncelerinin rengini alır.",
+        "by": "Marcus Aurelius · serbest çeviri"
+      },
       "title": "{month} yörüngesi",
       "hint": "Bir dilime gel, içinde ne olduğunu gör",
       "innerRing": "İç halka: gün {day} / {days}",
@@ -566,7 +575,12 @@
     "perMonth": "Taksitle: ayda {amount}.",
     "cashPay": "Peşin {amount}.",
     "buyAnyway": "Biliyorum, yine de al",
-    "room": {"none": "Sığmıyor", "short": "Yetmez", "tight": "Dar", "roomy": "Rahat"},
+    "room": {
+      "none": "Sığmıyor",
+      "short": "Yetmez",
+      "tight": "Dar",
+      "roomy": "Rahat"
+    },
     "wantsBeforeAfter": "İstekler önce / sonra",
     "freeCashBeforeAfter": "Serbest nakit önce / sonra",
     "installmentDraft": "Taksit taslağı: {months} ay",
@@ -1248,7 +1262,8 @@
       "profit": "Kâr ya da zarar",
       "profitPct": "Ödediğine göre {pct}",
       "allocationLabel": "Türe göre dağılım: {parts}",
-      "inflationNote": "Yılda yaklaşık {rate} enflasyon bekliyorsun. Bunun altındaki getiri alım gücünü kaybettirir. Buradaki değerler senin girdiğin fiyatlar; uygulama hiçbir fiyatı kendisi aramaz."
+      "inflationNote": "Yılda yaklaşık {rate} enflasyon bekliyorsun. Bunun altındaki getiri alım gücünü kaybettirir. Buradaki değerler senin girdiğin fiyatlar; uygulama hiçbir fiyatı kendisi aramaz.",
+      "inflationTitle": "Enflasyonu unutma"
     },
     "empty": {
       "title": "Yatırımlarını kaydet",
@@ -1285,7 +1300,8 @@
       "stale": "Fiyat {days} gündür güncellenmedi",
       "trade": "Al veya sat",
       "updatePrice": "Fiyatı güncelle",
-      "history": "Geçmiş"
+      "history": "Geçmiş",
+      "paid": "ödenen"
     },
     "trade": {
       "title": "{name} al veya sat",
@@ -1333,15 +1349,15 @@
       "template": {
         "careful": {
           "name": "Temkinli",
-          "text": "Çoğu az oynayan yerlerde. Kısa vadeler için ya da büyük düşüşler seni uykusuz bırakırsa."
+          "text": "Çoğu parayı sakin yerde tut; küçük bir kısmı büyümeye ayır."
         },
         "balanced": {
           "name": "Dengeli",
-          "text": "Büyüme ile daha sakin paranın karışımı. Beş yıl ve üzeri için yaygın bir başlangıç."
+          "text": "Büyüme ile sakinlik arasında orta yol."
         },
         "growth": {
           "name": "Atak",
-          "text": "Çoğunlukla hisse. Kötü bir yıl canını yakabilir; on yıl ve üzeri ile soğukkanlı bir mizaca uyar."
+          "text": "Uzun vadeli; dalgalanmayı kaldırabilen için."
         }
       },
       "use": "Bunu kullan",
@@ -1351,12 +1367,13 @@
       "keepMine": "Sepetimi koru",
       "replaced": "Sepet değiştirildi",
       "slice": {
-        "deposit": "Mevduat veya para piyasası",
-        "bond": "Tahvil / bono",
+        "deposit": "Mevduat",
         "gold": "Altın",
-        "world": "Dünya hisse endeks fonu",
-        "sp500": "S&P 500 endeks fonu",
-        "nasdaq": "Nasdaq-100 endeks fonu"
+        "indexFund": "Küresel endeks fonu",
+        "currency": "Döviz",
+        "sp500": "S&P 500",
+        "stock": "Hisse senedi",
+        "crypto": "Kripto"
       },
       "sliceName": "{n}. dilim adı",
       "slicePlaceholder": "örn. Altın",
@@ -1401,7 +1418,23 @@
       "willRecord": "İşaretlemek bu alımı {name} yatırımına da güncel fiyatıyla ekler.",
       "willLog": "İşaretlemek sadece not alır. Toplamların güncellensin istiyorsan alımı bir yatırıma ekle.",
       "cheerDone": "{name} için {amount} işaretlendi. İstikrar kazandırır.",
-      "monthlyHintNone": "Planın yatırım için pay ayırmıyor; her ay yatırmak istediğin tutarı kendin yaz."
+      "monthlyHintNone": "Planın yatırım için pay ayırmıyor; her ay yatırmak istediğin tutarı kendin yaz.",
+      "note": {
+        "gold": "Faiz getirmez, fiyatı oynar; sepetin küçük–orta parçası olarak. (Hata payı: Housel)",
+        "index-fund": "Düşük maliyetli geniş endeks: kazananı seçmeden büyümek. (Bogle)",
+        "deposit": "Sakin kısım; enflasyon alım gücünü yiyebilir.",
+        "currency": "Kısa-orta vade; kur her gün oynar.",
+        "stock": "Tek şirket riski; yıllar ve dağıtım ister.",
+        "crypto": "Çok oynak; kaybetsen de hayatını değiştirmeyecek tutar.",
+        "bond": "Faiz getirir ama fiyatı faizle oynar."
+      },
+      "templateReady": "“{name}” sepeti hazır",
+      "hideTemplates": "Şablonları gizle",
+      "replaceTitle": "Sepetini değiştirmek üzeresin",
+      "replaceText": "Mevcut sepetin yerine {name} şablonu gelecek; dilimlerin ve yüzdelerin sıfırlanır. Bu ayki işaretlemelerin de silinir.",
+      "replaceConfirm": "Sepeti değiştir",
+      "driftTarget": "hedef %{target}",
+      "splitSum": "Bölünen toplam: {sum}."
     }
   },
   "calendar": {

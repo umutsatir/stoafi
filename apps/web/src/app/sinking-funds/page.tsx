@@ -28,6 +28,7 @@ import { LessonLink } from "@/components/lesson-link";
 import { SavingsBoard } from "@/components/savings-board";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
 import { Page } from "@/components/ui/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { notify, notifyError, notifyUndo } from "@/components/ui/toaster";
@@ -64,6 +65,8 @@ export default function SavingsPage() {
   const ledger = useLedger();
   const [tab, setTab] = useState("pots");
   const quickAction = useAppStore((s) => s.quickAction);
+  const setQuickAction = useAppStore((s) => s.setQuickAction);
+  const tInvest = useTranslations("investments");
   // The palette can ask for an action on either tab; show that tab so its board can pick the request up.
   useEffect(() => {
     if (quickAction === "addInvestment") setTab("investments");
@@ -297,7 +300,20 @@ export default function SavingsPage() {
   }
 
   return (
-    <Page title={t("title")} subtitle={t("subtitle")}>
+    <Page
+      title={t("title")}
+      subtitle={t("subtitle")}
+      action={
+        <button
+          type="button"
+          onClick={() => setQuickAction(tab === "pots" ? "addPot" : "addInvestment")}
+          className="press inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-primary px-5 py-3 text-[13.5px] font-extrabold text-primary-foreground"
+        >
+          <Plus className="h-[15px] w-[15px]" strokeWidth={2.6} aria-hidden="true" />
+          {tab === "pots" ? t("addPot") : tInvest("addInvestment")}
+        </button>
+      }
+    >
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="pots">{t("tabs.pots")}</TabsTrigger>

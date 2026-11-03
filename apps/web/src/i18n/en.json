@@ -132,9 +132,18 @@
       "used": "({amount} used)"
     },
     "orbit": {
-      "quote1": { "text": "It is not the person who has little, but the one who craves more, who is poor.", "by": "Seneca · loose translation" },
-      "quote2": { "text": "Wealth is not having a lot, it is needing little.", "by": "Epictetus · loose translation" },
-      "quote3": { "text": "Your life takes on the colour of your thoughts.", "by": "Marcus Aurelius · loose translation" },
+      "quote1": {
+        "text": "It is not the person who has little, but the one who craves more, who is poor.",
+        "by": "Seneca · loose translation"
+      },
+      "quote2": {
+        "text": "Wealth is not having a lot, it is needing little.",
+        "by": "Epictetus · loose translation"
+      },
+      "quote3": {
+        "text": "Your life takes on the colour of your thoughts.",
+        "by": "Marcus Aurelius · loose translation"
+      },
       "title": "{month} orbit",
       "hint": "Point at a part to see what is inside it",
       "innerRing": "Inner ring: day {day} of {days}",
@@ -566,7 +575,12 @@
     "perMonth": "In installments: {amount} a month.",
     "cashPay": "Cash {amount}.",
     "buyAnyway": "I know, buy anyway",
-    "room": {"none": "Doesn't fit", "short": "Not enough", "tight": "Tight", "roomy": "Comfortable"},
+    "room": {
+      "none": "Doesn't fit",
+      "short": "Not enough",
+      "tight": "Tight",
+      "roomy": "Comfortable"
+    },
     "wantsBeforeAfter": "Wants before / after",
     "freeCashBeforeAfter": "Free cash before / after",
     "installmentDraft": "Installment draft: {months} months",
@@ -1248,7 +1262,8 @@
       "profit": "Profit or loss",
       "profitPct": "{pct} on what you paid",
       "allocationLabel": "Split by type: {parts}",
-      "inflationNote": "You expect about {rate} inflation a year. A return below that loses buying power. The values here are prices you typed in; the app never looks them up."
+      "inflationNote": "You expect about {rate} inflation a year. A return below that loses buying power. The values here are prices you typed in; the app never looks them up.",
+      "inflationTitle": "Don't forget inflation"
     },
     "empty": {
       "title": "Record what you invest in",
@@ -1285,7 +1300,8 @@
       "stale": "Price is {days} days old",
       "trade": "Buy or sell",
       "updatePrice": "Update price",
-      "history": "History"
+      "history": "History",
+      "paid": "paid"
     },
     "trade": {
       "title": "Buy or sell {name}",
@@ -1333,15 +1349,15 @@
       "template": {
         "careful": {
           "name": "Careful",
-          "text": "Most of it in places that move little. For short horizons, or if big drops would cost you sleep."
+          "text": "Keep most of the money somewhere calm; put a small part to work for growth."
         },
         "balanced": {
           "name": "Balanced",
-          "text": "A mix of growth and steadier money. A common starting point for five years or more."
+          "text": "A middle road between growth and calm."
         },
         "growth": {
           "name": "Growth",
-          "text": "Mostly stocks. A bad year can hurt, so it fits ten years or more and a calm temper."
+          "text": "For the long run, for someone who can stand the swings."
         }
       },
       "use": "Use this",
@@ -1351,12 +1367,13 @@
       "keepMine": "Keep my basket",
       "replaced": "Basket replaced",
       "slice": {
-        "deposit": "Deposit or money market",
-        "bond": "Bonds",
+        "deposit": "Deposit",
         "gold": "Gold",
-        "world": "World stock index fund",
-        "sp500": "S&P 500 index fund",
-        "nasdaq": "Nasdaq-100 index fund"
+        "indexFund": "Global index fund",
+        "currency": "Foreign currency",
+        "sp500": "S&P 500",
+        "stock": "Single stocks",
+        "crypto": "Crypto"
       },
       "sliceName": "Slice {n} name",
       "slicePlaceholder": "e.g. Gold",
@@ -1401,7 +1418,23 @@
       "willRecord": "Ticking also adds this purchase to {name}, at its current price.",
       "willLog": "Ticking only notes it. Add the purchase to a holding to update your totals.",
       "cheerDone": "{amount} into {name} ticked off. Steady wins.",
-      "monthlyHintNone": "Your plan sets nothing aside for investing, so type the amount you want to invest each month."
+      "monthlyHintNone": "Your plan sets nothing aside for investing, so type the amount you want to invest each month.",
+      "note": {
+        "gold": "Pays no interest and its price moves; keep it a small to medium part of the basket. (Room for error: Housel)",
+        "index-fund": "A cheap broad index: grow without picking the winner. (Bogle)",
+        "deposit": "The calm part; inflation can eat its buying power.",
+        "currency": "Short to medium term; the rate moves every day.",
+        "stock": "Single-company risk; it needs years and spreading.",
+        "crypto": "Very volatile; only an amount that would not change your life if lost.",
+        "bond": "Pays interest, but its price moves with rates."
+      },
+      "templateReady": "“{name}” basket is ready",
+      "hideTemplates": "Hide examples",
+      "replaceTitle": "You are about to change your basket",
+      "replaceText": "The {name} example replaces your current basket; your slices and percentages are reset. This month’s ticks are cleared too.",
+      "replaceConfirm": "Change basket",
+      "driftTarget": "target %{target}",
+      "splitSum": "Split total: {sum}."
     }
   },
   "calendar": {

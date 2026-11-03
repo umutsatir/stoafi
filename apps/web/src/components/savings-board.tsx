@@ -107,13 +107,7 @@ export function SavingsBoard(props: SavingsBoardProps) {
         potNames={potNames}
       />
 
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="sr-only">{t("potsTitle")}</h2>
-        <Button type="button" variant="outline" onClick={() => setAdding(true)}>
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          {t("addPot")}
-        </Button>
-      </div>
+      <h2 className="sr-only">{t("potsTitle")}</h2>
 
       <ul className="grid gap-4 lg:grid-cols-2">
         {pots.map((pot, index) => (

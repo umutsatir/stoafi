@@ -24,14 +24,15 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { SegmentedControl } from "@/components/ui/segmented-control";
-import { notifyUndo, useUndoLabel } from "@/components/ui/toaster";
+import { ConfirmDialog } from "@/components/ui/dialog";
+import { notify } from "@/components/ui/toaster";
 import { holdingForTick } from "@/lib/basket-tick";
 import { useMoney } from "@/lib/use-money";
 import { cn, stagger } from "@/lib/utils";
 import { MoneyInput } from "./money-input";
 
 /** Slice colours in the design's order. */
-const SLICE_COLORS = ["var(--c1)", "var(--c2)", "var(--c4)", "var(--c3)"];
+const SLICE_COLORS = ["var(--c2)", "var(--c1)", "var(--c4)", "var(--c3)", "var(--c2)"];
 
 export interface BasketPanelProps {
   basket: BasketEntry[];
@@ -71,8 +72,12 @@ export function BasketPanel({
   const t = useTranslations("investments.basket");
   const money = useMoney();
   const format = useFormatter();
-  const undoLabel = useUndoLabel();
-  const [choosing, setChoosing] = useState(basket.length === 0);
+  // The design tells "no basket yet" from "an empty basket you are filling in".
+  const [started, setStarted] = useState(false);
+  const [choosing, setChoosing] = useState(false);
+  const [pendingTemplate, setPendingTemplate] = useState<BasketTemplate | null>(null);
+  const hasBasket = basket.length > 0 || started;
+  const showTemplates = !hasBasket || choosing;
   const [monthly, setMonthlyState] = useState(savedMonthly ?? suggestedMonthly);
   const setMonthly = (amount: number) => {
     setMonthlyState(amount);
@@ -96,7 +101,6 @@ export function BasketPanel({
   }
 
   function apply(template: BasketTemplate) {
-    const previous = basket;
     onChange(
       template.entries.map((e) => ({
         id: createId(),
@@ -105,10 +109,15 @@ export function BasketPanel({
         percent: e.percent,
       })),
     );
+    setStarted(true);
     setChoosing(false);
-    if (previous.length > 0) {
-      notifyUndo(t("replaced"), undoLabel, () => onChange(previous));
-    }
+    notify(t("templateReady", { name: t(`template.${template.id}.name`) }));
+  }
+
+  /** Replacing a basket you already have asks first, as in the design. */
+  function useTemplate(template: BasketTemplate) {
+    if (basket.length > 0) setPendingTemplate(template);
+    else apply(template);
   }
 
   const sliceColor = (i: number) => SLICE_COLORS[i % SLICE_COLORS.length];
@@ -126,14 +135,14 @@ export function BasketPanel({
               {t("intro")}
             </p>
           </div>
-          {basket.length > 0 && !choosing && (
-            <button type="button" className={PILL} onClick={() => setChoosing(true)}>
-              {t("startFromExample")}
+          {hasBasket && (
+            <button type="button" className={PILL} onClick={() => setChoosing((open) => !open)}>
+              {choosing ? t("hideTemplates") : t("startFromExample")}
             </button>
           )}
         </div>
 
-        {choosing && (
+        {showTemplates && (
           <div className="mt-[22px] flex flex-col gap-4" data-testid="basket-templates">
             <ul className="grid gap-3.5 md:grid-cols-3">
               {BASKET_TEMPLATES.map((template, i) => (
@@ -178,7 +187,7 @@ export function BasketPanel({
                   <button
                     type="button"
                     className="press mt-auto rounded-full bg-primary p-3 text-[13.5px] font-extrabold text-primary-foreground"
-                    onClick={() => apply(template)}
+                    onClick={() => useTemplate(template)}
                     aria-label={t("useTemplate", { name: t(`template.${template.id}.name`) })}
                   >
                     {t("use")}
@@ -187,27 +196,17 @@ export function BasketPanel({
               ))}
             </ul>
             <div className="flex flex-wrap items-center gap-3.5">
-              {basket.length === 0 && (
-                <button
-                  type="button"
-                  className="press rounded-full bg-foreground px-5 py-[11px] text-[13px] font-extrabold text-background"
-                  onClick={() => {
-                    onChange([{ id: createId(), label: "", percent: 100 }]);
-                    setChoosing(false);
-                  }}
-                >
-                  {t("startEmpty")}
-                </button>
-              )}
-              {basket.length > 0 && (
-                <button
-                  type="button"
-                  className="press rounded-full bg-foreground px-5 py-[11px] text-[13px] font-extrabold text-background"
-                  onClick={() => setChoosing(false)}
-                >
-                  {t("keepMine")}
-                </button>
-              )}
+              <button
+                type="button"
+                className="press rounded-full bg-foreground px-5 py-[11px] text-[13px] font-extrabold text-background"
+                onClick={() => {
+                  onChange([]);
+                  setStarted(true);
+                  setChoosing(false);
+                }}
+              >
+                {t("startEmpty")}
+              </button>
               <p
                 className="text-xs leading-normal text-muted-foreground"
                 data-testid="basket-source"
@@ -219,7 +218,7 @@ export function BasketPanel({
         )}
       </div>
 
-      {basket.length > 0 && (
+      {hasBasket && (
         <>
           <div className="grid items-stretch gap-4 md:grid-cols-2">
             <div className={`${CARD} pop-in`}>
@@ -334,13 +333,7 @@ export function BasketPanel({
                         <div className="flex justify-between gap-2 text-[14.5px] font-extrabold">
                           <span>{name}</span>
                           <span className="text-muted-foreground">
-                            {t("driftLine", {
-                              current: format.number(d.currentPercent, {
-                                maximumFractionDigits: 1,
-                              }),
-                              target: format.number(d.targetPercent, { maximumFractionDigits: 1 }),
-                              diff: `${sign}${format.number(d.difference, { maximumFractionDigits: 1 })}`,
-                            })}
+                            {t("driftTarget", { target: format.number(d.targetPercent) })}
                           </span>
                         </div>
                         <div
@@ -364,6 +357,27 @@ export function BasketPanel({
                             style={{ left: `${Math.min(100, d.targetPercent)}%` }}
                           />
                         </div>
+                        <p
+                          className={cn(
+                            "mt-[7px] text-[12.5px] font-bold",
+                            Math.abs(d.difference) < 3
+                              ? "text-success"
+                              : d.difference < 0
+                                ? "text-foreground"
+                                : "text-muted-foreground",
+                          )}
+                        >
+                          {t("driftLine", {
+                            current: format.number(d.currentPercent, { maximumFractionDigits: 0 }),
+                            target: format.number(d.targetPercent, { maximumFractionDigits: 1 }),
+                            diff: `${sign}${format.number(d.difference, { maximumFractionDigits: 0 })}`,
+                          })}
+                        </p>
+                        {entry.typeId && t.has(`note.${entry.typeId}`) && (
+                          <p className="mt-[3px] text-[11.5px] leading-[1.45] text-muted-foreground">
+                            {t(`note.${entry.typeId}`)}
+                          </p>
+                        )}
                       </li>
                     );
                   })}
@@ -497,7 +511,12 @@ export function BasketPanel({
               ) : (
                 <p className="mt-3 text-sm text-muted-foreground">{t("finishFirst")}</p>
               )}
-              <p className="mt-3 text-xs font-semibold text-muted-foreground">{t("notAdvice")}</p>
+              {complete && (
+                <p className="mt-3 text-xs font-semibold text-muted-foreground">
+                  {t("splitSum", { sum: money(shares.reduce((sum, x) => sum + x.amount, 0)) })}
+                </p>
+              )}
+              <p className="mt-1 text-xs font-semibold text-muted-foreground">{t("notAdvice")}</p>
             </div>
 
             <div className={`${CARD} pop-in`} data-testid="basket-unassigned-card">
@@ -540,6 +559,23 @@ export function BasketPanel({
           </div>
         </>
       )}
+      <ConfirmDialog
+        open={pendingTemplate !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingTemplate(null);
+        }}
+        title={t("replaceTitle")}
+        description={
+          pendingTemplate
+            ? t("replaceText", { name: t(`template.${pendingTemplate.id}.name`) })
+            : undefined
+        }
+        cancelLabel={t("keepMine")}
+        confirmLabel={t("replaceConfirm")}
+        onConfirm={() => {
+          if (pendingTemplate) apply(pendingTemplate);
+        }}
+      />
     </section>
   );
 }

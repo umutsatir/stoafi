@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown } from "lucide-react";
 import { INVESTMENT_TYPES } from "@stoafi/core";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { LessonLink } from "./lesson-link";
 
 const FIELDS = ["what", "risk", "cost", "horizon", "mistake"] as const;
@@ -11,37 +12,47 @@ const FIELDS = ["what", "risk", "cost", "horizon", "mistake"] as const;
 export function InvestmentGuide() {
   const t = useTranslations("investments.guide");
   const tTypes = useTranslations("investments.types");
+  const [selected, setSelected] = useState<string>(INVESTMENT_TYPES[0]?.id ?? "gold");
+  // "other" has no notes of its own, so it never appears as a chip.
+  const types = INVESTMENT_TYPES.filter((type) => type.id !== "other" && t.has(`${type.id}.what`));
+
   return (
-    <section className="flex flex-col gap-3" aria-label={t("title")}>
-      <div>
-        <h2 className="text-lg font-semibold">{t("title")}</h2>
-        <p className="text-sm text-muted-foreground">{t("intro")}</p>
+    <section
+      className="pop-in rounded-card bg-card px-8 py-7"
+      aria-label={t("title")}
+      data-testid="investment-guide"
+    >
+      <h2 className="text-[19px] font-extrabold tracking-[-0.03em]">{t("title")}</h2>
+      <p className="mt-[3px] text-[12.5px] text-muted-foreground">{t("intro")}</p>
+      <div className="mt-3.5">
+        <SegmentedControl
+          tone="chips"
+          label={t("title")}
+          value={selected}
+          onChange={setSelected}
+          options={types.map((type) => ({ value: type.id, label: tTypes(`${type.id}.name`) }))}
+        />
       </div>
-      <ul className="flex flex-col gap-2">
-        {INVESTMENT_TYPES.map((type) => (
-          <li key={type.id}>
-            <details className="group rounded-xl bg-card" data-testid={`guide-${type.id}`}>
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                {tTypes(`${type.id}.name`)}
-                <ChevronDown
-                  className="h-4 w-4 transition-transform group-open:rotate-180"
-                  aria-hidden="true"
-                />
-              </summary>
-              <dl className="flex flex-col gap-2 px-4 pb-4 text-sm">
-                {FIELDS.map((field) => (
-                  <div key={field}>
-                    <dt className="font-medium">{t(`fields.${field}`)}</dt>
-                    <dd className="text-muted-foreground">{t(`${type.id}.${field}`)}</dd>
-                  </div>
-                ))}
-              </dl>
-            </details>
-          </li>
+      <dl
+        key={selected}
+        className="mt-3.5 grid gap-3 [animation:fade_0.4s_backwards] sm:grid-cols-2 lg:grid-cols-5"
+        data-testid={`guide-${selected}`}
+      >
+        {FIELDS.map((field) => (
+          <div key={field} className="rounded-[18px] bg-muted px-4 py-3.5">
+            <dt className="text-[11px] font-extrabold text-muted-foreground">
+              {t(`fields.${field}`)}
+            </dt>
+            <dd className="mt-1 text-[13px] font-bold leading-[1.45]">
+              {t(`${selected}.${field}`)}
+            </dd>
+          </div>
         ))}
-      </ul>
-      <p className="text-xs text-muted-foreground">{t("notAdvice")}</p>
-      <LessonLink lessonId="index-funds" testId="lesson-link-index-funds-investments" />
+      </dl>
+      <p className="mt-3.5 text-xs text-muted-foreground">{t("notAdvice")}</p>
+      <div className="mt-2">
+        <LessonLink lessonId="index-funds" testId="lesson-link-index-funds-investments" />
+      </div>
     </section>
   );
 }
