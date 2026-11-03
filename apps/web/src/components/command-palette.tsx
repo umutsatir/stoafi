@@ -3,7 +3,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Search } from "lucide-react";
+import {
+  ArrowRightLeft,
+  BookOpen,
+  Calendar,
+  CircleCheckBig,
+  CreditCard,
+  HeartPulse,
+  House,
+  LayoutGrid,
+  ListTodo,
+  Plus,
+  Search,
+  SlidersVertical,
+  Target,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAppStore, type QuickAction } from "@/store";
 import { cn } from "@/lib/utils";
@@ -14,6 +30,21 @@ interface Command {
   href: string;
   action?: QuickAction;
 }
+
+const PAGE_ICONS: Record<string, LucideIcon> = {
+  home: House,
+  calendar: Calendar,
+  incomeExpenses: ArrowRightLeft,
+  sinkingFunds: Target,
+  cards: CreditCard,
+  plan: LayoutGrid,
+  queue: ListTodo,
+  decisions: CircleCheckBig,
+  health: HeartPulse,
+  lessons: BookOpen,
+  profile: UserRound,
+  settings: SlidersVertical,
+};
 
 const COMMANDS: Command[] = [
   { id: "home", group: "go", href: "/" },
@@ -117,13 +148,27 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 onMouseEnter={() => setActive(index)}
                 onClick={() => run(command)}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-[14px] px-3 py-[11px] text-sm font-semibold",
+                  "flex cursor-pointer items-center gap-3 rounded-[14px] px-3 py-2 text-sm font-semibold",
                   index === active ? "bg-muted" : "",
                 )}
               >
                 <span className="w-[34px] flex-none text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-muted-foreground">
                   {t(`group.${command.group}`)}
                 </span>
+                {(() => {
+                  const Icon = command.group === "do" ? Plus : (PAGE_ICONS[command.id] ?? House);
+                  return (
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "flex h-9 w-9 flex-none items-center justify-center rounded-xl",
+                        command.group === "do" ? "bg-primary text-primary-foreground" : "bg-muted",
+                      )}
+                    >
+                      <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+                    </span>
+                  );
+                })()}
                 <span>{t(`commands.${command.id}`)}</span>
               </li>
             ))}
