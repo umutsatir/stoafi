@@ -2,8 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { Eye, EyeOff, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { notify } from "@/components/ui/toaster";
@@ -47,49 +47,38 @@ export function PrivacySettings() {
   }
 
   return (
-    <div className="flex flex-col gap-5 rounded-xl bg-card p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="flex flex-col">
+      <div className="mt-[18px] flex items-center justify-between gap-4">
         <div>
-          <p className="font-medium">{t("hideTitle")}</p>
-          <p className="text-sm text-muted-foreground">{t("hideText")}</p>
+          <p className="text-[14.5px] font-bold">{t("hideTitle")}</p>
+          <p className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">{t("hideText")}</p>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          role="switch"
-          aria-checked={hideAmounts}
-          onClick={() => setHideAmounts(!hideAmounts)}
-        >
-          {hideAmounts ? (
-            <EyeOff className="h-4 w-4" aria-hidden="true" />
-          ) : (
-            <Eye className="h-4 w-4" aria-hidden="true" />
-          )}
-          {hideAmounts ? t("hideOn") : t("hideOff")}
-        </Button>
+        <Switch checked={hideAmounts} onCheckedChange={setHideAmounts} label={t("hideTitle")} />
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-border pt-5">
-        <div>
-          <p className="flex items-center gap-2 font-medium">
-            <KeyRound className="h-4 w-4 text-primary-ink" aria-hidden="true" />
-            {t("pinTitle")}
-          </p>
-          <p className="text-sm text-muted-foreground">{lock ? t("pinOn") : t("pinOff")}</p>
-          <p className="text-xs text-muted-foreground">{t("pinNote")}</p>
+      <div className="flex flex-col gap-3">
+        <div className="mt-[18px] flex items-center justify-between gap-4">
+          <div>
+            <p className="text-[14.5px] font-bold">{t("pinTitle")}</p>
+            <p className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">
+              {lock ? t("pinOn") : t("pinOff")} {t("pinNote")}
+            </p>
+          </div>
+          <Switch
+            checked={lock !== null}
+            onCheckedChange={(on) => setMode(on ? "set" : "remove")}
+            label={t("pinTitle")}
+          />
         </div>
 
         {mode === "idle" ? (
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" onClick={() => setMode("set")}>
-              {lock ? t("change") : t("set")}
-            </Button>
-            {lock && (
-              <Button type="button" variant="ghost" onClick={() => setMode("remove")}>
-                {t("remove")}
+          lock && (
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => setMode("set")}>
+                {t("change")}
               </Button>
-            )}
-          </div>
+            </div>
+          )
         ) : (
           <form onSubmit={submit} className="flex max-w-xs flex-col gap-3">
             {lock && (

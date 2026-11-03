@@ -10,7 +10,6 @@ import {
   type Snapshot,
   type SnapshotKey,
 } from "@stoafi/core";
-import { InfoPopover } from "@/components/ui/info-popover";
 import { ProgressBar, type Tone } from "@/components/ui/progress-bar";
 import { Sparkline } from "@/components/ui/sparkline";
 import { Card } from "@/components/ui/card";
@@ -105,19 +104,18 @@ export function HealthMetrics({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
-        <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
+        <div className="grid gap-4 sm:grid-cols-2 sm:grid-rows-2">
           {KINDS.map((kind, i) => {
             const { status } = summary.metrics[kind];
             return (
-              <Card key={kind} className="pop-in px-7 py-[26px]" style={stagger(i + 1)}>
+              <Card
+                key={kind}
+                className="pop-in flex flex-col px-7 py-[26px]"
+                style={stagger(i + 1)}
+              >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-1 text-base font-extrabold">
-                    {t(`metric.${kind}`)}
-                    <InfoPopover label={t(`info.${kind}.label`)}>
-                      {t(`info.${kind}.text`)}
-                    </InfoPopover>
-                  </span>
+                  <span className="text-base font-extrabold">{t(`metric.${kind}`)}</span>
                   <span
                     className={cn(
                       "rounded-full px-3 py-1 text-xs font-extrabold text-on",
@@ -134,12 +132,17 @@ export function HealthMetrics({
                   {text(kind)}
                 </p>
                 <div className="mt-3.5">{visual(kind)}</div>
-                <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
-                  {t(`hint.${kind}.${status}`, {
-                    target: emergencyFundTargetMonths,
-                    cap: Math.round(installmentCapPct * 100),
-                  })}
-                </p>
+                <div className="mt-auto pt-3">
+                  <p className="text-[12.5px] leading-normal text-muted-foreground">
+                    {t(`hint.${kind}.${status}`, {
+                      target: emergencyFundTargetMonths,
+                      cap: Math.round(installmentCapPct * 100),
+                    })}
+                  </p>
+                  <p className="mt-2 text-xs leading-normal text-muted-foreground opacity-80">
+                    {t(`info.${kind}.text`)}
+                  </p>
+                </div>
               </Card>
             );
           })}

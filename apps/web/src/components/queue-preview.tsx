@@ -364,7 +364,7 @@ export function QueuePreview({
         </div>
       )}
 
-      {(
+      {
         <div className="pop-in flex flex-col gap-3 rounded-card bg-card px-[30px] py-[22px] text-[13px]">
           {suggestedMonth !== undefined && (
             <div
@@ -445,7 +445,7 @@ export function QueuePreview({
             </dd>
           </dl>
         </div>
-      )}
+      }
 
       {showInstallments && (
         <div className="pop-in rounded-card bg-card px-[30px] py-[26px]">

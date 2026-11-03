@@ -1020,6 +1020,8 @@
     "modeOpenHint": "No amount and no deadline. Put in whatever you can, whenever you can."
   },
   "guardSettings": {
+    "decrease": "Decrease",
+    "increase": "Increase",
     "installmentCap": "Installment cap (% of net income)",
     "installmentCapHint": "When your monthly installments add up to more than this share of your income, Stoafi warns you and asks you to confirm before you commit.",
     "outOfRange": "Enter a percent between 0 and 100."

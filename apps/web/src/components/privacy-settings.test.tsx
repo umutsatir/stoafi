@@ -24,18 +24,18 @@ describe("hiding amounts", () => {
       </>,
     );
     expect(screen.getByTestId("amount")).toHaveTextContent("₺1,234.56");
-    fireEvent.click(screen.getByRole("switch"));
+    fireEvent.click(screen.getByRole("switch", { name: "Hide amounts" }));
     expect(useAppStore.getState().hideAmounts).toBe(true);
     expect(screen.getByTestId("amount")).toHaveTextContent(HIDDEN_AMOUNT);
     expect(screen.getByTestId("amount")).not.toHaveTextContent("1,234");
-    fireEvent.click(screen.getByRole("switch"));
+    fireEvent.click(screen.getByRole("switch", { name: "Hide amounts" }));
     expect(screen.getByTestId("amount")).toHaveTextContent("₺1,234.56");
   });
 });
 
 describe("PIN settings", () => {
   async function setPin(pin: string, confirm = pin) {
-    fireEvent.click(screen.getByRole("button", { name: "Set a PIN" }));
+    fireEvent.click(screen.getByRole("switch", { name: "PIN lock" }));
     fireEvent.change(screen.getByLabelText("New PIN"), { target: { value: pin } });
     fireEvent.change(screen.getByLabelText("Type it again"), { target: { value: confirm } });
     fireEvent.click(screen.getByRole("button", { name: "Save PIN" }));
@@ -69,7 +69,7 @@ describe("PIN settings", () => {
   it("needs the current PIN to remove it, and a wrong one changes nothing", async () => {
     useAppStore.setState({ lock: await createLock("4821") });
     renderWithIntl(<PrivacySettings />);
-    fireEvent.click(screen.getByRole("button", { name: "Remove the PIN" }));
+    fireEvent.click(screen.getByRole("switch", { name: "PIN lock" }));
     fireEvent.change(screen.getByLabelText("Current PIN"), { target: { value: "0000" } });
     fireEvent.click(screen.getByRole("button", { name: "Remove the PIN" }));
     expect(await screen.findByText("That is not your current PIN.")).toBeInTheDocument();

@@ -2,18 +2,18 @@ import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { stagger } from "@/lib/utils";
 
-/** A titled block of settings: an icon, what it is for, then the controls. */
+/** A titled block of settings: what it is for, then the controls. */
 export function SettingsSection({
   title,
   description,
-  icon: Icon,
   index = 0,
   testId,
   children,
 }: {
   title: string;
   description?: string;
-  icon: LucideIcon;
+  /** Kept so existing call sites compile; the design's section titles carry no icon. */
+  icon?: LucideIcon;
   index?: number;
   testId?: string;
   children: ReactNode;
@@ -23,17 +23,12 @@ export function SettingsSection({
       aria-label={title}
       data-testid={testId}
       style={stagger(index)}
-      className="pop-in mb-4 flex break-inside-avoid flex-col gap-3 rounded-card bg-card px-[30px] py-[26px]"
+      className="pop-in mb-4 flex break-inside-avoid flex-col rounded-card bg-card px-[30px] py-[26px]"
     >
-      <div>
-        <h2 className="flex items-center gap-2 text-xl font-extrabold tracking-[-0.03em]">
-          <Icon className="h-5 w-5 text-primary-ink" aria-hidden="true" />
-          {title}
-        </h2>
-        {description && (
-          <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-        )}
-      </div>
+      <h2 className="text-xl font-extrabold tracking-[-0.03em]">{title}</h2>
+      {description && (
+        <p className="mt-[3px] text-[13px] leading-normal text-muted-foreground">{description}</p>
+      )}
       {children}
     </section>
   );

@@ -79,7 +79,14 @@ function LogoMark() {
     { d: "M14 32.6 A14 14 0 0 1 5.6 23", color: "var(--c3)" },
   ];
   return (
-    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" aria-hidden="true" className="flex-none">
+    <svg
+      width="38"
+      height="38"
+      viewBox="0 0 38 38"
+      fill="none"
+      aria-hidden="true"
+      className="flex-none"
+    >
       {arcs.map((a) => (
         <path key={a.color} d={a.d} stroke={a.color} strokeWidth="4.6" strokeLinecap="round" />
       ))}

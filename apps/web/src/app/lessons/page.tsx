@@ -100,7 +100,7 @@ export default function LessonsPage() {
 
       {shown.length === 0 && <p className="text-sm text-muted-foreground">{t("noMatch")}</p>}
 
-      <ul className="grid items-start gap-4 md:grid-cols-2">
+      <ul className="grid items-stretch gap-4 md:grid-cols-2">
         {shown.map((card, i) => {
           const open = openId === card.id;
           const read = readLessons.includes(card.id);
@@ -112,7 +112,7 @@ export default function LessonsPage() {
               data-testid={`lesson-${card.id}`}
               style={stagger(i)}
               className={cn(
-                "lift pop-in scroll-mt-24 rounded-card bg-card px-[30px] py-[26px]",
+                "lift pop-in flex scroll-mt-24 flex-col rounded-card bg-card px-[30px] py-[26px]",
                 open && "shadow-[inset_0_0_0_2px_var(--primary)]",
               )}
             >
@@ -141,7 +141,7 @@ export default function LessonsPage() {
                   <Section label={t("critique")} text={card.critique} />
                 </div>
               )}
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-auto flex flex-wrap gap-2 pt-4">
                 <button
                   type="button"
                   aria-expanded={open}

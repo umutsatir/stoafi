@@ -5,12 +5,10 @@ import { THEMES } from "@stoafi/core";
 import { LOCALES, type Locale } from "@/i18n/messages";
 import { useAppStore } from "@/store";
 import { useMoney } from "@/lib/use-money";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { NativeSelect } from "@/components/ui/native-select";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 
 const CURRENCIES = ["TRY", "USD", "EUR"] as const;
+const GROUP_LABEL = "mb-2 mt-4 text-[13px] font-bold";
 
 export function LocaleSwitcher() {
   const locale = useAppStore((s) => s.locale);
@@ -27,62 +25,44 @@ export function LocaleSwitcher() {
   const sampleDate = new Date(Date.UTC(2026, 8, 20));
 
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-4 pt-6">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="locale">{t("language")}</Label>
-          <select
-            id="locale"
-            value={locale}
-            onChange={(e) => setLocale(e.target.value as Locale)}
-            className="h-9 w-40 rounded-md border border-input bg-card px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {LOCALES.map((l) => (
-              <option key={l} value={l}>
-                {t(`languageNames.${l}`)}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div>
+      <p className={GROUP_LABEL} style={{ marginTop: 18 }}>
+        {t("language")}
+      </p>
+      <SegmentedControl
+        tone="chips"
+        label={t("language")}
+        value={locale as Locale}
+        onChange={setLocale}
+        options={LOCALES.map((l) => ({ value: l, label: t(`languageNames.${l}`) }))}
+      />
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="currency">{t("currency")}</Label>
-          <NativeSelect
-            id="currency"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="w-40"
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </NativeSelect>
-        </div>
+      <p className={GROUP_LABEL}>{t("currency")}</p>
+      <SegmentedControl
+        tone="chips"
+        label={t("currency")}
+        value={currency as (typeof CURRENCIES)[number]}
+        onChange={setCurrency}
+        options={CURRENCIES.map((c) => ({ value: c, label: c }))}
+      />
 
-        <div className="flex flex-col gap-1.5">
-          <Label>{t("theme")}</Label>
-          <SegmentedControl
-            label={t("theme")}
-            value={theme}
-            onChange={setTheme}
-            options={THEMES.map((option) => ({
-              value: option,
-              label: t(`themeOptions.${option}`),
-            }))}
-          />
-        </div>
+      <p className={GROUP_LABEL}>{t("theme")}</p>
+      <SegmentedControl
+        tone="chips"
+        label={t("theme")}
+        value={theme}
+        onChange={setTheme}
+        options={THEMES.map((option) => ({ value: option, label: t(`themeOptions.${option}`) }))}
+      />
 
-        <div className="flex flex-col gap-1 text-sm text-muted-foreground">
-          <p data-testid="sample-amount">
-            {t("sampleAmountLabel")}: {money(sampleAmount)}
-          </p>
-          <p data-testid="sample-date">
-            {t("sampleDateLabel")}: {format.dateTime(sampleDate, { dateStyle: "long" })}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+      <div className="mt-4 flex flex-col gap-0.5 text-xs text-muted-foreground">
+        <p data-testid="sample-amount">
+          {t("sampleAmountLabel")}: {money(sampleAmount)}
+        </p>
+        <p data-testid="sample-date">
+          {t("sampleDateLabel")}: {format.dateTime(sampleDate, { dateStyle: "long" })}
+        </p>
+      </div>
+    </div>
   );
 }

@@ -16,7 +16,7 @@ export interface SegmentedControlProps<T extends string> {
   label: string;
   className?: string;
   /** "surface" sits on the page background; "soft" sits inside a card. */
-  tone?: "surface" | "soft";
+  tone?: "surface" | "soft" | "chips";
 }
 
 /** A short either-or switch (view modes). Arrow keys move the choice, like native radios. */
@@ -34,8 +34,10 @@ export function SegmentedControl<T extends string>({
       role="radiogroup"
       aria-label={label}
       className={cn(
-        "inline-flex gap-1.5 rounded-full p-[5px] text-[13px] font-bold",
-        tone === "surface" ? "bg-card" : "bg-muted",
+        "inline-flex flex-wrap gap-1.5 text-[13px] font-bold",
+        tone === "chips" ? "gap-2" : "rounded-full p-[5px]",
+        tone === "surface" && "bg-card",
+        tone === "soft" && "bg-muted",
         className,
       )}
     >
@@ -46,7 +48,10 @@ export function SegmentedControl<T extends string>({
             "cursor-pointer rounded-full px-4 py-2 transition-all duration-[250ms] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
             value === option.value
               ? "bg-foreground text-background"
-              : "text-muted-foreground hover:text-foreground",
+              : cn(
+                  "text-muted-foreground hover:text-foreground",
+                  tone === "chips" && "bg-muted text-foreground hover:scale-[1.04]",
+                ),
           )}
         >
           <input

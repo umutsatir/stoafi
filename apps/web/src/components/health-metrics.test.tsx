@@ -78,16 +78,12 @@ describe("HealthMetrics", () => {
     expect(screen.queryByTestId("step-build-emergency-fund")).not.toBeInTheDocument();
   });
 
-  it("explains each metric in an (i) popover", () => {
+  it("explains each metric in words under its card", () => {
     render();
-    for (const name of [
-      "What is the savings rate?",
-      "What are emergency fund months?",
-      "What is the installment ratio?",
-      "What is the runway?",
-    ]) {
-      expect(screen.getByRole("button", { name })).toBeInTheDocument();
+    for (const id of ["savings-rate", "emergency-fund-months", "installment-ratio", "runway"]) {
+      expect(screen.getByTestId(id)).toBeInTheDocument();
     }
+    expect(screen.getAllByText(/./, { selector: "p.opacity-80" })).toHaveLength(4);
   });
 
   it("shows how far the emergency fund is toward its target, capped at 100 percent", () => {
