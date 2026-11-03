@@ -1,5 +1,6 @@
 "use client";
 
+import { OfflineInstall } from "@/components/offline-install";
 import {
   Database,
   EyeOff,
@@ -8,6 +9,7 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
+  WifiOff,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GuardThresholdsSchema } from "@stoafi/core";
@@ -50,120 +52,126 @@ export default function SettingsPage() {
   const tTypes = useTranslations("investments.types");
 
   return (
-    <Page title={t("title")}>
-      <SettingsSection
-        title={t("sections.general")}
-        description={t("sections.generalHint")}
-        icon={Settings2}
-      >
-        <LocaleSwitcher />
-      </SettingsSection>
-
-      <SettingsSection
-        title={t("sections.rules")}
-        description={t("sections.rulesHint")}
-        icon={ShieldCheck}
-        index={1}
-      >
-        <GuardSettings
-          installmentCapPct={guardThresholds.installmentCapPct}
-          onChange={(installmentCapPct) => {
-            const next = { ...guardThresholds, installmentCapPct };
-            setGuardThresholds(next);
-            void putSingleton(db, "guards", GuardThresholdsSchema, next).catch((error: unknown) =>
-              console.error("Could not save the installment cap", error),
-            );
-          }}
-        />
-      </SettingsSection>
-
-      <SettingsSection
-        title={t("sections.privacy")}
-        description={t("sections.privacyHint")}
-        icon={EyeOff}
-        index={2}
-        testId="privacy-section"
-      >
-        <PrivacySettings />
-      </SettingsSection>
-
-      <SettingsSection
-        title={t("sections.data")}
-        description={t("sections.dataHint")}
-        icon={Database}
-        index={2}
-      >
-        <SettingsPanel
-          lastBackup={lastBackup}
-          today={today}
-          onExport={async () => {
-            const json = await exportToJson(db, new Date().toISOString());
-            setLastBackup(today);
-            return json;
-          }}
-          onImport={async (json) => {
-            const result = await importWithSafetyCopy(db, json, new Date().toISOString());
-            // The store mirrors Dexie, so an imported backup must be loaded back in.
-            if (!("errors" in result)) hydrate(await loadAppState(db), localIsoDate(new Date()));
-            return result;
-          }}
-        />
-      </SettingsSection>
-
-      <SettingsSection
-        title={t("sections.safety")}
-        description={t("sections.safetyHint")}
-        icon={HardDriveDownload}
-        index={3}
-        testId="safety-section"
-      >
-        <DataSafetySettings
-          onRestored={() => {
-            void loadAppState(db).then((loaded) => hydrate(loaded, localIsoDate(new Date())));
-          }}
-        />
-      </SettingsSection>
-
-      {profile && (
+    <Page title={t("title")} subtitle={t("subtitle")}>
+      <div className="gap-4 lg:columns-2">
         <SettingsSection
-          title={t("sections.ai")}
-          description={t("sections.aiHint")}
-          icon={Sparkles}
-          index={3}
-          testId="ai-section"
+          title={t("sections.general")}
+          description={t("sections.generalHint")}
+          icon={Settings2}
         >
-          <AiExportPanel
-            currency={currency}
-            itemNames={activeQueueItems(queueItems).map((i) => i.name)}
-            data={buildAiExportData({
-              profile,
-              planState,
-              queueItems,
-              sinkingFunds,
-              holdings,
-              cards,
-              decisions,
-              ledger,
-              installmentCapPct: guardThresholds.installmentCapPct,
-              today,
-              month: monthOf(today),
-              locale,
-              typeName: (h) =>
-                h.typeId === "custom" ? (h.customType ?? "") : tTypes(`${h.typeId}.name`),
-            })}
+          <LocaleSwitcher />
+        </SettingsSection>
+
+        <SettingsSection
+          title={t("sections.rules")}
+          description={t("sections.rulesHint")}
+          icon={ShieldCheck}
+          index={1}
+        >
+          <GuardSettings
+            installmentCapPct={guardThresholds.installmentCapPct}
+            onChange={(installmentCapPct) => {
+              const next = { ...guardThresholds, installmentCapPct };
+              setGuardThresholds(next);
+              void putSingleton(db, "guards", GuardThresholdsSchema, next).catch((error: unknown) =>
+                console.error("Could not save the installment cap", error),
+              );
+            }}
           />
         </SettingsSection>
-      )}
 
-      <SettingsSection title={t("sections.about")} icon={Info} index={4}>
-        <div className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
-          <p>{t("about.privacy")}</p>
-          <p className="mt-2">{t("about.notAdvice")}</p>
-          <p className="mt-2">{t("about.data")}</p>
-          <p className="mt-2">{t("about.storage")}</p>
-          <p className="mt-2">{t("about.licenses")}</p>
-        </div>
-      </SettingsSection>
+        <SettingsSection
+          title={t("sections.privacy")}
+          description={t("sections.privacyHint")}
+          icon={EyeOff}
+          index={2}
+          testId="privacy-section"
+        >
+          <PrivacySettings />
+        </SettingsSection>
+
+        <SettingsSection
+          title={t("sections.data")}
+          description={t("sections.dataHint")}
+          icon={Database}
+          index={2}
+        >
+          <SettingsPanel
+            lastBackup={lastBackup}
+            today={today}
+            onExport={async () => {
+              const json = await exportToJson(db, new Date().toISOString());
+              setLastBackup(today);
+              return json;
+            }}
+            onImport={async (json) => {
+              const result = await importWithSafetyCopy(db, json, new Date().toISOString());
+              // The store mirrors Dexie, so an imported backup must be loaded back in.
+              if (!("errors" in result)) hydrate(await loadAppState(db), localIsoDate(new Date()));
+              return result;
+            }}
+          />
+        </SettingsSection>
+
+        <SettingsSection
+          title={t("sections.safety")}
+          description={t("sections.safetyHint")}
+          icon={HardDriveDownload}
+          index={3}
+          testId="safety-section"
+        >
+          <DataSafetySettings
+            onRestored={() => {
+              void loadAppState(db).then((loaded) => hydrate(loaded, localIsoDate(new Date())));
+            }}
+          />
+        </SettingsSection>
+
+        {profile && (
+          <SettingsSection
+            title={t("sections.ai")}
+            description={t("sections.aiHint")}
+            icon={Sparkles}
+            index={3}
+            testId="ai-section"
+          >
+            <AiExportPanel
+              currency={currency}
+              itemNames={activeQueueItems(queueItems).map((i) => i.name)}
+              data={buildAiExportData({
+                profile,
+                planState,
+                queueItems,
+                sinkingFunds,
+                holdings,
+                cards,
+                decisions,
+                ledger,
+                installmentCapPct: guardThresholds.installmentCapPct,
+                today,
+                month: monthOf(today),
+                locale,
+                typeName: (h) =>
+                  h.typeId === "custom" ? (h.customType ?? "") : tTypes(`${h.typeId}.name`),
+              })}
+            />
+          </SettingsSection>
+        )}
+
+        <SettingsSection title={t("sections.offline")} icon={WifiOff} index={4}>
+          <OfflineInstall />
+        </SettingsSection>
+
+        <SettingsSection title={t("sections.about")} icon={Info} index={5}>
+          <div className="text-sm text-muted-foreground">
+            <p>{t("about.privacy")}</p>
+            <p className="mt-2">{t("about.notAdvice")}</p>
+            <p className="mt-2">{t("about.data")}</p>
+            <p className="mt-2">{t("about.storage")}</p>
+            <p className="mt-2">{t("about.licenses")}</p>
+          </div>
+        </SettingsSection>
+      </div>
     </Page>
   );
 }

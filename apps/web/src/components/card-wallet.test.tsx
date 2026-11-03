@@ -1,6 +1,7 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { Card } from "@stoafi/core";
+import { useAppStore } from "@/store";
 import { renderWithIntl } from "@/test-utils";
 import { CardWallet } from "./card-wallet";
 
@@ -60,59 +61,47 @@ describe("CardWallet empty state", () => {
 });
 
 describe("CardWallet cards", () => {
-  it("shows a card as a card, with its supplementary card tucked under it", () => {
+  it("shows every card in a row, a supplementary card marked as such", () => {
     renderWallet([main, spouse]);
     expect(screen.getByTestId("card-m")).toHaveTextContent("Bonus");
     expect(screen.getByTestId("card-m")).toHaveTextContent("•••• 1234");
     expect(screen.getByTestId("card-s")).toHaveTextContent("Spouse");
-    // Only one stack: the supplementary card is not a card of its own in the wallet.
-    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+    expect(screen.getByTestId("card-s")).toHaveTextContent("Supplementary");
   });
 
-  it("keeps the minimum-payment calculator closed until asked", () => {
+  it("always shows the minimum-payment calculator beside the card details", () => {
     renderWallet([main]);
-    expect(screen.queryByText(/minimum payment %/i)).not.toBeInTheDocument();
-    const toggle = screen.getByRole("button", {
-      name: /show the minimum-payment trap calculator/i,
-    });
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    fireEvent.click(toggle);
     expect(screen.getByLabelText("Minimum payment %")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /hide the minimum-payment trap calculator/i }),
-    ).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("card-detail")).toBeInTheDocument();
   });
 
-  it("opens a detail panel with the shared limit, and opens the calculator from the card with its debt", async () => {
+  it("shows the shared limit for the picked card, and fills the calculator with its debt", async () => {
     renderWallet([main, spouse], { remainingInstallments: { s: 500_000 } });
     fireEvent.click(screen.getByRole("button", { name: "Open Bonus" }));
-    const panel = await screen.findByRole("dialog", { name: "Bonus" });
+    const panel = within(screen.getByTestId("card-detail"));
     // 10,000 owed + 5,000 of the spouse card's installments, of a 50,000 limit.
-    expect(within(panel).getByTestId("limit-used-text")).toHaveTextContent("₺15,000.00");
-    expect(within(panel).getByTestId("limit-used-text")).toHaveTextContent("₺50,000.00");
-    expect(within(panel).getByTestId("limit-available")).toHaveTextContent("₺35,000.00");
+    expect(panel.getByTestId("limit-used-text")).toHaveTextContent("₺15,000.00");
+    expect(panel.getByTestId("limit-used-text")).toHaveTextContent("₺50,000.00");
+    expect(panel.getByTestId("limit-available")).toHaveTextContent("₺35,000.00");
 
-    fireEvent.click(within(panel).getByRole("button", { name: "Only paying the minimum?" }));
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(screen.getByLabelText("Balance")).toHaveValue("10000");
+    fireEvent.click(panel.getByRole("button", { name: "Only paying the minimum?" }));
+    await waitFor(() => expect(screen.getByLabelText("Balance")).toHaveValue("10000"));
   });
 
-  it("says when a group is over its limit", async () => {
+  it("says when a group is over its limit", () => {
     renderWallet([main], { remainingInstallments: { m: 4_500_000 } });
-    fireEvent.click(screen.getByRole("button", { name: "Open Bonus" }));
-    const panel = await screen.findByRole("dialog", { name: "Bonus" });
-    expect(within(panel).getByTestId("limit-available")).toHaveTextContent(/over the limit by/i);
+    expect(
+      within(screen.getByTestId("card-detail")).getByTestId("limit-available"),
+    ).toHaveTextContent(/over the limit by/i);
   });
 
-  it("shows a supplementary card's shared limit and offers no supplementary card of its own", async () => {
+  it("shows a supplementary card's shared limit and offers no supplementary card of its own", () => {
     renderWallet([main, spouse]);
     fireEvent.click(screen.getByRole("button", { name: /Open Spouse/ }));
-    const panel = await screen.findByRole("dialog", { name: "Spouse" });
-    expect(within(panel).getByText("Bonus")).toBeInTheDocument();
-    expect(within(panel).getByText(/draw from one limit/i)).toBeInTheDocument();
-    expect(
-      within(panel).queryByRole("button", { name: "Add supplementary card" }),
-    ).not.toBeInTheDocument();
+    const panel = within(screen.getByTestId("card-detail"));
+    expect(panel.getByText(/Bonus/)).toBeInTheDocument();
+    expect(panel.getByText(/draw from one limit/i)).toBeInTheDocument();
+    expect(panel.queryByRole("button", { name: "Add supplementary card" })).not.toBeInTheDocument();
   });
 });
 
@@ -153,7 +142,8 @@ describe("CardWallet forms", () => {
 
   it("refuses a card without a name or with a bad last four digits and says why", async () => {
     const { onSave } = renderWallet([main]);
-    fireEvent.click(screen.getByRole("button", { name: "Add card" }));
+    // The page header holds the add button; it asks the wallet through the palette's quick action.
+    act(() => useAppStore.setState({ quickAction: "addCard" }));
     const form = await screen.findByRole("dialog", { name: "Add a card" });
     fireEvent.change(within(form).getByLabelText("Last 4 digits"), { target: { value: "12" } });
     fireEvent.click(within(form).getByRole("button", { name: "Add card" }));
@@ -164,7 +154,8 @@ describe("CardWallet forms", () => {
 
   it("requires choosing a main card for a supplementary card", async () => {
     const { onSave } = renderWallet([main]);
-    fireEvent.click(screen.getByRole("button", { name: "Add card" }));
+    // The page header holds the add button; it asks the wallet through the palette's quick action.
+    act(() => useAppStore.setState({ quickAction: "addCard" }));
     const form = await screen.findByRole("dialog", { name: "Add a card" });
     fireEvent.change(within(form).getByLabelText("Card name"), { target: { value: "Kid" } });
     fireEvent.change(within(form).getByLabelText("Type"), { target: { value: "supplementary" } });

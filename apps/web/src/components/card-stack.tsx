@@ -44,7 +44,7 @@ export function CardStack({ main, cards, onOpen }: CardStackProps) {
             <span className="flex items-center gap-1 text-xs opacity-90">
               {t("supplementaryBadge")}
               <ChevronRight
-                className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
+                className="h-3 w-3 transition-[transform,translate,scale] group-hover:translate-x-0.5"
                 aria-hidden="true"
               />
             </span>

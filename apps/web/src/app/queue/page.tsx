@@ -2,10 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   DecisionSchema,
+  cooldownPhase,
   activeQueueItems,
+  addMonths,
+  cashFlowSeries,
+  installmentCommitments,
+  sinkingFundCommitments,
   hourlyNetIncome,
   monthlyNeeds,
   type Commitment,
@@ -23,12 +28,13 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Page } from "@/components/ui/page";
 import { notify, notifyUndo } from "@/components/ui/toaster";
+import { formatMonth } from "@/lib/format-month";
 import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
 import { QueueEisenhower } from "@/components/queue-eisenhower";
 import { QueueSummary } from "@/components/queue-summary";
-import { QueueTimeView } from "@/components/queue-time-view";
+import { QueueBubbleView } from "@/components/queue-bubble-view";
 import { remainingByCard } from "@/lib/card-debt";
 import { monthOf } from "@/lib/clock";
 import { db } from "@/storage/instance";
@@ -51,16 +57,18 @@ export default function QueuePage() {
   const guardThresholds = useAppStore((s) => s.guardThresholds);
   const commitments = useLedger();
   const today = useAppStore((s) => s.today);
+  const sinkingFunds = useAppStore((s) => s.sinkingFunds);
   const decisions = useAppStore((s) => s.decisions);
   const setDecisions = useAppStore((s) => s.setDecisions);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
-  const [view, setView] = useState<"list" | "eisenhower" | "time">("list");
+  const [view, setView] = useState<"bubble" | "list" | "eisenhower">("bubble");
   const [filter, setFilter] = useState<"all" | "need" | "want">("all");
   useQuickAction("addQueueItem", () => setAdding(true));
   const t = useTranslations("queue");
   const tc = useTranslations("common");
+  const locale = useLocale();
 
   if (!profile || !planState) {
     return (
@@ -79,7 +87,7 @@ export default function QueuePage() {
 
   const remainingByCardId = remainingByCard(queueItems, profile, monthOf(today));
   const waitingItems = activeQueueItems(queueItems);
-  const selectedItem = waitingItems.find((i) => i.id === selectedId) ?? null;
+  const selectedItem = waitingItems.find((i) => i.id === selectedId) ?? waitingItems[0] ?? null;
   const editingItem = waitingItems.find((i) => i.id === editingId);
   const needs = monthlyNeeds(profile, monthOf(today));
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
@@ -98,17 +106,33 @@ export default function QueuePage() {
   const monthByItemId = new Map<string, Month | null>(schedule.map((r) => [r.itemId, r.month]));
   const cashPrice = (item: QueueItem) => item.discountedCashPrice ?? item.price;
   const currentMonth = monthOf(today);
-  const placed = schedule.flatMap((r) => (r.month ? [r.month] : []));
+  const fitting = waitingItems.filter((i) => monthByItemId.get(i.id) === currentMonth);
+  const nearestItem = waitingItems
+    .flatMap((i) => {
+      const m = monthByItemId.get(i.id);
+      return m ? [{ name: i.name, month: m }] : [];
+    })
+    .sort((a, b) => a.month.localeCompare(b.month))[0];
   const summary = {
     total: waitingItems.reduce((sum, i) => sum + cashPrice(i), 0),
-    fitsThisMonth: waitingItems
-      .filter((i) => monthByItemId.get(i.id) === currentMonth)
-      .reduce((sum, i) => sum + cashPrice(i), 0),
-    nearestMonth: placed.length > 0 ? ([...placed].sort()[0] ?? null) : null,
+    fitsCount: fitting.length,
+    nearest: nearestItem ?? null,
   };
+  const timeline = cashFlowSeries(
+    profile,
+    [...installmentCommitments(queueItems), ...sinkingFundCommitments(sinkingFunds, currentMonth)],
+    Array.from({ length: 12 }, (_, i) => addMonths(currentMonth, i)),
+  ).map((point) => ({ month: point.month, left: point.left }));
   const visibleItems = waitingItems.filter(
     (i) => filter === "all" || (filter === "need" ? i.isNeed : !i.isNeed),
   );
+
+  /** The first want whose 30-day wait is over and has not been asked "still want it?" yet. */
+  const askItem = waitingItems.find((i) => cooldownPhase(i, today).phase === "ask");
+
+  function confirmStillWanted(item: QueueItem) {
+    handleSave({ ...item, cooldownConfirmedOn: today });
+  }
 
   function handleSave(item: QueueItem) {
     const exists = queueItems.some((i) => i.id === item.id);
@@ -149,10 +173,41 @@ export default function QueuePage() {
     void saveQueueItem(db, original).catch(logFailure("restore the queue item"));
   }
 
+  /** Moves an item to a month the user chose (dragged onto, or clicked), and offers to take it back. */
+  function handlePin(item: QueueItem, month: Month) {
+    setSelectedId(item.id);
+    if (item.pinnedMonth === month || monthByItemId.get(item.id) === month) return;
+    const before = item;
+    const moved: QueueItem = { ...item, pinnedMonth: month };
+    setQueueItems(queueItems.map((i) => (i.id === item.id ? moved : i)));
+    void saveQueueItem(db, moved).catch(logFailure("move the queue item"));
+    notifyUndo(
+      t("bubbles.moved", { name: item.name, month: formatMonth(month, locale) }),
+      tc("undo"),
+      () => {
+        const current = useAppStore.getState();
+        current.setQueueItems(current.queueItems.map((i) => (i.id === before.id ? before : i)));
+        void saveQueueItem(db, before).catch(logFailure("restore the queue item"));
+      },
+    );
+  }
+
   function handleReorder(next: QueueItem[]) {
+    // A new order replaces the months the user pinned, as the order is what the schedule follows.
+    const unpinned = next.map((item) => {
+      const clean: QueueItem = { ...item };
+      delete clean.pinnedMonth;
+      return clean;
+    });
     // `next` holds only the waiting items; bought-in-installments items keep their place in the store.
-    setQueueItems([...next, ...queueItems.filter((i) => i.installmentPurchase)]);
-    void saveQueueOrder(db, next).catch(logFailure("save the queue order"));
+    setQueueItems([...unpinned, ...queueItems.filter((i) => i.installmentPurchase)]);
+    void saveQueueOrder(db, unpinned).catch(logFailure("save the queue order"));
+    for (const item of next) {
+      if (item.pinnedMonth) {
+        const clean = unpinned.find((u) => u.id === item.id);
+        if (clean) void saveQueueItem(db, clean).catch(logFailure("save the queue item"));
+      }
+    }
   }
 
   function handleConfirm(
@@ -206,26 +261,26 @@ export default function QueuePage() {
     setSelectedId(null);
   }
 
-  function handleDecide(outcome: "skipped" | "postponed") {
-    if (!selectedItem) return;
+  function handleDecide(outcome: "skipped" | "postponed", target: QueueItem | null = selectedItem) {
+    if (!target) return;
     const decision: Decision = {
-      id: `${outcome}-${selectedItem.id}-${decisions.length}`,
-      queueItemRef: selectedItem.id,
-      itemName: selectedItem.name,
+      id: `${outcome}-${target.id}-${decisions.length}`,
+      queueItemRef: target.id,
+      itemName: target.name,
       outcome,
       timestamp: new Date().toISOString(),
       // What the item would have cost in cash: the money saved when skipped.
-      amount: selectedItem.discountedCashPrice ?? selectedItem.price,
+      amount: target.discountedCashPrice ?? target.price,
     };
     setDecisions([...decisions, decision]);
     void putListItem(db, "decisions", DecisionSchema, decision).catch(
       logFailure("save the decision"),
     );
-    if (outcome === "skipped") removeItem(selectedItem);
+    if (outcome === "skipped") removeItem(target);
     notifyUndo(
-      tc("decisionRecorded", { name: selectedItem.name, outcome: tc(`outcome.${outcome}`) }),
+      tc("decisionRecorded", { name: target.name, outcome: tc(`outcome.${outcome}`) }),
       tc("undo"),
-      () => undoDecision(decision, selectedItem, outcome === "skipped"),
+      () => undoDecision(decision, target, outcome === "skipped"),
     );
     setSelectedId(null);
   }
@@ -239,6 +294,7 @@ export default function QueuePage() {
   return (
     <Page
       title={t("title")}
+      subtitle={t("subtitle")}
       action={
         <Button type="button" onClick={() => setAdding(true)}>
           <Plus className="h-4 w-4" aria-hidden="true" />
@@ -261,15 +317,15 @@ export default function QueuePage() {
       ) : (
         <>
           <QueueSummary {...summary} />
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="rise-in flex flex-wrap items-center justify-between gap-4">
             <SegmentedControl
               label={t("views.label")}
               value={view}
               onChange={setView}
               options={[
+                { value: "bubble", label: t("views.time") },
                 { value: "list", label: t("views.list") },
                 { value: "eisenhower", label: t("views.eisenhower") },
-                { value: "time", label: t("views.time") },
               ]}
             />
             <SegmentedControl
@@ -284,6 +340,16 @@ export default function QueuePage() {
             />
           </div>
           <div key={view} className="fade-in">
+            {view === "bubble" && (
+              <QueueBubbleView
+                items={visibleItems}
+                months={timeline}
+                monthByItemId={monthByItemId}
+                selectedId={selectedItem?.id ?? null}
+                onSelect={(item) => setSelectedId(item.id)}
+                onPin={handlePin}
+              />
+            )}
             {view === "list" && (
               <QueueList
                 items={visibleItems}
@@ -298,20 +364,66 @@ export default function QueuePage() {
                 today={today}
                 startMonth={currentMonth}
                 hourlyNetIncome={hourlyNetIncome(profile)}
+                selectedId={selectedItem?.id ?? null}
               />
             )}
             {view === "eisenhower" && (
-              <QueueEisenhower items={visibleItems} onSelect={(item) => setSelectedId(item.id)} />
-            )}
-            {view === "time" && (
-              <QueueTimeView
+              <QueueEisenhower
                 items={visibleItems}
-                monthByItemId={monthByItemId}
-                today={today}
+                selectedId={selectedItem?.id ?? null}
                 onSelect={(item) => setSelectedId(item.id)}
               />
             )}
           </div>
+          {askItem && (
+            <section
+              role="status"
+              data-testid="cooldown-ask"
+              className="pop-in flex flex-wrap items-center gap-5 rounded-card bg-c4 px-[30px] py-[22px] text-on"
+            >
+              <div className="min-w-0 flex-1 basis-60">
+                <h2 className="text-[22px] font-extrabold tracking-[-0.03em]">
+                  {t("cooldown.askTitle")}
+                </h2>
+                <p className="mt-0.5 text-[13.5px] font-semibold">
+                  {t("cooldown.askText", { name: askItem.name })}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => confirmStillWanted(askItem)}
+                className="press rounded-full bg-foreground px-6 py-3 text-sm font-extrabold text-background"
+              >
+                {t("cooldown.keep")}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDecide("skipped", askItem)}
+                className="press rounded-full bg-white/45 px-6 py-3 text-sm font-extrabold"
+              >
+                {t("cooldown.skip")}
+              </button>
+            </section>
+          )}
+          {selectedItem && (
+            <QueuePreview
+              key={selectedItem.id}
+              item={selectedItem}
+              profile={profile}
+              planState={planState}
+              commitments={commitments}
+              month={monthOf(today)}
+              income={income}
+              monthlyNeeds={needs}
+              installmentCapPct={guardThresholds.installmentCapPct}
+              cards={cards}
+              remainingInstallments={remainingByCardId}
+              purchaseDate={today}
+              suggestedMonth={suggestedMonth}
+              onDecide={handleDecide}
+              onConfirm={handleConfirm}
+            />
+          )}
         </>
       )}
 
@@ -331,29 +443,6 @@ export default function QueuePage() {
                 closeForm();
               }}
               onCancel={closeForm}
-            />
-          </SheetContent>
-        )}
-      </Sheet>
-
-      <Sheet open={selectedItem !== null} onOpenChange={(open) => !open && setSelectedId(null)}>
-        {selectedItem && (
-          <SheetContent title={selectedItem.name} className="md:max-w-xl">
-            <QueuePreview
-              item={selectedItem}
-              profile={profile}
-              planState={planState}
-              commitments={commitments}
-              month={monthOf(today)}
-              income={income}
-              monthlyNeeds={needs}
-              installmentCapPct={guardThresholds.installmentCapPct}
-              cards={cards}
-              remainingInstallments={remainingByCardId}
-              purchaseDate={today}
-              suggestedMonth={suggestedMonth}
-              onDecide={handleDecide}
-              onConfirm={handleConfirm}
             />
           </SheetContent>
         )}

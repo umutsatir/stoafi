@@ -28,6 +28,16 @@ export const QueueItemSchema = z.object({
       cardId: z.string().optional(),
     })
     .optional(),
+  /**
+   * The day the user answered "still want it?" after the 30-day cooldown of a want ended.
+   * Additive and optional, so existing stored items stay valid.
+   */
+  cooldownConfirmedOn: z.string().optional(),
+  /**
+   * A month the user dragged (or clicked) the item onto in the timeline. The scheduler keeps it there
+   * instead of choosing the earliest month that fits. Additive and optional, so stored items stay valid.
+   */
+  pinnedMonth: MonthSchema.optional(),
   /** Manual drag-and-drop order, lower comes first. */
   order: z.number().int(),
 });

@@ -17,7 +17,6 @@ import { Confetti } from "@/components/ui/confetti";
 import { Money } from "@/components/ui/money";
 import { PotVisual } from "@/components/ui/pot-visual";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { StatusChip, type ChipTone } from "@/components/ui/status-chip";
 import { formatMonth } from "@/lib/format-month";
 import { picturesFor } from "./investment-icons";
 import { useHeldInName } from "./held-in-select";
@@ -63,13 +62,14 @@ export interface PotCardProps {
   onChooseHeldIn?: () => void;
 }
 
-const STATE_TONE: Record<PotView["state"], ChipTone> = {
-  funded: "success",
-  active: "info",
-  open: "info",
-  due: "warning",
-  overdue: "danger",
+const STATE_FILL: Record<PotView["state"], string> = {
+  funded: "bg-c4",
+  active: "bg-c1",
+  open: "bg-c1",
+  due: "bg-c2",
+  overdue: "bg-c3",
 };
+const POT_FILL = ["bg-c2", "bg-c1", "bg-c4", "bg-c3"];
 
 export function PotCard({
   pot,
@@ -111,19 +111,30 @@ export function PotCard({
     <li
       data-testid={`pot-${pot.id}`}
       style={stagger(index)}
-      className="rise-in relative flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
+      className="lift pop-in relative flex h-full flex-col gap-4 rounded-card bg-card px-7 py-[26px]"
     >
       {celebrate > 0 && <Confetti key={celebrate} />}
       <div className="flex gap-4">
-        <PotVisual fraction={fraction} icon={Icon} dropKey={dropKey} />
+        <PotVisual
+          fraction={fraction}
+          icon={Icon}
+          dropKey={dropKey}
+          fillClass={POT_FILL[index % 4] ?? "bg-c4"}
+        />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="truncate text-lg font-semibold">{pot.label}</h3>
-            <StatusChip tone={STATE_TONE[pot.state]}>
-              <span data-testid={`pot-state-${pot.id}`}>{t(`state.${pot.state}`)}</span>
-            </StatusChip>
+            <h3 className="truncate text-[19px] font-extrabold tracking-[-0.03em]">{pot.label}</h3>
+            <span
+              data-testid={`pot-state-${pot.id}`}
+              className={`whitespace-nowrap rounded-full px-3 py-1 text-[11.5px] font-extrabold text-on ${STATE_FILL[pot.state]}`}
+            >
+              {t(`state.${pot.state}`)}
+            </span>
           </div>
-          <p className="mt-1 text-2xl font-semibold" data-testid={`pot-balance-${pot.id}`}>
+          <p
+            className="mt-1.5 text-[28px] font-extrabold tracking-[-0.05em]"
+            data-testid={`pot-balance-${pot.id}`}
+          >
             <Money value={pot.balance} animated />
           </p>
           <p className="text-sm text-muted-foreground">
@@ -141,14 +152,14 @@ export function PotCard({
             const Held = picturesFor(
               heldTypeId === "cash" ? "currency" : heldTypeId === "custom" ? "other" : heldTypeId,
             ).pot;
-            return <Held className="h-4 w-4 text-primary" aria-hidden="true" />;
+            return <Held className="h-4 w-4 text-primary-ink" aria-hidden="true" />;
           })()}
           <span>{t("heldIn.chip", { name: heldInName(pot.heldIn) })}</span>
           {onChooseHeldIn && (
             <button
               type="button"
               onClick={onChooseHeldIn}
-              className="text-xs font-medium text-primary hover:underline"
+              className="text-xs font-medium text-primary-ink hover:underline"
             >
               {t("heldIn.change")}
             </button>
@@ -159,7 +170,7 @@ export function PotCard({
           <button
             type="button"
             onClick={onChooseHeldIn}
-            className="w-fit text-sm font-medium text-primary hover:underline"
+            className="w-fit text-sm font-medium text-primary-ink hover:underline"
             data-testid={`held-in-choose-${pot.id}`}
           >
             {t("heldIn.choose")}
@@ -176,7 +187,7 @@ export function PotCard({
           value={Math.min(pot.balance, pot.target)}
           max={pot.target}
           label={t("progressLabel", { name: pot.label })}
-          tone={pot.state === "overdue" ? "danger" : pot.state === "funded" ? "success" : "primary"}
+          tone={pot.state === "overdue" ? "danger" : "success"}
         />
       )}
       {pot.neededThisMonth > 0 && (
@@ -187,13 +198,13 @@ export function PotCard({
           })}
         </p>
       )}
-      <div className="flex flex-wrap gap-2">
+      <div className="mt-auto flex flex-wrap gap-2 pt-2">
         <Button type="button" onClick={() => onDeposit(pot)}>
           <Plus className="h-4 w-4" aria-hidden="true" />
           {t("addMoney")}
           <span className="sr-only"> {pot.label}</span>
         </Button>
-        <Button type="button" variant="outline" onClick={() => onHistory(pot)}>
+        <Button type="button" variant="secondary" onClick={() => onHistory(pot)}>
           <History className="h-4 w-4" aria-hidden="true" />
           {t("historyButton")}
           <span className="sr-only"> {pot.label}</span>

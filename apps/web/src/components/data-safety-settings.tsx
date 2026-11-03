@@ -54,9 +54,9 @@ export function DataSafetySettings({ onRestored }: DataSafetySettingsProps) {
     : null;
 
   return (
-    <div className="flex flex-col gap-6" data-testid="data-safety">
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
-        <h3 className="flex items-center gap-2 text-sm font-semibold">
+    <div className="flex flex-col gap-3" data-testid="data-safety">
+      <div className="flex flex-col gap-2 rounded-[20px] bg-muted px-[18px] py-4">
+        <h3 className="flex items-center gap-2 text-[14px] font-extrabold">
           <ShieldQuestion className="h-4 w-4 text-primary" aria-hidden="true" />
           {t("persist.title")}
         </h3>
@@ -84,8 +84,8 @@ export function DataSafetySettings({ onRestored }: DataSafetySettingsProps) {
         )}
       </div>
 
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
-        <h3 className="flex items-center gap-2 text-sm font-semibold">
+      <div className="flex flex-col gap-2 rounded-[20px] bg-muted px-[18px] py-4">
+        <h3 className="flex items-center gap-2 text-[14px] font-extrabold">
           <FolderSync className="h-4 w-4 text-primary" aria-hidden="true" />
           {t("file.title")}
         </h3>
@@ -151,8 +151,8 @@ export function DataSafetySettings({ onRestored }: DataSafetySettingsProps) {
         )}
       </div>
 
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
-        <h3 className="flex items-center gap-2 text-sm font-semibold">
+      <div className="flex flex-col gap-2 rounded-[20px] bg-muted px-[18px] py-4">
+        <h3 className="flex items-center gap-2 text-[14px] font-extrabold">
           <History className="h-4 w-4 text-primary" aria-hidden="true" />
           {t("copies.title")}
         </h3>

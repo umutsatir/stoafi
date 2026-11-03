@@ -31,7 +31,6 @@ describe("Onboarding", () => {
     fireEvent.click(screen.getByRole("button", { name: /Get started/ }));
     expect(screen.getByTestId("onboarding-step")).toHaveTextContent("Step 1 of 4");
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
-    expect(screen.getByText("Enter your monthly pay to continue.")).toBeInTheDocument();
     expect(screen.getByTestId("onboarding-step")).toHaveTextContent("Step 1 of 4");
   });
 
@@ -41,7 +40,7 @@ describe("Onboarding", () => {
     fireEvent.click(screen.getByRole("button", { name: /Back/ }));
     expect(screen.getByTestId("onboarding-welcome")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Get started/ }));
-    fireEvent.change(screen.getByLabelText("Monthly amount"), { target: { value: "60000" } });
+    fireEvent.change(screen.getByLabelText(/^Monthly amount/), { target: { value: "60000" } });
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
     expect(screen.getByTestId("onboarding-step")).toHaveTextContent("Step 2 of 4");
     fireEvent.click(screen.getByRole("button", { name: /Back/ }));
@@ -51,9 +50,7 @@ describe("Onboarding", () => {
   it("walks through all four steps and saves a profile and a plan", async () => {
     start();
     fireEvent.click(screen.getByRole("button", { name: /Get started/ }));
-    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Acme" } });
-    fireEvent.change(screen.getByLabelText("Monthly amount"), { target: { value: "60000" } });
-    fireEvent.change(screen.getByLabelText("Paid on day"), { target: { value: "15" } });
+    fireEvent.change(screen.getByLabelText(/^Monthly amount/), { target: { value: "60000" } });
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
 
     fireEvent.click(screen.getByRole("button", { name: "+ Rent" }));
@@ -63,11 +60,11 @@ describe("Onboarding", () => {
     ) as HTMLInputElement[];
     fireEvent.change(rent as HTMLInputElement, { target: { value: "18000" } });
     fireEvent.change(subscription as HTMLInputElement, { target: { value: "250" } });
-    fireEvent.change(screen.getByLabelText("Living costs"), { target: { value: "12000" } });
+    fireEvent.change(screen.getByLabelText(/^Living costs/), { target: { value: "12000" } });
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
 
-    fireEvent.change(screen.getByLabelText("Current savings"), { target: { value: "90000" } });
-    fireEvent.change(screen.getByLabelText("Country"), { target: { value: "TR" } });
+    fireEvent.change(screen.getByLabelText(/^Current savings/), { target: { value: "90000" } });
+    fireEvent.click(screen.getByRole("radio", { name: "9 months" }));
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
 
     // 60,000 - 18,000 - 250 - 12,000
@@ -78,10 +75,10 @@ describe("Onboarding", () => {
     await waitFor(() => expect(useAppStore.getState().profile).not.toBeNull());
     const profile = useAppStore.getState().profile;
     expect(profile).toMatchObject({
-      incomes: [{ label: "Acme", monthly: 6_000_000, payDay: 15 }],
+      incomes: [{ label: "Salary", monthly: 6_000_000 }],
+      emergencyFundTargetMonths: 9,
       livingExpenses: 1_200_000,
       savings: 9_000_000,
-      countryCode: "TR",
     });
     expect(profile?.fixedExpenses).toEqual([
       { label: "Rent", monthly: 1_800_000, bucket: "needs" },
@@ -92,28 +89,39 @@ describe("Onboarding", () => {
     expect(await db.plan.count()).toBe(1);
   });
 
-  it("lets the user skip optional steps and still finish, with the default plan", async () => {
+  it("lets the user pass optional steps and still finish, with the default plan", async () => {
     start();
     fireEvent.click(screen.getByRole("button", { name: /Get started/ }));
-    fireEvent.change(screen.getByLabelText("Monthly amount"), { target: { value: "10000" } });
+    fireEvent.change(screen.getByLabelText(/^Monthly amount/), { target: { value: "10000" } });
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
-    fireEvent.click(screen.getByRole("button", { name: "Skip" }));
+    fireEvent.click(screen.getByRole("button", { name: /Next/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Next/ }));
     fireEvent.click(screen.getByRole("button", { name: "Finish" }));
     await waitFor(() => expect(useAppStore.getState().profile).not.toBeNull());
-    expect(useAppStore.getState().planState?.strategyId).toBe("fifty-thirty-twenty");
+    expect(useAppStore.getState().planState?.strategyId).toBe("conscious-spending");
     expect(useAppStore.getState().profile?.fixedExpenses).toEqual([]);
   });
 
   it("warns, but does not block, when regular costs are above income", () => {
     start();
     fireEvent.click(screen.getByRole("button", { name: /Get started/ }));
-    fireEvent.change(screen.getByLabelText("Monthly amount"), { target: { value: "1000" } });
+    fireEvent.change(screen.getByLabelText(/^Monthly amount/), { target: { value: "1000" } });
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
-    fireEvent.change(screen.getByLabelText("Living costs"), { target: { value: "5000" } });
+    fireEvent.change(screen.getByLabelText(/^Living costs/), { target: { value: "5000" } });
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
     fireEvent.click(screen.getByRole("button", { name: /Next/ }));
     expect(screen.getByTestId("onboarding-left")).toHaveTextContent(/above your income/);
     expect(screen.getByRole("button", { name: "Finish" })).toBeEnabled();
+  });
+});
+
+describe("Onboarding overlay", () => {
+  it("covers the screen and closes with Escape", () => {
+    const onClose = vi.fn();
+    renderWithIntl(<Onboarding onClose={onClose} />);
+    expect(screen.getByTestId("onboarding-overlay")).toHaveClass("fixed", "inset-0");
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId("onboarding-overlay")).not.toBeInTheDocument();
   });
 });

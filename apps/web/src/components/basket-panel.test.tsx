@@ -60,13 +60,13 @@ describe("BasketPanel", () => {
     renderWithIntl(<Harness onChange={onChange} />);
     fireEvent.click(screen.getByRole("button", { name: "Use the Balanced basket" }));
     expect(screen.queryByTestId("basket-templates")).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("S&P 500 index fund");
-    expect(screen.getByLabelText("Slice 1 percent")).toHaveValue(30);
+    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("Global index fund");
+    expect(screen.getByLabelText("Slice 1 percent")).toHaveValue(40);
     expect(screen.getByTestId("basket-total")).toHaveTextContent("Adds up to 100%");
 
-    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "40" } });
+    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "50" } });
     expect(screen.getByTestId("basket-total")).toHaveTextContent("Adds up to 110%: 10% too much");
-    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "20" } });
+    fireEvent.change(screen.getByLabelText("Slice 1 percent"), { target: { value: "30" } });
     expect(screen.getByTestId("basket-total")).toHaveTextContent(
       "Adds up to 90%: 10% still to place",
     );
@@ -99,10 +99,9 @@ describe("BasketPanel", () => {
 
   it("asks to finish the percentages before showing a split", () => {
     renderWithIntl(<Harness initial={[{ id: "a", label: "A", percent: 50 }]} />);
-    expect(
-      screen.getByText("Make the percentages add up to 100% to see the split."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Percentages don't add up to 100")).toBeInTheDocument();
     expect(screen.queryByTestId("split-a")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("basket-split")).not.toBeInTheDocument();
   });
 
   it("shows where the user is against the basket, and fills the gaps with new money", () => {
@@ -114,12 +113,12 @@ describe("BasketPanel", () => {
     expect(screen.getByTestId("drift-sp")).toHaveTextContent("0% held, target 40%");
     // After adding 1,000,000 the total is 1,900,000: gold target 1,140,000 (hold 900,000), sp target 760,000.
     // Gaps 240,000 and 760,000 share 1,000,000 by size.
-    const gold = screen.getByTestId("split-gold").textContent ?? "";
-    const sp = screen.getByTestId("split-sp").textContent ?? "";
+    const gold = screen.getByTestId("split-amount-gold").textContent ?? "";
+    const sp = screen.getByTestId("split-amount-sp").textContent ?? "";
     expect(Number(gold.replace(/[^\d.]/g, ""))).toBeLessThan(Number(sp.replace(/[^\d.]/g, "")));
 
     fireEvent.click(screen.getByRole("radio", { name: "Plain percentages" }));
-    expect(screen.getByTestId("split-gold")).toHaveTextContent("₺6,000.00");
+    expect(screen.getByTestId("split-amount-gold")).toHaveTextContent("₺6,000.00");
   });
 
   it("asks which slice an unplaced holding belongs to", () => {
@@ -128,17 +127,30 @@ describe("BasketPanel", () => {
       <Harness initial={mine} holdings={[held("crypto", "crypto", 1)]} onAssign={onAssign} />,
     );
     const box = screen.getByTestId("basket-unassigned");
-    fireEvent.change(within(box).getByLabelText("Put crypto in a slice"), {
-      target: { value: "gold" },
-    });
+    fireEvent.click(within(box).getByRole("button", { name: "Put crypto in a slice" }));
+    fireEvent.click(within(box).getByRole("button", { name: "Gold" }));
     expect(onAssign).toHaveBeenCalledWith("crypto", "gold");
   });
 
-  it("can restart from an example, and undo is offered when it replaces a basket", () => {
+  it("asks before an example replaces a basket you already have", async () => {
     renderWithIntl(<Harness initial={mine} />);
     fireEvent.click(screen.getByRole("button", { name: "Start from an example" }));
     fireEvent.click(screen.getByRole("button", { name: "Use the Careful basket" }));
-    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("Deposit or money market");
+    expect(await screen.findByRole("dialog")).toHaveTextContent(
+      "You are about to change your basket",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Change basket" }));
+    expect(screen.getByLabelText("Slice 1 name")).toHaveValue("Deposit");
+  });
+
+  it("starts an empty basket you fill in one slice at a time", () => {
+    renderWithIntl(<Harness />);
+    fireEvent.click(screen.getByRole("button", { name: "Start empty" }));
+    expect(screen.queryByTestId("basket-templates")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Slice 1 name")).not.toBeInTheDocument();
+    expect(screen.getByTestId("basket-total")).toHaveTextContent("Adds up to 0%");
+    fireEvent.click(screen.getByRole("button", { name: "Add slice" }));
+    expect(screen.getByLabelText("Slice 1 name")).toBeInTheDocument();
   });
 
   it("states that it is not a recommendation", () => {
@@ -213,7 +225,7 @@ describe("BasketPanel ticking", () => {
     expect(screen.getByTestId("split-gold")).toHaveTextContent(
       "Ticking also adds this purchase to g, at its current price.",
     );
-    expect(screen.getByTestId("split-sp")).toHaveTextContent("Ticking only notes it.");
+    expect(screen.getByTestId("split-sp")).toHaveTextContent("40% target");
   });
 
   it("remembers a monthly amount the user changed", () => {

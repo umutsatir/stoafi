@@ -10,9 +10,10 @@ export function Toaster() {
       position="bottom-center"
       toastOptions={{
         classNames: {
-          toast: "!bg-card !text-card-foreground !border-border !shadow-lg",
-          actionButton: "!bg-primary !text-primary-foreground",
-          description: "!text-muted-foreground",
+          toast:
+            "!rounded-full !border-0 !bg-foreground !px-6 !py-3.5 !font-bold !text-background !shadow-2xl",
+          actionButton: "!bg-transparent !font-extrabold !text-primary",
+          description: "!opacity-70",
         },
       }}
     />

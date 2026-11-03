@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cooldownStatus } from "./cooldown";
+import { cooldownPhase, cooldownStatus } from "./cooldown";
 
 describe("cooldownStatus", () => {
   it("a need is never subject to cooldown", () => {
@@ -39,5 +39,43 @@ describe("cooldownStatus with partial dates", () => {
   it("reads a date without a month as January", () => {
     const status = cooldownStatus({ isNeed: false, addedDate: "2026" }, "2026-03-01");
     expect(status.active).toBe(false);
+  });
+});
+
+describe("cooldownPhase", () => {
+  const want = { isNeed: false, addedDate: "2026-09-01" };
+
+  it("has no phase for a need", () => {
+    expect(cooldownPhase({ isNeed: true, addedDate: "2026-09-01" }, "2026-09-02")).toEqual({
+      phase: "none",
+    });
+  });
+
+  it("counts the days left while the cooldown runs", () => {
+    expect(cooldownPhase(want, "2026-09-20")).toEqual({ phase: "counting", daysLeft: 11 });
+  });
+
+  it("asks once the cooldown has ended and nothing was confirmed", () => {
+    expect(cooldownPhase(want, "2026-10-01")).toEqual({ phase: "ask" });
+    expect(cooldownPhase(want, "2026-12-01")).toEqual({ phase: "ask" });
+  });
+
+  it("remembers a confirmation made after the cooldown ended", () => {
+    expect(cooldownPhase({ ...want, cooldownConfirmedOn: "2026-10-03" }, "2026-10-04")).toEqual({
+      phase: "confirmed",
+      on: "2026-10-03",
+    });
+  });
+
+  it("ignores a confirmation made before the cooldown ended", () => {
+    expect(cooldownPhase({ ...want, cooldownConfirmedOn: "2026-09-15" }, "2026-10-04")).toEqual({
+      phase: "ask",
+    });
+  });
+
+  it("has no phase for an item already bought in installments", () => {
+    expect(cooldownPhase({ ...want, installmentBought: true }, "2026-10-04")).toEqual({
+      phase: "none",
+    });
   });
 });

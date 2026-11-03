@@ -134,7 +134,7 @@ export function ExpenseEditor({
                 tile === id ? "border-primary bg-primary/10" : "border-border bg-card",
               )}
             >
-              <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
+              <Icon className="h-5 w-5 text-primary-ink" aria-hidden="true" />
               <span className="text-sm font-semibold">{t(`kind.${id}.title`)}</span>
               <span className="text-xs text-muted-foreground">{t(`kind.${id}.hint`)}</span>
             </button>

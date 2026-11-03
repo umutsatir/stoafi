@@ -142,7 +142,7 @@ export function AdviceItem({ advice }: { advice: LimitAdvice }) {
     <>
       <AdviceText advice={advice} />
       {advice.id !== "allGood" && (
-        <Link href={HREF[advice.id]} className="font-medium text-primary hover:underline">
+        <Link href={HREF[advice.id]} className="font-medium text-primary-ink hover:underline">
           {t(`action.${advice.id}`)}
         </Link>
       )}

@@ -21,8 +21,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import {
+  cooldownPhase,
   costInWorkHours,
-  costPerUse,
   priceAgeDays,
   priceIsStale,
   eisenhowerQuadrant,
@@ -38,7 +38,7 @@ import { useMoney } from "@/lib/use-money";
 import { Button } from "@/components/ui/button";
 import { StatusChip, type ChipTone } from "@/components/ui/status-chip";
 import { formatMonth } from "@/lib/format-month";
-import { stagger } from "@/lib/utils";
+import { cn, stagger } from "@/lib/utils";
 
 const NO_COMMITMENTS: Commitment[] = [];
 
@@ -58,6 +58,7 @@ export interface QueueListProps {
   hourlyNetIncome: number;
   /** False hides the drag handle and arrows (e.g. while a filter hides some items). */
   reorderable?: boolean;
+  selectedId?: string | null;
 }
 
 /** Renumbers `order` to match array position. */
@@ -101,6 +102,7 @@ interface QueueRowProps {
   onDelete?: (item: QueueItem) => void;
   hourlyNetIncome: number;
   reorderable: boolean;
+  selected: boolean;
   today: string;
   locale: string;
   t: (key: string, values?: Record<string, string | number>) => string;
@@ -119,6 +121,7 @@ function QueueRow({
   onDelete,
   hourlyNetIncome,
   reorderable,
+  selected,
   today,
   locale,
   t,
@@ -129,6 +132,7 @@ function QueueRow({
   });
   const quadrant = eisenhowerQuadrant(item);
   const priority = priorityOf(quadrant);
+  const cooldown = cooldownPhase(item, today);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -136,14 +140,21 @@ function QueueRow({
     ...stagger(index),
   };
 
+  const kindColor = item.isNeed ? "bg-c4" : item.installmentPurchase ? "bg-c3" : "bg-c2";
+  const SOFT_CHIP = "rounded-full bg-muted px-2.5 py-[3px] text-[11.5px] font-bold";
+  const ARROW =
+    "flex h-[22px] w-7 items-center justify-center rounded-lg bg-muted text-[11px] disabled:opacity-40";
+
   return (
     <li
       ref={setNodeRef}
       style={style}
       data-testid={`queue-item-${item.id}`}
-      className={`rise-in flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md ${
-        isDragging ? "opacity-60 shadow-lg" : ""
-      }`}
+      className={cn(
+        "rise-in flex items-center gap-4 rounded-[20px] px-5 py-4 transition-[transform,translate,scale,box-shadow,background-color] duration-[250ms] hover:translate-x-[5px]",
+        selected ? "bg-muted shadow-[inset_0_0_0_2px_var(--primary)]" : "bg-card",
+        isDragging && "opacity-60 shadow-lg",
+      )}
     >
       {reorderable && (
         <button
@@ -157,27 +168,53 @@ function QueueRow({
         </button>
       )}
 
+      <span
+        aria-hidden="true"
+        className={cn(
+          "flex h-11 w-11 flex-none items-center justify-center rounded-[15px] text-[17px] font-extrabold text-on",
+          kindColor,
+        )}
+      >
+        {index + 1}
+      </span>
       <div className="min-w-0 flex-1">
         {onSelect ? (
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="sm"
-            className="-ml-3 h-auto px-3 py-0.5 text-sm font-medium"
+            className="text-left text-[16.5px] font-extrabold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => onSelect(item)}
           >
             {item.name}
-          </Button>
+          </button>
         ) : (
-          <p className="text-sm font-medium">{item.name}</p>
+          <p className="text-[16.5px] font-extrabold">{item.name}</p>
         )}
-        <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-          <StatusChip tone={month ? "success" : "warning"}>
-            <span data-testid={`month-${item.id}`}>
-              {month ? formatMonth(month, locale) : notAffordableLabel}
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+          <span className={SOFT_CHIP}>{item.isNeed ? t("kindNeed") : t("kindWant")}</span>
+          <span className={SOFT_CHIP}>{t("cash")}</span>
+          <span className={SOFT_CHIP}>
+            {t("hoursSuffix", { hours: costInWorkHours(item.price, hourlyNetIncome).toFixed(1) })}
+          </span>
+          <span className={SOFT_CHIP}>{t(`priority.${priority.key}`)}</span>
+          {cooldown.phase === "counting" && (
+            <span className="rounded-full bg-c2 px-2.5 py-[3px] text-[11.5px] font-extrabold text-on">
+              <span data-testid={`cooldown-${item.id}`}>
+                {t("cooldown.days", { count: cooldown.daysLeft })}
+              </span>
             </span>
-          </StatusChip>
-          <StatusChip tone={priority.tone}>{t(`priority.${priority.key}`)}</StatusChip>
+          )}
+          {cooldown.phase === "confirmed" && (
+            <span className="rounded-full bg-c4 px-2.5 py-[3px] text-[11.5px] font-extrabold text-on">
+              <span data-testid={`cooldown-${item.id}`}>
+                {t("cooldown.confirmed", { date: cooldown.on })}
+              </span>
+            </span>
+          )}
+          {cooldown.phase === "ask" && (
+            <span className="rounded-full bg-c3 px-2.5 py-[3px] text-[11.5px] font-extrabold text-on">
+              {t("cooldown.askBadge")}
+            </span>
+          )}
           {priceIsStale(item, today) && (
             <button
               type="button"
@@ -190,46 +227,41 @@ function QueueRow({
               </StatusChip>
             </button>
           )}
-          <span>
-            {t("hoursSuffix", { hours: costInWorkHours(item.price, hourlyNetIncome).toFixed(1) })}
-          </span>
-          <span>
-            {t("perUseSuffix", { amount: money(costPerUse(item.price, item.expectedUses)) })}
-          </span>
+        </div>
+      </div>
+
+      <div className="text-right">
+        <div className="text-[16.5px] font-extrabold">{money(item.price)}</div>
+        <div
+          className={cn("mt-[3px] text-[12.5px] font-bold", !month && "text-destructive")}
+          data-testid={`month-${item.id}`}
+        >
+          {month ? formatMonth(month, locale) : notAffordableLabel}
         </div>
       </div>
 
       <div className="flex items-center gap-1">
         {reorderable && (
           <div className="flex flex-col gap-1">
-            <Button
+            <button
               type="button"
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
+              className={ARROW}
               disabled={index === 0}
               aria-label={t("moveUp", { name: item.name })}
               onClick={() => onMove(index, -1)}
             >
-              ↑
-            </Button>
-            <Button
+              ▲
+            </button>
+            <button
               type="button"
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
+              className={ARROW}
               disabled={index === total - 1}
               aria-label={t("moveDown", { name: item.name })}
               onClick={() => onMove(index, 1)}
             >
-              ↓
-            </Button>
+              ▼
+            </button>
           </div>
-        )}
-        {onSelect && (
-          <Button type="button" size="sm" onClick={() => onSelect(item)}>
-            {t("buy")}
-          </Button>
         )}
         {onEdit && (
           <Button
@@ -271,6 +303,7 @@ export function QueueList({
   commitments = NO_COMMITMENTS,
   hourlyNetIncome,
   reorderable = true,
+  selectedId = null,
 }: QueueListProps) {
   const locale = useLocale();
   const t = useTranslations("queue");
@@ -320,6 +353,7 @@ export function QueueList({
                 onDelete={onDelete}
                 hourlyNetIncome={hourlyNetIncome}
                 reorderable={reorderable}
+                selected={item.id === selectedId}
                 today={today}
                 locale={locale}
                 t={t}

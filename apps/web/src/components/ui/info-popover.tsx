@@ -23,7 +23,7 @@ export function InfoPopover({ label, children }: InfoPopoverProps) {
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Content
           sideOffset={6}
-          className="z-50 max-w-xs rounded-lg border border-border bg-card p-3 text-sm text-card-foreground shadow-md"
+          className="z-50 max-w-xs rounded-lg bg-card p-3 text-sm text-card-foreground shadow-md"
         >
           {children}
         </PopoverPrimitive.Content>

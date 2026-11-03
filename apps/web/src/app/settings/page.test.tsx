@@ -13,13 +13,16 @@ beforeEach(async () => {
 describe("Settings screen installment cap", () => {
   it("saves a new cap so the queue and a reload use it", async () => {
     renderWithIntl(<SettingsPage />);
-    fireEvent.change(screen.getByLabelText("Installment cap (% of net income)"), {
-      target: { value: "10" },
-    });
-    expect(useAppStore.getState().guardThresholds.installmentCapPct).toBeCloseTo(0.1, 10);
+    const before = useAppStore.getState().guardThresholds.installmentCapPct;
+    fireEvent.click(screen.getByRole("button", { name: "Decrease" }));
+    const expected = Math.round(before * 100 - 1) / 100;
+    expect(useAppStore.getState().guardThresholds.installmentCapPct).toBeCloseTo(expected, 10);
     await waitFor(async () => {
       const row = await db.guards.get("singleton");
-      expect((row?.data as { installmentCapPct: number }).installmentCapPct).toBeCloseTo(0.1, 10);
+      expect((row?.data as { installmentCapPct: number }).installmentCapPct).toBeCloseTo(
+        expected,
+        10,
+      );
     });
   });
 });

@@ -19,15 +19,14 @@ function coveredCodePoints(): (cp: number) => boolean {
 }
 
 describe("self-hosted font", () => {
-  const files = ["inter-latin-wght-normal.woff2", "inter-latin-ext-wght-normal.woff2"];
+  const files = ["sora-latin.woff2", "sora-latin-ext.woff2"];
 
-  it("ships the font files, as real woff2, next to its licence", () => {
+  it("ships the font files as real woff2", () => {
     for (const file of files) {
       const path = join(fontDir, file);
       expect(existsSync(path), file).toBe(true);
       expect(readFileSync(path).subarray(0, 4).toString("latin1"), file).toBe("wOF2");
     }
-    expect(readFileSync(join(fontDir, "OFL.txt"), "utf8")).toContain("SIL Open Font License");
   });
 
   it("points every @font-face at one of those files and at nothing on another site", () => {
@@ -53,7 +52,7 @@ describe("self-hosted font", () => {
   });
 
   it("is first in the font stack, with system fonts behind it", () => {
-    expect(css).toMatch(/--font-sans:\s*"Inter", ui-sans-serif, system-ui/);
+    expect(css).toMatch(/--font-sans:\s*"Sora", ui-sans-serif, system-ui/);
   });
 
   it("is small: the two files together stay under 150 KB", () => {

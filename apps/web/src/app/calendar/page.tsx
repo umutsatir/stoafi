@@ -16,7 +16,7 @@ export default function CalendarPage() {
   const t = useTranslations("calendar");
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       {profile ? (
         <CalendarView profile={profile} cards={cards} today={today} />
       ) : (

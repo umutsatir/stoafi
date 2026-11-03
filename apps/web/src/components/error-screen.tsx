@@ -27,11 +27,16 @@ export function ErrorScreen({ error, reset }: ErrorScreenProps) {
   return (
     <main
       role="alert"
-      className="mx-auto flex max-w-lg flex-col items-start gap-4 rounded-2xl border border-destructive/40 bg-destructive/5 p-6"
+      className="pop-in mx-auto mt-10 flex max-w-lg flex-col items-start gap-4 rounded-card bg-card p-9"
     >
-      <TriangleAlert className="h-8 w-8 text-destructive" aria-hidden="true" />
+      <span
+        aria-hidden="true"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-c3 text-on"
+      >
+        <TriangleAlert className="h-7 w-7" />
+      </span>
       <div>
-        <h1 className="text-title font-semibold">{t("title")}</h1>
+        <h1 className="text-[26px] font-extrabold tracking-[-0.04em]">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{t("text")}</p>
       </div>
       <div className="flex flex-wrap gap-2">

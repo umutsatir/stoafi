@@ -38,27 +38,33 @@ export function SalaryList({ salaries, onAdd, onEdit, onRemove }: SalaryListProp
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="flex items-baseline justify-between gap-2 text-sm font-semibold">
+      <p className="flex items-baseline justify-between gap-2 text-[15px] font-extrabold text-muted-foreground">
         <span>{t("total")}</span>
         <span data-testid="salary-total">
           <Money value={total} />
         </span>
       </p>
-      <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
+      <ul className="flex flex-col">
         {salaries.map((salary, index) => (
           <li
             key={index}
             data-testid={`salary-row-${index}`}
             style={stagger(index)}
-            className="rise-in flex flex-wrap items-center gap-x-3 gap-y-1 p-3"
+            className="rise-in mt-3.5 flex flex-wrap items-center gap-x-3.5 gap-y-1 border-t border-border pt-3.5"
           >
+            <span
+              aria-hidden="true"
+              className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-c4 font-extrabold text-on"
+            >
+              {salary.payDay ?? 1}
+            </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{salary.label}</p>
+              <p className="truncate text-[15px] font-bold">{salary.label}</p>
               <p className="text-xs text-muted-foreground">
                 {t("row.day", { day: salary.payDay ?? 1 })}
               </p>
             </div>
-            <span className="text-sm font-semibold">
+            <span className="text-[17px] font-extrabold text-success">
               <Money value={salary.monthly} />
             </span>
             <Button

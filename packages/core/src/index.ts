@@ -88,7 +88,12 @@ export {
 export { DecisionSchema, type Decision } from "../modules/decisions/schema";
 
 export { costInWorkHours, costPerUse, eisenhowerQuadrant } from "../modules/queue/selectors";
-export { cooldownStatus, type CooldownStatus } from "../modules/queue/cooldown";
+export {
+  cooldownPhase,
+  cooldownStatus,
+  type CooldownPhase,
+  type CooldownStatus,
+} from "../modules/queue/cooldown";
 export { toDraftCommitment } from "../modules/queue/to-commitment";
 export {
   activeQueueItems,
@@ -115,7 +120,11 @@ export {
   type SavingsSummary,
 } from "../modules/decisions/selectors";
 export { timingTip, type TimingTip } from "../modules/cards/timing";
-export { minimumPaymentPayoff, type MinPaymentRule } from "../modules/cards/minimum-payment";
+export {
+  minimumPaymentBalances,
+  minimumPaymentPayoff,
+  type MinPaymentRule,
+} from "../modules/cards/minimum-payment";
 export { toCommitment } from "../modules/sinking-funds/schema";
 export {
   compareOffers,
@@ -129,6 +138,12 @@ export { installmentLoadTimeline, capacityRemaining } from "../modules/installme
 export { InstallmentOfferSchema, type InstallmentOfferInput } from "../modules/installments/schema";
 export { defaultGuardRules, type GuardContext, type GuardRule } from "../modules/guards/schema";
 export { evaluateGuards, type GuardBreach } from "../modules/guards/selectors";
+export {
+  FUND_HOLDINGS,
+  fundHoldingFit,
+  type FundHolding,
+  type FundHoldingFit,
+} from "../modules/profile/fund-holding";
 export { suggestedEmergencyFundMonth } from "../modules/health/suggested-emergency-fund";
 export {
   INFLATION_COUNTRY_CODES,

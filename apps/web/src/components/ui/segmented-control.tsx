@@ -15,6 +15,8 @@ export interface SegmentedControlProps<T extends string> {
   /** Screen-reader name for the group. */
   label: string;
   className?: string;
+  /** "surface" sits on the page background; "soft" sits inside a card. */
+  tone?: "surface" | "soft" | "chips";
 }
 
 /** A short either-or switch (view modes). Arrow keys move the choice, like native radios. */
@@ -24,22 +26,32 @@ export function SegmentedControl<T extends string>({
   options,
   label,
   className,
+  tone = "surface",
 }: SegmentedControlProps<T>) {
   const name = useId();
   return (
     <div
       role="radiogroup"
       aria-label={label}
-      className={cn("inline-flex max-w-full flex-wrap rounded-lg bg-muted p-1", className)}
+      className={cn(
+        "inline-flex max-w-full flex-wrap gap-1.5 text-[13px] font-bold",
+        tone === "chips" ? "gap-2" : "rounded-full p-[5px]",
+        tone === "surface" && "bg-card",
+        tone === "soft" && "bg-muted",
+        className,
+      )}
     >
       {options.map((option) => (
         <label
           key={option.value}
           className={cn(
-            "cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
+            "cursor-pointer rounded-full px-4 py-2 transition-all duration-[250ms] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
             value === option.value
-              ? "bg-card text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
+              ? "bg-foreground text-background"
+              : cn(
+                  "text-muted-foreground hover:text-foreground",
+                  tone === "chips" && "bg-muted text-foreground hover:scale-[1.04]",
+                ),
           )}
         >
           <input

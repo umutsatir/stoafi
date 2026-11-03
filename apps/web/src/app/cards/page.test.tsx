@@ -114,7 +114,7 @@ describe("Cards screen", () => {
     useAppStore.setState({ cards: [main], queueItems: [item] });
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Open Bonus" }));
-    const panel = await screen.findByRole("dialog", { name: "Bonus" });
+    const panel = screen.getByTestId("card-detail");
     expect(within(panel).getByTestId("limit-used-text")).toHaveTextContent("₺30,000.00");
     expect(within(panel).getByTestId("owed-here")).toHaveTextContent("₺30,000.00");
   });
