@@ -48,8 +48,8 @@ export function OrbitRing({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="mt-2 flex flex-wrap items-center gap-6">
-        <div className="relative mx-auto aspect-square w-[min(360px,100%)] flex-none">
+      <div className="mt-2 flex flex-col items-stretch gap-8">
+        <div className="relative mx-auto aspect-square w-[min(420px,100%)] flex-none">
           <svg
             role="img"
             aria-label={ariaLabel}
@@ -98,8 +98,8 @@ export function OrbitRing({
             <div
               className="mt-0.5 font-extrabold leading-[1.1] tracking-[-0.05em]"
               style={{
-                // The inner ring is ~59% of the ring, so long amounts shrink to stay inside it.
-                fontSize: `min(clamp(30px, 6vw, 48px), ${Math.max(20, Math.floor(190 / (current.amountText.length * 0.58)))}px)`,
+                // The inner ring is ~59% of the 420px ring, so long amounts shrink to stay inside it.
+                fontSize: `min(clamp(30px, 6vw, 48px), ${Math.max(20, Math.floor(222 / (current.amountText.length * 0.58)))}px)`,
               }}
             >
               {current.amountText}
@@ -110,7 +110,7 @@ export function OrbitRing({
           </div>
         </div>
 
-        <div key={current.id} className="min-w-0 flex-1 basis-[240px] [animation:fade_0.5s_both]">
+        <div key={current.id} className="min-w-0 [animation:fade_0.5s_both]">
           <div className="flex items-center gap-2.5">
             <span
               aria-hidden="true"
