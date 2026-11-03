@@ -899,6 +899,7 @@
       "light": "Açık",
       "dark": "Koyu"
     },
+    "importFailed": "Bu dosya okunamadı. Stoafi’den aldığın bir yedek dosyası (.json) olmalı.",
     "importConfirmTitle": "Verilerin bu yedekle değiştirilsin mi?",
     "importConfirmText": "İçe aktarmak bu uygulamadaki her şeyin yerine geçer. Emin değilsen önce yedek al.",
     "importConfirm": "Verilerimi değiştir",

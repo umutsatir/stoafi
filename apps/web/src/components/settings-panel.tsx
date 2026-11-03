@@ -56,9 +56,15 @@ export function SettingsPanel({
 
   async function confirmImport() {
     if (pendingImport === null) return;
-    const result = await onImport(pendingImport);
+    const json = pendingImport;
     setPendingImport(null);
-    setImportErrors("errors" in result ? result.errors : null);
+    try {
+      const result = await onImport(json);
+      setImportErrors("errors" in result ? result.errors : null);
+    } catch {
+      // A file that is not JSON at all, or a failed write: say so instead of doing nothing.
+      setImportErrors([t("importFailed")]);
+    }
   }
 
   return (

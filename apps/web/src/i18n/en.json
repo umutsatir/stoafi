@@ -899,6 +899,7 @@
       "light": "Light",
       "dark": "Dark"
     },
+    "importFailed": "This file could not be read. It should be a backup file (.json) taken from Stoafi.",
     "importConfirmTitle": "Replace your data with this backup?",
     "importConfirmText": "Importing replaces everything stored in this app. Export a backup first if you are not sure.",
     "importConfirm": "Replace my data",
