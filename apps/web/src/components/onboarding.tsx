@@ -46,13 +46,15 @@ interface ExpenseRow {
 
 export interface OnboardingProps {
   /** Loads the sample data; the page owns what that involves. */
-  onDemo: () => void;
+  onDemo?: () => void;
+  /** Called after the plan is saved, so a dialog hosting the wizard can close. */
+  onDone?: () => void;
 }
 
 const STEPS = ["income", "expenses", "savings", "plan"] as const;
 
 /** First run: four short steps from nothing to a plan, or a look around with sample data. */
-export function Onboarding({ onDemo }: OnboardingProps) {
+export function Onboarding({ onDemo, onDone }: OnboardingProps) {
   const t = useTranslations("onboarding");
   const tTypes = useTranslations("profile");
   const locale = useLocale() as Locale;
@@ -112,6 +114,7 @@ export function Onboarding({ onDemo }: OnboardingProps) {
     setProfile(savedProfile);
     setPlanState(plan);
     notify(t("done"));
+    onDone?.();
   }
 
   if (!started) {
@@ -137,9 +140,11 @@ export function Onboarding({ onDemo }: OnboardingProps) {
             {t("start")}
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Button>
-          <Button type="button" variant="outline" onClick={onDemo}>
-            {t("demo")}
-          </Button>
+          {onDemo && (
+            <Button type="button" variant="outline" onClick={onDemo}>
+              {t("demo")}
+            </Button>
+          )}
         </div>
         <p className="text-xs text-muted-foreground">{t("privacy")}</p>
       </section>

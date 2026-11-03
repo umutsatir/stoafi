@@ -1582,7 +1582,8 @@
       "addQueueItem": "Kuyruğa bir şey ekle",
       "addCard": "Kart ekle",
       "addPot": "Kumbara ekle",
-      "addInvestment": "Yatırım ekle"
+      "addInvestment": "Yatırım ekle",
+      "openOnboarding": "Kurulum sihirbazını aç"
     }
   },
   "errorScreen": {

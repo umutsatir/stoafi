@@ -1582,7 +1582,8 @@
       "addQueueItem": "Add something to the queue",
       "addCard": "Add a card",
       "addPot": "Add a savings pot",
-      "addInvestment": "Add an investment"
+      "addInvestment": "Add an investment",
+      "openOnboarding": "Open the setup wizard"
     }
   },
   "errorScreen": {

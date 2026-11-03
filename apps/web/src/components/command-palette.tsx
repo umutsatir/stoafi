@@ -63,6 +63,7 @@ const COMMANDS: Command[] = [
   { id: "addCard", group: "do", href: "/cards", action: "addCard" },
   { id: "addPot", group: "do", href: "/sinking-funds", action: "addPot" },
   { id: "addInvestment", group: "do", href: "/sinking-funds", action: "addInvestment" },
+  { id: "openOnboarding", group: "do", href: "/", action: "openOnboarding" },
 ];
 
 export interface CommandPaletteProps {

@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { Dashboard } from "@/components/dashboard";
 import { Onboarding } from "@/components/onboarding";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { notify } from "@/components/ui/toaster";
 import { backupDue } from "@/lib/backup-reminder";
 import { localIsoDate } from "@/lib/clock";
@@ -12,6 +14,7 @@ import { buildDemoData, type DemoLabels } from "@/lib/demo-data";
 import { loadAppState } from "@/storage/bootstrap";
 import { clearUserData, writeDemoData } from "@/storage/demo";
 import { db } from "@/storage/instance";
+import { useQuickAction } from "@/lib/use-quick-action";
 import { useAppStore } from "@/store";
 
 const LABEL_KEYS: (keyof DemoLabels)[] = [
@@ -48,6 +51,9 @@ export default function Home() {
   const setDemo = useAppStore((s) => s.setDemo);
   const t = useTranslations("home");
   const tLabels = useTranslations("demoLabels");
+  const tPalette = useTranslations("palette");
+  const [wizardOpen, setWizardOpen] = useState(false);
+  useQuickAction("openOnboarding", () => setWizardOpen(true));
 
   const firstMonth = snapshots[0]?.month;
   const showBackupNudge =
@@ -70,40 +76,49 @@ export default function Home() {
   }
 
   return (
-    <Dashboard
-      profile={profile}
-      planState={planState}
-      queueItems={queueItems}
-      sinkingFunds={sinkingFunds}
-      cards={cards}
-      installmentCapPct={guardThresholds.installmentCapPct}
-      today={today}
-      onboarding={<Onboarding onDemo={() => void startDemo()} />}
-      banner={
-        showBackupNudge ? (
-          <div
-            role="status"
-            data-testid="backup-nudge"
-            className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-card p-3 text-sm"
-          >
-            <span>{t("backupNudge")}</span>
-            <Button asChild size="sm" variant="outline">
-              <Link href="/settings">{t("backupNudgeAction")}</Link>
-            </Button>
-          </div>
-        ) : demo ? (
-          <div
-            role="status"
-            data-testid="demo-banner"
-            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-info/40 bg-info/10 p-3 text-sm"
-          >
-            <span>{t("demoBanner")}</span>
-            <Button type="button" size="sm" variant="outline" onClick={() => void clearDemo()}>
-              {t("demoClear")}
-            </Button>
-          </div>
-        ) : null
-      }
-    />
+    <>
+      <Dashboard
+        profile={profile}
+        planState={planState}
+        queueItems={queueItems}
+        sinkingFunds={sinkingFunds}
+        cards={cards}
+        installmentCapPct={guardThresholds.installmentCapPct}
+        today={today}
+        onboarding={<Onboarding onDemo={() => void startDemo()} />}
+        banner={
+          showBackupNudge ? (
+            <div
+              role="status"
+              data-testid="backup-nudge"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-card p-3 text-sm"
+            >
+              <span>{t("backupNudge")}</span>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/settings">{t("backupNudgeAction")}</Link>
+              </Button>
+            </div>
+          ) : demo ? (
+            <div
+              role="status"
+              data-testid="demo-banner"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-info/40 bg-info/10 p-3 text-sm"
+            >
+              <span>{t("demoBanner")}</span>
+              <Button type="button" size="sm" variant="outline" onClick={() => void clearDemo()}>
+                {t("demoClear")}
+              </Button>
+            </div>
+          ) : null
+        }
+      />
+      {profile && (
+        <Dialog open={wizardOpen} onOpenChange={setWizardOpen}>
+          <DialogContent title={tPalette("commands.openOnboarding")} className="max-w-[720px]">
+            <Onboarding onDone={() => setWizardOpen(false)} />
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }
