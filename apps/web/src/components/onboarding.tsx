@@ -127,7 +127,7 @@ export function Onboarding({ onDemo, onDone, onClose }: OnboardingProps) {
   }
 
   const pill =
-    "cursor-pointer rounded-full font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+    "press cursor-pointer rounded-full font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
   const toggle = (on: boolean) =>
     on ? "bg-foreground text-background" : "bg-muted text-foreground";
 
@@ -142,7 +142,7 @@ export function Onboarding({ onDemo, onDone, onClose }: OnboardingProps) {
         className="w-[760px] max-w-full rounded-card bg-card px-6 py-9 shadow-[0_30px_80px_rgba(0,0,0,.15)] animate-[pop_.5s_backwards] sm:px-[50px] sm:py-[44px]"
       >
         {!started ? (
-          <>
+          <div className="animate-[fade_.35s_both]">
             <LogoRing />
             <h2 className="mt-[22px] text-[44px] font-extrabold leading-[1.05] tracking-[-0.05em]">
               {t("welcomeTitle")}
@@ -175,7 +175,7 @@ export function Onboarding({ onDemo, onDone, onClose }: OnboardingProps) {
               )}
             </div>
             <p className="mt-[18px] text-[12.5px] text-muted-foreground">{t("privacy")}</p>
-          </>
+          </div>
         ) : (
           <>
             <p
@@ -197,162 +197,163 @@ export function Onboarding({ onDemo, onDone, onClose }: OnboardingProps) {
                 style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
               />
             </div>
-            <h2 className="mt-[22px] text-[32px] font-extrabold tracking-[-0.04em]">
-              {t(`steps.${STEPS[step]}.title`)}
-            </h2>
-            <p className="mt-1.5 text-sm text-muted-foreground">{t(`steps.${STEPS[step]}.hint`)}</p>
+            <div key={step} className="animate-[slide_.4s_cubic-bezier(.2,.8,.2,1)_backwards]">
+              <h2 className="mt-[22px] text-[32px] font-extrabold tracking-[-0.04em]">
+                {t(`steps.${STEPS[step]}.title`)}
+              </h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                {t(`steps.${STEPS[step]}.hint`)}
+              </p>
 
-            {step === 0 && (
-              <label className="mt-[22px] flex flex-col gap-[7px] text-[13px] font-bold [&_input]:text-[22px]">
-                {t("salaryAmount")}
-                <MoneyInput
-                  id="ob-salary"
-                  currency={currency}
-                  value={salary}
-                  onChange={setSalary}
-                />
-              </label>
-            )}
+              {step === 0 && (
+                <label className="mt-[22px] flex flex-col gap-[7px] text-[13px] font-bold [&_input]:text-[22px]">
+                  {t("salaryAmount")}
+                  <MoneyInput
+                    id="ob-salary"
+                    currency={currency}
+                    value={salary}
+                    onChange={setSalary}
+                  />
+                </label>
+              )}
 
-            {step === 1 && (
-              <>
-                <div className="mt-[22px] flex flex-wrap gap-2">
-                  {CHIPS.map((chip) => {
-                    const on = chosen.includes(chip.key);
-                    return (
-                      <button
-                        key={chip.key}
-                        type="button"
-                        aria-pressed={on}
-                        onClick={() =>
-                          setChosen((list) =>
-                            on ? list.filter((k) => k !== chip.key) : [...list, chip.key],
-                          )
-                        }
-                        className={cn(pill, "px-[18px] py-2.5 text-[13.5px]", toggle(on))}
-                      >
-                        {on ? "✓ " : "+ "}
-                        {t(`chips.${chip.key}`)}
-                      </button>
-                    );
-                  })}
-                </div>
-                {chosen.length > 0 && (
-                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                    {chosen.map((key) => (
-                      <label key={key} className="flex flex-col gap-[7px] text-[13px] font-bold">
-                        {t(`chips.${key}`)}
-                        <MoneyInput
-                          id={`ob-exp-${key}`}
-                          currency={currency}
-                          value={amounts[key] ?? 0}
-                          onChange={(monthly) => setAmounts((a) => ({ ...a, [key]: monthly }))}
-                        />
-                      </label>
-                    ))}
+              {step === 1 && (
+                <>
+                  <div className="mt-[22px] flex flex-wrap gap-2">
+                    {CHIPS.map((chip) => {
+                      const on = chosen.includes(chip.key);
+                      return (
+                        <button
+                          key={chip.key}
+                          type="button"
+                          aria-pressed={on}
+                          onClick={() =>
+                            setChosen((list) =>
+                              on ? list.filter((k) => k !== chip.key) : [...list, chip.key],
+                            )
+                          }
+                          className={cn(pill, "px-[18px] py-2.5 text-[13.5px]", toggle(on))}
+                        >
+                          {on ? "✓ " : "+ "}
+                          {t(`chips.${chip.key}`)}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
-                <label className="mt-5 flex flex-col gap-[7px] text-[13px] font-bold">
-                  {t("living")} ({t("livingHint").replace(/\.$/, "").toLocaleLowerCase(locale)})
-                  <MoneyInput
-                    id="ob-living"
-                    currency={currency}
-                    value={living}
-                    onChange={setLiving}
-                  />
-                </label>
-              </>
-            )}
+                  {chosen.length > 0 && (
+                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                      {chosen.map((key) => (
+                        <label key={key} className="flex flex-col gap-[7px] text-[13px] font-bold">
+                          {t(`chips.${key}`)}
+                          <MoneyInput
+                            id={`ob-exp-${key}`}
+                            currency={currency}
+                            value={amounts[key] ?? 0}
+                            onChange={(monthly) => setAmounts((a) => ({ ...a, [key]: monthly }))}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                  <label className="mt-5 flex flex-col gap-[7px] text-[13px] font-bold">
+                    {t("living")} ({t("livingHint").replace(/\.$/, "").toLocaleLowerCase(locale)})
+                    <MoneyInput
+                      id="ob-living"
+                      currency={currency}
+                      value={living}
+                      onChange={setLiving}
+                    />
+                  </label>
+                </>
+              )}
 
-            {step === 2 && (
-              <>
-                <label className="mt-[22px] flex flex-col gap-[7px] text-[13px] font-bold">
-                  {tTypes("currentSavings")}
-                  <MoneyInput
-                    id="ob-savings"
-                    currency={currency}
-                    value={savings}
-                    onChange={setSavings}
-                  />
-                </label>
-                <p className="mt-4 text-[13px] font-bold">
-                  {tTypes("emergencyFundMonths")} ·{" "}
-                  {t("monthsHint")
-                    .replace(/\.$/, "")
-                    .replace(/^./, (c) => c.toLocaleLowerCase(locale))}
-                </p>
-                <div
-                  className="mt-2 flex flex-wrap gap-2"
-                  role="radiogroup"
-                  aria-label={tTypes("emergencyFundMonths")}
-                >
-                  {MONTH_CHOICES.map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      role="radio"
-                      aria-checked={months === n}
-                      onClick={() => setMonths(n)}
-                      className={cn(
-                        pill,
-                        "px-4 py-[9px] text-[13px] hover:scale-[1.04]",
-                        toggle(months === n),
-                      )}
-                    >
-                      {t("monthsOption", { n })}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {step === 3 && (
-              <>
-                <p className="mt-[18px] text-base font-bold" data-testid="onboarding-left">
-                  {leftOver >= 0
-                    ? t("leftOver", { amount: money(leftOver) })
-                    : t("overspent", { amount: money(-leftOver) })}
-                </p>
-                <div
-                  role="radiogroup"
-                  aria-label={t("planChoice")}
-                  className="mt-3.5 grid gap-3 sm:grid-cols-2"
-                >
-                  {strategies.map(({ strategyId: id, allocation }) => {
-                    const strategy = strategyRegistry[id];
-                    const lesson = strategy ? getLessonCard(strategy.lessonId, locale) : undefined;
-                    const on = strategyId === id;
-                    return (
+              {step === 2 && (
+                <>
+                  <label className="mt-[22px] flex flex-col gap-[7px] text-[13px] font-bold">
+                    {tTypes("currentSavings")}
+                    <MoneyInput
+                      id="ob-savings"
+                      currency={currency}
+                      value={savings}
+                      onChange={setSavings}
+                    />
+                  </label>
+                  <p className="mt-4 text-[13px] font-bold">
+                    {tTypes("emergencyFundMonths")} ·{" "}
+                    {t("monthsHint")
+                      .replace(/\.$/, "")
+                      .replace(/^./, (c) => c.toLocaleLowerCase(locale))}
+                  </p>
+                  <div
+                    className="mt-2 flex flex-wrap gap-2"
+                    role="radiogroup"
+                    aria-label={tTypes("emergencyFundMonths")}
+                  >
+                    {MONTH_CHOICES.map((n) => (
                       <button
-                        key={id}
+                        key={n}
                         type="button"
                         role="radio"
-                        aria-checked={on}
-                        onClick={() => setStrategyId(id)}
-                        className={cn(
-                          "rounded-[22px] px-[18px] py-4 text-left transition-all duration-[250ms] hover:-translate-y-[3px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                          on
-                            ? "bg-muted shadow-[inset_0_0_0_2px_var(--primary)]"
-                            : "shadow-[inset_0_0_0_1px_var(--border)]",
-                        )}
+                        aria-checked={months === n}
+                        onClick={() => setMonths(n)}
+                        className={cn(pill, "px-4 py-[9px] text-[13px]", toggle(months === n))}
                       >
-                        <span className="block text-[15px] font-extrabold">
-                          {lesson?.title ?? id}
-                        </span>
-                        <span className="mt-1 block text-xs text-muted-foreground">
-                          {t("split", {
-                            needs: money(allocation.needs),
-                            wants: money(allocation.wants),
-                            savings: money(allocation.savings + allocation.investing),
-                          })}
-                        </span>
+                        {t("monthsOption", { n })}
                       </button>
-                    );
-                  })}
-                </div>
-              </>
-            )}
+                    ))}
+                  </div>
+                </>
+              )}
 
+              {step === 3 && (
+                <>
+                  <p className="mt-[18px] text-base font-bold" data-testid="onboarding-left">
+                    {leftOver >= 0
+                      ? t("leftOver", { amount: money(leftOver) })
+                      : t("overspent", { amount: money(-leftOver) })}
+                  </p>
+                  <div
+                    role="radiogroup"
+                    aria-label={t("planChoice")}
+                    className="mt-3.5 grid gap-3 sm:grid-cols-2"
+                  >
+                    {strategies.map(({ strategyId: id, allocation }) => {
+                      const strategy = strategyRegistry[id];
+                      const lesson = strategy
+                        ? getLessonCard(strategy.lessonId, locale)
+                        : undefined;
+                      const on = strategyId === id;
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          role="radio"
+                          aria-checked={on}
+                          onClick={() => setStrategyId(id)}
+                          className={cn(
+                            "rounded-[22px] px-[18px] py-4 text-left transition-all duration-[250ms] hover:-translate-y-[3px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            on
+                              ? "bg-muted shadow-[inset_0_0_0_2px_var(--primary)]"
+                              : "shadow-[inset_0_0_0_1px_var(--border)]",
+                          )}
+                        >
+                          <span className="block text-[15px] font-extrabold">
+                            {lesson?.title ?? id}
+                          </span>
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            {t("split", {
+                              needs: money(allocation.needs),
+                              wants: money(allocation.wants),
+                              savings: money(allocation.savings + allocation.investing),
+                            })}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
             <div className="mt-[30px] flex justify-between">
               <button
                 type="button"
