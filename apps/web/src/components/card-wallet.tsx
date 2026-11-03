@@ -174,7 +174,7 @@ export function CardWallet({
           </ul>
 
           {selected && (
-            <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+            <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
               <CardDetail
                 card={selected}
                 cards={cards}
@@ -184,7 +184,7 @@ export function CardWallet({
                 onAddSupplementary={() => setPanel({ kind: "form", parentId: selected.id })}
                 onMinimumOnly={() => openMinimumOnly(selected)}
               />
-              <div id="card-tools">
+              <div id="card-tools" className="flex [&>*]:flex-1">
                 <MinimumPaymentCalculator
                   key={calculatorBalance ?? "default"}
                   {...(calculatorBalance !== undefined

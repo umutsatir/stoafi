@@ -317,7 +317,7 @@ export function BasketPanel({
               </div>
             </div>
 
-            {complete && hasValue ? (
+            {complete ? (
               <div className={`${CARD} pop-in`} data-testid="basket-drift">
                 <h3 className="text-[19px] font-extrabold tracking-[-0.03em]">
                   {t("whereYouAre")}

@@ -971,7 +971,8 @@
       "copiesTitle": "Copies kept in this browser",
       "dailyCopy": "Copy from {date}",
       "beforeImport": "Before the last import",
-      "restore": "Restore"
+      "restore": "Restore",
+      "persistDenied": "The browser said no this time. Bookmarking the site or installing the app often gets it to agree; otherwise regular backups are the safest."
     }
   },
   "installmentExpenses": {

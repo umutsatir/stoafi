@@ -7,6 +7,7 @@ import type { ImportResult } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { notify } from "@/components/ui/toaster";
 import { daysSinceBackup } from "@/lib/backup-reminder";
 import { backupFileSupported, chosenBackupFileName, pickBackupFile } from "@/lib/backup-file";
 import { listCopies, type BrowserCopy } from "@/lib/browser-copies";
@@ -130,7 +131,12 @@ export function SettingsPanel({
                     variant="outline"
                     size="sm"
                     className="mt-2.5"
-                    onClick={() => void requestStoragePersist().then(setPersisted)}
+                    onClick={() =>
+                      void requestStoragePersist().then((granted) => {
+                        setPersisted(granted);
+                        if (!granted) notify(t("safety.persistDenied"));
+                      })
+                    }
                   >
                     {t("safety.persistAsk")}
                   </Button>

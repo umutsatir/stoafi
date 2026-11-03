@@ -484,7 +484,7 @@ export function QueuePreview({
 
       <Sheet open={showInstallments} onOpenChange={setShowInstallments}>
         {showInstallments && (
-          <SheetContent title={item.name} className="md:max-w-2xl">
+          <SheetContent title={item.name} className="md:max-w-3xl">
             <InstallmentCalculator
               cashPrice={cashPrice}
               annualInflation={profile.annualInflationExpectation}

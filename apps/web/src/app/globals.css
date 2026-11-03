@@ -334,34 +334,35 @@ body {
 @keyframes dialog-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
 }
+/* Centring comes from the element's own translate property, so these only scale. */
 @keyframes dialog-pop {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.92);
+    transform: scale(0.92);
   }
   60% {
-    transform: translate(-50%, -50%) scale(1.02);
+    transform: scale(1.02);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
 }
 @keyframes dialog-out {
   from {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
   to {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
+    transform: scale(0.96);
   }
 }
 @keyframes pop {

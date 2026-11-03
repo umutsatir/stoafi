@@ -36,7 +36,7 @@ export function CardDetail({
   const pill = "press rounded-full bg-muted px-[18px] py-[11px] text-[13px] font-bold";
 
   return (
-    <Surface className="pop-in px-8 py-7" data-testid="card-detail">
+    <Surface className="pop-in flex flex-col px-8 py-7" data-testid="card-detail">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-[22px] font-extrabold tracking-[-0.03em]">{card.label}</h2>
         {supplementary && main && (
@@ -124,7 +124,7 @@ export function CardDetail({
         </section>
       )}
 
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className="mt-auto flex flex-wrap gap-2 pt-5">
         <button type="button" className={pill} onClick={onEdit}>
           {t("edit")}
         </button>

@@ -102,14 +102,14 @@ export function InstallmentCalculator({
                     type="number"
                     min={1}
                     step={1}
-                    className="w-20 text-[15px]"
+                    className="w-24 text-[15px]"
                     value={row.months}
                     onChange={(e) =>
                       patch(row.key, { months: Math.max(0, Math.floor(Number(e.target.value))) })
                     }
                   />
                 </TableCell>
-                <TableCell data-testid={`monthly-payment-${row.months}`}>
+                <TableCell data-testid={`monthly-payment-${row.months}`} className="min-w-[180px]">
                   <MoneyInput
                     id={`offer-payment-${row.key}`}
                     aria-label={t("paymentAriaLabel", { index: n })}

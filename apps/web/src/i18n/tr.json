@@ -971,7 +971,8 @@
       "copiesTitle": "Bu tarayıcıda tutulan kopyalar",
       "dailyCopy": "{date} tarihli kopya",
       "beforeImport": "Son içe aktarmadan önce",
-      "restore": "Geri yükle"
+      "restore": "Geri yükle",
+      "persistDenied": "Tarayıcı bu kez izin vermedi. Siteyi yer imlerine eklemek ya da uygulamayı yüklemek çoğu zaman izni verdirir; olmazsa düzenli yedek almak en güvenlisi."
     }
   },
   "installmentExpenses": {
