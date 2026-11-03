@@ -35,7 +35,7 @@ export function snapshotFromState(state: SnapshotState): Snapshot {
   const strategy = state.planState ? strategyRegistry[state.planState.strategyId] : undefined;
   const limits =
     state.planState && strategy
-      ? currentAllocation(profile, state.planState, strategyRegistry)
+      ? currentAllocation(profile, state.planState, strategyRegistry, month)
       : undefined;
   const income = netMonthlyIncome(profile);
   const ledger = buildLedger(profile, state.queueItems, month, state.sinkingFunds);

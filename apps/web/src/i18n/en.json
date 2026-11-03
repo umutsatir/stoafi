@@ -108,14 +108,15 @@
         "saving": "Saving and investing",
         "personal": "Personal spending"
       },
-      "installmentBar": "Installments against your installment cap",
-      "installmentsInside": "Installments are part of this: {used} of your {cap} installment cap.",
       "spending": {
         "title": "Free spending",
         "spread": "About {weekly} a week, or {daily} a day, if you spread it evenly.",
         "fixed": "The amount you set for personal spending.",
         "auto": "What is left of your wants after subscriptions and installments."
-      }
+      },
+      "emergencyFirst": "Your emergency fund is not full yet, so this month the plan's investing money goes to savings. Investing starts once the fund is full.",
+      "installmentBar": "Installments against your installment cap",
+      "installmentsInside": "Installments are part of this: {used} of your {cap} installment cap."
     },
     "installmentRoom": {
       "title": "Installment room",
@@ -130,6 +131,17 @@
       "canTake": "You can take on {amount} more a month.",
       "overBy": "You are {amount} over your cap.",
       "used": "({amount} used)"
+    },
+    "personalSpending": "Personal spending",
+    "summary": {
+      "title": "This month at a glance",
+      "freeSpending": "Free spending",
+      "perDay": "about {daily} a day",
+      "nextPayment": "Next payment",
+      "nothingDue": "Nothing due in the next 14 days",
+      "todo": "What to do this month",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details"
     },
     "orbit": {
       "quote1": {
@@ -210,8 +222,6 @@
     "subtitle": "Money in, money out, and what is left. A few minutes each month is enough; you do not need to enter every cent."
   },
   "profile": {
-    "fundMonthsDecrease": "Fewer months",
-    "fundMonthsIncrease": "More months",
     "title": "Profile",
     "currentSavings": "Current savings",
     "emergencyFundMonths": "Emergency fund target (months)",
@@ -386,6 +396,8 @@
       "amount": "Monthly personal spending (optional)",
       "amountHint": "Leave it empty and Stoafi uses what is left of your wants after subscriptions and installments."
     },
+    "fundMonthsDecrease": "Fewer months",
+    "fundMonthsIncrease": "More months",
     "subtitle": "Your money at a glance. As the numbers change, the plan, health and queue update by themselves.",
     "held": {
       "label": "Where is it kept?",
@@ -493,19 +505,13 @@
       "importantOnly": "Important",
       "neither": "Can wait"
     },
-    "bubbles": {
-      "title": "12-month timeline",
-      "hint": "A bubble’s size is its price, its place the month it fits. Click a bubble to pick an item."
-    },
     "summary": {
-      "fitsCount": "{count, plural, one {# item} other {# items}}",
       "total": "Total waiting",
       "fits": "Fits this month",
       "nearest": "Nearest purchase",
-      "none": "Nothing fits yet"
+      "none": "Nothing fits yet",
+      "fitsCount": "{count, plural, one {# item} other {# items}}"
     },
-    "cash": "Cash",
-    "notYet": "not yet",
     "views": {
       "label": "View",
       "list": "List",
@@ -549,6 +555,12 @@
       "text": "Add something you are thinking of buying. Waiting a little before deciding is the whole idea."
     },
     "priceStale": "Price is {days} days old: still right?",
+    "bubbles": {
+      "title": "12-month timeline",
+      "hint": "A bubble’s size is its price, its place the month it fits. Click a bubble to pick an item."
+    },
+    "cash": "Cash",
+    "notYet": "not yet",
     "subtitle": "What you are thinking of buying, in order. Touch a bubble, then click a month to move it. The effect shows at once.",
     "cooldown": {
       "askBadge": "Time to decide",
@@ -561,26 +573,6 @@
     }
   },
   "queuePreview": {
-    "installmentMode": "{months} installments",
-    "workEquivalent": "Work equivalent · {cost}",
-    "hoursUnit": "hours",
-    "freeCashTitle": "Free cash in {month}",
-    "before": "Before",
-    "after": "After",
-    "thirtyDayRule": "30-day rule",
-    "ruleNone": "No waiting",
-    "ruleDone": "Time is up",
-    "ruleDays": "{days} / 30 days",
-    "needNoWait": "A need: no waiting.",
-    "perMonth": "In installments: {amount} a month.",
-    "cashPay": "Cash {amount}.",
-    "buyAnyway": "I know, buy anyway",
-    "room": {
-      "none": "Doesn't fit",
-      "short": "Not enough",
-      "tight": "Tight",
-      "roomy": "Comfortable"
-    },
     "wantsBeforeAfter": "Wants before / after",
     "freeCashBeforeAfter": "Free cash before / after",
     "installmentDraft": "Installment draft: {months} months",
@@ -604,6 +596,26 @@
       "wants-limit": "This purchase would push your wants above their limit for the month.",
       "unknown": "This purchase breaks one of your safety rules.",
       "card-limit": "These installments would take the card past its limit."
+    },
+    "installmentMode": "{months} installments",
+    "workEquivalent": "Work equivalent · {cost}",
+    "hoursUnit": "hours",
+    "freeCashTitle": "Free cash in {month}",
+    "before": "Before",
+    "after": "After",
+    "thirtyDayRule": "30-day rule",
+    "ruleNone": "No waiting",
+    "ruleDone": "Time is up",
+    "ruleDays": "{days} / 30 days",
+    "needNoWait": "A need: no waiting.",
+    "perMonth": "In installments: {amount} a month.",
+    "cashPay": "Cash {amount}.",
+    "buyAnyway": "I know, buy anyway",
+    "room": {
+      "none": "Doesn't fit",
+      "short": "Not enough",
+      "tight": "Tight",
+      "roomy": "Comfortable"
     },
     "sureTitle": "Are you sure?",
     "sureText": "You are buying {name}, worth {amount}. If you confirm, it leaves the queue and is written to your decisions.",
@@ -901,6 +913,8 @@
       "about": "About",
       "privacy": "Privacy",
       "privacyHint": "Keep your money out of sight.",
+      "safety": "Data safety",
+      "safetyHint": "Your data lives only on this device. These keep it from being lost.",
       "offline": "Offline and install"
     },
     "about": {
@@ -949,6 +963,43 @@
     "lastBackupNever": "No backup downloaded yet.",
     "lastBackupToday": "Last backup: today.",
     "lastBackupDays": "Last backup: {days} days ago.",
+    "safety": {
+      "persist": {
+        "title": "Does the browser keep your data?",
+        "state": {
+          "persisted": "Protected",
+          "not-persisted": "Not protected",
+          "unsupported": "Unknown"
+        },
+        "okText": "The browser has promised not to clear your data when it runs low on space. You can still lose it if you clear the site's data or change device, so keep a backup.",
+        "riskText": "The browser may clear your data when it runs low on space, or after a while if the app is not installed to your home screen. A backup is the safe way.",
+        "ask": "Ask the browser to keep my data"
+      },
+      "file": {
+        "title": "Automatic backup to a file",
+        "text": "Pick a file once and Stoafi keeps it up to date after every change. If the file sits in a folder that Google Drive, iCloud or Dropbox syncs, you have a second copy without any server.",
+        "unsupported": "Your browser cannot write files by itself. Use \"Export backup\" above now and then and save it to a synced folder. Chrome or Edge on a computer can do this automatically.",
+        "choose": "Choose a backup file",
+        "needsPermission": "The browser asks you to allow writing to the file again.",
+        "allow": "Allow again",
+        "on": "Backing up to the file after every change.",
+        "onWritten": "Backing up to the file after every change. Last written: {time}.",
+        "stop": "Stop automatic backup"
+      },
+      "copies": {
+        "title": "Copies kept in this browser",
+        "text": "Stoafi keeps your data from the last 3 days, and a copy from before each import. They help if you change something by mistake or import the wrong file. They do not help if the browser clears the site's data, because they are kept there too.",
+        "none": "No copies yet.",
+        "of": "Copy from {date}",
+        "beforeImport": "Before the last import",
+        "restore": "Restore",
+        "restoreLabel": "Restore {name}",
+        "confirm": "Yes, replace my data",
+        "cancel": "Cancel",
+        "restored": "Restored.",
+        "failed": "That copy could not be restored."
+      }
+    },
     "subtitle": "Everything stays on this device. Back up so you do not lose it.",
     "offline": {
       "works": "Works offline",
@@ -958,21 +1009,6 @@
       "installed": "Installed",
       "installHelp": "Your browser has not offered to install it. In Safari use Share, then Add to Home Screen.",
       "localNote": "Your data lives only on this device. If you change device or clear the browser data, it is gone; take a backup now and then."
-    },
-    "safety": {
-      "title": "Data safety",
-      "persistLabel": "Does the browser protect your data:",
-      "persistYes": "Yes",
-      "persistNo": "Not protected",
-      "persistAsk": "Ask the browser to protect my data",
-      "fileHint": "Pick a file and Stoafi keeps it up to date after every change. If the file sits in a Google Drive, iCloud or Dropbox sync folder, you get a second copy without any server.",
-      "pickFile": "Pick a backup file",
-      "fileChosen": "Chosen file: {name}",
-      "copiesTitle": "Copies kept in this browser",
-      "dailyCopy": "Copy from {date}",
-      "beforeImport": "Before the last import",
-      "restore": "Restore",
-      "persistDenied": "The browser said no this time. Bookmarking the site or installing the app often gets it to agree; otherwise regular backups are the safest."
     }
   },
   "installmentExpenses": {
@@ -1010,8 +1046,6 @@
     "hideDetails": "Hide details"
   },
   "insights": {
-    "idea": "The idea.",
-    "fits": "Who it suits.",
     "title": "What your plan says",
     "allClear": "Your plan fits your numbers for the next 12 months.",
     "wantsOverLimit": "Wants spending is above this plan's wants limit in {months}.",
@@ -1021,6 +1055,8 @@
     "babyStepsStep2": "Step 2: pay off debt before saving extra ({months}).",
     "babyStepsStep3": "Step 3: build the full emergency fund ({months}).",
     "babyStepsStep4": "Step 4 and on: the emergency fund is complete, start investing ({months}).",
+    "idea": "The idea.",
+    "fits": "Who it suits.",
     "savingsToSet": "To keep to your plan, set aside {amount} more for savings this month.",
     "investingToSet": "To keep to your plan, put {amount} more into investing this month.",
     "fundNotFull": "Your emergency fund is not full yet; the plan’s investing share goes to savings until it is."
@@ -1058,11 +1094,11 @@
     "modeOpenHint": "No amount and no deadline. Put in whatever you can, whenever you can."
   },
   "guardSettings": {
-    "decrease": "Decrease",
-    "increase": "Increase",
     "installmentCap": "Installment cap (% of net income)",
     "installmentCapHint": "When your monthly installments add up to more than this share of your income, Stoafi warns you and asks you to confirm before you commit.",
-    "outOfRange": "Enter a percent between 0 and 100."
+    "outOfRange": "Enter a percent between 0 and 100.",
+    "decrease": "Decrease",
+    "increase": "Increase"
   },
   "common": {
     "close": "Close",
@@ -1075,7 +1111,8 @@
       "bought": "marked as bought",
       "postponed": "postponed",
       "skipped": "skipped"
-    }
+    },
+    "deletedPurchase": "Removed “{name}” and its installments"
   },
   "savings": {
     "title": "Savings",
@@ -1156,6 +1193,26 @@
       "m50": "Halfway to {name}. Keep going!",
       "m75": "Three quarters of {name} done. Almost there!",
       "m100": "{name} is fully funded. Well done!"
+    },
+    "heldIn": {
+      "label": "Kept in",
+      "hint": "What the money is kept in. It does not change the amount; it tells you what to watch.",
+      "notSet": "Not set",
+      "cash": "Plain cash (lira in an account)",
+      "other": "Something else…",
+      "customLabel": "Name it",
+      "customPlaceholder": "e.g. Gram gold account",
+      "chip": "Kept in {name}",
+      "change": "Change",
+      "choose": "Choose what it is kept in",
+      "emergencyTitle": "Where is your emergency fund kept?",
+      "emergencyText": "Pick what the money sits in. This is only a note and a hint: the amount stays what you typed.",
+      "done": "Done",
+      "fit": {
+        "good": "Easy to reach and it keeps its value well: a good fit for an emergency fund.",
+        "ok": "Reachable, but its price can swing or it loses value over time. Plain cash loses to inflation; gold and currency swing. Consider keeping part of the fund somewhere steadier.",
+        "risky": "Its price can swing a lot or it is hard to sell fast. That is rarely wise for an emergency fund, which you need at the worst moment."
+      }
     },
     "subtitle": "Add money to your pots as you save and watch them fill. Stoafi shows what is left this month and how much to set aside."
   },
@@ -1391,9 +1448,9 @@
       "slice": {
         "deposit": "Deposit",
         "gold": "Gold",
+        "sp500": "S&P 500",
         "indexFund": "Global index fund",
         "currency": "Foreign currency",
-        "sp500": "S&P 500",
         "stock": "Single stocks",
         "crypto": "Crypto"
       },
@@ -1405,11 +1462,6 @@
       "totalOk": "Adds up to 100%",
       "totalLow": "Adds up to {total}%: {missing}% still to place",
       "totalHigh": "Adds up to {total}%: {extra}% too much",
-      "editorTitle": "Your basket",
-      "whereYouAreHint": "The line is your target, the fill is what you hold.",
-      "allAssigned": "Everything is in a slice.",
-      "invalidText": "The split and where you stand only show once the slices add up to 100.",
-      "invalidTitle": "Percentages don't add up to 100",
       "whereYouAre": "Where you are now",
       "driftLine": "{current}% held, target {target}% ({diff} points)",
       "driftBar": "{name}: share held",
@@ -1441,6 +1493,12 @@
       "willLog": "Ticking only notes it. Add the purchase to a holding to update your totals.",
       "cheerDone": "{amount} into {name} ticked off. Steady wins.",
       "monthlyHintNone": "Your plan sets nothing aside for investing, so type the amount you want to invest each month.",
+      "monthlyHintEmergency": "Your emergency fund is not full yet, so nothing is suggested for investing this month: the money goes to savings first. Type an amount if you want to invest anyway.",
+      "editorTitle": "Your basket",
+      "whereYouAreHint": "The line is your target, the fill is what you hold.",
+      "allAssigned": "Everything is in a slice.",
+      "invalidText": "The split and where you stand only show once the slices add up to 100.",
+      "invalidTitle": "Percentages don't add up to 100",
       "note": {
         "gold": "Pays no interest and its price moves; keep it a small to medium part of the basket. (Room for error: Housel)",
         "index-fund": "A cheap broad index: grow without picking the winner. (Bogle)",
@@ -1532,12 +1590,12 @@
     },
     "living": "Living costs",
     "livingHint": "Groceries and everyday spending, roughly, per month.",
-    "monthsOption": "{n} months",
     "monthsHint": "Many guides suggest 3 to 6 months of needs.",
     "leftOver": "After your regular costs you have {amount} left each month.",
     "overspent": "Your regular costs are {amount} above your income. You can still continue and fix it later.",
     "planChoice": "Plan",
-    "split": "Needs {needs} · Wants {wants} · Saving {savings}"
+    "split": "Needs {needs} · Wants {wants} · Saving {savings}",
+    "monthsOption": "{n} months"
   },
   "demoLabels": {
     "salary": "Salary",
@@ -1628,9 +1686,14 @@
     "removed": "PIN removed"
   },
   "dataLost": {
-    "title": "Your data looks gone",
-    "text": "This browser held your data before, but now it is empty. The browser may have cleared it. If you have a backup file, restore it here. Nothing was sent anywhere, so a backup file is the only way back.",
-    "restore": "Restore from a backup file",
-    "startFresh": "Start from scratch"
+    "title": "Your data seems to be gone",
+    "text": "This device used to hold your data, but there is none now. The browser may have cleared it. If you saved a backup file, restore it here. Nothing was sent anywhere, so a backup file (or a copy kept in this browser) is the only way back.",
+    "fromFile": "Restore from a backup file",
+    "fileInput": "Backup file",
+    "copiesTitle": "Copies kept in this browser",
+    "copyOf": "Copy from {date}",
+    "beforeImport": "Copy from before the last import",
+    "startFresh": "Start again with nothing",
+    "failed": "That could not be restored."
   }
 }

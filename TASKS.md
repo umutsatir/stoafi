@@ -892,8 +892,28 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T15.9** Surplus saving goes to investing: once pots with a date and the emergency fund are covered, the rest of what the plan saves is suggested for investing (`investingShare`, split id `investing`), and it becomes the default monthly amount for the basket.
   Note: pots without a target never hold money back; only a pot or the emergency fund that still needs money does.
 
-- [x] **T15.10** Free spending: an optional monthly personal spending amount (counted as wants), or else what is left of the wants limit, shown on Home as "Free spending" with a weekly and daily spread; installments are shown inside the wants bucket against the installment cap (`kernel/spending.ts`, `personalSpending` on the profile).
-  Note: no spending log, as chosen; the weekly and daily figures are the month spread evenly, not a live balance.
+- [x] **T15.10** Free spending: an optional monthly personal spending amount (counted as wants), or else what is left of the wants limit, shown on Home as "Free spending" with a weekly and daily spread; (`kernel/spending.ts`, `personalSpending` on the profile).
+  Note: installments stay in the bucket of the item (need or want); the bar that showed them under wants was removed because needs have installments too. No spending log, as chosen; the weekly and daily figures are the month spread evenly, not a live balance.
+
+- [x] **T15.11** Emergency fund first: while the emergency fund is below its target, what the plan would invest goes to savings (`strategies/emergency-first.ts`, applied in `currentAllocation`), the savings advice sends everything left to the emergency fund, and nothing is suggested for the basket until it is full.
+  Note: an amount typed into the basket is still honoured; the app only stops suggesting. The comparison of strategies on the Plan page still shows each plan as written.
+
+- [x] **T16.1** Data safety: asks the browser to keep the data (and shows whether it promised), notes that the device holds data and shows a restore screen if the database is later empty, keeps a copy per day (3 days) and a copy before each import inside the browser (Dexie v7 `backups`, not part of exports), automatic backup to a chosen file where the browser allows it (File System Access API, handle kept in its own small database), and a backup reminder after 3 days (never backed up) or 14 days.
+  Note: the copies inside the browser help against mistakes and bad imports, not against the browser clearing the site's data, since they live there too; the Settings text says so. The automatic file backup is what covers that, in Chrome and Edge on a computer. A server-side encrypted backup stays an open product decision.
+
+- [x] **T16.2** Calm Home: under the greeting, the month's left-over figure and a four-line summary (free spending with a daily figure, the next payment that is not income, the one thing to do this month); everything else sits under "Show details", and the choice is remembered (`homeDetails` in settings).
+  Note: details are hidden by default for the app and shown by default for the `Dashboard` component itself, so tests and other users of it are unchanged.
+
+- [x] **T16.3** Self-hosted font: Inter (variable, latin and latin-ext, SIL OFL) from `apps/web/public/fonts`, `font-display: swap`, the main file preloaded, licence in `docs/THIRD-PARTY.md`; a test checks the files, the Turkish letter coverage and that nothing points to another site, and the size budget now counts fonts.
+  Note: the wider letters showed three real overflows on a 360 px phone in Turkish (the backup import row, the lesson filter, the chart's screen-reader table); they are fixed and a browser test now checks every page in Turkish at 360 px.
+- [ ] **T16.4** Still to do from the plan: drag between Eisenhower quadrants, before/after bars and a cash/installment switch in the queue preview, changing a decision's outcome.
+
+- [x] **T16.5** One purchase, one record: deleting a "bought" decision that was bought in installments also removes the installments, and removing the installments from Expenses also removes the "bought" entry; undo restores both. Skipped, postponed and cash decisions are untouched.
+  Note: the link is `queueItemRef`; a purchase that was removed on one side before this change stays as it was.
+
+- [x] **T16.6** Search box opened off-centre and then jumped: the dialog is centred with Tailwind's `translate`, and its entrance keyframes also moved it with `transform`, so the two stacked. The keyframes now only fade and scale; a test guards the keyframes and a browser test samples the box while it opens.
+- [x] **T16.7** What a pot is kept in: each pot and the emergency fund can be marked as kept in plain cash or one of the investment types (or something the user names), shown on the card; the emergency fund also says how well that suits it (`data/held-in.json`, `emergencyFit`). It is a label and a hint: the amount stays what the user typed.
+  Note: linking a pot to a holding so its value follows the price is not done; that would change how pot balances work.
 
 ## Phase 16: Yörünge redesign (branch `feat/redesign`, source: `docs/design/Stoafi.dc.html`)
 
@@ -945,7 +965,7 @@ Each row is a line from SPEC's "Acceptance criteria" section, mapped to the task
 
 ## Open questions
 
-- [ ] T14.5 (owner): install and offline check on a real phone and Mac, where to deploy (host, domain), final product name, licence (MIT or AGPL). Nothing in code blocks on these; `public/_headers` assumes a host that reads it (Cloudflare Pages, Netlify).
+- [ ] T14.5 (owner): install and offline check on a real phone and Mac, domain, final product name, licence (MIT or AGPL). Hosting is Vercel with `stable` as the production branch (`vercel.json`, `docs/DEPLOY.md`); not yet deployed. Nothing in code blocks on these; `public/_headers` assumes a host that reads it (Cloudflare Pages, Netlify).
 - [ ] Not built from the plan, decide whether wanted: Eisenhower drag between quadrants, a `⋯` menu on queue rows, before/after bars and a cash/installment toggle with card picker in the queue preview, decision outcome change, a month picker and an insight sentence in Decisions, `MonthTrack` is unused, self-hosted fonts (system fonts today).
 - [ ] Suggested pot split gives pots due soonest priority before the emergency fund. Confirm that order.
 

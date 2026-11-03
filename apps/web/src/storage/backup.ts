@@ -1,6 +1,7 @@
 import { exportAll, importAll, type ImportResult } from "@stoafi/core";
 import type { StoafiDb } from "./db";
 import { SINGLETON_ID, type ListRow, type SingletonRow } from "./db";
+import { saveBeforeImport } from "./internal-backup";
 import { createAppRegistry, MODULE_ID_TO_TABLE, SINGLETON_MODULE_IDS } from "./registry";
 
 type TableName = (typeof MODULE_ID_TO_TABLE)[keyof typeof MODULE_ID_TO_TABLE];
@@ -67,4 +68,19 @@ export async function importFromJson(db: StoafiDb, json: string): Promise<Import
   });
 
   return result;
+}
+
+/**
+ * Like `importFromJson`, but first keeps a copy of what is there, so a wrong file can be undone. Nothing is
+ * copied when the database holds no profile yet, and a file that fails validation changes nothing.
+ */
+export async function importWithSafetyCopy(
+  db: StoafiDb,
+  json: string,
+  now: string,
+): Promise<ImportResult> {
+  if (await db.profile.get(SINGLETON_ID)) {
+    await saveBeforeImport(db, await exportToJson(db, now), now);
+  }
+  return importFromJson(db, json);
 }

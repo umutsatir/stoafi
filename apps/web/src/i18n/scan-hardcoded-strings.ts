@@ -17,6 +17,8 @@ const ATTRIBUTE_ALLOW_LIST = new Set([
   "alt", // icons only, per project convention; content strings still flagged as text
   "rel",
   "httpEquiv",
+  "as", // <link rel="preload" as="font">
+  "crossOrigin",
   "target",
   "lang",
   "content",

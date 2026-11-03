@@ -9,6 +9,7 @@ describe("StoafiDb", () => {
     const tableNames = db.tables.map((t) => t.name).sort();
     expect(tableNames).toEqual(
       [
+        "backups",
         "cards",
         "decisions",
         "guards",

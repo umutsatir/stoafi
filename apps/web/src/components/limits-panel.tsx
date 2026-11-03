@@ -41,9 +41,8 @@ export interface LimitsPanelProps {
   categories?: CategoryAmount[];
   /** Money for everyday fun, shown between the bars and the advice. */
   spending?: FreeSpending;
-  /** Installments are part of the wants bucket (or needs); their own cap is shown under wants. */
-  installmentUsed?: number;
-  installmentCap?: number;
+  /** The emergency fund is below its target, so the plan's investing money was moved to savings. */
+  emergencyFirst?: boolean;
   names?: Record<string, string>;
 }
 
@@ -53,8 +52,7 @@ export function LimitsPanel({
   queueFits,
   categories = [],
   spending,
-  installmentUsed,
-  installmentCap,
+  emergencyFirst = false,
   names,
 }: LimitsPanelProps) {
   const t = useTranslations("home.limits");
@@ -85,23 +83,6 @@ export function LimitsPanel({
               tone={TONE[s.state]}
             />
             <CategoryLines rows={categories} bucket={s.bucket} {...(names ? { names } : {})} />
-            {s.bucket === "wants" && installmentUsed !== undefined && installmentCap ? (
-              <div className="flex flex-col gap-1" data-testid="wants-installments">
-                <ProgressBar
-                  value={installmentUsed}
-                  max={installmentCap}
-                  label={t("installmentBar")}
-                  tone={installmentUsed > installmentCap ? "danger" : "info"}
-                  className="h-1"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("installmentsInside", {
-                    used: money(installmentUsed),
-                    cap: money(installmentCap),
-                  })}
-                </p>
-              </div>
-            ) : null}
             <p className="flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
               <span
                 data-testid={`left-${s.bucket}`}
@@ -118,6 +99,12 @@ export function LimitsPanel({
           </li>
         ))}
       </ul>
+
+      {emergencyFirst && (
+        <p className="text-sm text-muted-foreground" data-testid="emergency-first-note">
+          {t("emergencyFirst")}
+        </p>
+      )}
 
       {spending && (
         <div className="flex flex-col gap-1 rounded-xl bg-muted/60 p-4" data-testid="free-spending">
@@ -139,17 +126,27 @@ export function LimitsPanel({
         <ul className="flex flex-col gap-1.5 text-sm">
           {advice.map((a) => (
             <li key={a.id} data-testid={`advice-${a.id}`} className="flex flex-wrap gap-x-2">
-              <AdviceText advice={a} />
-              {a.id !== "allGood" && (
-                <Link href={HREF[a.id]} className="font-medium text-primary-ink hover:underline">
-                  {t(`action.${a.id}`)}
-                </Link>
-              )}
+              <AdviceItem advice={a} />
             </li>
           ))}
         </ul>
       </div>
     </div>
+  );
+}
+
+/** One piece of advice as a sentence, with the link that goes where it can be acted on. */
+export function AdviceItem({ advice }: { advice: LimitAdvice }) {
+  const t = useTranslations("home.limits");
+  return (
+    <>
+      <AdviceText advice={advice} />
+      {advice.id !== "allGood" && (
+        <Link href={HREF[advice.id]} className="font-medium text-primary-ink hover:underline">
+          {t(`action.${advice.id}`)}
+        </Link>
+      )}
+    </>
   );
 }
 

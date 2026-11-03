@@ -166,7 +166,7 @@ export function Dashboard({
   const ledger = buildLedger(profile, queueItems, month, sinkingFunds);
   const strategy = planState ? strategyRegistry[planState.strategyId] : undefined;
   const allocation =
-    planState && strategy ? currentAllocation(profile, planState, strategyRegistry) : null;
+    planState && strategy ? currentAllocation(profile, planState, strategyRegistry, month) : null;
   const thisMonth = project(
     { income },
     ledger,

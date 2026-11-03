@@ -274,6 +274,19 @@ describe("Savings screen basket ticks", () => {
   });
 });
 
+describe("Savings screen with the emergency fund still short", () => {
+  it("suggests nothing for investing and says why", async () => {
+    useAppStore.setState({
+      basket: [{ id: "gold", label: "Gold", typeId: "gold", percent: 100 }],
+      basketMonthly: null,
+    });
+    renderPage(); // savings 9,000 of a much larger target
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Investments" }));
+    expect(await screen.findByLabelText("Amount to invest")).toHaveValue("");
+    expect(screen.getByText(/nothing is suggested for investing this month/)).toBeInTheDocument();
+  });
+});
+
 describe("Savings screen once the emergency fund is full", () => {
   it("suggests the rest of the plan's saving for investing, and offers it to the basket", async () => {
     useAppStore.setState({
@@ -292,5 +305,49 @@ describe("Savings screen once the emergency fund is full", () => {
     renderPage();
     expect(screen.queryByTestId("split-investing")).not.toBeInTheDocument();
     expect(screen.getByTestId("split-emergency")).toBeInTheDocument();
+  });
+});
+
+describe("Savings screen: what the money is kept in", () => {
+  it("asks where the emergency fund is kept, saves the answer and says how well it suits", async () => {
+    renderPage();
+    fireEvent.click(screen.getByTestId("held-in-choose-emergency"));
+    const panel = await screen.findByRole("dialog", { name: "Where is your emergency fund kept?" });
+    fireEvent.change(within(panel).getByLabelText("Kept in"), { target: { value: "deposit" } });
+    expect(useAppStore.getState().profile?.emergencyHeldIn).toBe("deposit");
+    expect(within(panel).getByTestId("emergency-fit")).toHaveTextContent("a good fit");
+    await waitFor(async () =>
+      expect(((await db.profile.get("singleton"))?.data as Profile).emergencyHeldIn).toBe(
+        "deposit",
+      ),
+    );
+    fireEvent.click(within(panel).getByRole("button", { name: "Done" }));
+    await waitFor(() =>
+      expect(screen.getByTestId("held-in-emergency")).toHaveTextContent("Kept in Deposit account"),
+    );
+    expect(screen.getByTestId("held-in-fit-emergency")).toHaveTextContent("a good fit");
+  });
+
+  it("warns when the emergency fund is kept in something that swings a lot", () => {
+    useAppStore.setState({ profile: { ...profile, emergencyHeldIn: "crypto" } });
+    renderPage();
+    expect(screen.getByTestId("held-in-fit-emergency")).toHaveTextContent("rarely wise");
+  });
+
+  it("can clear the choice again", async () => {
+    useAppStore.setState({ profile: { ...profile, emergencyHeldIn: "gold" } });
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: "Change" }));
+    const panel = await screen.findByRole("dialog", { name: "Where is your emergency fund kept?" });
+    fireEvent.change(within(panel).getByLabelText("Kept in"), { target: { value: "" } });
+    expect(useAppStore.getState().profile).not.toHaveProperty("emergencyHeldIn");
+  });
+
+  it("shows what another pot is kept in", () => {
+    const gold: SinkingFund = { ...fund, heldIn: "gold" };
+    useAppStore.setState({ sinkingFunds: [gold] });
+    renderPage();
+    expect(screen.getByTestId("held-in-insurance")).toHaveTextContent("Kept in Gold");
+    expect(screen.queryByTestId("held-in-fit-insurance")).not.toBeInTheDocument();
   });
 });

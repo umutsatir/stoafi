@@ -64,7 +64,7 @@ export function PlanInsights({
   const lesson = getLessonCard(strategy.lessonId, locale);
   const months = Array.from({ length: horizonMonths }, (_, i) => addMonths(month, i));
   const projections = projectSeries({ income: netMonthlyIncome(profile) }, ledger, months, {
-    bucketLimits: currentAllocation(profile, planState, strategyRegistry),
+    bucketLimits: currentAllocation(profile, planState, strategyRegistry, month),
   });
 
   // What this month still asks of the plan, as the design shows it: yellow dots for money to set

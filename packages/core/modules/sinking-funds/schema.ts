@@ -11,6 +11,8 @@ export const SinkingFundSchema = z.object({
   /** When the money is needed. Omitted for an open pot that just keeps growing (no date, maybe no target). */
   dueMonth: MonthSchema.optional(),
   currentBalance: z.number().int().nonnegative(),
+  /** What the money is kept in: a preset id (cash, deposit, gold, fund...) or `custom:Name`. Optional; see held-in.ts. */
+  heldIn: z.string().max(60).optional(),
   /** Icon name and colour token for the pot; both optional. */
   icon: z.string().optional(),
   color: z.string().optional(),

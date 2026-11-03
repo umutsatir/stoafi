@@ -28,7 +28,7 @@ export interface SavingsAdvice {
   deposited: Minor;
   stillToSet: Minor;
   freeAfter: Minor;
-  /** What the plan sets aside beyond what pots and the emergency fund still need: the part meant for investing. */
+  /** The part of the plan meant for investing: nothing while the emergency fund is short, else what pots do not need. */
   investingShare: Minor;
   /** Where the remaining amount could go; each pot only up to its own need this month. */
   suggestedSplit: { id: string; amount: Minor }[];
@@ -65,13 +65,13 @@ export function monthlySavingsAdvice(input: SavingsAdviceInput): SavingsAdvice {
     // Pots without a date come last: nothing is due, so they only get what is left.
     .sort((a, b) => (a.fund.dueMonth ?? "9999-12").localeCompare(b.fund.dueMonth ?? "9999-12"))
     .forEach((n) => give(n.fund.id, n.need - n.deposited));
-  if (input.emergency) {
-    give("emergency", input.emergency.gap - input.emergency.depositedThisMonth);
-  }
-  // What no pot and not the emergency fund still needs goes to investing: it should not sit idle.
+  // While the emergency fund is short, everything left goes to it: nothing is invested before it is full.
+  const behind = input.emergency !== undefined && input.emergency.gap > 0;
+  if (behind) give("emergency", left);
+  // With the fund full, what no pot still needs goes to investing: it should not sit idle.
   if (left > 0) give("investing", left);
 
-  const investingShare = Math.max(0, required - fundsNeed - (input.emergency?.gap ?? 0));
+  const investingShare = behind ? 0 : Math.max(0, required - fundsNeed);
 
   return { required, deposited, stillToSet, freeAfter, investingShare, suggestedSplit: split };
 }

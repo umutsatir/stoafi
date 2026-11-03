@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const COLORS = {
   obligations: "var(--chart-needs)",
   living: "var(--chart-wants)",
+  personal: "var(--chart-investing)",
   installments: "var(--chart-installments)",
   setAside: "var(--chart-setaside)",
   income: "var(--chart-income)",
@@ -47,6 +48,12 @@ export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
             />
             <Bar dataKey="living" name={t("living")} stackId="costs" fill={COLORS.living} />
             <Bar
+              dataKey="personal"
+              name={t("personalSpending")}
+              stackId="costs"
+              fill={COLORS.personal}
+            />
+            <Bar
               dataKey="installments"
               name={t("installments")}
               stackId="costs"
@@ -69,27 +76,29 @@ export function CashFlowChart({ series }: { series: CashFlowPoint[] }) {
             />
           </ComposedChart>
         </div>
-        <table className="sr-only">
-          <caption>{t("cashFlowTitle")}</caption>
-          <thead>
-            <tr>
-              <th>{t("month")}</th>
-              <th>{t("left")}</th>
-              <th>{t("installments")}</th>
-              <th>{t("setAside")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {series.map((point) => (
-              <tr key={point.month}>
-                <td>{point.month}</td>
-                <td>{money(point.left)}</td>
-                <td>{money(point.installments)}</td>
-                <td>{money(point.setAside)}</td>
+        <div className="sr-only">
+          <table>
+            <caption>{t("cashFlowTitle")}</caption>
+            <thead>
+              <tr>
+                <th>{t("month")}</th>
+                <th>{t("left")}</th>
+                <th>{t("installments")}</th>
+                <th>{t("setAside")}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {series.map((point) => (
+                <tr key={point.month}>
+                  <td>{point.month}</td>
+                  <td>{money(point.left)}</td>
+                  <td>{money(point.installments)}</td>
+                  <td>{money(point.setAside)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </CardContent>
     </Card>
   );

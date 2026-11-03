@@ -8,10 +8,15 @@ import {
   SinkingFundSchema,
 } from "@stoafi/core";
 import type { DemoData } from "@/lib/demo-data";
+import { forgetData } from "@/lib/had-data";
 import type { StoafiDb } from "./db";
+import { clearCopies } from "./internal-backup";
 import { putListItem, putSingleton } from "./repo";
 
-/** Empties every table that holds the user's data. Settings (language, theme) are kept. */
+/**
+ * Empties every table that holds the user's data, the internal copies of it and the "had data" mark, since
+ * the user chose to empty it. Settings (language, theme) are kept.
+ */
 export async function clearUserData(db: StoafiDb): Promise<void> {
   await db.transaction(
     "rw",
@@ -40,6 +45,8 @@ export async function clearUserData(db: StoafiDb): Promise<void> {
       ]);
     },
   );
+  await clearCopies(db);
+  forgetData();
 }
 
 /** Replaces whatever is stored with the sample data. Every record is validated like a real save. */

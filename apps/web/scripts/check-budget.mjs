@@ -1,6 +1,6 @@
 // Fails when the static export grows past the written budget (docs/QUALITY-BUDGET.md).
 // Sizes are gzip bytes, which is what a phone downloads.
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
@@ -21,7 +21,13 @@ const js = walk(root).filter((p) => p.endsWith(".js"));
 const css = walk(root).filter((p) => p.endsWith(".css"));
 const kb = (n) => Math.round(n / 1024);
 
+const fonts = existsSync(join(here, "../out/fonts"))
+  ? readdirSync(join(here, "../out/fonts")).filter((n) => n.endsWith(".woff2"))
+  : [];
+const fontBytes = fonts.reduce((a, n) => a + statSync(join(here, "../out/fonts", n)).size, 0);
+
 const sums = {
+  totalFontKb: kb(fontBytes),
   totalJsKb: kb(js.reduce((a, p) => a + sizeOf(p), 0)),
   largestJsKb: kb(Math.max(...js.map(sizeOf))),
   totalCssKb: kb(css.reduce((a, p) => a + sizeOf(p), 0)),

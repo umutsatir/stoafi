@@ -18,9 +18,11 @@ import { Money } from "@/components/ui/money";
 import { PotVisual } from "@/components/ui/pot-visual";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { formatMonth } from "@/lib/format-month";
+import { picturesFor } from "./investment-icons";
+import { useHeldInName } from "./held-in-select";
 import { useMoney } from "@/lib/use-money";
 import { stagger } from "@/lib/utils";
-import type { Deposit } from "@stoafi/core";
+import { emergencyFit, parseHeldIn, type Deposit } from "@stoafi/core";
 
 const ICONS: Record<string, LucideIcon> = {
   piggy: PiggyBank,
@@ -43,6 +45,8 @@ export interface PotView {
   neededThisMonth: number;
   depositedThisMonth: number;
   state: "funded" | "active" | "due" | "overdue" | "open";
+  /** What the money is kept in (a stored held-in value), if the user said. */
+  heldIn?: string;
   /** What the picture is measured against for a pot with no target (a month of needs). */
   openScale?: number;
 }
@@ -54,6 +58,8 @@ export interface PotCardProps {
   dropKey: number;
   onDeposit: (pot: PotView) => void;
   onHistory: (pot: PotView) => void;
+  /** Opens the choice of what the emergency fund is kept in. */
+  onChooseHeldIn?: () => void;
 }
 
 const STATE_FILL: Record<PotView["state"], string> = {
@@ -65,8 +71,18 @@ const STATE_FILL: Record<PotView["state"], string> = {
 };
 const POT_FILL = ["bg-c2", "bg-c1", "bg-c4", "bg-c3"];
 
-export function PotCard({ pot, index, dropKey, onDeposit, onHistory }: PotCardProps) {
+export function PotCard({
+  pot,
+  index,
+  dropKey,
+  onDeposit,
+  onHistory,
+  onChooseHeldIn,
+}: PotCardProps) {
   const t = useTranslations("savings");
+  const heldInName = useHeldInName();
+  const heldTypeId = parseHeldIn(pot.heldIn).typeId;
+  const fit = pot.kind === "emergency" ? emergencyFit(pot.heldIn) : null;
   const locale = useLocale();
   const money = useMoney();
   const hasTarget = pot.target > 0;
@@ -127,6 +143,45 @@ export function PotCard({ pot, index, dropKey, onDeposit, onHistory }: PotCardPr
           </p>
         </div>
       </div>
+      {pot.heldIn ? (
+        <p
+          className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm"
+          data-testid={`held-in-${pot.id}`}
+        >
+          {(() => {
+            const Held = picturesFor(
+              heldTypeId === "cash" ? "currency" : heldTypeId === "custom" ? "other" : heldTypeId,
+            ).pot;
+            return <Held className="h-4 w-4 text-primary" aria-hidden="true" />;
+          })()}
+          <span>{t("heldIn.chip", { name: heldInName(pot.heldIn) })}</span>
+          {onChooseHeldIn && (
+            <button
+              type="button"
+              onClick={onChooseHeldIn}
+              className="text-xs font-medium text-primary hover:underline"
+            >
+              {t("heldIn.change")}
+            </button>
+          )}
+        </p>
+      ) : (
+        onChooseHeldIn && (
+          <button
+            type="button"
+            onClick={onChooseHeldIn}
+            className="w-fit text-sm font-medium text-primary hover:underline"
+            data-testid={`held-in-choose-${pot.id}`}
+          >
+            {t("heldIn.choose")}
+          </button>
+        )
+      )}
+      {fit && (
+        <p className="text-sm text-muted-foreground" data-testid={`held-in-fit-${pot.id}`}>
+          {t(`heldIn.fit.${fit}`)}
+        </p>
+      )}
       {hasTarget && (
         <ProgressBar
           value={Math.min(pot.balance, pot.target)}

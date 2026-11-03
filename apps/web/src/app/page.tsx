@@ -8,6 +8,7 @@ import { Onboarding } from "@/components/onboarding";
 import { Button } from "@/components/ui/button";
 import { notify } from "@/components/ui/toaster";
 import { backupDue } from "@/lib/backup-reminder";
+import { dataSince } from "@/lib/had-data";
 import { localIsoDate } from "@/lib/clock";
 import { buildDemoData, type DemoLabels } from "@/lib/demo-data";
 import { loadAppState } from "@/storage/bootstrap";
@@ -54,8 +55,11 @@ export default function Home() {
   useQuickAction("openOnboarding", () => setWizardOpen(true));
 
   const firstMonth = snapshots[0]?.month;
+  // Data the device has held for some time counts from the day it first did; snapshots are the fallback.
+  const firstDate = dataSince() ?? (firstMonth ? `${firstMonth}-01` : null);
+  const autoBackupOn = useAppStore((s) => s.autoBackup.status === "on");
   const showBackupNudge =
-    !demo && backupDue(lastBackup, today, profile !== null, firstMonth ? `${firstMonth}-01` : null);
+    !demo && !autoBackupOn && backupDue(lastBackup, today, profile !== null, firstDate);
 
   async function startDemo() {
     const labels = Object.fromEntries(

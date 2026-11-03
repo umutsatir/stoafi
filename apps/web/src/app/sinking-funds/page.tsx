@@ -95,13 +95,16 @@ export default function SavingsPage() {
 
   const month = monthOf(today);
   const income = profile.incomes.reduce((sum, i) => sum + i.monthly, 0);
-  const limits = planState ? currentAllocation(profile, planState, strategyRegistry) : null;
+  const limits = planState ? currentAllocation(profile, planState, strategyRegistry, month) : null;
   const projection = project({ income }, ledger, month, limits ? { bucketLimits: limits } : {});
   const freeBeforeSaving = Math.max(
     0,
     income - projection.byBucket.needs.committed - projection.byBucket.wants.committed,
   );
   const planSavings = limits ? limits.savings + limits.investing : 0;
+  const emergencyBehind =
+    emergencyGap(profile.savings, monthlyNeeds(profile, month), profile.emergencyFundTargetMonths) >
+    0;
   // Once the emergency fund and the pots are covered, the rest of what the plan saves is for investing.
   const investingSuggestion = Math.max(
     limits ? limits.investing : 0,
@@ -219,6 +222,15 @@ export default function SavingsPage() {
     });
   }
 
+  function handleEmergencyHeldIn(value: string | undefined) {
+    const current = useAppStore.getState().profile;
+    if (!current) return;
+    const next = { ...current };
+    if (value) next.emergencyHeldIn = value;
+    else delete next.emergencyHeldIn;
+    persistProfile(next);
+  }
+
   function handleSaveFund(fund: SinkingFund) {
     const exists = funds.some((f) => f.id === fund.id);
     setFunds(exists ? funds.map((f) => (f.id === fund.id ? fund : f)) : [...funds, fund]);
@@ -334,6 +346,7 @@ export default function SavingsPage() {
             onDeleteDeposit={handleDeleteDeposit}
             onSaveFund={handleSaveFund}
             onDeleteFund={handleDeleteFund}
+            onSetEmergencyHeldIn={handleEmergencyHeldIn}
           />
         </TabsContent>
         <TabsContent value="investments">
@@ -348,6 +361,7 @@ export default function SavingsPage() {
             onBasketChange={setBasket}
             onAssign={handleAssign}
             savedMonthly={basketMonthly}
+            emergencyFirst={emergencyBehind}
             onMonthlyChange={setBasketMonthly}
             basketLog={basketLog}
             month={month}

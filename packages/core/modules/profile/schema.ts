@@ -42,6 +42,8 @@ export const ProfileSchema = z.object({
   /** Money put into or taken out of the emergency fund by hand; `savings` moves with it. */
   deposits: z.array(DepositSchema).optional(),
   emergencyFundTargetMonths: z.number().nonnegative(),
+  /** What the emergency fund is kept in, the same values as a pot's `heldIn`. Optional. */
+  emergencyHeldIn: z.string().max(60).optional(),
   annualInflationExpectation: z.number(),
   /** ISO 3166 country the inflation suggestion came from; remembered so the form can show it again. */
   countryCode: z.string().optional(),

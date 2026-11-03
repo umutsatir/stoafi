@@ -68,3 +68,51 @@ describe("export/import round trip", () => {
     db.close();
   });
 });
+
+describe("importWithSafetyCopy", () => {
+  it("keeps what was there before a file replaces it, and restoring that copy brings it back", async () => {
+    const { StoafiDb } = await import("./db");
+    const { importWithSafetyCopy, exportToJson, importFromJson } = await import("./backup");
+    const { readCopy } = await import("./internal-backup");
+    const db = new StoafiDb(`safety-${Math.random()}`);
+    const profile = {
+      incomes: [{ label: "Job", monthly: 1_000_000 }],
+      fixedExpenses: [],
+      livingExpenses: 0,
+      savings: 0,
+      emergencyFundTargetMonths: 6,
+      annualInflationExpectation: 0.3,
+    };
+    await db.profile.put({ id: "singleton", data: profile });
+    const before = await exportToJson(db, "2026-10-05T08:00:00.000Z");
+
+    // a file with a different income
+    await db.profile.put({ id: "singleton", data: { ...profile, savings: 5 } });
+    const other = await exportToJson(db, "2026-10-05T09:00:00.000Z");
+    await db.profile.put({ id: "singleton", data: profile });
+
+    const result = await importWithSafetyCopy(db, other, "2026-10-05T10:00:00.000Z");
+    expect("errors" in result).toBe(false);
+    expect(((await db.profile.get("singleton"))?.data as { savings: number }).savings).toBe(5);
+
+    const copy = await readCopy(db, "before-import");
+    expect(copy).not.toBeNull();
+    await importFromJson(db, copy as string);
+    expect(((await db.profile.get("singleton"))?.data as { savings: number }).savings).toBe(0);
+    expect(before.length).toBeGreaterThan(0);
+  });
+
+  it("changes nothing, and keeps no copy, when the file is not a valid backup", async () => {
+    const { StoafiDb } = await import("./db");
+    const { importWithSafetyCopy } = await import("./backup");
+    const { listCopies } = await import("./internal-backup");
+    const db = new StoafiDb(`safety-${Math.random()}`);
+    const result = await importWithSafetyCopy(
+      db,
+      JSON.stringify({ nope: true }),
+      "2026-10-05T10:00:00.000Z",
+    );
+    expect("errors" in result).toBe(true);
+    expect(await listCopies(db)).toEqual([]);
+  });
+});

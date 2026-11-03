@@ -136,3 +136,39 @@ describe("open pots", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 });
+
+describe("what a pot is kept in", () => {
+  it("saves the choice with the pot, and leaves it out when none is made", () => {
+    const onSubmit = vi.fn();
+    const { unmount } = renderWithIntl(<SinkingFundForm {...base} onSubmit={onSubmit} />);
+    type("Name", "Tax");
+    type("Due month", "2027-03");
+    type("Target amount", "1200");
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    expect(onSubmit.mock.calls[0]?.[0]).not.toHaveProperty("heldIn");
+    unmount();
+
+    renderWithIntl(<SinkingFundForm {...base} onSubmit={onSubmit} />);
+    type("Name", "Tax");
+    type("Due month", "2027-03");
+    type("Target amount", "1200");
+    fireEvent.change(screen.getByLabelText("Kept in"), { target: { value: "gold" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+    expect(onSubmit.mock.calls[1]?.[0]).toMatchObject({ heldIn: "gold" });
+  });
+
+  it("shows the saved choice when editing, and can clear it", () => {
+    const onSubmit = vi.fn();
+    renderWithIntl(
+      <SinkingFundForm
+        {...base}
+        initial={{ id: "x", label: "Open", target: 0, currentBalance: 5, heldIn: "fund" }}
+        onSubmit={onSubmit}
+      />,
+    );
+    expect(screen.getByLabelText("Kept in")).toHaveValue("fund");
+    fireEvent.change(screen.getByLabelText("Kept in"), { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+    expect(onSubmit.mock.calls[0]?.[0]).not.toHaveProperty("heldIn");
+  });
+});

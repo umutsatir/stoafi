@@ -7,14 +7,12 @@ import { localIsoDate } from "@/lib/clock";
 import { loadAppState } from "@/storage/bootstrap";
 import { db } from "@/storage/instance";
 import { putSingleton } from "@/storage/repo";
-import { DataLost } from "@/components/data-lost";
+import { DataLostScreen } from "@/components/data-lost-screen";
 import { LockGate } from "@/components/lock-gate";
 import { Skeleton } from "@/components/ui/skeleton";
-import { clearHadData, hadData, markHadData } from "@/lib/had-data";
 import { applyTheme } from "@/lib/theme";
-import { writeBackupFile } from "@/lib/backup-file";
-import { hasDailyCopy, saveCopy } from "@/lib/browser-copies";
-import { exportToJson, importFromJson } from "@/storage/backup";
+import { dataLooksLost, forgetData } from "@/lib/had-data";
+import { useDataSafety } from "@/lib/use-data-safety";
 import { useSnapshotRecorder } from "@/lib/use-snapshot-recorder";
 import { useAppStore } from "@/store";
 
@@ -22,10 +20,11 @@ import { useAppStore } from "@/store";
 export function AppBootstrap({ children }: { children: ReactNode }) {
   const t = useTranslations("app");
   useSnapshotRecorder();
+  useDataSafety();
+  const [startedFresh, setStartedFresh] = useState(false);
+  const hasProfile = useAppStore((s) => s.profile !== null);
   const hydrated = useAppStore((s) => s.hydrated);
   const hydrate = useAppStore((s) => s.hydrate);
-  const profile = useAppStore((s) => s.profile);
-  const [lost, setLost] = useState(false);
   const setToday = useAppStore((s) => s.setToday);
   const locale = useAppStore((s) => s.locale);
   const currency = useAppStore((s) => s.currency);
@@ -38,6 +37,7 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
   const basket = useAppStore((s) => s.basket);
   const basketLog = useAppStore((s) => s.basketLog);
   const basketMonthly = useAppStore((s) => s.basketMonthly);
+  const homeDetails = useAppStore((s) => s.homeDetails);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,44 +48,6 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [hydrate]);
-
-  // A copy once a day, and the chosen backup file kept current a little after the last change.
-  useEffect(() => {
-    if (!hydrated || demo || !profile) return;
-    const day = localIsoDate(new Date());
-    void (async () => {
-      try {
-        if (!(await hasDailyCopy(day)))
-          await saveCopy("daily", day, await exportToJson(db, new Date().toISOString()));
-      } catch {
-        // Copies are a convenience; the app works without them.
-      }
-    })();
-  }, [hydrated, demo, profile]);
-
-  useEffect(() => {
-    if (!hydrated || demo) return;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const unsubscribe = useAppStore.subscribe(() => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        void exportToJson(db, new Date().toISOString())
-          .then(writeBackupFile)
-          .catch(() => undefined);
-      }, 3000);
-    });
-    return () => {
-      clearTimeout(timer);
-      unsubscribe();
-    };
-  }, [hydrated, demo]);
-
-  // Remember that this browser held real data, so an empty database later is noticed instead of ignored.
-  useEffect(() => {
-    if (!hydrated) return;
-    if (profile && !demo) markHadData();
-    else if (!profile && !demo && hadData()) setLost(true);
-  }, [hydrated, profile, demo]);
 
   // Whatever the screens change, the saved preferences and the page language follow.
   useEffect(() => {
@@ -103,6 +65,7 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
       ...(basket.length > 0 ? { basket } : {}),
       ...(basketLog.length > 0 ? { basketLog } : {}),
       ...(basketMonthly !== null ? { basketMonthly } : {}),
+      ...(homeDetails ? { homeDetails } : {}),
     }).catch((error) => console.error("Could not save settings", error));
   }, [
     hydrated,
@@ -117,6 +80,7 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
     basket,
     basketLog,
     basketMonthly,
+    homeDetails,
   ]);
 
   // Follow the saved theme, and the system's while the user has not picked one.
@@ -142,23 +106,17 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
     };
   }, [hydrated, setToday]);
 
-  if (hydrated && lost) {
+  if (hydrated && !startedFresh && dataLooksLost(hasProfile)) {
     return (
-      <DataLost
-        onStartFresh={() => {
-          clearHadData();
-          setLost(false);
+      <DataLostScreen
+        onRestored={() => {
+          void loadAppState(db, navigator.language).then((loaded) =>
+            hydrate(loaded, localIsoDate(new Date())),
+          );
         }}
-        onRestore={async (json) => {
-          try {
-            const result = await importFromJson(db, json);
-            if ("errors" in result) return result.errors.map((e) => String(e));
-            hydrate(await loadAppState(db, navigator.language), localIsoDate(new Date()));
-            setLost(false);
-            return null;
-          } catch {
-            return [t("restoreFailed")];
-          }
+        onStartFresh={() => {
+          forgetData();
+          setStartedFresh(true);
         }}
       />
     );
