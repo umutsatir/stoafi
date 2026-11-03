@@ -117,12 +117,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 onMouseEnter={() => setActive(index)}
                 onClick={() => run(command)}
                 className={cn(
-                  "flex cursor-pointer items-center justify-between rounded-[14px] px-3 py-3 text-sm font-semibold",
-                  index === active ? "bg-accent" : "",
+                  "flex cursor-pointer items-center gap-3 rounded-[14px] px-3 py-[11px] text-sm font-semibold",
+                  index === active ? "bg-muted" : "",
                 )}
               >
+                <span className="w-[34px] flex-none text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-muted-foreground">
+                  {t(`group.${command.group}`)}
+                </span>
                 <span>{t(`commands.${command.id}`)}</span>
-                <span className="text-xs text-muted-foreground">{t(`group.${command.group}`)}</span>
               </li>
             ))}
           </ul>
