@@ -1,4 +1,4 @@
-import { screen, within } from "@testing-library/react";
+import { fireEvent, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Card, Profile, QueueItem, SinkingFund } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
@@ -46,6 +46,31 @@ function renderDashboard(overrides: Partial<Parameters<typeof Dashboard>[0]> = {
 }
 
 describe("Dashboard", () => {
+  it("names recurring installment and loan lines under installments, not under fixed costs", () => {
+    renderDashboard({
+      profile: {
+        ...profile,
+        fixedExpenses: [
+          { label: "Rent", monthly: 200_000, bucket: "needs" },
+          { label: "Car loan", monthly: 380_000, bucket: "needs", kind: "loan" },
+          { label: "Phone plan", monthly: 25_000, bucket: "needs", kind: "installment" },
+        ],
+      },
+    });
+    const month = within(screen.getByTestId("this-month"));
+    fireEvent.click(month.getByRole("button", { name: /Installments/ }));
+    const detail = month.getByText("Car loan").closest("li");
+    expect(detail).not.toBeNull();
+    expect(month.getByText("Phone plan")).toBeInTheDocument();
+    fireEvent.click(month.getByRole("button", { name: /Fixed costs/ }));
+    expect(month.getByText("Rent")).toBeVisible();
+  });
+
+  it("colours the emergency fund and the health tile by how they are doing", () => {
+    renderDashboard({ profile: { ...profile, savings: 0 } });
+    expect(screen.getByRole("link", { name: "Emergency fund" })).toHaveClass("bg-c3");
+  });
+
   it("points a new user to income and expenses first and shows no numbers", () => {
     renderDashboard({ profile: null });
     expect(screen.getByRole("link", { name: "Add your income and expenses" })).toHaveAttribute(

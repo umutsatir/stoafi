@@ -43,7 +43,6 @@ export function OrbitRing({
   const [active, setActive] = useState(segments.length - 1);
   const current = segments[Math.min(active, segments.length - 1)];
   if (!current) return null;
-  const detailTotal = current.rows.reduce((sum, r) => sum + Math.abs(r.amount), 0) || 1;
   let cumulative = 0;
 
   return (
@@ -110,40 +109,15 @@ export function OrbitRing({
           </div>
         </div>
 
-        <div key={current.id} className="min-w-0 [animation:fade_0.5s_both]">
-          <div className="flex items-center gap-2.5">
-            <span
-              aria-hidden="true"
-              className="h-3.5 w-3.5 rounded-full"
-              style={{ background: current.color }}
+        {/* Every part's detail sits in the same grid cell, so the card is as tall as the tallest one and never jumps when another part is picked. */}
+        <div className="grid min-w-0">
+          {segments.map((segment) => (
+            <SegmentDetail
+              key={segment.id}
+              segment={segment}
+              visible={segment.id === current.id}
             />
-            <span className="text-[19px] font-extrabold tracking-[-0.02em]">{current.label}</span>
-            <span className="ml-auto text-sm font-extrabold text-muted-foreground">
-              {current.shareText}
-            </span>
-          </div>
-          <ul className="max-h-[200px] overflow-hidden">
-            {current.rows.map((row) => (
-              <li key={row.label} className="mt-4">
-                <div className="flex justify-between gap-3 text-[13.5px] font-semibold">
-                  <span className="min-w-0 truncate">{row.label}</span>
-                  <span className="font-extrabold">{row.amountText}</span>
-                </div>
-                <div className="mt-2 h-2 rounded-lg bg-muted">
-                  <div
-                    className="h-2 rounded-lg"
-                    style={{
-                      background: current.color,
-                      width: `${(Math.abs(row.amount) / detailTotal) * 100}%`,
-                    }}
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-5 text-[13px] font-medium leading-normal text-muted-foreground">
-            {current.note}
-          </p>
+          ))}
         </div>
       </div>
 
@@ -174,6 +148,59 @@ export function OrbitRing({
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function SegmentDetail({
+  segment,
+  visible,
+}: {
+  segment: OrbitSegment;
+  visible: boolean;
+}) {
+  const total = segment.rows.reduce((sum, r) => sum + Math.abs(r.amount), 0) || 1;
+  return (
+    <div
+      aria-hidden={visible ? undefined : true}
+      className={cn(
+        "col-start-1 row-start-1 min-w-0",
+        visible ? "[animation:fade_0.5s_both]" : "pointer-events-none invisible",
+      )}
+    >
+      <div className="flex items-center gap-2.5">
+        <span
+          aria-hidden="true"
+          className="h-3.5 w-3.5 rounded-full"
+          style={{ background: segment.color }}
+        />
+        <span className="text-[19px] font-extrabold tracking-[-0.02em]">{segment.label}</span>
+        <span className="ml-auto text-sm font-extrabold text-muted-foreground">
+          {segment.shareText}
+        </span>
+      </div>
+      <ul>
+        {segment.rows.map((row) => (
+          <li key={row.label} className="mt-4">
+            <div className="flex justify-between gap-3 text-[13.5px] font-semibold">
+              <span className="min-w-0 truncate">{row.label}</span>
+              <span className="font-extrabold">{row.amountText}</span>
+            </div>
+            <div className="mt-2 h-2 rounded-lg bg-muted">
+              <div
+                className="h-2 rounded-lg"
+                style={{
+                  background: segment.color,
+                  width: `${Math.min(100, (Math.abs(row.amount) / total) * 100)}%`,
+                }}
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-5 text-[13px] font-medium leading-normal text-muted-foreground">
+        {segment.note}
+      </p>
     </div>
   );
 }

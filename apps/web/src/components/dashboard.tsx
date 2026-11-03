@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
   activeFixedExpenses,
+  expenseKind,
   activeQueueItems,
   addMonths,
   cashFlowSeries,
@@ -13,6 +14,7 @@ import {
   emergencyGap,
   freeSpending,
   healthSummary,
+  type HealthStatus,
   installmentCommitments,
   limitAdvice,
   limitStatuses,
@@ -113,6 +115,12 @@ function Panel({
     </Card>
   );
 }
+
+const TONE_BG: Record<HealthStatus, string> = {
+  good: "bg-c4",
+  watch: "bg-c2",
+  risk: "bg-c3",
+};
 
 export function Dashboard({
   profile,
@@ -255,13 +263,25 @@ export function Dashboard({
     : "";
 
   const share = (amount: number) => (income > 0 ? Math.round((amount / income) * 100) : 0);
+  // Recurring instalment and loan lines are keyed "fixed-<index>" into the profile's expenses.
+  const installmentLabel = (refId: string): string => {
+    if (refId.startsWith("fixed-")) {
+      return profile.fixedExpenses[Number(refId.slice("fixed-".length))]?.label ?? refId;
+    }
+    return names[refId] ?? refId;
+  };
   const installmentRows = ledger
     .filter((c) => c.source.module === "installments" && c.status !== "cancelled")
     .map((c) => ({
-      label: names[c.source.refId] ?? c.source.refId,
+      label: installmentLabel(c.source.refId),
       amount: c.payments.filter((p) => p.month === month).reduce((sum, p) => sum + p.amount, 0),
     }))
     .filter((row) => row.amount > 0);
+  // Instalment and loan lines are already in `installments` (the ledger counts them there), so the
+  // fixed part leaves them out and nothing is counted twice.
+  const activeExpenses = activeFixedExpenses(profile, month);
+  const fixedLines = activeExpenses.filter((e) => expenseKind(e) === "regular");
+  const orbitFixed = fixedLines.reduce((sum, e) => sum + e.monthly, 0);
   const needsRoom = allocation
     ? thisMonth.byBucket.needs.limit - thisMonth.byBucket.needs.committed
     : 0;
@@ -273,11 +293,11 @@ export function Dashboard({
     {
       id: "fixed",
       label: tOrbit("fixed"),
-      amount: obligations,
-      amountText: money(obligations),
+      amount: orbitFixed,
+      amountText: money(orbitFixed),
       color: "var(--c1)",
-      shareText: tOrbit("ofIncome", { pct: share(obligations) }),
-      rows: activeFixedExpenses(profile, month).map((e) => rowOf(e.label, e.monthly)),
+      shareText: tOrbit("ofIncome", { pct: share(orbitFixed) }),
+      rows: fixedLines.map((e) => rowOf(e.label, e.monthly)),
       note: tOrbit("fixedNote"),
     },
     {
@@ -330,6 +350,8 @@ export function Dashboard({
     valueText: money(point.left),
   }));
   const fundPct = Math.min(1, savedMonths / Math.max(profile.emergencyFundTargetMonths, 0.01));
+  // Red under half the target, yellow until it is reached, green once it is.
+  const fundTone: HealthStatus = fundPct >= 1 ? "good" : fundPct >= 0.5 ? "watch" : "risk";
   const eventRows = events.slice(0, 4);
 
   return (
@@ -453,7 +475,7 @@ export function Dashboard({
             <Link
               href="/profile"
               aria-label={t("emergencyFund")}
-              className="lift pop-in rounded-card bg-c2 p-5 text-on"
+              className={cn("lift pop-in rounded-card p-5 text-on", TONE_BG[fundTone])}
               style={stagger(3)}
             >
               <div className="text-[13px] font-bold">{t("emergencyFund")}</div>
@@ -484,7 +506,7 @@ export function Dashboard({
             <Link
               href="/health"
               aria-label={t("healthTitle")}
-              className="lift pop-in rounded-card bg-c4 p-5 text-on"
+              className={cn("lift pop-in rounded-card p-5 text-on", TONE_BG[health.overall])}
               style={stagger(4)}
             >
               <div className="text-[13px] font-bold">{t("healthTitle")}</div>
