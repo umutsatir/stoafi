@@ -161,11 +161,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     <span
                       aria-hidden="true"
                       className={cn(
-                        "flex h-9 w-9 flex-none items-center justify-center rounded-xl",
+                        "flex h-[30px] w-[30px] flex-none items-center justify-center rounded-[11px]",
                         command.group === "do" ? "bg-primary text-primary-foreground" : "bg-muted",
                       )}
                     >
-                      <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+                      <Icon className="h-4 w-4" strokeWidth={2} />
                     </span>
                   );
                 })()}
