@@ -16,6 +16,8 @@ export interface OrbitSegment {
   shareText: string;
   rows: { label: string; amountText: string; amount: number }[];
   note: string;
+  /** What the bar is measured against (installments: the cap, in minor units) and its caption. */
+  capacity?: { amount: number; fillText: string };
 }
 
 /** Colours for the parts of the installments bar. */
@@ -155,6 +157,8 @@ function SegmentDetail({ segment, visible }: { segment: OrbitSegment; visible: b
   const total = segment.rows.reduce((sum, r) => sum + Math.abs(r.amount), 0) || 1;
   // Installments read as one bar split between the plans, not one bar each.
   const stacked = segment.id === "installments" && segment.rows.length > 0;
+  // The bar is the installment limit; each plan fills its own share of it, so the empty part reads as room left.
+  const scale = Math.max(segment.capacity?.amount ?? 0, total);
   return (
     <div
       aria-hidden={visible ? undefined : true}
@@ -175,22 +179,29 @@ function SegmentDetail({ segment, visible }: { segment: OrbitSegment; visible: b
         </span>
       </div>
       {stacked && (
-        <div
-          role="img"
-          aria-label={segment.label}
-          className="mt-4 flex h-3 gap-[3px] overflow-hidden rounded-xl"
-        >
-          {segment.rows.map((row, i) => (
-            <div
-              key={row.label}
-              title={row.label}
-              className="rounded-md transition-[width] duration-500"
-              style={{
-                width: `${(Math.abs(row.amount) / total) * 100}%`,
-                background: ROW_COLORS[i % ROW_COLORS.length],
-              }}
-            />
-          ))}
+        <div className="mt-4">
+          <div
+            role="img"
+            aria-label={segment.capacity?.fillText ?? segment.label}
+            className="flex h-3.5 gap-[3px] overflow-hidden rounded-xl bg-muted p-[2px]"
+          >
+            {segment.rows.map((row, i) => (
+              <div
+                key={row.label}
+                title={`${row.label} · ${row.amountText}`}
+                className="rounded-lg transition-[width] duration-500 ease-[cubic-bezier(.2,.8,.2,1)]"
+                style={{
+                  width: `${(Math.abs(row.amount) / scale) * 100}%`,
+                  background: ROW_COLORS[i % ROW_COLORS.length],
+                }}
+              />
+            ))}
+          </div>
+          {segment.capacity && (
+            <p className="mt-2 text-xs font-bold text-muted-foreground">
+              {segment.capacity.fillText}
+            </p>
+          )}
         </div>
       )}
       <ul>

@@ -318,6 +318,13 @@ export function Dashboard({
       color: "var(--c3)",
       shareText: tOrbit("ofIncome", { pct: share(installments) }),
       rows: installmentRows.map((row) => rowOf(row.label, row.amount)),
+      capacity: {
+        amount: Math.round(income * installmentCapPct),
+        fillText: tOrbit("installmentsFill", {
+          pct: Math.round((installments / Math.max(1, income * installmentCapPct)) * 100),
+          cap: Math.round(installmentCapPct * 100),
+        }),
+      },
       note: tOrbit("installmentsNote", {
         pct: share(installments),
         cap: Math.round(installmentCapPct * 100),

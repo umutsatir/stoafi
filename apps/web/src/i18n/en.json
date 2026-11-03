@@ -154,6 +154,7 @@
       "ofIncome": "{pct}% of income",
       "fixedNote": "Costs that go out the same day every month and are not up for negotiation.",
       "livingNote": "Tracked as one line; you do not need to log every purchase.",
+      "installmentsFill": "{pct}% of your installment limit is used (limit is {cap}% of income)",
       "installmentsNote": "{pct}% of your income, {state, select, under {comfortably under} other {over}} your {cap}% limit.",
       "freeSpending": "Free spending (wants)",
       "needsRoom": "Room in needs",
