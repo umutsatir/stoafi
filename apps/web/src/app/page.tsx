@@ -6,7 +6,6 @@ import { useState } from "react";
 import { Dashboard } from "@/components/dashboard";
 import { Onboarding } from "@/components/onboarding";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { notify } from "@/components/ui/toaster";
 import { backupDue } from "@/lib/backup-reminder";
 import { localIsoDate } from "@/lib/clock";
@@ -51,7 +50,6 @@ export default function Home() {
   const setDemo = useAppStore((s) => s.setDemo);
   const t = useTranslations("home");
   const tLabels = useTranslations("demoLabels");
-  const tPalette = useTranslations("palette");
   const [wizardOpen, setWizardOpen] = useState(false);
   useQuickAction("openOnboarding", () => setWizardOpen(true));
 
@@ -112,12 +110,8 @@ export default function Home() {
           ) : null
         }
       />
-      {profile && (
-        <Dialog open={wizardOpen} onOpenChange={setWizardOpen}>
-          <DialogContent title={tPalette("commands.openOnboarding")} className="max-w-[720px]">
-            <Onboarding onDone={() => setWizardOpen(false)} />
-          </DialogContent>
-        </Dialog>
+      {profile && wizardOpen && (
+        <Onboarding onDone={() => setWizardOpen(false)} onClose={() => setWizardOpen(false)} />
       )}
     </>
   );

@@ -1507,7 +1507,7 @@
       },
       "expenses": {
         "title": "Her ay ne çıkıyor?",
-        "hint": "Geçerli olanlara dokun ve tutarı gir. Olmayanı atla."
+        "hint": "Geçerli olanlara dokun. Olmayanı atla."
       },
       "savings": {
         "title": "Ne biriktirdin?",
@@ -1531,8 +1531,9 @@
       "school": "Okul"
     },
     "living": "Yaşam giderleri",
-    "livingHint": "Market ve günlük harcamalar, aylık yaklaşık.",
-    "monthsHint": "Birçok kaynak 3 ila 6 aylık ihtiyaç önerir.",
+    "livingHint": "Market ve günlük, aylık yaklaşık.",
+    "monthsOption": "{n} ay",
+    "monthsHint": "Birçok kaynak 3 ila 6 ay önerir.",
     "leftOver": "Düzenli giderlerinden sonra her ay {amount} kalıyor.",
     "overspent": "Düzenli giderlerin gelirinden {amount} fazla. Yine de devam edip sonra düzeltebilirsin.",
     "planChoice": "Plan",

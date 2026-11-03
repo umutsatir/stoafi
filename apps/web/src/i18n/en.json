@@ -1532,6 +1532,7 @@
     },
     "living": "Living costs",
     "livingHint": "Groceries and everyday spending, roughly, per month.",
+    "monthsOption": "{n} months",
     "monthsHint": "Many guides suggest 3 to 6 months of needs.",
     "leftOver": "After your regular costs you have {amount} left each month.",
     "overspent": "Your regular costs are {amount} above your income. You can still continue and fix it later.",
