@@ -258,4 +258,33 @@ describe("QueuePage undo", () => {
     expect(useAppStore.getState().decisions).toEqual([]);
     expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["headphones"]);
   });
+
+  it("asks 'still want it?' once the 30 days are over, and remembers a yes", async () => {
+    renderWithIntl(<QueuePage />);
+    // The headphones were added in January; by mid-September the cooldown is long over.
+    const band = screen.getByTestId("cooldown-ask");
+    expect(band).toHaveTextContent("Still want it?");
+    fireEvent.click(within(band).getByRole("button", { name: "Yes, keep it" }));
+    expect(useAppStore.getState().queueItems[0]?.cooldownConfirmedOn).toBe("2026-09-15");
+    expect(screen.queryByTestId("cooldown-ask")).not.toBeInTheDocument();
+    await waitFor(async () =>
+      expect((await db.queue.get("headphones"))?.cooldownConfirmedOn).toBe("2026-09-15"),
+    );
+  });
+
+  it("skips the item from the question and records it as a decision", async () => {
+    renderWithIntl(<QueuePage />);
+    fireEvent.click(
+      within(screen.getByTestId("cooldown-ask")).getByRole("button", { name: "Skip it" }),
+    );
+    expect(useAppStore.getState().queueItems).toEqual([]);
+    expect(useAppStore.getState().decisions[0]?.outcome).toBe("skipped");
+  });
+
+  it("shows the days left while a want is still cooling down", () => {
+    useAppStore.setState({ queueItems: [{ ...item, addedDate: "2026-09-01" }] });
+    renderWithIntl(<QueuePage />);
+    expect(screen.queryByTestId("cooldown-ask")).not.toBeInTheDocument();
+    expect(screen.getByTestId("cooldown-headphones")).toHaveTextContent("16 days to wait");
+  });
 });

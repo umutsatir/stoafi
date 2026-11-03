@@ -372,7 +372,28 @@
       "amount": "Monthly personal spending (optional)",
       "amountHint": "Leave it empty and Stoafi uses what is left of your wants after subscriptions and installments."
     },
-    "subtitle": "Your money at a glance. As the numbers change, the plan, health and queue update by themselves."
+    "subtitle": "Your money at a glance. As the numbers change, the plan, health and queue update by themselves.",
+    "held": {
+      "label": "Where is it kept?",
+      "cash": "Plain cash",
+      "gold": "Gold",
+      "deposit": "Deposit",
+      "indexFund": "Index fund",
+      "fit": {
+        "good": {
+          "title": "A good fit.",
+          "text": "Easy to reach and it keeps its value well: suited to an emergency fund."
+        },
+        "medium": {
+          "title": "Middling.",
+          "text": "Easy to reach, but cash loses to inflation and gold swings. Consider keeping part of the fund somewhere calmer."
+        },
+        "risky": {
+          "title": "Risky.",
+          "text": "Its price can swing a lot, or it cannot be sold quickly. Rarely wise for money you may need at the worst moment."
+        }
+      }
+    }
   },
   "plan": {
     "title": "Plan",
@@ -507,7 +528,15 @@
       "text": "Add something you are thinking of buying. Waiting a little before deciding is the whole idea."
     },
     "priceStale": "Price is {days} days old: still right?",
-    "subtitle": "What you are thinking of buying, in order. Touch a bubble, then click a month to move it. The effect shows at once."
+    "subtitle": "What you are thinking of buying, in order. Touch a bubble, then click a month to move it. The effect shows at once.",
+    "cooldown": {
+      "askTitle": "Still want it?",
+      "askText": "You stayed calm for 30 days. The decision on {name} is yours.",
+      "keep": "Yes, keep it",
+      "skip": "Skip it",
+      "days": "{count, plural, one {# day to wait} other {# days to wait}}",
+      "confirmed": "Confirmed {date}"
+    }
   },
   "queuePreview": {
     "wantsBeforeAfter": "Wants before / after",

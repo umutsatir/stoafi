@@ -372,7 +372,28 @@
       "amount": "Aylık kişisel harcama (isteğe bağlı)",
       "amountHint": "Boş bırakırsan Stoafi, aboneliklerden ve taksitlerden sonra isteklerinde kalanı kullanır."
     },
-    "subtitle": "Paran bir bakışta. Rakamlar değiştikçe plan, sağlık ve kuyruk kendiliğinden güncellenir."
+    "subtitle": "Paran bir bakışta. Rakamlar değiştikçe plan, sağlık ve kuyruk kendiliğinden güncellenir.",
+    "held": {
+      "label": "Nerede tutuluyor?",
+      "cash": "Düz nakit",
+      "gold": "Altın",
+      "deposit": "Mevduat",
+      "indexFund": "Endeks fonu",
+      "fit": {
+        "good": {
+          "title": "İyi.",
+          "text": "Kolay ulaşılır ve değerini iyi korur: acil durum fonu için uygun."
+        },
+        "medium": {
+          "title": "Orta.",
+          "text": "Ulaşılır, ama düz nakit enflasyona yenilir, altının fiyatı oynar. Fonun bir kısmını daha sakin bir yerde tutmayı düşün."
+        },
+        "risky": {
+          "title": "Riskli.",
+          "text": "Fiyatı çok oynayabilir ya da çabuk satılamaz. Tam en kötü anda ihtiyaç duyacağın para için nadiren akıllıca."
+        }
+      }
+    }
   },
   "plan": {
     "title": "Plan",
@@ -507,7 +528,15 @@
       "text": "Almayı düşündüğün bir şey ekle. Karar vermeden önce biraz beklemek işin özü."
     },
     "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?",
-    "subtitle": "Almayı düşündüğün şeyler, sırayla. Bir kabarcığa dokun; sonra bir aya tıklayıp taşı. Etkisi anında görünür."
+    "subtitle": "Almayı düşündüğün şeyler, sırayla. Bir kabarcığa dokun; sonra bir aya tıklayıp taşı. Etkisi anında görünür.",
+    "cooldown": {
+      "askTitle": "Hâlâ istiyor musun?",
+      "askText": "Sakin kaldın, 30 gün geçti. {name} için karar senin.",
+      "keep": "Evet, tut",
+      "skip": "Vazgeç",
+      "days": "{count} gün bekle",
+      "confirmed": "{date} onaylandı"
+    }
   },
   "queuePreview": {
     "wantsBeforeAfter": "İstekler önce / sonra",

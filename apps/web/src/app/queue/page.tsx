@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   DecisionSchema,
+  cooldownPhase,
   activeQueueItems,
   hourlyNetIncome,
   monthlyNeeds,
@@ -110,6 +111,13 @@ export default function QueuePage() {
     (i) => filter === "all" || (filter === "need" ? i.isNeed : !i.isNeed),
   );
 
+  /** The first want whose 30-day wait is over and has not been asked "still want it?" yet. */
+  const askItem = waitingItems.find((i) => cooldownPhase(i, today).phase === "ask");
+
+  function confirmStillWanted(item: QueueItem) {
+    handleSave({ ...item, cooldownConfirmedOn: today });
+  }
+
   function handleSave(item: QueueItem) {
     const exists = queueItems.some((i) => i.id === item.id);
     setQueueItems(
@@ -206,26 +214,26 @@ export default function QueuePage() {
     setSelectedId(null);
   }
 
-  function handleDecide(outcome: "skipped" | "postponed") {
-    if (!selectedItem) return;
+  function handleDecide(outcome: "skipped" | "postponed", target: QueueItem | null = selectedItem) {
+    if (!target) return;
     const decision: Decision = {
-      id: `${outcome}-${selectedItem.id}-${decisions.length}`,
-      queueItemRef: selectedItem.id,
-      itemName: selectedItem.name,
+      id: `${outcome}-${target.id}-${decisions.length}`,
+      queueItemRef: target.id,
+      itemName: target.name,
       outcome,
       timestamp: new Date().toISOString(),
       // What the item would have cost in cash: the money saved when skipped.
-      amount: selectedItem.discountedCashPrice ?? selectedItem.price,
+      amount: target.discountedCashPrice ?? target.price,
     };
     setDecisions([...decisions, decision]);
     void putListItem(db, "decisions", DecisionSchema, decision).catch(
       logFailure("save the decision"),
     );
-    if (outcome === "skipped") removeItem(selectedItem);
+    if (outcome === "skipped") removeItem(target);
     notifyUndo(
-      tc("decisionRecorded", { name: selectedItem.name, outcome: tc(`outcome.${outcome}`) }),
+      tc("decisionRecorded", { name: target.name, outcome: tc(`outcome.${outcome}`) }),
       tc("undo"),
-      () => undoDecision(decision, selectedItem, outcome === "skipped"),
+      () => undoDecision(decision, target, outcome === "skipped"),
     );
     setSelectedId(null);
   }
@@ -262,6 +270,36 @@ export default function QueuePage() {
       ) : (
         <>
           <QueueSummary {...summary} />
+          {askItem && (
+            <section
+              role="status"
+              data-testid="cooldown-ask"
+              className="pop-in flex flex-wrap items-center gap-5 rounded-card bg-c4 px-[30px] py-[22px] text-on"
+            >
+              <div className="min-w-0 flex-1 basis-60">
+                <h2 className="text-[22px] font-extrabold tracking-[-0.03em]">
+                  {t("cooldown.askTitle")}
+                </h2>
+                <p className="mt-0.5 text-[13.5px] font-semibold">
+                  {t("cooldown.askText", { name: askItem.name })}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => confirmStillWanted(askItem)}
+                className="press rounded-full bg-on px-6 py-3 text-sm font-extrabold text-background"
+              >
+                {t("cooldown.keep")}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDecide("skipped", askItem)}
+                className="press rounded-full bg-black/15 px-6 py-3 text-sm font-extrabold"
+              >
+                {t("cooldown.skip")}
+              </button>
+            </section>
+          )}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <SegmentedControl
               label={t("views.label")}

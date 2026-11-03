@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { decisionStats, filterDecisions, type Decision } from "@stoafi/core";
 import { Card } from "@/components/ui/card";

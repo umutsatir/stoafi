@@ -95,7 +95,7 @@ export function PotCard({ pot, index, dropKey, onDeposit, onHistory }: PotCardPr
     <li
       data-testid={`pot-${pot.id}`}
       style={stagger(index)}
-      className="lift pop-in relative flex flex-col gap-4 rounded-card bg-card px-7 py-[26px]"
+      className="lift pop-in relative flex h-full flex-col gap-4 rounded-card bg-card px-7 py-[26px]"
     >
       {celebrate > 0 && <Confetti key={celebrate} />}
       <div className="flex gap-4">
@@ -143,7 +143,7 @@ export function PotCard({ pot, index, dropKey, onDeposit, onHistory }: PotCardPr
           })}
         </p>
       )}
-      <div className="flex flex-wrap gap-2">
+      <div className="mt-auto flex flex-wrap gap-2 pt-2">
         <Button type="button" onClick={() => onDeposit(pot)}>
           <Plus className="h-4 w-4" aria-hidden="true" />
           {t("addMoney")}

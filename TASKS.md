@@ -904,9 +904,11 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T16.5** Profile (four tiles). **T16.6** Plan (stacked bars per strategy, lesson details).
 - [x] **T16.7** Queue rows with rank badges; large radii everywhere. **T16.8** Settings in two columns plus offline and install section.
 - [x] **T16.9** Data-lost screen (`lib/had-data.ts`), lock, error and onboarding restyled.
-- [ ] **T16.10** Not recomposed yet, only restyled through shared primitives: Savings (pots and basket), Cards, Health, Decisions, Lessons, queue detail/Eisenhower/timeline views.
-- [ ] **T16.11** Needs an owner decision: cooldown re-prompt ("Still want it?") needs an optional field on the queue item; "Where is it held?" on the profile needs a new profile field. Both are in the design, neither exists in the data model.
-- [ ] **T16.12** Run `npx playwright install` then `pnpm --filter @stoafi/web test:e2e`; browsers were not installed here, so e2e was not run.
+- [x] **T16.10** Recomposed to the design: modals (sheets are now centred pop modals, palette, toast pill), home bottom row, decisions, health, lessons, cards (wallet row, inline detail, calculator beside), savings summary and pots, basket template cards.
+- [x] **T16.11** Cooldown re-prompt (`cooldownPhase`, optional `cooldownConfirmedOn` on the queue item) and "where is the fund kept" (`emergencyFundHeld`, `fundHoldingFit`), both with core tests.
+  Note: both fields are additive and optional, like `installmentPurchase`, so stored data stays valid.
+- [ ] **T16.12** Run `npx playwright install` then `pnpm --filter @stoafi/web test:e2e`; browsers are not installed here, so e2e was not run.
+- [ ] **T16.13** Still not inline like the design: the queue item preview (stays a modal) and the investments tab's holdings list (restyled only).
 
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 

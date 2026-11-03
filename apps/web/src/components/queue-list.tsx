@@ -21,6 +21,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import {
+  cooldownPhase,
   costInWorkHours,
   costPerUse,
   priceAgeDays,
@@ -129,6 +130,7 @@ function QueueRow({
   });
   const quadrant = eisenhowerQuadrant(item);
   const priority = priorityOf(quadrant);
+  const cooldown = cooldownPhase(item, today);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -192,6 +194,20 @@ function QueueRow({
             </span>
           </StatusChip>
           <StatusChip tone={priority.tone}>{t(`priority.${priority.key}`)}</StatusChip>
+          {cooldown.phase === "counting" && (
+            <StatusChip tone="warning">
+              <span data-testid={`cooldown-${item.id}`}>
+                {t("cooldown.days", { count: cooldown.daysLeft })}
+              </span>
+            </StatusChip>
+          )}
+          {cooldown.phase === "confirmed" && (
+            <StatusChip tone="success">
+              <span data-testid={`cooldown-${item.id}`}>
+                {t("cooldown.confirmed", { date: cooldown.on })}
+              </span>
+            </StatusChip>
+          )}
           {priceIsStale(item, today) && (
             <button
               type="button"

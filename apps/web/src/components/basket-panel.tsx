@@ -117,7 +117,7 @@ export function BasketPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="flex items-center gap-2 text-lg font-semibold">
+          <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-[-0.03em]">
             <Layers className="h-4 w-4 text-primary-ink" aria-hidden="true" />
             {t("title")}
           </h2>
@@ -137,7 +137,7 @@ export function BasketPanel({
               <li
                 key={template.id}
                 style={stagger(i)}
-                className="rise-in flex flex-col gap-2 rounded-xl border border-border p-3"
+                className="pop-in flex flex-col gap-2 rounded-[20px] bg-muted px-[22px] py-5 transition-transform duration-300 [transition-timing-function:cubic-bezier(.3,1.6,.5,1)] hover:-translate-y-1.5"
               >
                 <p className="font-semibold">{t(`template.${template.id}.name`)}</p>
                 <p className="text-xs text-muted-foreground">{t(`template.${template.id}.text`)}</p>
@@ -308,7 +308,7 @@ export function BasketPanel({
                       aria-label={t("assignTo", { name: h.label })}
                       value=""
                       onChange={(e) => e.target.value && onAssign(h.id, e.target.value)}
-                      className="h-9 rounded-md border border-input bg-card px-2 text-sm"
+                      className="h-9 rounded-2xl border-0 bg-muted px-3 text-sm font-bold"
                     >
                       <option value="">{t("choose")}</option>
                       {basket.map((e) => (
@@ -372,7 +372,7 @@ export function BasketPanel({
                     />
                   </div>
                 )}
-                <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
+                <ul className="flex flex-col divide-y divide-border rounded-[20px] bg-muted px-3">
                   {basket.map((entry) => {
                     const share = shares.find((s) => s.id === entry.id);
                     const planned = share?.amount ?? 0;

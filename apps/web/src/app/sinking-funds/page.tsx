@@ -298,7 +298,6 @@ export default function SavingsPage() {
 
   return (
     <Page title={t("title")} subtitle={t("subtitle")}>
-      <p className="max-w-prose text-sm text-muted-foreground">{t("intro")}</p>
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="pots">{t("tabs.pots")}</TabsTrigger>

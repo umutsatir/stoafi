@@ -4,6 +4,9 @@ import { useState, type FormEvent } from "react";
 import { ShieldCheck, TrendingUp } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  FUND_HOLDINGS,
+  fundHoldingFit,
+  type FundHolding,
   INFLATION_COUNTRY_CODES,
   INFLATION_DATA_AS_OF,
   activeFixedExpenses,
@@ -27,7 +30,11 @@ import { PercentInput } from "./percent-input";
 /** The settings part of the profile: savings, the emergency-fund goal and inflation. */
 export type ProfileSettings = Pick<
   Profile,
-  "savings" | "emergencyFundTargetMonths" | "annualInflationExpectation" | "countryCode"
+  | "savings"
+  | "emergencyFundTargetMonths"
+  | "annualInflationExpectation"
+  | "countryCode"
+  | "emergencyFundHeld"
 >;
 
 export interface ProfileFormProps {
@@ -54,6 +61,7 @@ export function ProfileForm({
   const [fundMonths, setFundMonths] = useState(initial?.emergencyFundTargetMonths ?? 6);
   const [inflation, setInflation] = useState(initial?.annualInflationExpectation ?? 0.3);
   const [country, setCountry] = useState(initial?.countryCode ?? "");
+  const [held, setHeld] = useState<FundHolding | undefined>(initial?.emergencyFundHeld);
 
   const regionNames = new Intl.DisplayNames(locale, { type: "region" });
 
@@ -78,6 +86,7 @@ export function ProfileForm({
       emergencyFundTargetMonths: fundMonths,
       annualInflationExpectation: inflation,
       ...(country ? { countryCode: country } : {}),
+      ...(held ? { emergencyFundHeld: held } : {}),
     });
   }
 
@@ -111,6 +120,50 @@ export function ProfileForm({
               </p>
             )}
           </Field>
+          <div>
+            <p className="text-[13px] font-bold" id="held-label">
+              {t("held.label")}
+            </p>
+            <div
+              role="radiogroup"
+              aria-labelledby="held-label"
+              className="mt-2 flex flex-wrap gap-2"
+            >
+              {FUND_HOLDINGS.map((holding) => (
+                <button
+                  key={holding}
+                  type="button"
+                  role="radio"
+                  aria-checked={held === holding}
+                  onClick={() => setHeld(held === holding ? undefined : holding)}
+                  className={`press rounded-full px-4 py-[9px] text-[13px] font-bold ${
+                    held === holding ? "bg-foreground text-background" : "bg-muted"
+                  }`}
+                >
+                  {t(`held.${holding}`)}
+                </button>
+              ))}
+            </div>
+            {held && (
+              <p
+                data-testid="held-fit"
+                className="mt-3 text-[13px] leading-relaxed text-muted-foreground"
+              >
+                <b
+                  className={
+                    fundHoldingFit(held) === "good"
+                      ? "text-success"
+                      : fundHoldingFit(held) === "risky"
+                        ? "text-destructive"
+                        : "text-foreground"
+                  }
+                >
+                  {t(`held.fit.${fundHoldingFit(held)}.title`)}
+                </b>{" "}
+                {t(`held.fit.${fundHoldingFit(held)}.text`)}
+              </p>
+            )}
+          </div>
         </CardContent>
       </Card>
 

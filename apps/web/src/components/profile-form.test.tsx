@@ -175,3 +175,18 @@ describe("ProfileForm settings", () => {
     expect(screen.getByTestId("inflation-insight")).toHaveTextContent("₺1,500.00");
   });
 });
+
+describe("ProfileForm where the fund is kept", () => {
+  it("says how well the chosen place suits an emergency fund, and saves the choice", () => {
+    const onSave = vi.fn();
+    renderWithIntl(<ProfileForm onSave={onSave} />);
+    fireEvent.click(screen.getByRole("radio", { name: "Deposit" }));
+    expect(screen.getByTestId("held-fit")).toHaveTextContent("A good fit.");
+    fireEvent.click(screen.getByRole("radio", { name: "Index fund" }));
+    expect(screen.getByTestId("held-fit")).toHaveTextContent("Risky.");
+    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({ emergencyFundHeld: "indexFund" }),
+    );
+  });
+});
