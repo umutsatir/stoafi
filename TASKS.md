@@ -908,7 +908,9 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
 - [x] **T16.11** Cooldown re-prompt (`cooldownPhase`, optional `cooldownConfirmedOn` on the queue item) and "where is the fund kept" (`emergencyFundHeld`, `fundHoldingFit`), both with core tests.
   Note: both fields are additive and optional, like `installmentPurchase`, so stored data stays valid.
 - [ ] **T16.12** Run `npx playwright install` then `pnpm --filter @stoafi/web test:e2e`; browsers are not installed here, so e2e was not run.
-- [ ] **T16.13** Still not inline like the design: the queue item preview (stays a modal) and the investments tab's holdings list (restyled only).
+- [x] **T16.13** Queue item detail is now inline under the list, as in the design (three cards plus the installment calculator). The investments tab's holdings list is still only restyled.
+- [x] **T16.14** Design pass: navbar, orbit ring (centred, one installments bar), plan cards, basket, queue (timeline, list, Eisenhower, inline detail), health, lessons, profile, settings; shared inputs, buttons, switch and stepper; hover transitions animate (Tailwind v4 individual transform properties need their own transition).
+  - Queue: the design lets you click a month to move an item there. That needs a "pinned month" on the queue item, so it was not built. Open question.
 
 **Stop and report after each page in Phase 12 and after each of Phases 11, 13, 14.**
 
