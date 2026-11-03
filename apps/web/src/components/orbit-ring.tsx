@@ -16,12 +16,7 @@ export interface OrbitSegment {
   shareText: string;
   rows: { label: string; amountText: string; amount: number }[];
   note: string;
-  /** What the bar is measured against (installments: the cap, in minor units) and its caption. */
-  capacity?: { amount: number; fillText: string };
 }
-
-/** Colours for the parts of the installments bar. */
-const ROW_COLORS = ["var(--c3)", "var(--c1)", "var(--c2)", "var(--c4)"];
 
 const CIRCUMFERENCE = 2 * Math.PI * 190;
 const INNER = 2 * Math.PI * 148;
@@ -155,10 +150,6 @@ export function OrbitRing({
 
 function SegmentDetail({ segment, visible }: { segment: OrbitSegment; visible: boolean }) {
   const total = segment.rows.reduce((sum, r) => sum + Math.abs(r.amount), 0) || 1;
-  // Installments read as one bar split between the plans, not one bar each.
-  const stacked = segment.id === "installments" && segment.rows.length > 0;
-  // The bar is the installment limit; each plan fills its own share of it, so the empty part reads as room left.
-  const scale = Math.max(segment.capacity?.amount ?? 0, total);
   return (
     <div
       aria-hidden={visible ? undefined : true}
@@ -178,59 +169,22 @@ function SegmentDetail({ segment, visible }: { segment: OrbitSegment; visible: b
           {segment.shareText}
         </span>
       </div>
-      {stacked && (
-        <div className="mt-4">
-          <div
-            role="img"
-            aria-label={segment.capacity?.fillText ?? segment.label}
-            className="flex h-3.5 gap-[3px] overflow-hidden rounded-xl bg-muted p-[2px]"
-          >
-            {segment.rows.map((row, i) => (
-              <div
-                key={row.label}
-                title={`${row.label} · ${row.amountText}`}
-                className="rounded-lg transition-[width] duration-500 ease-[cubic-bezier(.2,.8,.2,1)]"
-                style={{
-                  width: `${(Math.abs(row.amount) / scale) * 100}%`,
-                  background: ROW_COLORS[i % ROW_COLORS.length],
-                }}
-              />
-            ))}
-          </div>
-          {segment.capacity && (
-            <p className="mt-2 text-xs font-bold text-muted-foreground">
-              {segment.capacity.fillText}
-            </p>
-          )}
-        </div>
-      )}
       <ul>
-        {segment.rows.map((row, i) => (
+        {segment.rows.map((row) => (
           <li key={row.label} className="mt-4">
             <div className="flex justify-between gap-3 text-[13.5px] font-semibold">
-              <span className="flex min-w-0 items-center gap-2">
-                {stacked && (
-                  <span
-                    aria-hidden="true"
-                    className="h-2.5 w-2.5 flex-none rounded-full"
-                    style={{ background: ROW_COLORS[i % ROW_COLORS.length] }}
-                  />
-                )}
-                <span className="truncate">{row.label}</span>
-              </span>
+              <span className="min-w-0 truncate">{row.label}</span>
               <span className="font-extrabold">{row.amountText}</span>
             </div>
-            {!stacked && (
-              <div className="mt-2 h-2 rounded-lg bg-muted">
-                <div
-                  className="h-2 rounded-lg"
-                  style={{
-                    background: segment.color,
-                    width: `${Math.min(100, (Math.abs(row.amount) / total) * 100)}%`,
-                  }}
-                />
-              </div>
-            )}
+            <div className="mt-2 h-2 rounded-lg bg-muted">
+              <div
+                className="h-2 rounded-lg"
+                style={{
+                  background: segment.color,
+                  width: `${Math.min(100, (Math.abs(row.amount) / total) * 100)}%`,
+                }}
+              />
+            </div>
           </li>
         ))}
       </ul>

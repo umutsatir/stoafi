@@ -154,7 +154,6 @@
       "ofIncome": "gelirin %{pct}’i",
       "fixedNote": "Her ay aynı gün çıkan, pazarlık konusu olmayan yükler.",
       "livingNote": "Tek bir kalem olarak izlenir; her harcamayı girmen gerekmez.",
-      "installmentsFill": "Taksit sınırının %{pct}’i dolu (sınır gelirinin %{cap}’i)",
       "installmentsNote": "Gelirinin %{pct}’i; sınırın (%{cap}) {state, select, under {rahatça altında.} other {üstünde.}}",
       "freeSpending": "Serbest harcama (istekler)",
       "needsRoom": "İhtiyaç payı",
