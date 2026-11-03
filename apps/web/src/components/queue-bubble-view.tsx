@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState, type PointerEvent } from "react";
 import { useLocale } from "next-intl";
 import type { Month, QueueItem } from "@stoafi/core";
 import { formatMonth } from "@/lib/format-month";
@@ -14,6 +15,8 @@ export interface QueueBubbleViewProps {
   monthByItemId: Map<string, Month | null>;
   selectedId: string | null;
   onSelect: (item: QueueItem) => void;
+  /** The user dragged an item onto a month, or picked a month for the selected item. */
+  onPin?: (item: QueueItem, month: Month) => void;
 }
 
 const COLUMN = 93;
@@ -26,9 +29,59 @@ export function QueueBubbleView({
   monthByItemId,
   selectedId,
   onSelect,
+  onPin,
 }: QueueBubbleViewProps) {
   const locale = useLocale();
   const t = useTranslations("queue.bubbles");
+  const stage = useRef<HTMLDivElement>(null);
+  const [drag, setDrag] = useState<{
+    id: string;
+    startX: number;
+    startY: number;
+    dx: number;
+    dy: number;
+    moved: boolean;
+  } | null>(null);
+  const [overCol, setOverCol] = useState<number | null>(null);
+  const justDragged = useRef(false);
+  const [hoverMonth, setHoverMonth] = useState<number | null>(null);
+  const columnAt = (clientX: number): number | null => {
+    const rect = stage.current?.getBoundingClientRect();
+    if (!rect) return null;
+    const col = Math.floor((clientX - rect.left) / COLUMN);
+    return col >= 0 && col < months.length ? col : null;
+  };
+  const dragStart = (event: PointerEvent<HTMLButtonElement>, item: QueueItem) => {
+    if (!onPin) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDrag({
+      id: item.id,
+      startX: event.clientX,
+      startY: event.clientY,
+      dx: 0,
+      dy: 0,
+      moved: false,
+    });
+  };
+  const dragMove = (event: PointerEvent<HTMLButtonElement>) => {
+    if (!drag) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    const moved = drag.moved || Math.hypot(dx, dy) > 6;
+    setDrag({ ...drag, dx, dy, moved });
+    if (moved) setOverCol(columnAt(event.clientX));
+  };
+  const dragEnd = (event: PointerEvent<HTMLButtonElement>, item: QueueItem) => {
+    if (!drag) return;
+    if (drag.moved) {
+      justDragged.current = true;
+      const col = columnAt(event.clientX);
+      const month = col === null ? undefined : months[col]?.month;
+      if (month && onPin) onPin(item, month);
+    }
+    setDrag(null);
+    setOverCol(null);
+  };
   const max = Math.max(1, ...months.map((m) => m.left));
   const monthIndex = new Map(months.map((m, i) => [m.month, i]));
   const stacked: Record<number, number> = {};
@@ -71,12 +124,22 @@ export function QueueBubbleView({
     <div className="pop-in overflow-x-auto rounded-card bg-card px-7 pb-3.5 pt-[26px]">
       <h3 className="mb-0.5 text-lg font-extrabold tracking-[-0.03em]">{t("title")}</h3>
       <p className="mb-1.5 text-[12.5px] text-muted-foreground">{t("hint")}</p>
-      <div className="relative" style={{ width: COLUMN * months.length, height }}>
+      <div ref={stage} className="relative" style={{ width: COLUMN * months.length, height }}>
         <div className="absolute inset-x-0 bottom-0 flex h-[200px] items-end">
           {months.map((m, i) => (
-            <div
+            <button
+              type="button"
               key={m.month}
-              className="flex h-[200px] items-end justify-center"
+              tabIndex={onPin && selectedId ? 0 : -1}
+              aria-label={formatMonth(m.month, locale)}
+              disabled={!onPin || !selectedId}
+              onClick={() => {
+                const sel = items.find((it) => it.id === selectedId);
+                if (sel && onPin) onPin(sel, m.month);
+              }}
+              onMouseEnter={() => setHoverMonth(i)}
+              onMouseLeave={() => setHoverMonth(null)}
+              className="flex h-[200px] cursor-pointer items-end justify-center rounded-t-[18px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default"
               style={{ width: COLUMN }}
             >
               <div
@@ -84,10 +147,15 @@ export function QueueBubbleView({
                 className={cn(
                   "w-[54px] rounded-t-[18px] rounded-b-lg transition-[background-color,box-shadow] duration-[250ms]",
                   selectedMonth === i ? "bg-c1 shadow-[0_0_0_3px_var(--foreground)]" : "bg-muted",
+                  overCol === i && "shadow-[0_0_0_3px_var(--primary)]",
+                  overCol === null &&
+                    hoverMonth === i &&
+                    selectedMonth !== i &&
+                    "shadow-[0_0_0_2px_var(--border)]",
                 )}
                 style={{ height: Math.max(4, (Math.max(0, m.left) / max) * BAR_AREA) }}
               />
-            </div>
+            </button>
           ))}
         </div>
         {placements.map(({ item, rank, col, size, bottom, crowded }) => {
@@ -102,17 +170,36 @@ export function QueueBubbleView({
                   width: size,
                   height: size,
                   animationDelay: `${rank * 0.6}s`,
-                  zIndex: on ? 3 : 1,
+                  zIndex: drag?.id === item.id && drag.moved ? 6 : on ? 3 : 1,
                 }}
               >
                 <button
                   type="button"
-                  onClick={() => onSelect(item)}
+                  onPointerDown={(e) => dragStart(e, item)}
+                  onPointerMove={dragMove}
+                  onPointerUp={(e) => dragEnd(e, item)}
+                  onPointerCancel={() => {
+                    setDrag(null);
+                    setOverCol(null);
+                  }}
+                  onClick={() => {
+                    if (justDragged.current) {
+                      justDragged.current = false;
+                      return;
+                    }
+                    onSelect(item);
+                  }}
                   aria-label={item.name}
                   title={item.name}
                   aria-pressed={on}
+                  style={
+                    drag?.id === item.id && drag.moved
+                      ? { translate: `${drag.dx}px ${drag.dy}px`, transition: "none" }
+                      : undefined
+                  }
                   className={cn(
                     "flex h-full w-full items-center justify-center rounded-full text-[19px] font-extrabold text-on transition-[transform,translate,scale,box-shadow] duration-[400ms] [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    onPin && "cursor-grab touch-none select-none active:cursor-grabbing",
                     item.isNeed ? "bg-c4" : item.installmentPurchase ? "bg-c3" : "bg-c2",
                     on
                       ? "scale-[1.18] shadow-[0_0_0_5px_var(--card),0_0_0_8px_var(--foreground)]"

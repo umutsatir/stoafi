@@ -556,6 +556,7 @@
     },
     "priceStale": "Price is {days} days old: still right?",
     "bubbles": {
+      "moved": "“{name}” moved to {month}",
       "title": "12-month timeline",
       "hint": "A bubble’s size is its price, its place the month it fits. Click a bubble to pick an item."
     },

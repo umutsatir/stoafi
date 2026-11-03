@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   DecisionSchema,
   cooldownPhase,
@@ -28,6 +28,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Page } from "@/components/ui/page";
 import { notify, notifyUndo } from "@/components/ui/toaster";
+import { formatMonth } from "@/lib/format-month";
 import { QueueForm } from "@/components/queue-form";
 import { QueueList } from "@/components/queue-list";
 import { QueuePreview, type PurchaseChoice } from "@/components/queue-preview";
@@ -67,6 +68,7 @@ export default function QueuePage() {
   useQuickAction("addQueueItem", () => setAdding(true));
   const t = useTranslations("queue");
   const tc = useTranslations("common");
+  const locale = useLocale();
 
   if (!profile || !planState) {
     return (
@@ -171,10 +173,41 @@ export default function QueuePage() {
     void saveQueueItem(db, original).catch(logFailure("restore the queue item"));
   }
 
+  /** Moves an item to a month the user chose (dragged onto, or clicked), and offers to take it back. */
+  function handlePin(item: QueueItem, month: Month) {
+    setSelectedId(item.id);
+    if (item.pinnedMonth === month || monthByItemId.get(item.id) === month) return;
+    const before = item;
+    const moved: QueueItem = { ...item, pinnedMonth: month };
+    setQueueItems(queueItems.map((i) => (i.id === item.id ? moved : i)));
+    void saveQueueItem(db, moved).catch(logFailure("move the queue item"));
+    notifyUndo(
+      t("bubbles.moved", { name: item.name, month: formatMonth(month, locale) }),
+      tc("undo"),
+      () => {
+        const current = useAppStore.getState();
+        current.setQueueItems(current.queueItems.map((i) => (i.id === before.id ? before : i)));
+        void saveQueueItem(db, before).catch(logFailure("restore the queue item"));
+      },
+    );
+  }
+
   function handleReorder(next: QueueItem[]) {
+    // A new order replaces the months the user pinned, as the order is what the schedule follows.
+    const unpinned = next.map((item) => {
+      const clean: QueueItem = { ...item };
+      delete clean.pinnedMonth;
+      return clean;
+    });
     // `next` holds only the waiting items; bought-in-installments items keep their place in the store.
-    setQueueItems([...next, ...queueItems.filter((i) => i.installmentPurchase)]);
-    void saveQueueOrder(db, next).catch(logFailure("save the queue order"));
+    setQueueItems([...unpinned, ...queueItems.filter((i) => i.installmentPurchase)]);
+    void saveQueueOrder(db, unpinned).catch(logFailure("save the queue order"));
+    for (const item of next) {
+      if (item.pinnedMonth) {
+        const clean = unpinned.find((u) => u.id === item.id);
+        if (clean) void saveQueueItem(db, clean).catch(logFailure("save the queue item"));
+      }
+    }
   }
 
   function handleConfirm(
@@ -314,6 +347,7 @@ export default function QueuePage() {
                 monthByItemId={monthByItemId}
                 selectedId={selectedItem?.id ?? null}
                 onSelect={(item) => setSelectedId(item.id)}
+                onPin={handlePin}
               />
             )}
             {view === "list" && (

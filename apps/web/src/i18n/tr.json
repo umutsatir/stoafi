@@ -556,6 +556,7 @@
     },
     "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?",
     "bubbles": {
+      "moved": "“{name}” {month} ayına taşındı",
       "title": "12 aylık zaman çizelgesi",
       "hint": "Kabarcığın boyu bedeli, yeri satın alma ayını gösterir. Seçili öğe için bir kabarcığa tıkla."
     },

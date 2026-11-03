@@ -33,6 +33,11 @@ export const QueueItemSchema = z.object({
    * Additive and optional, so existing stored items stay valid.
    */
   cooldownConfirmedOn: z.string().optional(),
+  /**
+   * A month the user dragged (or clicked) the item onto in the timeline. The scheduler keeps it there
+   * instead of choosing the earliest month that fits. Additive and optional, so stored items stay valid.
+   */
+  pinnedMonth: MonthSchema.optional(),
   /** Manual drag-and-drop order, lower comes first. */
   order: z.number().int(),
 });
