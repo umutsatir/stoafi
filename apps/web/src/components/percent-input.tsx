@@ -31,9 +31,9 @@ export function PercentInput({ id, value, onChange, "aria-label": ariaLabel }: P
   }, [value, locale]);
 
   return (
-    <span className="flex items-center gap-2">
+    <span className="relative flex w-full items-center">
       <Input
-        className="w-40"
+        className="w-full pr-12 text-lg font-extrabold"
         id={id}
         type="text"
         inputMode="decimal"
@@ -50,7 +50,10 @@ export function PercentInput({ id, value, onChange, "aria-label": ariaLabel }: P
           if (ratio !== null) onChange(ratio);
         }}
       />
-      <span aria-hidden="true" className="text-sm text-muted-foreground">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-4 text-sm font-bold text-muted-foreground"
+      >
         %
       </span>
     </span>

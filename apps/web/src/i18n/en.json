@@ -201,6 +201,8 @@
     "subtitle": "Money in, money out, and what is left. A few minutes each month is enough; you do not need to enter every cent."
   },
   "profile": {
+    "fundMonthsDecrease": "Fewer months",
+    "fundMonthsIncrease": "More months",
     "title": "Profile",
     "currentSavings": "Current savings",
     "emergencyFundMonths": "Emergency fund target (months)",

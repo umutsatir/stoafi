@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ShieldCheck, TrendingUp } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   FUND_HOLDINGS,
@@ -18,9 +17,8 @@ import {
   type Profile,
 } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Stepper } from "@/components/ui/stepper";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useMoney } from "@/lib/use-money";
 import { stagger } from "@/lib/utils";
@@ -90,92 +88,84 @@ export function ProfileForm({
     });
   }
 
+  const CARD = "pop-in flex flex-col rounded-card bg-card px-8 py-7";
+  const TITLE = "text-[22px] font-extrabold tracking-[-0.03em]";
+  const HINT = "mt-1 text-[13px] leading-normal text-muted-foreground";
+
   return (
     <form onSubmit={handleSubmit} className="grid items-stretch gap-4 lg:grid-cols-[1.1fr_1fr]">
-      <Card className="rise-in">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-primary-ink" aria-hidden="true" />
-            {t("fundTitle")}
-          </CardTitle>
-          <CardDescription>{t("fundHint")}</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
+      <section className={CARD} aria-label={t("fundTitle")}>
+        <h2 className={TITLE}>{t("fundTitle")}</h2>
+        <p className={HINT}>{t("fundHint")}</p>
+        <div className="mt-5">
           <Field label={t("currentSavings")} htmlFor="savings">
             <MoneyInput id="savings" currency={currency} value={savings} onChange={setSavings} />
           </Field>
-          <Field label={t("emergencyFundMonths")} htmlFor="fund-months">
-            <Input
-              id="fund-months"
-              type="number"
-              min={0}
-              step="any"
-              className="w-full"
-              value={fundMonths}
-              onChange={(e) => setFundMonths(Math.max(0, Number(e.target.value)))}
-            />
-            {caption && (
-              <p data-testid="emergency-fund-caption" className="text-xs text-muted-foreground">
-                {caption}
-              </p>
-            )}
-          </Field>
-          <div>
-            <p className="text-[13px] font-bold" id="held-label">
-              {t("held.label")}
-            </p>
-            <div
-              role="radiogroup"
-              aria-labelledby="held-label"
-              className="mt-2 flex flex-wrap gap-2"
+        </div>
+        <p className="mt-[18px] text-[13px] font-bold" id="fund-months-label">
+          {t("emergencyFundMonths")}
+        </p>
+        <Stepper
+          className="mt-2"
+          value={fundMonths}
+          min={0}
+          max={60}
+          decreaseLabel={t("fundMonthsDecrease")}
+          increaseLabel={t("fundMonthsIncrease")}
+          onChange={setFundMonths}
+        />
+        {caption && (
+          <p
+            data-testid="emergency-fund-caption"
+            className="mt-[18px] rounded-[18px] bg-muted px-4 py-3.5 text-[13.5px] font-semibold leading-normal"
+          >
+            {caption}
+          </p>
+        )}
+        <p className="mt-5 text-[13px] font-bold" id="held-label">
+          {t("held.label")}
+        </p>
+        <div role="radiogroup" aria-labelledby="held-label" className="mt-2 flex flex-wrap gap-2">
+          {FUND_HOLDINGS.map((holding) => (
+            <button
+              key={holding}
+              type="button"
+              role="radio"
+              aria-checked={held === holding}
+              onClick={() => setHeld(held === holding ? undefined : holding)}
+              className={`press rounded-full px-4 py-[9px] text-[13px] font-bold ${
+                held === holding ? "bg-foreground text-background" : "bg-muted"
+              }`}
             >
-              {FUND_HOLDINGS.map((holding) => (
-                <button
-                  key={holding}
-                  type="button"
-                  role="radio"
-                  aria-checked={held === holding}
-                  onClick={() => setHeld(held === holding ? undefined : holding)}
-                  className={`press rounded-full px-4 py-[9px] text-[13px] font-bold ${
-                    held === holding ? "bg-foreground text-background" : "bg-muted"
-                  }`}
-                >
-                  {t(`held.${holding}`)}
-                </button>
-              ))}
-            </div>
-            {held && (
-              <p
-                data-testid="held-fit"
-                className="mt-3 text-[13px] leading-relaxed text-muted-foreground"
-              >
-                <b
-                  className={
-                    fundHoldingFit(held) === "good"
-                      ? "text-success"
-                      : fundHoldingFit(held) === "risky"
-                        ? "text-destructive"
-                        : "text-foreground"
-                  }
-                >
-                  {t(`held.fit.${fundHoldingFit(held)}.title`)}
-                </b>{" "}
-                {t(`held.fit.${fundHoldingFit(held)}.text`)}
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              {t(`held.${holding}`)}
+            </button>
+          ))}
+        </div>
+        {held && (
+          <p
+            data-testid="held-fit"
+            className="mt-3 text-[13px] leading-[1.55] text-muted-foreground [animation:fade_0.4s_both]"
+          >
+            <b
+              className={
+                fundHoldingFit(held) === "good"
+                  ? "text-success"
+                  : fundHoldingFit(held) === "risky"
+                    ? "text-destructive"
+                    : "text-foreground"
+              }
+            >
+              {t(`held.fit.${fundHoldingFit(held)}.title`)}
+            </b>{" "}
+            {t(`held.fit.${fundHoldingFit(held)}.text`)}
+          </p>
+        )}
+      </section>
 
-      <Card className="rise-in" style={stagger(1)}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary-ink" aria-hidden="true" />
-            {t("economyTitle")}
-          </CardTitle>
-          <CardDescription>{t("economyHint")}</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
+      <section className={CARD} style={stagger(1)} aria-label={t("economyTitle")}>
+        <h2 className={TITLE}>{t("economyTitle")}</h2>
+        <p className={HINT}>{t("economyHint")}</p>
+        <div className="mt-5">
           <Field label={t("country")} htmlFor="country">
             <NativeSelect
               id="country"
@@ -194,6 +184,8 @@ export function ProfileForm({
               ))}
             </NativeSelect>
           </Field>
+        </div>
+        <div className="mt-[18px]">
           <Field
             label={t("annualInflation")}
             htmlFor="inflation"
@@ -205,24 +197,23 @@ export function ProfileForm({
           >
             <PercentInput id="inflation" value={inflation} onChange={setInflation} />
           </Field>
-          <p
-            data-testid="inflation-insight"
-            className="rounded-[18px] bg-muted px-[18px] py-4 text-sm font-semibold leading-relaxed"
-          >
-            {t("inflationInsight", {
-              rate: `${(inflation * 100).toFixed(0)}%`,
-              amount: money(100_000),
-              then: money(Math.round(100_000 * (1 + inflation))),
-            })}
-          </p>
-        </CardContent>
-      </Card>
-
-      <div className="lg:col-span-2">
-        <Button type="submit" size="lg">
-          {t("save")}
-        </Button>
-      </div>
+        </div>
+        <p
+          data-testid="inflation-insight"
+          className="mt-[18px] rounded-[18px] bg-muted px-[18px] py-4 text-sm font-semibold leading-[1.55]"
+        >
+          {t("inflationInsight", {
+            rate: `${(inflation * 100).toFixed(0)}%`,
+            amount: money(100_000),
+            then: money(Math.round(100_000 * (1 + inflation))),
+          })}
+        </p>
+        <div className="mt-auto pt-5">
+          <Button type="submit" size="lg" className="w-full hover:scale-[1.03]">
+            {t("save")}
+          </Button>
+        </div>
+      </section>
     </form>
   );
 }

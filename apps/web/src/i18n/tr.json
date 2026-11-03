@@ -201,6 +201,8 @@
     "subtitle": "Giren para, çıkan para ve geriye kalan. Her ay birkaç dakikalık bir bakış yeter; her kuruşu girmen gerekmez."
   },
   "profile": {
+    "fundMonthsDecrease": "Hedefi azalt",
+    "fundMonthsIncrease": "Hedefi artır",
     "title": "Profil",
     "currentSavings": "Mevcut birikim",
     "emergencyFundMonths": "Acil durum fonu hedefi (ay)",
