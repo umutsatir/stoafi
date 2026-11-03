@@ -63,13 +63,13 @@ describe("DecisionLog", () => {
     expect(screen.getByTestId("outcome-d3")).toHaveTextContent("Skipped");
   });
 
-  it("groups decisions under month names, newest first", () => {
+  it("lists decisions newest first with their date", () => {
     renderWithIntl(<DecisionLog decisions={decisions} />);
-    const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(headings).toEqual(["October 2026", "September 2026"]);
-    expect(
-      within(screen.getByTestId("month-2026-10")).getByTestId("decision-d1"),
-    ).toBeInTheDocument();
+    const dates = screen
+      .getAllByTestId(/^decision-/)
+      .map((row) => /\d{4}-\d{2}-\d{2}/.exec(row.textContent ?? "")?.[0] ?? "");
+    expect(dates).toEqual([...dates].sort().reverse());
+    expect(screen.getByTestId("decision-d1")).toHaveTextContent("2026-10");
   });
 
   it("shows the item name recorded with the decision, never the raw id", () => {

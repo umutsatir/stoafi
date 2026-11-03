@@ -39,3 +39,23 @@ export function minimumPaymentPayoff(
 
   return { months, totalInterest, neverPaysOff: b >= PAID_OFF_BELOW };
 }
+
+/**
+ * The balance at the start of each of the first `months` months under the same rule, for drawing how
+ * slowly the debt shrinks. Months after the debt is cleared read zero.
+ */
+export function minimumPaymentBalances(
+  balance: number,
+  monthlyRate: number,
+  minPaymentRule: MinPaymentRule,
+  months: number,
+): number[] {
+  const balances: number[] = [];
+  let b = balance;
+  for (let i = 0; i < months; i++) {
+    balances.push(b >= PAID_OFF_BELOW ? b : 0);
+    if (b < PAID_OFF_BELOW) continue;
+    b = Math.max(0, b * (1 + monthlyRate) - Math.max(minPaymentRule.pct * b, minPaymentRule.floor));
+  }
+  return balances;
+}

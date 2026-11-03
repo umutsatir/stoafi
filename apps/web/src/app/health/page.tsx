@@ -23,7 +23,7 @@ export default function HealthPage() {
 
   if (!profile) {
     return (
-      <Page title={t("title")}>
+      <Page title={t("title")} subtitle={t("subtitle")}>
         <EmptyState
           icon={<HeartPulse className="h-8 w-8" />}
           title={t("empty.title")}
@@ -55,7 +55,7 @@ export default function HealthPage() {
   });
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       <HealthMetrics
         summary={summary}
         emergencyFundTargetMonths={profile.emergencyFundTargetMonths}

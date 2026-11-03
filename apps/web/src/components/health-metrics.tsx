@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ArrowRight, CircleCheck, TriangleAlert } from "lucide-react";
 import {
   trendOf,
   type HealthMetricKind,
@@ -11,15 +10,10 @@ import {
   type Snapshot,
   type SnapshotKey,
 } from "@stoafi/core";
-import { Button } from "@/components/ui/button";
-import { InfoPopover } from "@/components/ui/info-popover";
 import { ProgressBar, type Tone } from "@/components/ui/progress-bar";
-import { ProgressRing } from "@/components/ui/progress-ring";
-import { Sparkline } from "@/components/ui/sparkline";
-import { StatCard } from "@/components/ui/stat-card";
+import { Card } from "@/components/ui/card";
 import { useMoney } from "@/lib/use-money";
-import type { ChipTone } from "@/components/ui/status-chip";
-import { stagger } from "@/lib/utils";
+import { cn, stagger } from "@/lib/utils";
 
 export interface HealthMetricsProps {
   summary: HealthSummary;
@@ -30,7 +24,6 @@ export interface HealthMetricsProps {
   snapshots?: Snapshot[];
 }
 
-const CHIP: Record<HealthStatus, ChipTone> = { good: "success", watch: "warning", risk: "danger" };
 const TONE: Record<HealthStatus, Tone> = { good: "success", watch: "warning", risk: "danger" };
 const TREND_KEYS: SnapshotKey[] = ["savingsRate", "emergencyMonths", "installmentRatio", "wealth"];
 const KINDS: HealthMetricKind[] = [
@@ -50,6 +43,8 @@ export function HealthMetrics({
   const money = useMoney();
   const first = summary.steps[0];
 
+  const FILL: Record<string, string> = { good: "bg-c4", watch: "bg-c2", risk: "bg-c3" };
+
   const text = (kind: HealthMetricKind): string => {
     const value = summary.metrics[kind].value;
     switch (kind) {
@@ -64,18 +59,28 @@ export function HealthMetrics({
   const visual = (kind: HealthMetricKind) => {
     const { value, status } = summary.metrics[kind];
     switch (kind) {
-      case "emergencyFundMonths":
-        return (
-          <ProgressRing
-            value={value}
-            max={emergencyFundTargetMonths}
-            label={t("fundRingLabel")}
-            tone={TONE[status]}
-            size={64}
-          >
-            {Math.min(100, Math.round((value / Math.max(emergencyFundTargetMonths, 0.01)) * 100))}%
-          </ProgressRing>
+      case "emergencyFundMonths": {
+        const pct = Math.min(
+          100,
+          Math.round((value / Math.max(emergencyFundTargetMonths, 0.01)) * 100),
         );
+        return (
+          <div
+            role="progressbar"
+            aria-label={t("fundRingLabel")}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={pct}
+            className="h-2.5 w-full overflow-hidden rounded-full bg-muted"
+          >
+            <div
+              className={cn("h-full rounded-full transition-[width] duration-500", FILL[status])}
+              style={{ width: `${pct}%` }}
+            />
+            <span className="sr-only">{pct}%</span>
+          </div>
+        );
+      }
       case "installmentRatio":
         return (
           <ProgressBar
@@ -97,73 +102,112 @@ export function HealthMetrics({
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <section
-        aria-label={t("summary.title")}
-        data-testid="health-summary"
-        className="rise-in flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
-      >
-        {summary.overall === "good" ? (
-          <CircleCheck className="h-10 w-10 text-success" aria-hidden="true" />
-        ) : (
-          <TriangleAlert
-            className={
-              summary.overall === "risk" ? "h-10 w-10 text-destructive" : "h-10 w-10 text-warning"
-            }
-            aria-hidden="true"
-          />
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="text-sm text-muted-foreground">{t("summary.title")}</p>
-          <p className="text-title font-semibold" data-testid="overall-status">
-            {t(`status.${summary.overall}`)}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {first ? t(`steps.${first.id}.why`) : t("summary.allGood")}
-          </p>
+    <div className="flex flex-col gap-4">
+      <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
+        <div className="grid gap-4 sm:grid-cols-2 sm:grid-rows-2">
+          {KINDS.map((kind, i) => {
+            const { status } = summary.metrics[kind];
+            return (
+              <Card
+                key={kind}
+                className="pop-in flex flex-col px-7 py-[26px]"
+                style={stagger(i + 1)}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-base font-extrabold">{t(`metric.${kind}`)}</span>
+                  <span
+                    className={cn(
+                      "rounded-full px-3 py-1 text-xs font-extrabold text-on",
+                      FILL[status],
+                    )}
+                  >
+                    {t(`status.${status}`)}
+                  </span>
+                </div>
+                <p
+                  data-testid={kindTestId(kind)}
+                  className="mt-3 text-[clamp(32px,4vw,46px)] font-extrabold leading-[1.1] tracking-[-0.06em]"
+                >
+                  {text(kind)}
+                </p>
+                <div className="mt-3.5">{visual(kind)}</div>
+                <div className="mt-auto pt-3">
+                  <p className="text-[12.5px] leading-normal text-muted-foreground">
+                    {t(`hint.${kind}.${status}`, {
+                      target: emergencyFundTargetMonths,
+                      cap: Math.round(installmentCapPct * 100),
+                    })}
+                  </p>
+                  <p className="mt-2 text-xs leading-normal text-muted-foreground">
+                    {t(`info.${kind}.text`)}
+                  </p>
+                </div>
+              </Card>
+            );
+          })}
         </div>
-        {first && (
-          <Button asChild>
-            <Link href={first.href}>
-              {t("summary.fix")}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
-        )}
-      </section>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {KINDS.map((kind, i) => {
-          const { status } = summary.metrics[kind];
-          return (
-            <StatCard
-              key={kind}
-              className="rise-in"
-              style={stagger(i + 1)}
-              label={t(`metric.${kind}`)}
-              info={
-                <InfoPopover label={t(`info.${kind}.label`)}>{t(`info.${kind}.text`)}</InfoPopover>
-              }
-              testId={kind === "savingsRate" ? "savings-rate" : kindTestId(kind)}
-              value={text(kind)}
-              status={{ label: t(`status.${status}`), tone: CHIP[status] }}
-              hint={t(`hint.${kind}.${status}`, {
-                target: emergencyFundTargetMonths,
-                cap: Math.round(installmentCapPct * 100),
-              })}
-              footer={visual(kind)}
-            />
-          );
-        })}
+        <div className="flex flex-col gap-4">
+          <Card
+            data-testid="health-summary"
+            aria-label={t("summary.title")}
+            className={cn("pop-in px-[30px] py-[26px] text-on", FILL[summary.overall])}
+            style={stagger(2)}
+          >
+            <p className="text-[13px] font-bold">{t("summary.title")}</p>
+            <p
+              data-testid="overall-status"
+              className="mt-1 text-[clamp(38px,5vw,54px)] font-extrabold leading-[1.1] tracking-[-0.06em]"
+            >
+              {t(`status.${summary.overall}`)}
+            </p>
+            <p className="mt-1 text-[13px] font-semibold">
+              {first ? t(`steps.${first.id}.why`) : t("summary.allGood")}
+            </p>
+          </Card>
+
+          <Card className="pop-in flex-1 px-[30px] py-[26px]" style={stagger(3)}>
+            <h2 className="text-xl font-extrabold tracking-[-0.03em]">{t("steps.title")}</h2>
+            {summary.steps.length === 0 ? (
+              <p className="mt-3.5 text-sm font-semibold">{t("steps.allGood")}</p>
+            ) : (
+              <ul>
+                {summary.steps.map((step) => (
+                  <li
+                    key={step.id}
+                    data-testid={`step-${step.id}`}
+                    className="mt-4 border-t border-border pt-3.5"
+                  >
+                    <p className="text-[15px] font-extrabold">{t(`steps.${step.id}.title`)}</p>
+                    <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                      {t(`steps.${step.id}.why`)}
+                    </p>
+                    <Link
+                      href={step.href}
+                      className="press mt-2.5 inline-block rounded-full bg-foreground px-4 py-2 text-[12.5px] font-extrabold text-background"
+                    >
+                      {t(`steps.${step.id}.action`)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
       </div>
 
-      <section className="flex flex-col gap-3" aria-label={t("trends.title")} data-testid="trends">
-        <h2 className="text-lg font-semibold">{t("trends.title")}</h2>
+      <Card
+        className="pop-in px-5 py-[26px] md:px-8"
+        style={stagger(4)}
+        aria-label={t("trends.title")}
+        data-testid="trends"
+      >
+        <h2 className="text-xl font-extrabold tracking-[-0.03em]">{t("trends.title")}</h2>
         {snapshots.length < 2 ? (
-          <p className="text-sm text-muted-foreground">{t("trends.soon")}</p>
+          <p className="mt-3 text-sm text-muted-foreground">{t("trends.soon")}</p>
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {TREND_KEYS.map((key, i) => {
+          <ul className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {TREND_KEYS.map((key) => {
               const trend = trendOf(snapshots, key, 6);
               const percent = key === "savingsRate" || key === "installmentRatio";
               const change = trend.change;
@@ -178,27 +222,44 @@ export function HealthMetrics({
                     ? `${(n * 100).toFixed(1)}%`
                     : t("monthsValue", { value: n.toFixed(1) });
               return (
-                <li
-                  key={key}
-                  data-testid={`trend-${key}`}
-                  style={stagger(i)}
-                  className="rise-in flex flex-col gap-1 rounded-xl border border-border bg-card p-4"
-                >
-                  <p className="text-sm text-muted-foreground">{t(`trends.${key}`)}</p>
-                  <p className="text-lg font-semibold">
+                <li key={key} data-testid={`trend-${key}`} className="flex flex-col gap-1">
+                  <p className="text-[13px] font-bold text-muted-foreground">
+                    {t(`trends.${key}`)}
+                  </p>
+                  <p className="text-lg font-extrabold">
                     {format(trend.points[trend.points.length - 1] ?? 0)}
                   </p>
-                  <Sparkline
-                    points={trend.points}
-                    label={t("trends.lineLabel", {
+                  <div
+                    role="img"
+                    aria-label={t("trends.lineLabel", {
                       name: t(`trends.${key}`),
                       months: trend.points.length,
                     })}
-                  />
+                    className="mt-2.5 flex h-14 items-end gap-[5px]"
+                  >
+                    {trend.points.map((point, i) => {
+                      const top = Math.max(...trend.points.map((p) => Math.abs(p)), 1e-9);
+                      return (
+                        <div
+                          key={i}
+                          className={cn(
+                            "flex-1 rounded-t-md rounded-b-[2px] transition-[height] duration-500",
+                            i === trend.points.length - 1 ? "bg-primary" : "bg-muted",
+                          )}
+                          style={{ height: Math.max(4, (Math.abs(point) / top) * 56) }}
+                        />
+                      );
+                    })}
+                  </div>
                   <p
-                    className={
-                      better === null ? "text-xs text-muted-foreground" : "text-xs font-medium"
-                    }
+                    className={cn(
+                      "mt-2 text-[12.5px] font-bold",
+                      better === null
+                        ? "text-muted-foreground"
+                        : better
+                          ? "text-success"
+                          : "text-destructive",
+                    )}
                     data-testid={`trend-change-${key}`}
                   >
                     {change === null || change === 0
@@ -216,29 +277,7 @@ export function HealthMetrics({
             })}
           </ul>
         )}
-      </section>
-
-      {summary.steps.length > 0 && (
-        <section className="flex flex-col gap-3" aria-label={t("steps.title")}>
-          <h2 className="text-lg font-semibold">{t("steps.title")}</h2>
-          <ul className="grid gap-3 md:grid-cols-2">
-            {summary.steps.map((step, i) => (
-              <li
-                key={step.id}
-                data-testid={`step-${step.id}`}
-                style={stagger(i)}
-                className="rise-in flex flex-col gap-2 rounded-xl border border-border bg-card p-4"
-              >
-                <p className="font-medium">{t(`steps.${step.id}.title`)}</p>
-                <p className="text-sm text-muted-foreground">{t(`steps.${step.id}.why`)}</p>
-                <Button asChild variant="outline" size="sm" className="w-fit">
-                  <Link href={step.href}>{t(`steps.${step.id}.action`)}</Link>
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      </Card>
     </div>
   );
 }

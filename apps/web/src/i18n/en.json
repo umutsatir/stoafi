@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Stoafi",
-    "loading": "Loading your data"
+    "loading": "Loading your data",
+    "restoreFailed": "That file could not be read as a Stoafi backup."
   },
   "home": {
     "title": "Home",
@@ -113,7 +114,9 @@
         "fixed": "The amount you set for personal spending.",
         "auto": "What is left of your wants after subscriptions and installments."
       },
-      "emergencyFirst": "Your emergency fund is not full yet, so this month the plan's investing money goes to savings. Investing starts once the fund is full."
+      "emergencyFirst": "Your emergency fund is not full yet, so this month the plan's investing money goes to savings. Investing starts once the fund is full.",
+      "installmentBar": "Installments against your installment cap",
+      "installmentsInside": "Installments are part of this: {used} of your {cap} installment cap."
     },
     "installmentRoom": {
       "title": "Installment room",
@@ -139,7 +142,41 @@
       "todo": "What to do this month",
       "showDetails": "Show details",
       "hideDetails": "Hide details"
-    }
+    },
+    "orbit": {
+      "quote1": {
+        "text": "It is not the person who has little, but the one who craves more, who is poor.",
+        "by": "Seneca · loose translation"
+      },
+      "quote2": {
+        "text": "Wealth is not having a lot, it is needing little.",
+        "by": "Epictetus · loose translation"
+      },
+      "quote3": {
+        "text": "Your life takes on the colour of your thoughts.",
+        "by": "Marcus Aurelius · loose translation"
+      },
+      "title": "{month} orbit",
+      "hint": "Point at a part to see what is inside it",
+      "innerRing": "Inner ring: day {day} of {days}",
+      "fixed": "Fixed costs",
+      "living": "Living costs",
+      "installments": "Installments",
+      "left": "Left",
+      "ofIncome": "{pct}% of income",
+      "fixedNote": "Costs that go out the same day every month and are not up for negotiation.",
+      "livingNote": "Tracked as one line; you do not need to log every purchase.",
+      "installmentsNote": "{pct}% of your income, {state, select, under {comfortably under} other {over}} your {cap}% limit.",
+      "freeSpending": "Free spending (wants)",
+      "needsRoom": "Room in needs",
+      "savingRoom": "Saving and investing share",
+      "leftNote": "Your free spending is about {daily} a day."
+    },
+    "todoTitle": "What to do this month",
+    "todoAddMoney": "Add money",
+    "todoLookQueue": "Look at the queue",
+    "fundMonths": "{target} months",
+    "activePlanNamed": "Active plan · {name}"
   },
   "nav": {
     "ariaLabel": "Main",
@@ -167,7 +204,9 @@
       "you": "You"
     },
     "calendar": "Calendar",
-    "search": "Search"
+    "search": "Search",
+    "add": "Add",
+    "toggleTheme": "Switch light or dark"
   },
   "incomeExpenses": {
     "title": "Income & Expenses",
@@ -179,7 +218,8 @@
       "outHint": "Recurring expenses, living costs and installments",
       "leftHint": "What you can save or spend freely",
       "leftNegative": "You spend more than you earn this month"
-    }
+    },
+    "subtitle": "Money in, money out, and what is left. A few minutes each month is enough; you do not need to enter every cent."
   },
   "profile": {
     "title": "Profile",
@@ -216,7 +256,9 @@
       "fund": "Emergency fund",
       "fundMonths": "{months} of {target} months",
       "fundRing": "Emergency fund progress",
-      "addMoney": "Add money to it"
+      "addMoney": "Add money to it",
+      "needsTitle": "Your needs",
+      "needsHint": "Rent, bills, living costs and installments each month"
     },
     "fundTitle": "Emergency fund",
     "fundHint": "Money kept aside so a bad month never turns into debt. Add to it from the Savings page as you save.",
@@ -353,6 +395,30 @@
       "hint": "Going out, friends, coffee, shopping: the money that is just for you.",
       "amount": "Monthly personal spending (optional)",
       "amountHint": "Leave it empty and Stoafi uses what is left of your wants after subscriptions and installments."
+    },
+    "fundMonthsDecrease": "Fewer months",
+    "fundMonthsIncrease": "More months",
+    "subtitle": "Your money at a glance. As the numbers change, the plan, health and queue update by themselves.",
+    "held": {
+      "label": "Where is it kept?",
+      "cash": "Plain cash",
+      "gold": "Gold",
+      "deposit": "Deposit",
+      "indexFund": "Index fund",
+      "fit": {
+        "good": {
+          "title": "A good fit.",
+          "text": "Easy to reach and it keeps its value well: suited to an emergency fund."
+        },
+        "medium": {
+          "title": "Middling.",
+          "text": "Easy to reach, but cash loses to inflation and gold swings. Consider keeping part of the fund somewhere calmer."
+        },
+        "risky": {
+          "title": "Risky.",
+          "text": "Its price can swing a lot, or it cannot be sold quickly. Rarely wise for money you may need at the worst moment."
+        }
+      }
     }
   },
   "plan": {
@@ -385,7 +451,13 @@
       "investingWhere": "Where can this money go?",
       "learnInvesting": "Learn about index funds and costs",
       "installmentRoomTitle": "Installment room"
-    }
+    },
+    "subtitle": "Strategies that split your money into four buckets. Pick one; every suggestion comes from a book or an investor.",
+    "showLesson": "Details",
+    "hideLesson": "Hide",
+    "idea": "Idea.",
+    "fits": "Who it suits.",
+    "limits": "Its limits."
   },
   "queue": {
     "title": "Queue",
@@ -437,13 +509,14 @@
       "total": "Total waiting",
       "fits": "Fits this month",
       "nearest": "Nearest purchase",
-      "none": "Nothing fits yet"
+      "none": "Nothing fits yet",
+      "fitsCount": "{count, plural, one {# item} other {# items}}"
     },
     "views": {
       "label": "View",
       "list": "List",
       "eisenhower": "Eisenhower",
-      "time": "Time"
+      "time": "Timeline"
     },
     "filters": {
       "label": "Show",
@@ -481,7 +554,24 @@
       "title": "Your queue is empty",
       "text": "Add something you are thinking of buying. Waiting a little before deciding is the whole idea."
     },
-    "priceStale": "Price is {days} days old: still right?"
+    "priceStale": "Price is {days} days old: still right?",
+    "bubbles": {
+      "moved": "“{name}” moved to {month}",
+      "title": "12-month timeline",
+      "hint": "A bubble’s size is its price, its place the month it fits. Click a bubble to pick an item."
+    },
+    "cash": "Cash",
+    "notYet": "not yet",
+    "subtitle": "What you are thinking of buying, in order. Touch a bubble, then click a month to move it. The effect shows at once.",
+    "cooldown": {
+      "askBadge": "Time to decide",
+      "askTitle": "Still want it?",
+      "askText": "You stayed calm for 30 days. The decision on {name} is yours.",
+      "keep": "Yes, keep it",
+      "skip": "Skip it",
+      "days": "{count, plural, one {# day to wait} other {# days to wait}}",
+      "confirmed": "Confirmed {date}"
+    }
   },
   "queuePreview": {
     "wantsBeforeAfter": "Wants before / after",
@@ -507,7 +597,30 @@
       "wants-limit": "This purchase would push your wants above their limit for the month.",
       "unknown": "This purchase breaks one of your safety rules.",
       "card-limit": "These installments would take the card past its limit."
-    }
+    },
+    "installmentMode": "{months} installments",
+    "workEquivalent": "Work equivalent · {cost}",
+    "hoursUnit": "hours",
+    "freeCashTitle": "Free cash in {month}",
+    "before": "Before",
+    "after": "After",
+    "thirtyDayRule": "30-day rule",
+    "ruleNone": "No waiting",
+    "ruleDone": "Time is up",
+    "ruleDays": "{days} / 30 days",
+    "needNoWait": "A need: no waiting.",
+    "perMonth": "In installments: {amount} a month.",
+    "cashPay": "Cash {amount}.",
+    "buyAnyway": "I know, buy anyway",
+    "room": {
+      "none": "Doesn't fit",
+      "short": "Not enough",
+      "tight": "Tight",
+      "roomy": "Comfortable"
+    },
+    "sureTitle": "Are you sure?",
+    "sureText": "You are buying {name}, worth {amount}. If you confirm, it leaves the queue and is written to your decisions.",
+    "sureOk": "OK"
   },
   "installments": {
     "title": "Calculate with installments",
@@ -593,7 +706,8 @@
       "owedHere": "Owed on this card",
       "supplementaryTitle": "Supplementary cards",
       "availableShort": "Limit tracked",
-      "overLimitShort": "Over the limit"
+      "overLimitShort": "Over the limit",
+      "usedLabel": "Used"
     },
     "deleteDialog": {
       "title": "Delete {name}?",
@@ -606,7 +720,8 @@
       "limitFor": "Limit for {name}",
       "deleteAndKeep": "Delete and keep the rest"
     },
-    "openCard": "Open {name}"
+    "openCard": "Open {name}",
+    "subtitle": "Track statement and due days and limits; Stoafi tells you the best day to buy."
   },
   "minimumPayment": {
     "title": "Minimum-payment trap calculator",
@@ -616,7 +731,8 @@
     "minFloor": "Minimum payment floor",
     "monthsToPayoff": "Months to payoff: {months}",
     "totalInterest": "Total interest: {interest}",
-    "neverPaysOff": "This debt never pays off: the minimum payment is smaller than the interest."
+    "neverPaysOff": "This debt never pays off: the minimum payment is smaller than the interest.",
+    "hint": "The minimum-payment trap: enter the balance, interest and minimum rate to see how long the debt takes to clear."
   },
   "health": {
     "title": "Health",
@@ -711,7 +827,8 @@
         "title": "Stretch your runway",
         "why": "Your savings would not cover many months of needs. Lowering fixed costs helps most.",
         "action": "Review expenses"
-      }
+      },
+      "allGood": "All is well. Keep it up."
     },
     "trends": {
       "title": "How it is changing",
@@ -725,7 +842,8 @@
       "points": "points",
       "better": "better",
       "worse": "worse"
-    }
+    },
+    "subtitle": "How healthy your money is: four measures at a glance. The thresholds come from your own rules."
   },
   "decisions": {
     "title": "Decisions",
@@ -760,7 +878,8 @@
     "addBack": "Add back",
     "addBackNamed": "Add {name} back to the queue",
     "deleteNamed": "Delete decision {name}",
-    "addedBack": "{name} is back in your queue"
+    "addedBack": "{name} is back in your queue",
+    "subtitle": "What you bought, postponed and skipped. Waiting 30 days on a want is the habit this page rewards."
   },
   "settings": {
     "title": "Settings",
@@ -796,7 +915,8 @@
       "privacy": "Privacy",
       "privacyHint": "Keep your money out of sight.",
       "safety": "Data safety",
-      "safetyHint": "Your data lives only on this device. These keep it from being lost."
+      "safetyHint": "Your data lives only on this device. These keep it from being lost.",
+      "offline": "Offline and install"
     },
     "about": {
       "privacy": "Your data never leaves this device. Stoafi has no account and no server, and it never sends your figures anywhere.",
@@ -880,6 +1000,16 @@
         "restored": "Restored.",
         "failed": "That copy could not be restored."
       }
+    },
+    "subtitle": "Everything stays on this device. Back up so you do not lose it.",
+    "offline": {
+      "works": "Works offline",
+      "offlineNow": "You are offline, and Stoafi still works",
+      "hint": "It opens and runs without the internet; nothing goes to a server.",
+      "install": "Install the app",
+      "installed": "Installed",
+      "installHelp": "Your browser has not offered to install it. In Safari use Share, then Add to Home Screen.",
+      "localNote": "Your data lives only on this device. If you change device or clear the browser data, it is gone; take a backup now and then."
     }
   },
   "installmentExpenses": {
@@ -911,7 +1041,10 @@
       "saving": "Saving",
       "investing": "Investing",
       "thinking": "Thinking"
-    }
+    },
+    "subtitle": "Every suggestion in Stoafi comes from a book or an investor. These cards explain the idea in our own words, how the app uses it, who it suits and where it falls short.",
+    "showDetails": "Details",
+    "hideDetails": "Hide details"
   },
   "insights": {
     "title": "What your plan says",
@@ -922,7 +1055,12 @@
     "babyStepsStep1": "Step 1: build the starter emergency fund ({months}).",
     "babyStepsStep2": "Step 2: pay off debt before saving extra ({months}).",
     "babyStepsStep3": "Step 3: build the full emergency fund ({months}).",
-    "babyStepsStep4": "Step 4 and on: the emergency fund is complete, start investing ({months})."
+    "babyStepsStep4": "Step 4 and on: the emergency fund is complete, start investing ({months}).",
+    "idea": "The idea.",
+    "fits": "Who it suits.",
+    "savingsToSet": "To keep to your plan, set aside {amount} more for savings this month.",
+    "investingToSet": "To keep to your plan, put {amount} more into investing this month.",
+    "fundNotFull": "Your emergency fund is not full yet; the plan’s investing share goes to savings until it is."
   },
   "sinkingFunds": {
     "title": "Savings goals",
@@ -959,7 +1097,9 @@
   "guardSettings": {
     "installmentCap": "Installment cap (% of net income)",
     "installmentCapHint": "When your monthly installments add up to more than this share of your income, Stoafi warns you and asks you to confirm before you commit.",
-    "outOfRange": "Enter a percent between 0 and 100."
+    "outOfRange": "Enter a percent between 0 and 100.",
+    "decrease": "Decrease",
+    "increase": "Increase"
   },
   "common": {
     "close": "Close",
@@ -1074,7 +1214,8 @@
         "ok": "Reachable, but its price can swing or it loses value over time. Plain cash loses to inflation; gold and currency swing. Consider keeping part of the fund somewhere steadier.",
         "risky": "Its price can swing a lot or it is hard to sell fast. That is rarely wise for an emergency fund, which you need at the worst moment."
       }
-    }
+    },
+    "subtitle": "Add money to your pots as you save and watch them fill. Stoafi shows what is left this month and how much to set aside."
   },
   "investments": {
     "types": {
@@ -1201,7 +1342,8 @@
       "profit": "Profit or loss",
       "profitPct": "{pct} on what you paid",
       "allocationLabel": "Split by type: {parts}",
-      "inflationNote": "You expect about {rate} inflation a year. A return below that loses buying power. The values here are prices you typed in; the app never looks them up."
+      "inflationNote": "You expect about {rate} inflation a year. A return below that loses buying power. The values here are prices you typed in; the app never looks them up.",
+      "inflationTitle": "Don't forget inflation"
     },
     "empty": {
       "title": "Record what you invest in",
@@ -1238,7 +1380,8 @@
       "stale": "Price is {days} days old",
       "trade": "Buy or sell",
       "updatePrice": "Update price",
-      "history": "History"
+      "history": "History",
+      "paid": "paid"
     },
     "trade": {
       "title": "Buy or sell {name}",
@@ -1286,15 +1429,15 @@
       "template": {
         "careful": {
           "name": "Careful",
-          "text": "Most of it in places that move little. For short horizons, or if big drops would cost you sleep."
+          "text": "Keep most of the money somewhere calm; put a small part to work for growth."
         },
         "balanced": {
           "name": "Balanced",
-          "text": "A mix of growth and steadier money. A common starting point for five years or more."
+          "text": "A middle road between growth and calm."
         },
         "growth": {
           "name": "Growth",
-          "text": "Mostly stocks. A bad year can hurt, so it fits ten years or more and a calm temper."
+          "text": "For the long run, for someone who can stand the swings."
         }
       },
       "use": "Use this",
@@ -1304,15 +1447,16 @@
       "keepMine": "Keep my basket",
       "replaced": "Basket replaced",
       "slice": {
-        "deposit": "Deposit or money market",
-        "bond": "Bonds",
+        "deposit": "Deposit",
         "gold": "Gold",
-        "world": "World stock index fund",
-        "sp500": "S&P 500 index fund",
-        "nasdaq": "Nasdaq-100 index fund"
+        "sp500": "S&P 500",
+        "indexFund": "Global index fund",
+        "currency": "Foreign currency",
+        "stock": "Single stocks",
+        "crypto": "Crypto"
       },
       "sliceName": "Slice {n} name",
-      "slicePlaceholder": "e.g. Gold",
+      "slicePlaceholder": "Slice name",
       "slicePercent": "Slice {n} percent",
       "removeSlice": "Remove slice {n}",
       "addSlice": "Add slice",
@@ -1326,7 +1470,7 @@
       "unassignedTitle": "Not in your basket yet",
       "unassignedHint": "Say which slice each of these belongs to, so the numbers above include it.",
       "assignTo": "Put {name} in a slice",
-      "choose": "Choose slice",
+      "choose": "Pick a slice",
       "splitTitle": "Split this month's money",
       "monthlyAmount": "Amount to invest",
       "monthlyHint": "Starts at what your plan sets for investing.",
@@ -1334,8 +1478,8 @@
         "label": "How to split",
         "catchUp": "Fill the gaps",
         "percent": "Plain percentages",
-        "catchUpHint": "Puts new money where you hold less than your target first. Nothing is sold.",
-        "percentHint": "Splits the amount exactly by your percentages."
+        "catchUpHint": "Puts new money first where you hold less than your target; nothing is sold.",
+        "percentHint": "Splits the amount by the percentages."
       },
       "finishFirst": "Make the percentages add up to 100% to see the split.",
       "notAdvice": "A way to organise your own choice, not a recommendation to buy anything. Past results do not predict future ones.",
@@ -1350,7 +1494,32 @@
       "willLog": "Ticking only notes it. Add the purchase to a holding to update your totals.",
       "cheerDone": "{amount} into {name} ticked off. Steady wins.",
       "monthlyHintNone": "Your plan sets nothing aside for investing, so type the amount you want to invest each month.",
-      "monthlyHintEmergency": "Your emergency fund is not full yet, so nothing is suggested for investing this month: the money goes to savings first. Type an amount if you want to invest anyway."
+      "monthlyHintEmergency": "Your emergency fund is not full yet, so nothing is suggested for investing this month: the money goes to savings first. Type an amount if you want to invest anyway.",
+      "editorTitle": "Your basket",
+      "whereYouAreHint": "The line is your target, the fill is what you hold.",
+      "allAssigned": "Everything is in a slice.",
+      "invalidText": "The split and where you stand only show once the slices add up to 100.",
+      "invalidTitle": "Percentages don't add up to 100",
+      "note": {
+        "gold": "Pays no interest and its price moves; keep it a small to medium part of the basket. (Room for error: Housel)",
+        "index-fund": "A cheap broad index: grow without picking the winner. (Bogle)",
+        "deposit": "The calm part; inflation can eat its buying power.",
+        "currency": "Short to medium term; the rate moves every day.",
+        "stock": "Single-company risk; it needs years and spreading.",
+        "crypto": "Very volatile; only an amount that would not change your life if lost.",
+        "bond": "Pays interest, but its price moves with rates."
+      },
+      "templateReady": "“{name}” basket is ready",
+      "hideTemplates": "Hide examples",
+      "replaceTitle": "You are about to change your basket",
+      "replaceText": "The {name} example replaces your current basket; your slices and percentages are reset. This month’s ticks are cleared too.",
+      "replaceConfirm": "Change basket",
+      "driftTarget": "target %{target}",
+      "splitSum": "Split total: {sum}. If a slice holds a single priced asset, “I put it in” is also recorded as a purchase of it at that day’s price.",
+      "planAmount": "The amount your plan sets aside for investing: {amount}.",
+      "targetClosing": "{pct}% target · closing the gap",
+      "targetOnly": "{pct}% target",
+      "closePick": "Close"
     }
   },
   "calendar": {
@@ -1371,7 +1540,9 @@
       "title": "See your month on a calendar",
       "text": "Add your salary, bills and cards with their days and they appear here.",
       "action": "Add income and expenses"
-    }
+    },
+    "subtitle": "Pay days, bills and card due dates, by day.",
+    "all": "All"
   },
   "onboarding": {
     "title": "Set up Stoafi",
@@ -1424,7 +1595,8 @@
     "leftOver": "After your regular costs you have {amount} left each month.",
     "overspent": "Your regular costs are {amount} above your income. You can still continue and fix it later.",
     "planChoice": "Plan",
-    "split": "Needs {needs} · Wants {wants} · Saving {savings}"
+    "split": "Needs {needs} · Wants {wants} · Saving {savings}",
+    "monthsOption": "{n} months"
   },
   "demoLabels": {
     "salary": "Salary",
@@ -1470,7 +1642,8 @@
       "addQueueItem": "Add something to the queue",
       "addCard": "Add a card",
       "addPot": "Add a savings pot",
-      "addInvestment": "Add an investment"
+      "addInvestment": "Add an investment",
+      "openOnboarding": "Open the setup wizard"
     }
   },
   "errorScreen": {

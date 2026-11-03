@@ -262,7 +262,6 @@ export function CardForm({
             value={last4}
             aria-invalid={errors.last4 ? "true" : undefined}
             onChange={(e) => setLast4(e.target.value.replace(/\D/g, "").slice(0, 4))}
-            className="w-24"
           />
         </Field>
         <Field label={t("form.network")} htmlFor="card-network">

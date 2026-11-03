@@ -58,7 +58,7 @@ describe("InvestmentsBoard", () => {
   it("invites the first investment and lists the types to read about", () => {
     renderWithIntl(<Harness />);
     expect(screen.getByText("Record what you invest in")).toBeInTheDocument();
-    expect(screen.getByTestId("guide-gold")).toHaveTextContent("Gold");
+    expect(screen.getByRole("radio", { name: "Gold" })).toBeInTheDocument();
     expect(screen.getByText(/not financial advice/i)).toBeInTheDocument();
   });
 
@@ -69,7 +69,7 @@ describe("InvestmentsBoard", () => {
     expect(screen.getByTestId("portfolio-cost")).toHaveTextContent("₺4,000.00");
     expect(screen.getByTestId("portfolio-profit")).toHaveTextContent("+₺2,000.00");
     expect(screen.getByTestId("alloc-gold")).toHaveTextContent("Gold 100%");
-    expect(screen.getByTestId("holding-profit-g")).toHaveTextContent("(+50.0%)");
+    expect(screen.getByTestId("holding-profit-g")).toHaveTextContent("+50.0% · +₺2,000.00");
   });
 
   it("shows a loss as a loss", () => {
@@ -144,7 +144,8 @@ describe("InvestmentsBoard", () => {
   it("records a purchase and moves the price to it", async () => {
     const onSaved = vi.fn();
     renderWithIntl(<Harness initial={[gold]} onSaved={onSaved} />);
-    fireEvent.click(screen.getByRole("button", { name: /Buy or sell.*Gram gold/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Gram gold" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Buy or sell.*Gram gold/ }));
     const panel = await screen.findByRole("dialog", { name: "Buy or sell Gram gold" });
     fireEvent.change(within(panel).getByLabelText("How many (g)"), { target: { value: "1,5" } });
     fireEvent.change(within(panel).getByLabelText("Price of one unit"), {
@@ -160,7 +161,8 @@ describe("InvestmentsBoard", () => {
   it("refuses to sell more than is held", async () => {
     const onSaved = vi.fn();
     renderWithIntl(<Harness initial={[gold]} onSaved={onSaved} />);
-    fireEvent.click(screen.getByRole("button", { name: /Buy or sell.*Gram gold/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Gram gold" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Buy or sell.*Gram gold/ }));
     const panel = await screen.findByRole("dialog");
     fireEvent.click(within(panel).getByText("Sell", { selector: "label" }));
     fireEvent.change(within(panel).getByLabelText("How many (g)"), { target: { value: "2.5" } });
@@ -175,7 +177,8 @@ describe("InvestmentsBoard", () => {
   it("updates the price with its date", async () => {
     const onSaved = vi.fn();
     renderWithIntl(<Harness initial={[stale]} onSaved={onSaved} />);
-    fireEvent.click(screen.getByRole("button", { name: /Update price.*Old fund/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Old fund" }));
+    fireEvent.click(await screen.findByRole("button", { name: /Update price.*Old fund/ }));
     const panel = await screen.findByRole("dialog");
     fireEvent.change(within(panel).getByLabelText("Price of one unit"), {
       target: { value: "3500" },
@@ -204,7 +207,8 @@ describe("InvestmentsBoard", () => {
         onDeleted={onDeleted}
       />,
     );
-    fireEvent.click(screen.getByRole("button", { name: /History.*Gram gold/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Gram gold" }));
+    fireEvent.click(await screen.findByRole("button", { name: /History.*Gram gold/ }));
     const panel = await screen.findByRole("dialog", { name: "History of Gram gold" });
     fireEvent.click(
       within(panel).getByRole("button", { name: "Delete the entry from 2026-02-01" }),

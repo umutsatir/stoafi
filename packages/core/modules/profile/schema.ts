@@ -47,6 +47,8 @@ export const ProfileSchema = z.object({
   annualInflationExpectation: z.number(),
   /** ISO 3166 country the inflation suggestion came from; remembered so the form can show it again. */
   countryCode: z.string().optional(),
+  /** Where the emergency fund is kept; optional, only used to say how well that place suits it. */
+  emergencyFundHeld: z.enum(["cash", "gold", "deposit", "indexFund"]).optional(),
   hourlyNetIncome: z.number().int().nonnegative().optional(),
 });
 

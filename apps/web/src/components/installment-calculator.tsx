@@ -6,7 +6,6 @@ import { compareOffers, type OfferResult } from "@stoafi/core";
 import { LessonLink } from "@/components/lesson-link";
 import { Plus, Trash2 } from "lucide-react";
 import { useMoney } from "@/lib/use-money";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -74,10 +73,10 @@ export function InstallmentCalculator({
   const resultByKey = new Map(complete.map((r, i) => [r.key, results[i]]));
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border p-4">
+    <div className="flex flex-col gap-3">
       <div>
-        <h2 className="text-base font-semibold">{t("title")}</h2>
-        <p className="text-sm text-muted-foreground">{t("hint")}</p>
+        <h2 className="text-xl font-extrabold tracking-[-0.03em]">{t("title")}</h2>
+        <p className="mt-1 text-[12.5px] font-semibold text-muted-foreground">{t("hint")}</p>
       </div>
       <LessonLink lessonId="time-value-of-money" testId="lesson-link-time-value-of-money" />
       <Table>
@@ -103,14 +102,14 @@ export function InstallmentCalculator({
                     type="number"
                     min={1}
                     step={1}
-                    className="w-20"
+                    className="w-24 text-[15px]"
                     value={row.months}
                     onChange={(e) =>
                       patch(row.key, { months: Math.max(0, Math.floor(Number(e.target.value))) })
                     }
                   />
                 </TableCell>
-                <TableCell data-testid={`monthly-payment-${row.months}`}>
+                <TableCell data-testid={`monthly-payment-${row.months}`} className="min-w-[180px]">
                   <MoneyInput
                     id={`offer-payment-${row.key}`}
                     aria-label={t("paymentAriaLabel", { index: n })}
@@ -127,9 +126,13 @@ export function InstallmentCalculator({
                 </TableCell>
                 <TableCell data-testid={`real-saving-${row.months}`}>
                   {result ? (
-                    <Badge variant={result.realSaving >= 0 ? "secondary" : "destructive"}>
+                    <span
+                      className={`rounded-full bg-muted px-2.5 py-0.5 text-xs font-extrabold ${
+                        result.realSaving >= 0 ? "text-success" : "text-destructive"
+                      }`}
+                    >
                       {`${(result.realSaving * 100).toFixed(1)}%`}
-                    </Badge>
+                    </span>
                   ) : (
                     t("incomplete")
                   )}

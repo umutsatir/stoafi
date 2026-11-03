@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card, CardContent } from "@/components/ui/card";
-import { Field } from "@/components/ui/field";
-import { PercentInput } from "./percent-input";
+import { Stepper } from "@/components/ui/stepper";
 
 export interface GuardSettingsProps {
   /** The cap as a ratio: 0.2 means 20% of net income. */
@@ -12,34 +9,26 @@ export interface GuardSettingsProps {
   onChange: (installmentCapPct: number) => void;
 }
 
-/** Editable guard thresholds. Only values the guard schema accepts (0 to 100%) are passed on. */
+/** Editable guard thresholds. Steps of one percent, kept between 0 and 100%. */
 export function GuardSettings({ installmentCapPct, onChange }: GuardSettingsProps) {
   const t = useTranslations("guardSettings");
-  const [outOfRange, setOutOfRange] = useState(false);
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <Field
-          label={t("installmentCap")}
-          htmlFor="installment-cap"
-          hint={t("installmentCapHint")}
-          error={outOfRange ? t("outOfRange") : undefined}
-        >
-          <PercentInput
-            id="installment-cap"
-            value={installmentCapPct}
-            onChange={(ratio) => {
-              if (ratio > 1) {
-                setOutOfRange(true);
-                return;
-              }
-              setOutOfRange(false);
-              onChange(ratio);
-            }}
-          />
-        </Field>
-      </CardContent>
-    </Card>
+    <div>
+      <p className="mt-4 text-[13px] font-bold">{t("installmentCap")}</p>
+      <Stepper
+        className="mt-2"
+        value={Math.round(installmentCapPct * 100)}
+        min={0}
+        max={100}
+        format={(v) => `%${v}`}
+        decreaseLabel={t("decrease")}
+        increaseLabel={t("increase")}
+        onChange={(percent) => onChange(percent / 100)}
+      />
+      <p className="mt-2.5 text-[12.5px] leading-normal text-muted-foreground">
+        {t("installmentCapHint")}
+      </p>
+    </div>
   );
 }

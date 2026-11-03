@@ -12,7 +12,7 @@ export function TabsList({
 }: React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
-      className={cn("inline-flex rounded-lg bg-muted p-1", className)}
+      className={cn("inline-flex gap-1.5 rounded-full bg-card p-[5px]", className)}
       {...props}
     />
   );
@@ -25,7 +25,7 @@ export function TabsTrigger({
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "rounded-md px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+        "press rounded-full px-4 py-2 text-[13px] font-bold text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=active]:bg-foreground data-[state=active]:text-background",
         className,
       )}
       {...props}

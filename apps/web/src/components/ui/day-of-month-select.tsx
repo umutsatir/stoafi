@@ -1,5 +1,7 @@
 "use client";
 
+import { NativeSelect } from "@/components/ui/native-select";
+
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export interface DayOfMonthSelectProps {
@@ -19,14 +21,11 @@ export function DayOfMonthSelect({
   ...rest
 }: DayOfMonthSelectProps) {
   return (
-    <select
+    <NativeSelect
       id={id}
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
-      className={
-        className ??
-        "h-9 w-20 rounded-md border border-input bg-card px-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      }
+      {...(className ? { className } : {})}
       {...rest}
     >
       {DAYS.map((day) => (
@@ -34,6 +33,6 @@ export function DayOfMonthSelect({
           {day}
         </option>
       ))}
-    </select>
+    </NativeSelect>
   );
 }

@@ -105,6 +105,8 @@ test("the sample data loads in one click and can be cleared", async ({ page }) =
 test("a card added from a bank shows as a card and passes the accessibility scan", async ({
   page,
 }) => {
+  // Animations are switched off so the scan reads final colours, not a half-faded entrance.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/cards");
   await page.getByRole("button", { name: "Garanti BBVA" }).click();
   await page.getByLabel("Card name").fill("Bonus");
@@ -210,22 +212,17 @@ test("a pot with no goal takes money and cheers, and the basket can be built fro
   }
 });
 
-test("the home page opens with a short summary, and shows the limits and advice on request", async ({
+test("the home page shows the orbit ring with what is left, and a part opens its detail", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Look around with sample data" }).click();
-  await expect(page.getByTestId("month-summary")).toBeVisible();
-  await expect(page.getByTestId("summary-free-spending")).toBeVisible();
-  await expect(page.getByTestId("limit-needs")).toBeHidden();
-
-  await page.getByRole("button", { name: "Show details" }).click();
-  await expect(page.getByTestId("limit-needs")).toBeVisible();
-  await expect(page.getByTestId("limit-advice")).toBeVisible();
-
-  // the choice is remembered
-  await page.reload();
-  await expect(page.getByTestId("limit-needs")).toBeVisible();
+  await expect(page.getByTestId("left")).toBeVisible();
+  await page.getByRole("button", { name: /Installments/ }).click();
+  await expect(page.getByRole("button", { name: /Installments/ })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
 });
 
 test("when the browser lost the data, the app says so and offers a way back", async ({
@@ -254,7 +251,7 @@ test("settings show the three layers of data safety", async ({ page }) => {
   await expect(section.getByText("Copies kept in this browser")).toBeVisible();
 });
 
-test("the page is set in Inter from our own files, and Turkish letters use it too", async ({
+test("the page is set in Sora from our own files, and Turkish letters use it too", async ({
   page,
 }) => {
   const requested: string[] = [];
@@ -265,13 +262,13 @@ test("the page is set in Inter from our own files, and Turkish letters use it to
   const loaded = await page.evaluate(() =>
     [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/"/g, "")),
   );
-  expect(loaded).toContain("Inter");
-  expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).toMatch(/^"?Inter/);
+  expect(loaded).toContain("Sora");
+  expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).toMatch(/^"?Sora/);
   // the second file is only fetched when a Turkish letter is asked for
   expect(
     await page.evaluate(async () => {
-      await document.fonts.load("16px Inter", "ğşİıçöü");
-      return document.fonts.check("16px Inter", "ğşİıçöü");
+      await document.fonts.load("16px Sora", "ğşİıçöü");
+      return document.fonts.check("16px Sora", "ğşİıçöü");
     }),
   ).toBe(true);
   // every request stays on the site itself
@@ -301,7 +298,7 @@ test("no page scrolls sideways on a phone in Turkish with sample data", async ({
     if (await show.count()) await show.click();
     // Measure after the font has swapped in and the page has settled; before that the widths are not final.
     await page.evaluate(async () => {
-      await document.fonts.load("16px Inter", "ğşİıçöü");
+      await document.fonts.load("16px Sora", "ğşİıçöü");
       await document.fonts.ready;
     });
     await page.waitForTimeout(400);

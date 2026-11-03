@@ -3,7 +3,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Search } from "lucide-react";
+import {
+  ArrowRightLeft,
+  BookOpen,
+  Calendar,
+  CircleCheckBig,
+  CreditCard,
+  HeartPulse,
+  House,
+  LayoutGrid,
+  ListTodo,
+  Plus,
+  Search,
+  SlidersVertical,
+  Target,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAppStore, type QuickAction } from "@/store";
 import { cn } from "@/lib/utils";
@@ -14,6 +30,21 @@ interface Command {
   href: string;
   action?: QuickAction;
 }
+
+const PAGE_ICONS: Record<string, LucideIcon> = {
+  home: House,
+  calendar: Calendar,
+  incomeExpenses: ArrowRightLeft,
+  sinkingFunds: Target,
+  cards: CreditCard,
+  plan: LayoutGrid,
+  queue: ListTodo,
+  decisions: CircleCheckBig,
+  health: HeartPulse,
+  lessons: BookOpen,
+  profile: UserRound,
+  settings: SlidersVertical,
+};
 
 const COMMANDS: Command[] = [
   { id: "home", group: "go", href: "/" },
@@ -32,6 +63,7 @@ const COMMANDS: Command[] = [
   { id: "addCard", group: "do", href: "/cards", action: "addCard" },
   { id: "addPot", group: "do", href: "/sinking-funds", action: "addPot" },
   { id: "addInvestment", group: "do", href: "/sinking-funds", action: "addInvestment" },
+  { id: "openOnboarding", group: "do", href: "/", action: "openOnboarding" },
 ];
 
 export interface CommandPaletteProps {
@@ -68,10 +100,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent title={t("title")} description={t("hint")} className="max-w-lg">
+      <DialogContent title={t("title")} description={t("hint")} className="max-w-[600px]">
         <div className="relative">
           <Search
-            className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"
+            className="pointer-events-none absolute left-3.5 top-4 h-4 w-4 text-muted-foreground"
             aria-hidden="true"
           />
           <input
@@ -96,7 +128,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 run(results[active]);
               }
             }}
-            className="h-10 w-full rounded-md border border-input bg-card pl-9 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="h-12 w-full rounded-2xl border-0 bg-muted pl-10 pr-3 text-[15px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
         {results.length === 0 ? (
@@ -117,12 +149,28 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 onMouseEnter={() => setActive(index)}
                 onClick={() => run(command)}
                 className={cn(
-                  "flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm",
-                  index === active ? "bg-accent" : "",
+                  "flex cursor-pointer items-center gap-3 rounded-[14px] px-3 py-2 text-sm font-semibold",
+                  index === active ? "bg-muted" : "",
                 )}
               >
+                <span className="w-[34px] flex-none text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-muted-foreground">
+                  {t(`group.${command.group}`)}
+                </span>
+                {(() => {
+                  const Icon = command.group === "do" ? Plus : (PAGE_ICONS[command.id] ?? House);
+                  return (
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "flex h-[30px] w-[30px] flex-none items-center justify-center rounded-[11px]",
+                        command.group === "do" ? "bg-primary text-primary-foreground" : "bg-muted",
+                      )}
+                    >
+                      <Icon className="h-4 w-4" strokeWidth={2} />
+                    </span>
+                  );
+                })()}
                 <span>{t(`commands.${command.id}`)}</span>
-                <span className="text-xs text-muted-foreground">{t(`group.${command.group}`)}</span>
               </li>
             ))}
           </ul>

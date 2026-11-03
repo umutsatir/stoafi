@@ -14,29 +14,27 @@ export interface SheetContentProps {
   title: string;
   description?: string;
   children?: ReactNode;
-  /** Desktop: slides in from the right. Phone: always a bottom sheet. */
   className?: string;
 }
 
-/** A side panel for forms and previews that should not take you off the page. */
+/** A centred modal for forms and previews that should not take you off the page. */
 export function SheetContent({ title, description, children, className }: SheetContentProps) {
   const t = useTranslations("common");
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm data-[state=closed]:animate-[overlay-out_160ms_ease-in_forwards] data-[state=open]:animate-[overlay-in_200ms_ease-out]" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/45 data-[state=closed]:animate-[overlay-out_160ms_ease-in_forwards] data-[state=open]:animate-[overlay-in_200ms_ease-out]" />
       <DialogPrimitive.Content
         {...(description ? {} : { "aria-describedby": undefined })}
         className={cn(
-          "fixed z-50 flex flex-col gap-4 overflow-y-auto border-border bg-card p-6 shadow-lg",
-          "data-[state=open]:animate-[sheet-up-in_280ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[sheet-up-out_200ms_ease-in_forwards]",
-          "md:data-[state=open]:animate-[sheet-right-in_280ms_cubic-bezier(0.16,1,0.3,1)] md:data-[state=closed]:animate-[sheet-right-out_200ms_ease-in_forwards]",
-          "inset-x-0 bottom-0 max-h-[85vh] rounded-t-xl border-t",
-          "md:inset-y-0 md:left-auto md:right-0 md:max-h-none md:w-full md:max-w-md md:rounded-none md:border-l md:border-t-0",
+          "fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-[520px] -translate-x-1/2 -translate-y-1/2 flex-col gap-[18px] overflow-y-auto rounded-card bg-card px-6 py-7 shadow-2xl sm:px-[34px] sm:py-8",
+          "data-[state=open]:animate-[dialog-pop_450ms_cubic-bezier(.2,.8,.2,1)] data-[state=closed]:animate-[dialog-out_160ms_ease-in_forwards]",
           className,
         )}
       >
         <div className="flex flex-col gap-1.5 pr-6">
-          <DialogPrimitive.Title className="text-lg font-semibold">{title}</DialogPrimitive.Title>
+          <DialogPrimitive.Title className="text-2xl font-extrabold tracking-[-0.03em]">
+            {title}
+          </DialogPrimitive.Title>
           {description && (
             <DialogPrimitive.Description className="text-sm text-muted-foreground">
               {description}
@@ -46,7 +44,7 @@ export function SheetContent({ title, description, children, className }: SheetC
         {children}
         <DialogPrimitive.Close
           aria-label={t("close")}
-          className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="absolute right-5 top-5 rounded-full bg-muted p-2 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </DialogPrimitive.Close>

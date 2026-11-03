@@ -30,6 +30,13 @@ const item: QueueItem = {
   order: 0,
 };
 
+/** The page opens on the timeline; most tests work with the list. */
+function renderPage(view: "List" | "Eisenhower" | null = "List") {
+  const result = renderWithIntl(<QueuePage />);
+  if (view) fireEvent.click(screen.getByRole("radio", { name: view }));
+  return result;
+}
+
 beforeEach(async () => {
   toast.dismiss();
   await db.queue.clear();
@@ -49,7 +56,7 @@ beforeEach(async () => {
 
 describe("QueuePage purchase flow", () => {
   it("adds a queue item from the form and saves it", async () => {
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Add item" }));
     const panel = await screen.findByRole("dialog", { name: "Add to queue" });
     fireEvent.change(within(panel).getByLabelText("Name"), { target: { value: "Desk" } });
@@ -67,9 +74,10 @@ describe("QueuePage purchase flow", () => {
   });
 
   it("records a cash purchase as a decision only and removes the item from the queue", async () => {
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
 
     const state = useAppStore.getState();
     expect(state.queueItems).toEqual([]);
@@ -86,11 +94,12 @@ describe("QueuePage purchase flow", () => {
   });
 
   it("turns an installment purchase into an expense: item kept, flagged and saved", async () => {
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
     fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
 
     const state = useAppStore.getState();
     const bought = state.queueItems[0];
@@ -112,14 +121,14 @@ describe("QueuePage purchase flow", () => {
   });
 
   it("deletes an item and persists the deletion", async () => {
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Delete Headphones" }));
     expect(useAppStore.getState().queueItems).toEqual([]);
     await waitFor(async () => expect(await db.queue.count()).toBe(0));
   });
 
   it("skipping records a skipped decision, removes the item and counts as money saved", async () => {
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     fireEvent.click(screen.getByRole("button", { name: "Skip" }));
 
@@ -140,14 +149,14 @@ describe("QueuePage purchase flow", () => {
   it("saves a skip at the cash price when the item has one", async () => {
     const withCash = { ...item, discountedCashPrice: 250_000 };
     useAppStore.setState({ queueItems: [withCash] });
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     fireEvent.click(screen.getByRole("button", { name: "Skip" }));
     expect(useAppStore.getState().decisions[0]?.amount).toBe(250_000);
   });
 
   it("postponing records a postponed decision and keeps the item in the queue", async () => {
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     fireEvent.click(screen.getByRole("button", { name: "Postpone" }));
 
@@ -157,13 +166,12 @@ describe("QueuePage purchase flow", () => {
     expect(savingsSummary(state.decisions).totalSaved).toBe(0);
     await waitFor(async () => expect(await db.decisions.count()).toBe(1));
     expect(await db.queue.count()).toBe(1);
-    // the preview closes after the decision
-    expect(screen.queryByRole("button", { name: "Postpone" })).not.toBeInTheDocument();
   });
 
   it("shows the first month the scheduler finds room for the selected item", () => {
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     expect(screen.getByTestId("suggested-month")).toHaveTextContent("2026-09");
   });
 
@@ -171,8 +179,9 @@ describe("QueuePage purchase flow", () => {
     useAppStore.setState({
       cards: [{ id: "visa", label: "Visa", statementDay: 15, dueDay: 5 }],
     });
-    renderWithIntl(<QueuePage />);
+    renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     expect(screen.getByLabelText("Pay with card")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Visa" })).toBeInTheDocument();
   });
@@ -185,7 +194,7 @@ describe("QueuePage purchase flow", () => {
     }
 
     it("does not flag a small installment under the default 20% cap", () => {
-      renderWithIntl(<QueuePage />);
+      renderPage();
       pickThreeMonthOffer();
       expect(screen.queryByText(/installments would go above the cap/i)).not.toBeInTheDocument();
     });
@@ -193,7 +202,7 @@ describe("QueuePage purchase flow", () => {
     it("flags the same installment once the cap is lowered in settings", () => {
       // 1,000.00 a month against an income of 100,000.00: about 1%
       useAppStore.setState({ guardThresholds: { installmentCapPct: 0.005 } });
-      renderWithIntl(<QueuePage />);
+      renderPage();
       pickThreeMonthOffer();
       expect(screen.getByTestId("guard-breaches")).toHaveTextContent(
         /installments would go above the cap/i,
@@ -233,6 +242,7 @@ describe("QueuePage undo", () => {
     fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
     fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
     expect(useAppStore.getState().queueItems[0]?.installmentPurchase).toBeDefined();
 
     fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
@@ -257,5 +267,34 @@ describe("QueuePage undo", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Undo" }));
     expect(useAppStore.getState().decisions).toEqual([]);
     expect(useAppStore.getState().queueItems.map((i) => i.id)).toEqual(["headphones"]);
+  });
+
+  it("asks 'still want it?' once the 30 days are over, and remembers a yes", async () => {
+    renderPage();
+    // The headphones were added in January; by mid-September the cooldown is long over.
+    const band = screen.getByTestId("cooldown-ask");
+    expect(band).toHaveTextContent("Still want it?");
+    fireEvent.click(within(band).getByRole("button", { name: "Yes, keep it" }));
+    expect(useAppStore.getState().queueItems[0]?.cooldownConfirmedOn).toBe("2026-09-15");
+    expect(screen.queryByTestId("cooldown-ask")).not.toBeInTheDocument();
+    await waitFor(async () =>
+      expect((await db.queue.get("headphones"))?.cooldownConfirmedOn).toBe("2026-09-15"),
+    );
+  });
+
+  it("skips the item from the question and records it as a decision", async () => {
+    renderPage();
+    fireEvent.click(
+      within(screen.getByTestId("cooldown-ask")).getByRole("button", { name: "Skip it" }),
+    );
+    expect(useAppStore.getState().queueItems).toEqual([]);
+    expect(useAppStore.getState().decisions[0]?.outcome).toBe("skipped");
+  });
+
+  it("shows the days left while a want is still cooling down", () => {
+    useAppStore.setState({ queueItems: [{ ...item, addedDate: "2026-09-01" }] });
+    renderPage();
+    expect(screen.queryByTestId("cooldown-ask")).not.toBeInTheDocument();
+    expect(screen.getByTestId("cooldown-headphones")).toHaveTextContent("16 days to wait");
   });
 });

@@ -108,52 +108,58 @@ export function IncomeExpensesForm({
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("salariesTitle")}</CardTitle>
-            <CardDescription>{t("salariesHint")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <SalaryList
-              salaries={salaries}
-              onAdd={() => setOpen({ kind: "salary", index: -1 })}
-              onEdit={(index) => setOpen({ kind: "salary", index })}
-              onRemove={removeSalary}
-            />
-          </CardContent>
-        </Card>
+      <form
+        onSubmit={handleSubmit}
+        className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]"
+      >
+        <div className="flex flex-col gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("salariesTitle")}</CardTitle>
+              <CardDescription>{t("salariesHint")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SalaryList
+                salaries={salaries}
+                onAdd={() => setOpen({ kind: "salary", index: -1 })}
+                onEdit={(index) => setOpen({ kind: "salary", index })}
+                onRemove={removeSalary}
+              />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("expensesTitle")}</CardTitle>
-            <CardDescription>{t("expensesHint")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ExpenseList
-              expenses={expenses}
-              month={month}
-              onAdd={() => setOpen({ kind: "expense", index: -1 })}
-              onEdit={(index) => setOpen({ kind: "expense", index })}
-              onRemove={removeExpense}
-            />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("expensesTitle")}</CardTitle>
+              <CardDescription>{t("expensesHint")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ExpenseList
+                expenses={expenses}
+                month={month}
+                onAdd={() => setOpen({ kind: "expense", index: -1 })}
+                onEdit={(index) => setOpen({ kind: "expense", index })}
+                onRemove={removeExpense}
+              />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="flex flex-col gap-4">
+          <LivingCostsCard
+            currency={currency}
+            living={livingExpenses}
+            yearAgo={yearAgo}
+            income={income}
+            annualInflation={initial?.annualInflationExpectation ?? 0.3}
+            onLiving={setLivingExpenses}
+            onYearAgo={setYearAgo}
+          />
 
-        <LivingCostsCard
-          currency={currency}
-          living={livingExpenses}
-          yearAgo={yearAgo}
-          income={income}
-          annualInflation={initial?.annualInflationExpectation ?? 0.3}
-          onLiving={setLivingExpenses}
-          onYearAgo={setYearAgo}
-        />
+          <PersonalSpendingCard currency={currency} value={personal} onChange={setPersonal} />
 
-        <PersonalSpendingCard currency={currency} value={personal} onChange={setPersonal} />
-
-        <div>
-          <Button type="submit">{t("save")}</Button>
+          <div>
+            <Button type="submit">{t("save")}</Button>
+          </div>
         </div>
       </form>
 

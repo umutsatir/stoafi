@@ -41,8 +41,28 @@ export function scheduleQueue(
   const results: ScheduleResult[] = [];
 
   const orderedItems = [...items].sort((a, b) => a.order - b.order);
+  const inHorizon = (month: Month): boolean => {
+    for (let offset = 0; offset < horizonMonths; offset++) {
+      if (addMonths(startMonth, offset) === month) return true;
+    }
+    return false;
+  };
+  // A pinned month is the user's own choice: it is kept even when the month is over its limit, and it is
+  // placed first so the items that are not pinned work around it.
+  const pins = new Map<string, Month>();
+  for (const item of orderedItems) {
+    if (item.pinnedMonth && inHorizon(item.pinnedMonth)) {
+      pins.set(item.id, item.pinnedMonth);
+      ledger.push({ ...toDraftCommitment(item, item.pinnedMonth), status: "active" });
+    }
+  }
 
   for (const item of orderedItems) {
+    const pinned = pins.get(item.id);
+    if (pinned) {
+      results.push({ itemId: item.id, month: pinned });
+      continue;
+    }
     let placedMonth: Month | null = null;
 
     for (let offset = 0; offset < horizonMonths; offset++) {

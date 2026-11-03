@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Stoafi",
-    "loading": "Verilerin yükleniyor"
+    "loading": "Verilerin yükleniyor",
+    "restoreFailed": "Bu dosya Stoafi yedeği olarak okunamadı."
   },
   "home": {
     "title": "Ana sayfa",
@@ -113,7 +114,9 @@
         "fixed": "Kişisel harcama için senin belirlediğin tutar.",
         "auto": "Aboneliklerden ve taksitlerden sonra isteklerinde kalan."
       },
-      "emergencyFirst": "Acil durum fonun henüz dolmadı; bu ay planın yatırım payı birikime gidiyor. Fon dolunca yatırım başlar."
+      "emergencyFirst": "Acil durum fonun henüz dolmadı; bu ay planın yatırım payı birikime gidiyor. Fon dolunca yatırım başlar.",
+      "installmentBar": "Taksitler, taksit sınırına karşı",
+      "installmentsInside": "Taksitler bunun içinde: {cap} taksit sınırının {used} kadarı."
     },
     "installmentRoom": {
       "title": "Taksit payı",
@@ -139,7 +142,41 @@
       "todo": "Bu ay yapman gereken",
       "showDetails": "Detayları göster",
       "hideDetails": "Detayları gizle"
-    }
+    },
+    "orbit": {
+      "quote1": {
+        "text": "Az şeye sahip olan değil, daha çoğunu isteyen yoksuldur.",
+        "by": "Seneca · serbest çeviri"
+      },
+      "quote2": {
+        "text": "Zenginlik, çok şeye sahip olmak değil, az şeye ihtiyaç duymaktır.",
+        "by": "Epiktetos · serbest çeviri"
+      },
+      "quote3": {
+        "text": "Hayatın, düşüncelerinin rengini alır.",
+        "by": "Marcus Aurelius · serbest çeviri"
+      },
+      "title": "{month} yörüngesi",
+      "hint": "Bir dilime gel, içinde ne olduğunu gör",
+      "innerRing": "İç halka: gün {day} / {days}",
+      "fixed": "Sabit giderler",
+      "living": "Yaşam giderleri",
+      "installments": "Taksitler",
+      "left": "Kalan",
+      "ofIncome": "gelirin %{pct}’i",
+      "fixedNote": "Her ay aynı gün çıkan, pazarlık konusu olmayan yükler.",
+      "livingNote": "Tek bir kalem olarak izlenir; her harcamayı girmen gerekmez.",
+      "installmentsNote": "Gelirinin %{pct}’i; sınırın (%{cap}) {state, select, under {rahatça altında.} other {üstünde.}}",
+      "freeSpending": "Serbest harcama (istekler)",
+      "needsRoom": "İhtiyaç payı",
+      "savingRoom": "Birikim ve yatırım payı",
+      "leftNote": "Serbest harcama payın günde yaklaşık {daily}."
+    },
+    "todoTitle": "Bu ay yapman gereken",
+    "todoAddMoney": "Para ekle",
+    "todoLookQueue": "Kuyruğa bak",
+    "fundMonths": "{target} ay",
+    "activePlanNamed": "Aktif plan · {name}"
   },
   "nav": {
     "ariaLabel": "Ana",
@@ -167,7 +204,9 @@
       "you": "Sen"
     },
     "calendar": "Takvim",
-    "search": "Ara"
+    "search": "Ara",
+    "add": "Ekle",
+    "toggleTheme": "Açık / koyu"
   },
   "incomeExpenses": {
     "title": "Gelir ve Giderler",
@@ -179,7 +218,8 @@
       "outHint": "Düzenli giderler, yaşam masrafı ve taksitler",
       "leftHint": "Biriktirebileceğin ya da serbest harcayabileceğin",
       "leftNegative": "Bu ay kazandığından fazla harcıyorsun"
-    }
+    },
+    "subtitle": "Giren para, çıkan para ve geriye kalan. Her ay birkaç dakikalık bir bakış yeter; her kuruşu girmen gerekmez."
   },
   "profile": {
     "title": "Profil",
@@ -216,7 +256,9 @@
       "fund": "Acil durum fonu",
       "fundMonths": "{target} aydan {months} ay",
       "fundRing": "Acil durum fonu ilerlemesi",
-      "addMoney": "Ona para ekle"
+      "addMoney": "Ona para ekle",
+      "needsTitle": "İhtiyaçların",
+      "needsHint": "Her ay kira, faturalar, yaşam giderleri ve taksitler"
     },
     "fundTitle": "Acil durum fonu",
     "fundHint": "Kötü bir ayın borca dönüşmemesi için kenara ayrılan para. Biriktirdikçe Birikim sayfasından ekle.",
@@ -353,6 +395,30 @@
       "hint": "Dışarı çıkma, arkadaşlar, kahve, alışveriş: sadece sana ayrılan para.",
       "amount": "Aylık kişisel harcama (isteğe bağlı)",
       "amountHint": "Boş bırakırsan Stoafi, aboneliklerden ve taksitlerden sonra isteklerinde kalanı kullanır."
+    },
+    "fundMonthsDecrease": "Hedefi azalt",
+    "fundMonthsIncrease": "Hedefi artır",
+    "subtitle": "Paran bir bakışta. Rakamlar değiştikçe plan, sağlık ve kuyruk kendiliğinden güncellenir.",
+    "held": {
+      "label": "Nerede tutuluyor?",
+      "cash": "Düz nakit",
+      "gold": "Altın",
+      "deposit": "Mevduat",
+      "indexFund": "Endeks fonu",
+      "fit": {
+        "good": {
+          "title": "İyi.",
+          "text": "Kolay ulaşılır ve değerini iyi korur: acil durum fonu için uygun."
+        },
+        "medium": {
+          "title": "Orta.",
+          "text": "Ulaşılır, ama düz nakit enflasyona yenilir, altının fiyatı oynar. Fonun bir kısmını daha sakin bir yerde tutmayı düşün."
+        },
+        "risky": {
+          "title": "Riskli.",
+          "text": "Fiyatı çok oynayabilir ya da çabuk satılamaz. Tam en kötü anda ihtiyaç duyacağın para için nadiren akıllıca."
+        }
+      }
     }
   },
   "plan": {
@@ -385,7 +451,13 @@
       "investingWhere": "Bu para nereye gidebilir?",
       "learnInvesting": "Endeks fonları ve maliyetleri öğren",
       "installmentRoomTitle": "Taksit payı"
-    }
+    },
+    "subtitle": "Paranı dört kovaya bölen strateji. Birini seç; her öneri bir kitaptan ya da yatırımcıdan gelir.",
+    "showLesson": "Ayrıntı",
+    "hideLesson": "Gizle",
+    "idea": "Fikir.",
+    "fits": "Kime uyar.",
+    "limits": "Sınırları."
   },
   "queue": {
     "title": "Kuyruk",
@@ -437,13 +509,14 @@
       "total": "Bekleyen toplam",
       "fits": "Bu ay sığan",
       "nearest": "En yakın alım",
-      "none": "Henüz hiçbiri sığmıyor"
+      "none": "Henüz hiçbiri sığmıyor",
+      "fitsCount": "{count} öğe"
     },
     "views": {
       "label": "Görünüm",
       "list": "Liste",
       "eisenhower": "Eisenhower",
-      "time": "Zaman"
+      "time": "Zaman çizelgesi"
     },
     "filters": {
       "label": "Göster",
@@ -481,7 +554,24 @@
       "title": "Kuyruğun boş",
       "text": "Almayı düşündüğün bir şey ekle. Karar vermeden önce biraz beklemek işin özü."
     },
-    "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?"
+    "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?",
+    "bubbles": {
+      "moved": "“{name}” {month} ayına taşındı",
+      "title": "12 aylık zaman çizelgesi",
+      "hint": "Kabarcığın boyu bedeli, yeri satın alma ayını gösterir. Seçili öğe için bir kabarcığa tıkla."
+    },
+    "cash": "Peşin",
+    "notYet": "henüz değil",
+    "subtitle": "Almayı düşündüğün şeyler, sırayla. Bir kabarcığa dokun; sonra bir aya tıklayıp taşı. Etkisi anında görünür.",
+    "cooldown": {
+      "askBadge": "Karar zamanı",
+      "askTitle": "Hâlâ istiyor musun?",
+      "askText": "Sakin kaldın, 30 gün geçti. {name} için karar senin.",
+      "keep": "Evet, tut",
+      "skip": "Vazgeç",
+      "days": "{count} gün bekle",
+      "confirmed": "{date} onaylandı"
+    }
   },
   "queuePreview": {
     "wantsBeforeAfter": "İstekler önce / sonra",
@@ -507,7 +597,30 @@
       "wants-limit": "Bu alım bu ayki istekler limitini aşar.",
       "unknown": "Bu alım güvenlik kurallarından birini aşıyor.",
       "card-limit": "Bu taksitler kartı limitinin üstüne çıkarır."
-    }
+    },
+    "installmentMode": "{months} taksit",
+    "workEquivalent": "Çalışma karşılığı · {cost}",
+    "hoursUnit": "saat",
+    "freeCashTitle": "{month} serbest nakit",
+    "before": "Önce",
+    "after": "Sonra",
+    "thirtyDayRule": "30 gün kuralı",
+    "ruleNone": "Bekleme yok",
+    "ruleDone": "Süre doldu",
+    "ruleDays": "{days} / 30 gün",
+    "needNoWait": "İhtiyaç: bekleme yok.",
+    "perMonth": "Taksitle: ayda {amount}.",
+    "cashPay": "Peşin {amount}.",
+    "buyAnyway": "Biliyorum, yine de al",
+    "room": {
+      "none": "Sığmıyor",
+      "short": "Yetmez",
+      "tight": "Dar",
+      "roomy": "Rahat"
+    },
+    "sureTitle": "Emin misin?",
+    "sureText": "{name} için {amount} değerinde bir alım yapıyorsun. Onaylarsan kuyruktan çıkar ve kararlara yazılır.",
+    "sureOk": "Tamam"
   },
   "installments": {
     "title": "Taksitle hesapla",
@@ -593,7 +706,8 @@
       "owedHere": "Bu kartta borç",
       "supplementaryTitle": "Ek kartlar",
       "availableShort": "Limit takip ediliyor",
-      "overLimitShort": "Limit aşıldı"
+      "overLimitShort": "Limit aşıldı",
+      "usedLabel": "Kullanılan"
     },
     "deleteDialog": {
       "title": "{name} silinsin mi?",
@@ -606,7 +720,8 @@
       "limitFor": "{name} limiti",
       "deleteAndKeep": "Sil, diğerlerini koru"
     },
-    "openCard": "{name} aç"
+    "openCard": "{name} aç",
+    "subtitle": "Hesap kesim ve son ödeme günlerini, limitini takip et; alışverişte en iyi günü söyleyeyim."
   },
   "minimumPayment": {
     "title": "Asgari ödeme tuzağı hesaplayıcısı",
@@ -616,7 +731,8 @@
     "minFloor": "Asgari ödeme tabanı",
     "monthsToPayoff": "Kapanma süresi: {months} ay",
     "totalInterest": "Toplam faiz: {interest}",
-    "neverPaysOff": "Bu borç hiç bitmez: asgari ödeme faizden küçük."
+    "neverPaysOff": "Bu borç hiç bitmez: asgari ödeme faizden küçük.",
+    "hint": "Asgari ödeme tuzağı: bakiye, faiz ve asgari oranını gir; borcun ne kadar sürede biteceğini gör."
   },
   "health": {
     "title": "Sağlık",
@@ -711,7 +827,8 @@
         "title": "Dayanma süreni uzat",
         "why": "Birikimin birkaç aylık ihtiyacını karşılamaz. En çok sabit giderleri azaltmak yardım eder.",
         "action": "Giderleri gözden geçir"
-      }
+      },
+      "allGood": "Her şey yolunda. Böyle devam."
     },
     "trends": {
       "title": "Nasıl değişiyor",
@@ -725,7 +842,8 @@
       "points": "puan",
       "better": "daha iyi",
       "worse": "daha kötü"
-    }
+    },
+    "subtitle": "Paranın ne kadar sağlıklı olduğu: dört ölçü, tek bakışta. Eşikler senin kurallarından gelir."
   },
   "decisions": {
     "title": "Kararlar",
@@ -760,7 +878,8 @@
     "addBack": "Geri ekle",
     "addBackNamed": "{name} ürününü kuyruğa geri ekle",
     "deleteNamed": "{name} kararını sil",
-    "addedBack": "{name} kuyruğuna geri eklendi"
+    "addedBack": "{name} kuyruğuna geri eklendi",
+    "subtitle": "Aldıkların, ertelediklerin ve vazgeçtiklerin. Bir istek için 30 gün beklemek bu sayfanın ödüllendirdiği alışkanlık."
   },
   "settings": {
     "title": "Ayarlar",
@@ -796,7 +915,8 @@
       "privacy": "Gizlilik",
       "privacyHint": "Paranı gözden uzak tut.",
       "safety": "Veri güvenliği",
-      "safetyHint": "Verilerin yalnızca bu cihazda duruyor. Bunlar kaybolmasını önler."
+      "safetyHint": "Verilerin yalnızca bu cihazda duruyor. Bunlar kaybolmasını önler.",
+      "offline": "Çevrimdışı ve kurulum"
     },
     "about": {
       "privacy": "Verilerin bu cihazdan çıkmaz. Stoafi'nin hesabı ve sunucusu yoktur, rakamlarını hiçbir yere göndermez.",
@@ -880,6 +1000,16 @@
         "restored": "Geri yüklendi.",
         "failed": "Bu kopya geri yüklenemedi."
       }
+    },
+    "subtitle": "Her şey bu cihazda kalır. Kaybetmemek için yedekle.",
+    "offline": {
+      "works": "Çevrimdışı çalışır",
+      "offlineNow": "Çevrimdışısın ve Stoafi hâlâ çalışıyor",
+      "hint": "İnternet olmadan da açılır ve çalışır; hiçbir şey sunucuya gitmez.",
+      "install": "Uygulamayı yükle",
+      "installed": "Yüklendi",
+      "installHelp": "Tarayıcın yüklemeyi önermedi. Safari’de Paylaş, sonra Ana Ekrana Ekle’yi kullan.",
+      "localNote": "Verilerin yalnızca bu cihazda duruyor. Cihaz değiştirir ya da tarayıcı verisini silersen kaybolur; ara sıra yedek al."
     }
   },
   "installmentExpenses": {
@@ -911,7 +1041,10 @@
       "saving": "Biriktirme",
       "investing": "Yatırım",
       "thinking": "Düşünme"
-    }
+    },
+    "subtitle": "Stoafi’deki her öneri bir kitaptan ya da bir yatırımcıdan gelir. Bu kartlar fikri kendi sözlerimizle, uygulamanın onu nasıl kullandığını, kime uyduğunu ve nerede yetersiz kaldığını anlatır.",
+    "showDetails": "Ayrıntılar",
+    "hideDetails": "Ayrıntıyı gizle"
   },
   "insights": {
     "title": "Planın ne diyor",
@@ -922,7 +1055,12 @@
     "babyStepsStep1": "1. adım: başlangıç acil durum fonunu biriktir ({months}).",
     "babyStepsStep2": "2. adım: fazladan biriktirmeden önce borçları öde ({months}).",
     "babyStepsStep3": "3. adım: tam acil durum fonunu biriktir ({months}).",
-    "babyStepsStep4": "4. adım ve sonrası: acil durum fonu tamam, yatırıma başla ({months})."
+    "babyStepsStep4": "4. adım ve sonrası: acil durum fonu tamam, yatırıma başla ({months}).",
+    "idea": "Fikir.",
+    "fits": "Kime uyar.",
+    "savingsToSet": "Planına uymak için bu ay birikime {amount} daha ayır.",
+    "investingToSet": "Planına uymak için bu ay yatırıma {amount} daha ayır.",
+    "fundNotFull": "Acil durum fonun henüz dolmadı; planın yatırım payı birikime gidiyor. Fon dolunca yatırım başlar."
   },
   "sinkingFunds": {
     "title": "Birikim hedefleri",
@@ -959,7 +1097,9 @@
   "guardSettings": {
     "installmentCap": "Taksit üst sınırı (net gelirin %'si)",
     "installmentCapHint": "Aylık taksitlerin toplamı gelirinin bu oranını aşınca Stoafi seni uyarır ve devam etmeden önce onay ister.",
-    "outOfRange": "0 ile 100 arasında bir yüzde gir."
+    "outOfRange": "0 ile 100 arasında bir yüzde gir.",
+    "decrease": "Azalt",
+    "increase": "Artır"
   },
   "common": {
     "close": "Kapat",
@@ -1074,7 +1214,8 @@
         "ok": "Ulaşılır, ama fiyatı oynayabilir ya da zamanla değer kaybeder. Düz nakit enflasyona yenilir, altın ve döviz oynar. Fonun bir kısmını daha sakin bir yerde tutmayı düşün.",
         "risky": "Fiyatı çok oynayabilir ya da çabuk satılamaz. Tam en kötü anda ihtiyaç duyacağın acil durum fonu için nadiren akıllıca."
       }
-    }
+    },
+    "subtitle": "Biriktirdikçe parayı kumbaralara ekle ve dolduğunu izle. Stoafi bu ay ne kaldığını ve ne kadar ayırman gerektiğini gösterir."
   },
   "investments": {
     "types": {
@@ -1201,7 +1342,8 @@
       "profit": "Kâr ya da zarar",
       "profitPct": "Ödediğine göre {pct}",
       "allocationLabel": "Türe göre dağılım: {parts}",
-      "inflationNote": "Yılda yaklaşık {rate} enflasyon bekliyorsun. Bunun altındaki getiri alım gücünü kaybettirir. Buradaki değerler senin girdiğin fiyatlar; uygulama hiçbir fiyatı kendisi aramaz."
+      "inflationNote": "Yılda yaklaşık {rate} enflasyon bekliyorsun. Bunun altındaki getiri alım gücünü kaybettirir. Buradaki değerler senin girdiğin fiyatlar; uygulama hiçbir fiyatı kendisi aramaz.",
+      "inflationTitle": "Enflasyonu unutma"
     },
     "empty": {
       "title": "Yatırımlarını kaydet",
@@ -1238,7 +1380,8 @@
       "stale": "Fiyat {days} gündür güncellenmedi",
       "trade": "Al veya sat",
       "updatePrice": "Fiyatı güncelle",
-      "history": "Geçmiş"
+      "history": "Geçmiş",
+      "paid": "ödenen"
     },
     "trade": {
       "title": "{name} al veya sat",
@@ -1286,15 +1429,15 @@
       "template": {
         "careful": {
           "name": "Temkinli",
-          "text": "Çoğu az oynayan yerlerde. Kısa vadeler için ya da büyük düşüşler seni uykusuz bırakırsa."
+          "text": "Çoğu parayı sakin yerde tut; küçük bir kısmı büyümeye ayır."
         },
         "balanced": {
           "name": "Dengeli",
-          "text": "Büyüme ile daha sakin paranın karışımı. Beş yıl ve üzeri için yaygın bir başlangıç."
+          "text": "Büyüme ile sakinlik arasında orta yol."
         },
         "growth": {
           "name": "Atak",
-          "text": "Çoğunlukla hisse. Kötü bir yıl canını yakabilir; on yıl ve üzeri ile soğukkanlı bir mizaca uyar."
+          "text": "Uzun vadeli; dalgalanmayı kaldırabilen için."
         }
       },
       "use": "Bunu kullan",
@@ -1304,15 +1447,16 @@
       "keepMine": "Sepetimi koru",
       "replaced": "Sepet değiştirildi",
       "slice": {
-        "deposit": "Mevduat veya para piyasası",
-        "bond": "Tahvil / bono",
+        "deposit": "Mevduat",
         "gold": "Altın",
-        "world": "Dünya hisse endeks fonu",
-        "sp500": "S&P 500 endeks fonu",
-        "nasdaq": "Nasdaq-100 endeks fonu"
+        "sp500": "S&P 500",
+        "indexFund": "Küresel endeks fonu",
+        "currency": "Döviz",
+        "stock": "Hisse senedi",
+        "crypto": "Kripto"
       },
       "sliceName": "{n}. dilim adı",
-      "slicePlaceholder": "örn. Altın",
+      "slicePlaceholder": "Dilim adı",
       "slicePercent": "{n}. dilim yüzdesi",
       "removeSlice": "{n}. dilimi sil",
       "addSlice": "Dilim ekle",
@@ -1328,14 +1472,14 @@
       "assignTo": "{name} yatırımını bir dilime koy",
       "choose": "Dilim seç",
       "splitTitle": "Bu ayın parasını böl",
-      "monthlyAmount": "Yatırılacak tutar",
+      "monthlyAmount": "Yatırıma ayıracağın tutar",
       "monthlyHint": "Planının yatırım için ayırdığı tutarla başlar.",
       "mode": {
         "label": "Nasıl bölünsün",
         "catchUp": "Açıkları kapat",
         "percent": "Düz yüzdeler",
-        "catchUpHint": "Yeni parayı önce hedefinden az tuttuğun yere koyar. Hiçbir şey satılmaz.",
-        "percentHint": "Tutarı yüzdelerine göre tam olarak böler."
+        "catchUpHint": "Yeni parayı önce hedefinden az tuttuğun yere koyar; hiçbir şey satılmaz.",
+        "percentHint": "Tutarı yüzdelerine göre böler."
       },
       "finishFirst": "Bölünmeyi görmek için yüzdelerin toplamı 100 olsun.",
       "notAdvice": "Kendi seçimini düzenlemenin bir yolu; bir şey almanı önermez. Geçmiş sonuçlar gelecekteki sonuçların habercisi değildir.",
@@ -1350,7 +1494,32 @@
       "willLog": "İşaretlemek sadece not alır. Toplamların güncellensin istiyorsan alımı bir yatırıma ekle.",
       "cheerDone": "{name} için {amount} işaretlendi. İstikrar kazandırır.",
       "monthlyHintNone": "Planın yatırım için pay ayırmıyor; her ay yatırmak istediğin tutarı kendin yaz.",
-      "monthlyHintEmergency": "Acil durum fonun henüz dolmadığı için bu ay yatırım önerilmiyor: para önce birikime gidiyor. Yine de yatırmak istersen tutarı kendin yaz."
+      "monthlyHintEmergency": "Acil durum fonun henüz dolmadığı için bu ay yatırım önerilmiyor: para önce birikime gidiyor. Yine de yatırmak istersen tutarı kendin yaz.",
+      "editorTitle": "Sepetin",
+      "whereYouAreHint": "Çizgi hedefin, dolgu elindeki pay.",
+      "allAssigned": "Hepsi bir dilime bağlı.",
+      "invalidText": "Dilimlerin toplamı 100 olmadan bölünme ve sapma gösterilmez.",
+      "invalidTitle": "Yüzde toplamı 100 değil",
+      "note": {
+        "gold": "Faiz getirmez, fiyatı oynar; sepetin küçük–orta parçası olarak. (Hata payı: Housel)",
+        "index-fund": "Düşük maliyetli geniş endeks: kazananı seçmeden büyümek. (Bogle)",
+        "deposit": "Sakin kısım; enflasyon alım gücünü yiyebilir.",
+        "currency": "Kısa-orta vade; kur her gün oynar.",
+        "stock": "Tek şirket riski; yıllar ve dağıtım ister.",
+        "crypto": "Çok oynak; kaybetsen de hayatını değiştirmeyecek tutar.",
+        "bond": "Faiz getirir ama fiyatı faizle oynar."
+      },
+      "templateReady": "“{name}” sepeti hazır",
+      "hideTemplates": "Şablonları gizle",
+      "replaceTitle": "Sepetini değiştirmek üzeresin",
+      "replaceText": "Mevcut sepetin yerine {name} şablonu gelecek; dilimlerin ve yüzdelerin sıfırlanır. Bu ayki işaretlemelerin de silinir.",
+      "replaceConfirm": "Sepeti değiştir",
+      "driftTarget": "hedef %{target}",
+      "splitSum": "Bölünen toplam: {sum}. Dilimde tek bir fiyatlı varlık varsa, “Ben koydum” o varlığa o günkü fiyattan alım olarak da yazılır.",
+      "planAmount": "Planın yatırım için ayırdığı tutar: {amount}.",
+      "targetClosing": "%{pct} hedef · açık kapatılıyor",
+      "targetOnly": "%{pct} hedef",
+      "closePick": "Kapat"
     }
   },
   "calendar": {
@@ -1371,7 +1540,9 @@
       "title": "Ayını takvimde gör",
       "text": "Maaşını, faturalarını ve kartlarını günleriyle ekle, burada görünsünler.",
       "action": "Gelir ve gider ekle"
-    }
+    },
+    "subtitle": "Maaş günleri, faturalar ve kart son ödemeleri, günleriyle.",
+    "all": "Hepsi"
   },
   "onboarding": {
     "title": "Stoafi'yi kur",
@@ -1395,7 +1566,7 @@
       },
       "expenses": {
         "title": "Her ay ne çıkıyor?",
-        "hint": "Geçerli olanlara dokun ve tutarı gir. Olmayanı atla."
+        "hint": "Geçerli olanlara dokun. Olmayanı atla."
       },
       "savings": {
         "title": "Ne biriktirdin?",
@@ -1419,12 +1590,13 @@
       "school": "Okul"
     },
     "living": "Yaşam giderleri",
-    "livingHint": "Market ve günlük harcamalar, aylık yaklaşık.",
-    "monthsHint": "Birçok kaynak 3 ila 6 aylık ihtiyaç önerir.",
+    "livingHint": "Market ve günlük, aylık yaklaşık.",
+    "monthsHint": "Birçok kaynak 3 ila 6 ay önerir.",
     "leftOver": "Düzenli giderlerinden sonra her ay {amount} kalıyor.",
     "overspent": "Düzenli giderlerin gelirinden {amount} fazla. Yine de devam edip sonra düzeltebilirsin.",
     "planChoice": "Plan",
-    "split": "İhtiyaç {needs} · İstek {wants} · Birikim {savings}"
+    "split": "İhtiyaç {needs} · İstek {wants} · Birikim {savings}",
+    "monthsOption": "{n} ay"
   },
   "demoLabels": {
     "salary": "Maaş",
@@ -1470,7 +1642,8 @@
       "addQueueItem": "Kuyruğa bir şey ekle",
       "addCard": "Kart ekle",
       "addPot": "Kumbara ekle",
-      "addInvestment": "Yatırım ekle"
+      "addInvestment": "Yatırım ekle",
+      "openOnboarding": "Kurulum sihirbazını aç"
     }
   },
   "errorScreen": {

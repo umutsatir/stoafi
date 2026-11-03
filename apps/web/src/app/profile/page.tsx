@@ -22,7 +22,7 @@ export default function ProfilePage() {
   const tc = useTranslations("common");
 
   return (
-    <Page title={t("title")}>
+    <Page title={t("title")} subtitle={t("subtitle")}>
       {profile && <ProfileOverview profile={profile} month={monthOf(today)} />}
       <ProfileForm
         initial={profile ?? undefined}

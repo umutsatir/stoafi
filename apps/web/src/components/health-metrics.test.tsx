@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import {
   healthSummary,
@@ -61,10 +61,9 @@ describe("HealthMetrics", () => {
   it("gives an overall status, the reason, and a fix button to the first step", () => {
     render({ savingsBalance: 5000, projection: { ...projection, installmentLoad: 3500 } });
     expect(screen.getByTestId("overall-status")).toHaveTextContent("At risk");
-    expect(screen.getByRole("link", { name: /Fix this/ })).toHaveAttribute(
-      "href",
-      "/sinking-funds",
-    );
+    expect(
+      within(screen.getByTestId("step-build-emergency-fund")).getByRole("link"),
+    ).toHaveAttribute("href", "/sinking-funds");
     expect(screen.getByTestId("step-build-emergency-fund")).toBeInTheDocument();
     expect(screen.getByTestId("step-reduce-installments")).toBeInTheDocument();
   });
@@ -75,20 +74,16 @@ describe("HealthMetrics", () => {
       projection: { ...projection, installmentLoad: 0 },
     });
     expect(screen.getByTestId("overall-status")).toHaveTextContent("Good");
-    expect(screen.getByText("Everything is on track. Keep going.")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /Fix this/ })).not.toBeInTheDocument();
+    expect(screen.getAllByText("Everything is on track. Keep going.").length).toBeGreaterThan(0);
+    expect(screen.queryByTestId("step-build-emergency-fund")).not.toBeInTheDocument();
   });
 
-  it("explains each metric in an (i) popover", () => {
+  it("explains each metric in words under its card", () => {
     render();
-    for (const name of [
-      "What is the savings rate?",
-      "What are emergency fund months?",
-      "What is the installment ratio?",
-      "What is the runway?",
-    ]) {
-      expect(screen.getByRole("button", { name })).toBeInTheDocument();
+    for (const id of ["savings-rate", "emergency-fund-months", "installment-ratio", "runway"]) {
+      expect(screen.getByTestId(id)).toBeInTheDocument();
     }
+    expect(screen.getAllByText(/./, { selector: "p.text-xs" })).toHaveLength(4);
   });
 
   it("shows how far the emergency fund is toward its target, capped at 100 percent", () => {

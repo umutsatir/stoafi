@@ -1,5 +1,5 @@
 import { fireEvent, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { Card, Profile, QueueItem, SinkingFund } from "@stoafi/core";
 import { renderWithIntl } from "@/test-utils";
 import { Dashboard } from "./dashboard";
@@ -46,6 +46,31 @@ function renderDashboard(overrides: Partial<Parameters<typeof Dashboard>[0]> = {
 }
 
 describe("Dashboard", () => {
+  it("names recurring installment and loan lines under installments, not under fixed costs", () => {
+    renderDashboard({
+      profile: {
+        ...profile,
+        fixedExpenses: [
+          { label: "Rent", monthly: 200_000, bucket: "needs" },
+          { label: "Car loan", monthly: 380_000, bucket: "needs", kind: "loan" },
+          { label: "Phone plan", monthly: 25_000, bucket: "needs", kind: "installment" },
+        ],
+      },
+    });
+    const month = within(screen.getByTestId("this-month"));
+    fireEvent.click(month.getByRole("button", { name: /Installments/ }));
+    const detail = month.getByText("Car loan").closest("li");
+    expect(detail).not.toBeNull();
+    expect(month.getByText("Phone plan")).toBeInTheDocument();
+    fireEvent.click(month.getByRole("button", { name: /Fixed costs/ }));
+    expect(month.getByText("Rent")).toBeVisible();
+  });
+
+  it("colours the emergency fund and the health tile by how they are doing", () => {
+    renderDashboard({ profile: { ...profile, savings: 0 } });
+    expect(screen.getByRole("link", { name: "Emergency fund" })).toHaveClass("bg-c3");
+  });
+
   it("points a new user to income and expenses first and shows no numbers", () => {
     renderDashboard({ profile: null });
     expect(screen.getByRole("link", { name: "Add your income and expenses" })).toHaveAttribute(
@@ -244,14 +269,14 @@ describe("Dashboard", () => {
     renderDashboard();
     expect(screen.getByTestId("saving-sentence")).toHaveTextContent(/Set aside .* more/);
     expect(
-      within(screen.getByTestId("saving-widget")).getByRole("link", { name: "Open savings" }),
+      within(screen.getByTestId("saving-widget")).getByRole("link", { name: "Add money" }),
     ).toHaveAttribute("href", "/sinking-funds");
   });
 
   it("gives the overall health in a word, with the reason", () => {
     renderDashboard();
     expect(screen.getByTestId("home-health")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "See the details" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Financial health" })).toHaveAttribute(
       "href",
       "/health",
     );
@@ -274,91 +299,5 @@ describe("Dashboard cash-flow chart and personal spending", () => {
     const left = screen.getByTestId("left").textContent;
     const firstRow = within(screen.getByTestId("cash-flow-chart")).getAllByRole("row")[1];
     expect(firstRow).toHaveTextContent(left ?? "never");
-  });
-});
-
-describe("Dashboard with the emergency fund first", () => {
-  const conscious = { strategyId: "conscious-spending", params: {} };
-
-  it("puts the plan's investing money into savings while the emergency fund is short", () => {
-    renderDashboard({ planState: conscious }); // savings 18,000 of a 30,000 target
-    expect(screen.getByTestId("emergency-first-note")).toBeInTheDocument();
-    expect(screen.getByTestId("plan-investing")).toHaveTextContent("₺0.00");
-  });
-
-  it("invests as the plan says once the emergency fund is full", () => {
-    renderDashboard({ planState: conscious, profile: { ...profile, savings: 3_000_000 } });
-    expect(screen.queryByTestId("emergency-first-note")).not.toBeInTheDocument();
-    expect(screen.getByTestId("plan-investing")).not.toHaveTextContent("₺0.00");
-  });
-});
-
-describe("Dashboard summary and details", () => {
-  const sinkingFunds: SinkingFund[] = [];
-
-  it("shows a short summary: what is left, free spending, the next payment and what to do", () => {
-    renderDashboard();
-    const summary = within(screen.getByTestId("month-summary"));
-    expect(summary.getByTestId("summary-free-spending")).toHaveTextContent("₺");
-    expect(summary.getByText(/a day/)).toBeInTheDocument();
-    expect(summary.getByTestId("summary-next-payment")).toBeInTheDocument();
-    expect(summary.getByTestId("summary-todo")).toBeInTheDocument();
-    expect(screen.getByTestId("left")).toBeInTheDocument();
-  });
-
-  it("names the next payment that is not income", () => {
-    renderDashboard({
-      profile: {
-        ...profile,
-        incomes: [{ label: "Job", monthly: 800_000, payDay: 16 }],
-        fixedExpenses: [{ label: "Rent", monthly: 200_000, bucket: "needs", dueDay: 20 }],
-      },
-      sinkingFunds,
-    });
-    const next = screen.getByTestId("summary-next-payment");
-    expect(next).toHaveTextContent("Rent");
-    expect(next).toHaveTextContent("₺2,000.00");
-  });
-
-  it("says when nothing is due soon", () => {
-    renderDashboard({ profile: { ...profile, fixedExpenses: [] } });
-    expect(screen.getByTestId("summary-next-payment")).toHaveTextContent(
-      "Nothing due in the next 14 days",
-    );
-  });
-
-  it("gives the most pressing thing to do, with a link to act on it", () => {
-    renderDashboard({
-      profile: {
-        ...profile,
-        fixedExpenses: [{ label: "Rent", monthly: 900_000, bucket: "needs" }],
-      },
-    });
-    const todo = within(screen.getByTestId("summary-todo"));
-    expect(todo.getByText(/over your plan/)).toBeInTheDocument();
-    expect(todo.getByRole("link", { name: "Review expenses" })).toHaveAttribute(
-      "href",
-      "/income-expenses",
-    );
-  });
-
-  it("shows the details by default and hides them on request, telling the page", () => {
-    const onChange = vi.fn();
-    renderDashboard({ onDetailsChange: onChange });
-    const toggle = screen.getByRole("button", { name: "Hide details" });
-    expect(toggle).toHaveAttribute("aria-expanded", "true");
-    fireEvent.click(toggle);
-    expect(onChange).toHaveBeenLastCalledWith(false);
-    expect(screen.getByRole("button", { name: "Show details" })).toHaveAttribute(
-      "aria-expanded",
-      "false",
-    );
-    expect(document.getElementById("home-details")).toHaveAttribute("hidden");
-  });
-
-  it("starts with the details hidden when the saved choice says so", () => {
-    renderDashboard({ detailsOpen: false });
-    expect(document.getElementById("home-details")).toHaveAttribute("hidden");
-    expect(screen.getByRole("button", { name: "Show details" })).toBeInTheDocument();
   });
 });

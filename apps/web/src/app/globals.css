@@ -1,134 +1,147 @@
 @import "tailwindcss";
 
 /*
- * Inter, served from our own files (public/fonts, SIL Open Font License, see OFL.txt and
- * docs/THIRD-PARTY.md): nothing is fetched from another site. Two files per style; the browser loads a file
- * only when a character from its range is on the page, so English needs "latin" and Turkish also "latin-ext"
- * (ğ ş İ and others).
+ * Design tokens ("Yörünge · Sakin", see docs/design/Stoafi.dc.html). Every colour in the app comes
+ * from here; components use the Tailwind names below (bg-card, text-muted-foreground, ...) or
+ * var(--chart-*) / var(--c1..c4). Light is the default; the dark set applies when
+ * <html data-theme="dark"> is set (see lib/theme.ts). The contrast test in tokens.test.ts reads this file.
  */
 @font-face {
-  font-family: "Inter";
+  font-family: "Sora";
   font-style: normal;
+  font-weight: 400 800;
   font-display: swap;
-  font-weight: 100 900;
-  src: url("/fonts/inter-latin-ext-wght-normal.woff2") format("woff2-variations");
+  src: url("/fonts/sora-latin-ext.woff2") format("woff2");
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
-    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F,
     U+A720-A7FF;
 }
-
 @font-face {
-  font-family: "Inter";
+  font-family: "Sora";
   font-style: normal;
+  font-weight: 400 800;
   font-display: swap;
-  font-weight: 100 900;
-  src: url("/fonts/inter-latin-wght-normal.woff2") format("woff2-variations");
+  src: url("/fonts/sora-latin.woff2") format("woff2");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/*
- * Design tokens. Every colour in the app comes from here; components use the
- * Tailwind names below (bg-card, text-muted-foreground, ...) or var(--chart-*).
- * Light is the default; the dark set applies when <html data-theme="dark"> is
- * set (see lib/theme.ts). The contrast test in tokens.test.ts reads this file.
- */
 :root {
   color-scheme: light;
 
   /* Surfaces and text */
-  --background: #f6f9f8;
-  --foreground: #0f2420;
-  --card: #ffffff;
-  --card-foreground: #0f2420;
-  --muted: #eaf1ef;
-  --muted-foreground: #4b605b;
-  --secondary: #e3eeeb;
-  --secondary-foreground: #0f2420;
-  --accent: #dcebe7;
-  --accent-foreground: #0f2420;
-  --border: #d3e0dc;
-  --input: #c3d4cf;
-  --ring: #0f766e;
+  --background: #ece9e2;
+  --foreground: #1c2b2a;
+  --card: #fbfaf7;
+  --card-foreground: #1c2b2a;
+  --muted: #f1efe9;
+  --muted-foreground: #5e6b69;
+  --secondary: #e8e4da;
+  --secondary-foreground: #1c2b2a;
+  --accent: #e3dfd5;
+  --accent-foreground: #1c2b2a;
+  --border: #e3dfd5;
+  --input: #c9c3b4;
+  --ring: #c4412f;
 
-  /* Brand */
-  --primary: #0f766e;
-  --primary-foreground: #ffffff;
-  --highlight: #b45309;
+  /* Brand: the coral accent fills buttons; --primary-ink is the same hue dark enough for text */
+  --primary: #ee5a6f;
+  --primary-foreground: #14211f;
+  --primary-ink: #b53a29;
+  --highlight: #8a5a00;
   --highlight-foreground: #ffffff;
 
+  /* The inverted card (dark on light, light on dark) */
+  --inverse: #1c2b2a;
+  --inverse-foreground: #ece9e2;
+
   /* Meaning */
-  --destructive: #b91c1c;
+  --destructive: #a62f20;
   --destructive-foreground: #ffffff;
-  --success: #15803d;
+  --success: #2f7d5f;
   --success-foreground: #ffffff;
-  --warning: #b45309;
+  --warning: #8a5a00;
   --warning-foreground: #ffffff;
-  --info: #0369a1;
+  --info: #3b6598;
   --info-foreground: #ffffff;
 
-  /* Data colours: one per plan bucket and per chart series */
-  --chart-needs: #0f766e;
-  --chart-wants: #7c6f64;
-  --chart-savings: #0369a1;
-  --chart-investing: #15803d;
-  --chart-installments: #c2410c;
-  --chart-setaside: #7e22ce;
-  --chart-income: #15803d;
-  --chart-left: #b45309;
+  /* Pastel fills: blue, gold, coral, green. Text on them is --on. */
+  --c1: #7b9bc7;
+  --c2: #e6b655;
+  --c3: #e8806f;
+  --c4: #6db596;
+  --on: #1c2b2a;
 
-  --radius: 0.75rem;
+  /* Data colours: one per plan bucket and per chart series */
+  --chart-needs: #7b9bc7;
+  --chart-wants: #e6b655;
+  --chart-savings: #6db596;
+  --chart-investing: #7b9bc7;
+  --chart-installments: #e8806f;
+  --chart-setaside: #e6b655;
+  --chart-income: #6db596;
+  --chart-left: #6db596;
+
+  --radius: 1.25rem;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --background: #0a1412;
-  --foreground: #dfeae6;
-  --card: #101d1a;
-  --card-foreground: #dfeae6;
-  --muted: #162622;
-  --muted-foreground: #9db3ad;
-  --secondary: #1a2d29;
-  --secondary-foreground: #e6f1ee;
-  --accent: #1f3631;
-  --accent-foreground: #e6f1ee;
-  --border: #243832;
-  --input: #2f4740;
-  --ring: #4fc2b1;
+  --background: #121a19;
+  --foreground: #eaf0ec;
+  --card: #1b2625;
+  --card-foreground: #eaf0ec;
+  --muted: #223130;
+  --muted-foreground: #9db0ab;
+  --secondary: #2a3836;
+  --secondary-foreground: #eaf0ec;
+  --accent: #2a3836;
+  --accent-foreground: #eaf0ec;
+  --border: #2a3836;
+  --input: #46605b;
+  --ring: #ff7a8c;
 
-  --primary: #34b3a0;
-  --primary-foreground: #031a17;
-  --highlight: #e0b44a;
+  --primary: #ff7a8c;
+  --primary-foreground: #2a0a10;
+  --primary-ink: #ff7a8c;
+  --highlight: #ebc468;
   --highlight-foreground: #2a1a02;
 
-  --destructive: #ec7c7c;
-  --destructive-foreground: #2a0606;
-  --success: #62c184;
+  --inverse: #2c3e3b;
+  --inverse-foreground: #eaf0ec;
+
+  --destructive: #ff8a7a;
+  --destructive-foreground: #2a0a06;
+  --success: #7acba8;
   --success-foreground: #04200d;
-  --warning: #deb04e;
+  --warning: #ebc468;
   --warning-foreground: #2a1a02;
-  --info: #62aedd;
+  --info: #8fb0dc;
   --info-foreground: #04202e;
 
-  --chart-needs: #3aa596;
-  --chart-wants: #a89a8c;
-  --chart-savings: #5aa5d6;
-  --chart-investing: #5fb97f;
-  --chart-installments: #e0915a;
-  --chart-setaside: #a98bd6;
-  --chart-income: #5fb97f;
-  --chart-left: #d9ad4a;
+  --c1: #8fb0dc;
+  --c2: #ebc468;
+  --c3: #f0907f;
+  --c4: #7acba8;
+  --on: #1c2b2a;
+
+  --chart-needs: #8fb0dc;
+  --chart-wants: #ebc468;
+  --chart-savings: #7acba8;
+  --chart-investing: #8fb0dc;
+  --chart-installments: #f0907f;
+  --chart-setaside: #ebc468;
+  --chart-income: #7acba8;
+  --chart-left: #7acba8;
 }
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
-  --font-sans:
-    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    sans-serif;
+  --font-sans: "Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -151,6 +164,16 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
+  --color-primary-ink: var(--primary-ink);
+  --color-inverse: var(--inverse);
+  --color-inverse-foreground: var(--inverse-foreground);
+  --color-c1: var(--c1);
+  --color-c2: var(--c2);
+  --color-c3: var(--c3);
+  --color-c4: var(--c4);
+  --color-on: var(--on);
+  --font-sans: "Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius-card: 2.125rem;
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -171,7 +194,64 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
+}
+
+/* Cards lift on hover with a springy ease; buttons and chips lift, grow and press (design: Yörünge). */
+.lift {
+  transition:
+    transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.45s;
+}
+.lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 44px rgb(20 40 40 / 0.13);
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheen {
+  from {
+    transform: skewX(-20deg) translateX(-140%);
+  }
+  to {
+    transform: skewX(-20deg) translateX(420%);
+  }
+}
+.sheen {
+  animation: sheen 3.6s 1.4s infinite;
+}
+
+.press {
+  transition:
+    transform 0.3s cubic-bezier(0.3, 1.7, 0.5, 1),
+    filter 0.25s,
+    background-color 0.25s;
+}
+.press:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.06);
+  filter: brightness(1.06);
+}
+.press:active:not(:disabled) {
+  transform: scale(0.93);
+  filter: brightness(0.96);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -260,21 +340,35 @@ body {
 @keyframes dialog-in {
   from {
     opacity: 0;
-    transform: translateY(2%) scale(0.96);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
-    transform: none;
+    transform: scale(1);
+  }
+}
+/* Centring comes from the element's own translate property, so these only scale. */
+@keyframes dialog-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  60% {
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 @keyframes dialog-out {
   from {
     opacity: 1;
-    transform: none;
+    transform: scale(1);
   }
   to {
     opacity: 0;
-    transform: translateY(2%) scale(0.96);
+    transform: scale(0.96);
   }
 }
 @keyframes pop {

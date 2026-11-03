@@ -6,7 +6,6 @@ import { AlertCircle, Download, Upload } from "lucide-react";
 import type { ImportResult } from "@stoafi/core";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/dialog";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { daysSinceBackup } from "@/lib/backup-reminder";
 
@@ -63,9 +62,9 @@ export function SettingsPanel({
   }
 
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-5 pt-6">
-        <p className="text-sm text-muted-foreground" data-testid="last-backup">
+    <div className="flex flex-col">
+      <div className="flex flex-col">
+        <p className="mt-[3px] text-[13px] text-muted-foreground" data-testid="last-backup">
           {since === null
             ? t("lastBackupNever")
             : since === 0
@@ -73,34 +72,32 @@ export function SettingsPanel({
               : t("lastBackupDays", { days: since })}
         </p>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Button type="button" variant="outline" onClick={() => void handleExport()}>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Button type="button" onClick={() => void handleExport()}>
             <Download className="h-4 w-4" />
             {t("exportBackup")}
           </Button>
 
-          <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-            <Label
-              htmlFor="import-file"
-              className="flex cursor-pointer items-center gap-2 text-sm font-medium"
-            >
-              <Upload className="h-4 w-4" />
-              {t("importBackup")}
-            </Label>
+          <Label
+            htmlFor="import-file"
+            className="press flex cursor-pointer items-center gap-2 rounded-full bg-muted px-5 py-[11px] text-[13px] font-extrabold has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
+          >
+            <Upload className="h-4 w-4" />
+            {t("importBackup")}
             <input
               id="import-file"
               type="file"
               accept="application/json"
               onChange={handleFileChange}
-              className="w-full min-w-0 max-w-full text-sm text-muted-foreground file:mr-2 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium"
+              className="sr-only"
             />
-          </div>
+          </Label>
         </div>
 
         {importErrors && (
           <ul
             data-testid="import-errors"
-            className="flex flex-col gap-1 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"
+            className="mt-4 flex flex-col gap-1 rounded-[20px] bg-destructive/10 px-4 py-3 text-[13px] font-bold text-destructive"
           >
             {importErrors.map((err) => (
               <li key={err} className="flex items-start gap-1.5">
@@ -110,7 +107,7 @@ export function SettingsPanel({
             ))}
           </ul>
         )}
-      </CardContent>
+      </div>
       <ConfirmDialog
         open={pendingImport !== null}
         onOpenChange={(open) => {
@@ -122,6 +119,6 @@ export function SettingsPanel({
         destructive
         onConfirm={() => void confirmImport()}
       />
-    </Card>
+    </div>
   );
 }

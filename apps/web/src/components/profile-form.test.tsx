@@ -13,7 +13,8 @@ describe("ProfileForm settings", () => {
     const onSave = vi.fn();
     renderWithIntl(<ProfileForm onSave={onSave} />);
     type("Current savings", "10000");
-    type("Emergency fund target (months)", "4");
+    fireEvent.click(screen.getByRole("button", { name: "Fewer months" }));
+    fireEvent.click(screen.getByRole("button", { name: "Fewer months" }));
     type("Annual inflation expectation", "45");
     fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
     expect(onSave).toHaveBeenCalledTimes(1);
@@ -39,7 +40,7 @@ describe("ProfileForm settings", () => {
     };
     renderWithIntl(<ProfileForm initial={initial} onSave={vi.fn()} />);
     expect(screen.getByLabelText("Current savings")).toHaveValue("2500.5");
-    expect(screen.getByLabelText("Emergency fund target (months)")).toHaveValue(3);
+    expect(screen.getByRole("status")).toHaveTextContent("3");
     expect(screen.getByLabelText("Annual inflation expectation")).toHaveValue("50");
   });
 
@@ -121,7 +122,9 @@ describe("ProfileForm settings", () => {
 
     it("updates as the target months change", () => {
       renderWithIntl(<ProfileForm initial={initial} currentMonth="2026-09" onSave={vi.fn()} />);
-      type("Emergency fund target (months)", "3");
+      for (let i = 0; i < 3; i++) {
+        fireEvent.click(screen.getByRole("button", { name: "Fewer months" }));
+      }
       expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("2026-12");
     });
 
@@ -173,5 +176,20 @@ describe("ProfileForm settings", () => {
     expect(screen.getByTestId("inflation-insight")).toHaveTextContent("₺1,300.00");
     type("Annual inflation expectation", "50");
     expect(screen.getByTestId("inflation-insight")).toHaveTextContent("₺1,500.00");
+  });
+});
+
+describe("ProfileForm where the fund is kept", () => {
+  it("says how well the chosen place suits an emergency fund, and saves the choice", () => {
+    const onSave = vi.fn();
+    renderWithIntl(<ProfileForm onSave={onSave} />);
+    fireEvent.click(screen.getByRole("radio", { name: "Deposit" }));
+    expect(screen.getByTestId("held-fit")).toHaveTextContent("A good fit.");
+    fireEvent.click(screen.getByRole("radio", { name: "Index fund" }));
+    expect(screen.getByTestId("held-fit")).toHaveTextContent("Risky.");
+    fireEvent.click(screen.getByRole("button", { name: "Save profile" }));
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({ emergencyFundHeld: "indexFund" }),
+    );
   });
 });

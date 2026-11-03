@@ -29,12 +29,12 @@ export function CategoryLines({ rows, bucket, names = {}, detailed = false }: Ca
   }
 
   return (
-    <ul className="flex flex-col gap-1.5 text-sm" data-testid={`categories-${bucket}`}>
+    <ul className="flex flex-col gap-1.5 text-[12.5px]" data-testid={`categories-${bucket}`}>
       {mine.map((r) => (
         <li key={r.category} data-testid={`category-${bucket}-${r.category}`}>
           <div className="flex justify-between gap-2">
-            <span className="font-medium">{t(r.category)}</span>
-            <span>{money(r.amount)}</span>
+            <span className="font-semibold text-muted-foreground">{t(r.category)}</span>
+            <span className="font-bold">{money(r.amount)}</span>
           </div>
           {r.items.length > 1 || r.items[0]?.label !== t(r.category) ? (
             <ul className="mt-0.5 flex flex-col gap-0.5 pl-3 text-xs text-muted-foreground">

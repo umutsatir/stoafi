@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import type { SavingsAdvice } from "@stoafi/core";
 import { Money } from "@/components/ui/money";
-import { StatCard } from "@/components/ui/stat-card";
 import { useMoney } from "@/lib/use-money";
 import { cn, stagger } from "@/lib/utils";
 
@@ -26,22 +25,27 @@ export function SavingsSummary({ advice, freeBeforeSaving, potNames }: SavingsSu
   const part = (value: number) => ({ width: `${(value / total) * 100}%` });
 
   return (
-    <section aria-label={t("title")} className="flex flex-col gap-4" data-testid="savings-summary">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <section
+      aria-label={t("title")}
+      className="pop-in flex flex-col gap-4 rounded-card bg-card px-6 py-7 md:px-[34px]"
+      data-testid="savings-summary"
+    >
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { key: "left", value: freeBeforeSaving },
           { key: "toSet", value: advice.required },
           { key: "added", value: advice.deposited },
           { key: "free", value: advice.freeAfter },
         ].map((item, i) => (
-          <StatCard
-            key={item.key}
-            className="rise-in"
-            style={stagger(i)}
-            label={t(item.key)}
-            value={<Money value={item.value} animated />}
-            testId={`summary-${item.key}`}
-          />
+          <div key={item.key} className="rise-in" style={stagger(i)}>
+            <p className="text-[13px] font-bold text-muted-foreground">{t(item.key)}</p>
+            <p
+              className="mt-0.5 text-[28px] font-extrabold tracking-[-0.05em]"
+              data-testid={`summary-${item.key}`}
+            >
+              <Money value={item.value} animated />
+            </p>
+          </div>
         ))}
       </div>
       <div
@@ -51,13 +55,19 @@ export function SavingsSummary({ advice, freeBeforeSaving, potNames }: SavingsSu
           still: money(advice.stillToSet),
           free: money(advice.freeAfter),
         })}
-        className="flex h-3 w-full overflow-hidden rounded-full bg-muted"
+        className="flex h-[18px] w-full gap-1"
       >
-        <div className="bg-success transition-[width] duration-700" style={part(deposited)} />
-        <div className="bg-primary/60 transition-[width] duration-700" style={part(still)} />
-        <div className={cn("transition-[width] duration-700")} style={part(free)} />
+        <div
+          className="rounded-[10px] bg-c4 transition-[width] duration-700"
+          style={part(deposited)}
+        />
+        <div className="rounded-[10px] bg-c2 transition-[width] duration-700" style={part(still)} />
+        <div
+          className={cn("rounded-[10px] bg-muted transition-[width] duration-700")}
+          style={part(free)}
+        />
       </div>
-      <p className="text-sm" data-testid="savings-sentence">
+      <p className="text-sm font-semibold leading-relaxed" data-testid="savings-sentence">
         {advice.stillToSet > 0
           ? t("sentenceMore", { more: money(advice.stillToSet), free: money(advice.freeAfter) })
           : t("sentenceDone", { free: money(advice.freeAfter) })}

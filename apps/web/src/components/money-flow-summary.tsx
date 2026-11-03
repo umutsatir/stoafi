@@ -30,11 +30,11 @@ export function MoneyFlowSummary({ profile, month, installmentsThisMonth }: Mone
       {items.map((item, i) => (
         <StatCard
           key={item.key}
-          className="rise-in"
+          className={`pop-in ${item.key === "left" ? (left < 0 ? "bg-c3 text-on" : "bg-c4 text-on") : ""}`}
           style={stagger(i)}
           label={t(item.key)}
           value={
-            <span className={item.key === "left" && left < 0 ? "text-destructive" : undefined}>
+            <span>
               {item.key === "left" && left < 0 ? "−" : ""}
               <Money value={item.value} animated />
             </span>

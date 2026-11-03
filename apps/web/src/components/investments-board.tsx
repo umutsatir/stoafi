@@ -6,10 +6,13 @@ import { Plus, TrendingUp } from "lucide-react";
 import {
   addTrade,
   allocationByType,
+  costBasis,
   holdingQuantity,
   marketValue,
   portfolioTotals,
+  priceStaleDays,
   removeTrade,
+  unrealizedPnL,
   type BasketEntry,
   type BasketLogEntry,
   type Month,
@@ -20,24 +23,12 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Money } from "@/components/ui/money";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { StatCard } from "@/components/ui/stat-card";
 import { useMoney } from "@/lib/use-money";
 import { useQuickAction } from "@/lib/use-quick-action";
 import { cn, stagger } from "@/lib/utils";
 import { BasketPanel } from "./basket-panel";
 import { HoldingForm, PriceForm, TradeForm } from "./holding-forms";
-import { HoldingCard } from "./holding-card";
 import { InvestmentGuide } from "./investment-guide";
-
-const SEGMENTS = [
-  "bg-[var(--chart-needs)]",
-  "bg-[var(--chart-savings)]",
-  "bg-[var(--chart-investing)]",
-  "bg-[var(--chart-installments)]",
-  "bg-[var(--chart-setaside)]",
-  "bg-[var(--chart-left)]",
-  "bg-[var(--chart-wants)]",
-];
 
 export interface InvestmentsBoardProps {
   holdings: Holding[];
@@ -72,7 +63,8 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
   const [tradeId, setTradeId] = useState<string | null>(null);
   const [priceId, setPriceId] = useState<string | null>(null);
   const [historyId, setHistoryId] = useState<string | null>(null);
-  const [drops, setDrops] = useState<Record<string, number>>({});
+  const [actionId, setActionId] = useState<string | null>(null);
+  const [, setDrops] = useState<Record<string, number>>({});
   useQuickAction("addInvestment", () => setAdding(true));
 
   const totals = portfolioTotals(holdings);
@@ -86,73 +78,12 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
     key.startsWith("custom:") ? key.slice("custom:".length) : tTypes(`${key}.name`);
   const profitPct = totals.cost > 0 ? (totals.profit / totals.cost) * 100 : 0;
 
-  return (
-    <div className="flex flex-col gap-8">
-      {holdings.length > 0 && (
-        <section className="flex flex-col gap-4" aria-label={t("summary.title")}>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <StatCard
-              className="rise-in"
-              style={stagger(0)}
-              label={t("summary.value")}
-              value={<Money value={totals.value} animated />}
-              testId="portfolio-value"
-            />
-            <StatCard
-              className="rise-in"
-              style={stagger(1)}
-              label={t("summary.cost")}
-              value={<Money value={totals.cost} />}
-              testId="portfolio-cost"
-            />
-            <StatCard
-              className="rise-in"
-              style={stagger(2)}
-              label={t("summary.profit")}
-              testId="portfolio-profit"
-              value={
-                <span className={totals.profit >= 0 ? "text-success" : "text-destructive"}>
-                  {totals.profit >= 0 ? "+" : "−"}
-                  <Money value={Math.abs(totals.profit)} />
-                </span>
-              }
-              hint={t("summary.profitPct", {
-                pct: `${profitPct >= 0 ? "+" : "−"}${Math.abs(profitPct).toFixed(1)}%`,
-              })}
-            />
-          </div>
-          <div
-            role="img"
-            aria-label={t("summary.allocationLabel", {
-              parts: split.map((s) => `${keyName(s.key)} ${Math.round(s.share * 100)}%`).join(", "),
-            })}
-            className="flex h-3 w-full overflow-hidden rounded-full bg-muted"
-          >
-            {split.map((s, i) => (
-              <div
-                key={s.key}
-                className={cn("transition-[width] duration-700", SEGMENTS[i % SEGMENTS.length])}
-                style={{ width: `${s.share * 100}%` }}
-              />
-            ))}
-          </div>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            {split.map((s, i) => (
-              <li key={s.key} className="flex items-center gap-1.5" data-testid={`alloc-${s.key}`}>
-                <span
-                  className={cn("h-2.5 w-2.5 rounded-full", SEGMENTS[i % SEGMENTS.length])}
-                  aria-hidden="true"
-                />
-                {keyName(s.key)} {Math.round(s.share * 100)}%
-              </li>
-            ))}
-          </ul>
-          <p className="text-sm text-muted-foreground">
-            {t("summary.inflationNote", { rate: `${Math.round(props.annualInflation * 100)}%` })}
-          </p>
-        </section>
-      )}
+  const actionHolding = holdings.find((h) => h.id === actionId);
+  const COLORS = ["bg-c2", "bg-c1", "bg-c4", "bg-c3"];
+  const abbreviation = (h: Holding) => typeName(h).slice(0, 3).toLocaleUpperCase();
 
+  return (
+    <div className="flex flex-col gap-4">
       <BasketPanel
         basket={props.basket}
         holdings={holdings}
@@ -169,46 +100,240 @@ export function InvestmentsBoard(props: InvestmentsBoardProps) {
         onAssign={props.onAssign}
       />
 
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">{t("holdingsTitle")}</h2>
-        <Button type="button" variant="outline" onClick={() => setAdding(true)}>
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          {t("addInvestment")}
-        </Button>
-      </div>
-
-      {holdings.length === 0 ? (
-        <EmptyState
-          icon={<TrendingUp className="h-8 w-8" />}
-          title={t("empty.title")}
-          description={t("empty.text")}
-          action={
-            <Button type="button" onClick={() => setAdding(true)}>
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              {t("addInvestment")}
-            </Button>
-          }
-        />
-      ) : (
-        <ul className="grid gap-4 lg:grid-cols-2">
-          {holdings.map((h, i) => (
-            <HoldingCard
-              key={h.id}
-              holding={h}
-              index={i}
-              today={today}
-              share={totals.value > 0 ? marketValue(h).value / totals.value : 0}
-              dropKey={drops[h.id] ?? 0}
-              typeName={typeName(h)}
-              onTrade={(x) => setTradeId(x.id)}
-              onPrice={(x) => setPriceId(x.id)}
-              onHistory={(x) => setHistoryId(x.id)}
-            />
-          ))}
-        </ul>
+      {holdings.length > 0 && (
+        <section
+          className="grid items-stretch gap-4 lg:grid-cols-[1.3fr_1fr]"
+          aria-label={t("summary.title")}
+        >
+          <div className="pop-in flex flex-col rounded-card bg-card px-8 py-7">
+            <div className="grid grid-cols-3 gap-5">
+              <div>
+                <p className="text-[13px] font-bold text-muted-foreground">{t("summary.value")}</p>
+                <p
+                  data-testid="portfolio-value"
+                  className="mt-0.5 text-[28px] font-extrabold tracking-[-0.05em]"
+                >
+                  <Money value={totals.value} animated />
+                </p>
+              </div>
+              <div>
+                <p className="text-[13px] font-bold text-muted-foreground">{t("summary.cost")}</p>
+                <p
+                  data-testid="portfolio-cost"
+                  className="mt-0.5 text-[28px] font-extrabold tracking-[-0.05em]"
+                >
+                  <Money value={totals.cost} />
+                </p>
+              </div>
+              <div>
+                <p className="text-[13px] font-bold text-muted-foreground">{t("summary.profit")}</p>
+                <p
+                  data-testid="portfolio-profit"
+                  className={cn(
+                    "mt-0.5 text-[28px] font-extrabold tracking-[-0.05em]",
+                    totals.profit >= 0 ? "text-success" : "text-destructive",
+                  )}
+                >
+                  {totals.profit >= 0 ? "+" : "−"}
+                  <Money value={Math.abs(totals.profit)} />
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t("summary.profitPct", {
+                    pct: `${profitPct >= 0 ? "+" : "−"}${Math.abs(profitPct).toFixed(1)}%`,
+                  })}
+                </p>
+              </div>
+            </div>
+            <div
+              role="img"
+              aria-label={t("summary.allocationLabel", {
+                parts: split
+                  .map((x) => `${keyName(x.key)} ${Math.round(x.share * 100)}%`)
+                  .join(", "),
+              })}
+              className="mt-5 flex h-3 gap-1 overflow-hidden"
+            >
+              {split.map((x, i) => (
+                <div
+                  key={x.key}
+                  className={cn(
+                    "rounded-[10px] transition-[width] duration-700",
+                    COLORS[i % COLORS.length],
+                  )}
+                  style={{ width: `${x.share * 100}%` }}
+                />
+              ))}
+            </div>
+            <ul className="mt-3 flex flex-wrap gap-x-3.5 gap-y-1 text-xs font-bold">
+              {split.map((x, i) => (
+                <li
+                  key={x.key}
+                  className="flex items-center gap-1.5"
+                  data-testid={`alloc-${x.key}`}
+                >
+                  <span
+                    className={cn("h-2.5 w-2.5 rounded-full", COLORS[i % COLORS.length])}
+                    aria-hidden="true"
+                  />
+                  {keyName(x.key)} {Math.round(x.share * 100)}%
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="pop-in rounded-card bg-c1 px-[26px] py-6 text-on">
+            <h3 className="text-[17px] font-extrabold tracking-[-0.02em]">
+              {t("summary.inflationTitle")}
+            </h3>
+            <p className="mt-2.5 text-[13px] font-semibold leading-[1.55]">
+              {t("summary.inflationNote", { rate: `${Math.round(props.annualInflation * 100)}%` })}
+            </p>
+          </div>
+        </section>
       )}
 
+      <section className="pop-in rounded-card bg-card px-8 py-7" aria-label={t("holdingsTitle")}>
+        <h2 className="text-[19px] font-extrabold tracking-[-0.03em]">{t("holdingsTitle")}</h2>
+        {holdings.length === 0 ? (
+          <EmptyState
+            icon={<TrendingUp className="h-8 w-8" />}
+            title={t("empty.title")}
+            description={t("empty.text")}
+            action={
+              <Button type="button" onClick={() => setAdding(true)}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                {t("addInvestment")}
+              </Button>
+            }
+          />
+        ) : (
+          <ul>
+            {holdings.map((h, i) => {
+              const { value, priceKnown } = marketValue(h);
+              const cost = costBasis(h);
+              const profit = unrealizedPnL(h);
+              const quantity = holdingQuantity(h);
+              const staleDays = priceStaleDays(h, today);
+              return (
+                <li
+                  key={h.id}
+                  data-testid={`holding-${h.id}`}
+                  style={stagger(i)}
+                  className="rise-in border-t border-border first:border-t-0"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActionId(h.id)}
+                    aria-label={h.label}
+                    className="flex w-full items-center gap-3.5 py-3.5 text-left transition-[transform,translate,scale] duration-200 hover:translate-x-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "flex h-11 w-11 flex-none items-center justify-center rounded-[15px] text-[11px] font-extrabold text-on",
+                        COLORS[i % COLORS.length],
+                      )}
+                    >
+                      {abbreviation(h)}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[15px] font-extrabold">{h.label}</span>
+                      <span
+                        className="block text-xs text-muted-foreground"
+                        data-testid={`holding-quantity-${h.id}`}
+                      >
+                        {typeName(h)} · {quantity} {h.unitLabel ?? ""} · {t("card.paid")}{" "}
+                        {money(cost)}
+                      </span>
+                      {((!priceKnown && quantity > 0) ||
+                        (staleDays !== null && staleDays >= 30)) && (
+                        <span className="mt-1 block text-xs font-bold text-warning">
+                          {!priceKnown && quantity > 0 ? (
+                            <span data-testid={`holding-noprice-${h.id}`}>{t("card.noPrice")}</span>
+                          ) : (
+                            <span data-testid={`holding-stale-${h.id}`}>
+                              {t("card.stale", { days: staleDays ?? 0 })}
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </span>
+                    <span className="text-right">
+                      <span
+                        className="block text-base font-extrabold"
+                        data-testid={`holding-value-${h.id}`}
+                      >
+                        {money(value)}
+                      </span>
+                      <span
+                        data-testid={`holding-profit-${h.id}`}
+                        className={cn(
+                          "block text-xs font-extrabold",
+                          profit > 0
+                            ? "text-success"
+                            : profit < 0
+                              ? "text-destructive"
+                              : "text-muted-foreground",
+                        )}
+                      >
+                        {profit >= 0 ? "+" : "−"}
+                        {cost > 0 && priceKnown
+                          ? `${Math.abs((profit / cost) * 100).toFixed(1)}% · `
+                          : ""}
+                        {profit >= 0 ? "+" : "−"}
+                        {money(Math.abs(profit))}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
       <InvestmentGuide />
+
+      <Sheet open={actionHolding !== undefined} onOpenChange={(open) => !open && setActionId(null)}>
+        {actionHolding && (
+          <SheetContent title={actionHolding.label}>
+            <div className="flex flex-col gap-2">
+              <Button
+                type="button"
+                onClick={() => {
+                  setTradeId(actionHolding.id);
+                  setActionId(null);
+                }}
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                {t("card.trade")}
+                <span className="sr-only"> {actionHolding.label}</span>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setPriceId(actionHolding.id);
+                  setActionId(null);
+                }}
+              >
+                {t("card.updatePrice")}
+                <span className="sr-only"> {actionHolding.label}</span>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setHistoryId(actionHolding.id);
+                  setActionId(null);
+                }}
+              >
+                {t("card.history")}
+                <span className="sr-only"> {actionHolding.label}</span>
+              </Button>
+            </div>
+          </SheetContent>
+        )}
+      </Sheet>
 
       <Sheet open={adding} onOpenChange={(open) => !open && setAdding(false)}>
         {adding && (
