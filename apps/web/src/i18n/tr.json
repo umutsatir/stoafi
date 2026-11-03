@@ -132,6 +132,9 @@
       "used": "({amount} kullanılıyor)"
     },
     "orbit": {
+      "quote1": { "text": "Az şeye sahip olan değil, daha çoğunu isteyen yoksuldur.", "by": "Seneca · serbest çeviri" },
+      "quote2": { "text": "Zenginlik, çok şeye sahip olmak değil, az şeye ihtiyaç duymaktır.", "by": "Epiktetos · serbest çeviri" },
+      "quote3": { "text": "Hayatın, düşüncelerinin rengini alır.", "by": "Marcus Aurelius · serbest çeviri" },
       "title": "{month} yörüngesi",
       "hint": "Bir dilime gel, içinde ne olduğunu gör",
       "innerRing": "İç halka: gün {day} / {days}",

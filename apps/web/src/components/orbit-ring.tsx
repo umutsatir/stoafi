@@ -95,7 +95,13 @@ export function OrbitRing({
           </svg>
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
             <div className="text-sm font-bold text-muted-foreground">{current.label}</div>
-            <div className="mt-0.5 text-[clamp(30px,6vw,48px)] font-extrabold leading-[1.1] tracking-[-0.05em]">
+            <div
+              className="mt-0.5 font-extrabold leading-[1.1] tracking-[-0.05em]"
+              style={{
+                // The inner ring is ~59% of the ring, so long amounts shrink to stay inside it.
+                fontSize: `min(clamp(30px, 6vw, 48px), ${Math.max(20, Math.floor(190 / (current.amountText.length * 0.58)))}px)`,
+              }}
+            >
               {current.amountText}
             </div>
             <div className="mt-1.5 text-[12.5px] font-semibold text-muted-foreground">

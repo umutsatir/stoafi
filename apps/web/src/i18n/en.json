@@ -132,6 +132,9 @@
       "used": "({amount} used)"
     },
     "orbit": {
+      "quote1": { "text": "It is not the person who has little, but the one who craves more, who is poor.", "by": "Seneca · loose translation" },
+      "quote2": { "text": "Wealth is not having a lot, it is needing little.", "by": "Epictetus · loose translation" },
+      "quote3": { "text": "Your life takes on the colour of your thoughts.", "by": "Marcus Aurelius · loose translation" },
       "title": "{month} orbit",
       "hint": "Point at a part to see what is inside it",
       "innerRing": "Inner ring: day {day} of {days}",

@@ -385,6 +385,10 @@ export function Dashboard({
             innerLabel={tOrbit("innerRing", { day: dayOfMonth, days: daysInMonth })}
             ariaLabel={t("monthProgress")}
           />
+          <p className="mt-auto pt-4 text-center text-[13px] font-semibold text-muted-foreground">
+            “{tOrbit(`quote${(dayOfMonth % 3) + 1}.text` as "quote1.text")}” ·{" "}
+            {tOrbit(`quote${(dayOfMonth % 3) + 1}.by` as "quote1.by")}
+          </p>
           <dl className="sr-only">
             <div>
               <dt>{t("left")}</dt>
