@@ -1397,7 +1397,7 @@
         "crypto": "Crypto"
       },
       "sliceName": "Slice {n} name",
-      "slicePlaceholder": "e.g. Gold",
+      "slicePlaceholder": "Slice name",
       "slicePercent": "Slice {n} percent",
       "removeSlice": "Remove slice {n}",
       "addSlice": "Add slice",
@@ -1416,7 +1416,7 @@
       "unassignedTitle": "Not in your basket yet",
       "unassignedHint": "Say which slice each of these belongs to, so the numbers above include it.",
       "assignTo": "Put {name} in a slice",
-      "choose": "Choose slice",
+      "choose": "Pick a slice",
       "splitTitle": "Split this month's money",
       "monthlyAmount": "Amount to invest",
       "monthlyHint": "Starts at what your plan sets for investing.",
@@ -1424,8 +1424,8 @@
         "label": "How to split",
         "catchUp": "Fill the gaps",
         "percent": "Plain percentages",
-        "catchUpHint": "Puts new money where you hold less than your target first. Nothing is sold.",
-        "percentHint": "Splits the amount exactly by your percentages."
+        "catchUpHint": "Puts new money first where you hold less than your target; nothing is sold.",
+        "percentHint": "Splits the amount by the percentages."
       },
       "finishFirst": "Make the percentages add up to 100% to see the split.",
       "notAdvice": "A way to organise your own choice, not a recommendation to buy anything. Past results do not predict future ones.",
@@ -1455,7 +1455,11 @@
       "replaceText": "The {name} example replaces your current basket; your slices and percentages are reset. This month’s ticks are cleared too.",
       "replaceConfirm": "Change basket",
       "driftTarget": "target %{target}",
-      "splitSum": "Split total: {sum}."
+      "splitSum": "Split total: {sum}. If a slice holds a single priced asset, “I put it in” is also recorded as a purchase of it at that day’s price.",
+      "planAmount": "The amount your plan sets aside for investing: {amount}.",
+      "targetClosing": "{pct}% target · closing the gap",
+      "targetOnly": "{pct}% target",
+      "closePick": "Close"
     }
   },
   "calendar": {

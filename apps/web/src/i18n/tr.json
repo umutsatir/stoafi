@@ -1397,7 +1397,7 @@
         "crypto": "Kripto"
       },
       "sliceName": "{n}. dilim adı",
-      "slicePlaceholder": "örn. Altın",
+      "slicePlaceholder": "Dilim adı",
       "slicePercent": "{n}. dilim yüzdesi",
       "removeSlice": "{n}. dilimi sil",
       "addSlice": "Dilim ekle",
@@ -1418,14 +1418,14 @@
       "assignTo": "{name} yatırımını bir dilime koy",
       "choose": "Dilim seç",
       "splitTitle": "Bu ayın parasını böl",
-      "monthlyAmount": "Yatırılacak tutar",
+      "monthlyAmount": "Yatırıma ayıracağın tutar",
       "monthlyHint": "Planının yatırım için ayırdığı tutarla başlar.",
       "mode": {
         "label": "Nasıl bölünsün",
         "catchUp": "Açıkları kapat",
         "percent": "Düz yüzdeler",
-        "catchUpHint": "Yeni parayı önce hedefinden az tuttuğun yere koyar. Hiçbir şey satılmaz.",
-        "percentHint": "Tutarı yüzdelerine göre tam olarak böler."
+        "catchUpHint": "Yeni parayı önce hedefinden az tuttuğun yere koyar; hiçbir şey satılmaz.",
+        "percentHint": "Tutarı yüzdelerine göre böler."
       },
       "finishFirst": "Bölünmeyi görmek için yüzdelerin toplamı 100 olsun.",
       "notAdvice": "Kendi seçimini düzenlemenin bir yolu; bir şey almanı önermez. Geçmiş sonuçlar gelecekteki sonuçların habercisi değildir.",
@@ -1455,7 +1455,11 @@
       "replaceText": "Mevcut sepetin yerine {name} şablonu gelecek; dilimlerin ve yüzdelerin sıfırlanır. Bu ayki işaretlemelerin de silinir.",
       "replaceConfirm": "Sepeti değiştir",
       "driftTarget": "hedef %{target}",
-      "splitSum": "Bölünen toplam: {sum}."
+      "splitSum": "Bölünen toplam: {sum}. Dilimde tek bir fiyatlı varlık varsa, “Ben koydum” o varlığa o günkü fiyattan alım olarak da yazılır.",
+      "planAmount": "Planın yatırım için ayırdığı tutar: {amount}.",
+      "targetClosing": "%{pct} hedef · açık kapatılıyor",
+      "targetOnly": "%{pct} hedef",
+      "closePick": "Kapat"
     }
   },
   "calendar": {

@@ -99,10 +99,9 @@ describe("BasketPanel", () => {
 
   it("asks to finish the percentages before showing a split", () => {
     renderWithIntl(<Harness initial={[{ id: "a", label: "A", percent: 50 }]} />);
-    expect(
-      screen.getByText("Make the percentages add up to 100% to see the split."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Percentages don't add up to 100")).toBeInTheDocument();
     expect(screen.queryByTestId("split-a")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("basket-split")).not.toBeInTheDocument();
   });
 
   it("shows where the user is against the basket, and fills the gaps with new money", () => {
@@ -114,12 +113,12 @@ describe("BasketPanel", () => {
     expect(screen.getByTestId("drift-sp")).toHaveTextContent("0% held, target 40%");
     // After adding 1,000,000 the total is 1,900,000: gold target 1,140,000 (hold 900,000), sp target 760,000.
     // Gaps 240,000 and 760,000 share 1,000,000 by size.
-    const gold = screen.getByTestId("split-gold").textContent ?? "";
-    const sp = screen.getByTestId("split-sp").textContent ?? "";
+    const gold = screen.getByTestId("split-amount-gold").textContent ?? "";
+    const sp = screen.getByTestId("split-amount-sp").textContent ?? "";
     expect(Number(gold.replace(/[^\d.]/g, ""))).toBeLessThan(Number(sp.replace(/[^\d.]/g, "")));
 
     fireEvent.click(screen.getByRole("radio", { name: "Plain percentages" }));
-    expect(screen.getByTestId("split-gold")).toHaveTextContent("₺6,000.00");
+    expect(screen.getByTestId("split-amount-gold")).toHaveTextContent("₺6,000.00");
   });
 
   it("asks which slice an unplaced holding belongs to", () => {
@@ -128,9 +127,8 @@ describe("BasketPanel", () => {
       <Harness initial={mine} holdings={[held("crypto", "crypto", 1)]} onAssign={onAssign} />,
     );
     const box = screen.getByTestId("basket-unassigned");
-    fireEvent.change(within(box).getByLabelText("Put crypto in a slice"), {
-      target: { value: "gold" },
-    });
+    fireEvent.click(within(box).getByRole("button", { name: "Put crypto in a slice" }));
+    fireEvent.click(within(box).getByRole("button", { name: "Gold" }));
     expect(onAssign).toHaveBeenCalledWith("crypto", "gold");
   });
 
@@ -227,7 +225,7 @@ describe("BasketPanel ticking", () => {
     expect(screen.getByTestId("split-gold")).toHaveTextContent(
       "Ticking also adds this purchase to g, at its current price.",
     );
-    expect(screen.getByTestId("split-sp")).toHaveTextContent("Ticking only notes it.");
+    expect(screen.getByTestId("split-sp")).toHaveTextContent("40% target");
   });
 
   it("remembers a monthly amount the user changed", () => {

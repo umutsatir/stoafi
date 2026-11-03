@@ -13,6 +13,7 @@ import {
   basketValues,
   catchUpSplit,
   isBasketComplete,
+  marketValue,
   splitByBasket,
   type BasketEntry,
   type BasketLogEntry,
@@ -75,6 +76,8 @@ export function BasketPanel({
   // The design tells "no basket yet" from "an empty basket you are filling in".
   const [started, setStarted] = useState(false);
   const [choosing, setChoosing] = useState(false);
+  const [pickId, setPickId] = useState<string | null>(null);
+  const tTypes = useTranslations("investments.types");
   const [pendingTemplate, setPendingTemplate] = useState<BasketTemplate | null>(null);
   const hasBasket = basket.length > 0 || started;
   const showTemplates = !hasBasket || choosing;
@@ -385,40 +388,40 @@ export function BasketPanel({
               </div>
             ) : (
               !complete && (
-                <div className="pop-in flex flex-col justify-center rounded-card bg-c3/20 px-8 py-7">
+                <div className="pop-in flex flex-col justify-center rounded-card bg-[color-mix(in_srgb,var(--destructive)_12%,var(--card))] px-8 py-7">
                   <h3 className="text-[19px] font-extrabold tracking-[-0.03em] text-destructive">
                     {t("invalidTitle")}
                   </h3>
-                  <p className="mt-2 text-[13.5px] leading-relaxed">{t("invalidText")}</p>
+                  <p className="mt-2 text-[13.5px] leading-relaxed">
+                    {t("invalidText")}{" "}
+                    {total < 100
+                      ? t("totalLow", { total, missing: 100 - total })
+                      : t("totalHigh", { total, extra: total - 100 })}
+                    .
+                  </p>
                 </div>
               )
             )}
           </div>
 
-          <div
-            className="grid items-stretch gap-4 md:grid-cols-[1.2fr_1fr]"
-            data-testid="basket-split"
-          >
-            <div className={`${CARD} pop-in`}>
-              <h3 className="text-[19px] font-extrabold tracking-[-0.03em]">{t("splitTitle")}</h3>
-              <div className="mt-4 flex flex-wrap items-end gap-3">
-                <div className="min-w-[180px] flex-1">
-                  <Field
-                    label={t("monthlyAmount")}
-                    htmlFor="basket-monthly"
-                    hint={
-                      suggestedMonthly > 0 || savedMonthly ? t("monthlyHint") : t("monthlyHintNone")
-                    }
-                  >
-                    <MoneyInput
-                      id="basket-monthly"
-                      currency={currency}
-                      value={monthly}
-                      onChange={setMonthly}
-                    />
-                  </Field>
-                </div>
-                {hasValue && (
+          {complete && (
+            <div
+              className="grid items-stretch gap-4 md:grid-cols-[1.2fr_1fr]"
+              data-testid="basket-split"
+            >
+              <div className={`${CARD} pop-in`}>
+                <h3 className="text-[19px] font-extrabold tracking-[-0.03em]">{t("splitTitle")}</h3>
+                <div className="mt-4 flex flex-wrap items-end gap-3">
+                  <div className="min-w-[180px] flex-1">
+                    <Field label={t("monthlyAmount")} htmlFor="basket-monthly">
+                      <MoneyInput
+                        id="basket-monthly"
+                        currency={currency}
+                        value={monthly}
+                        onChange={setMonthly}
+                      />
+                    </Field>
+                  </div>
                   <SegmentedControl
                     label={t("mode.label")}
                     tone="soft"
@@ -429,134 +432,145 @@ export function BasketPanel({
                       { value: "percent", label: t("mode.percent") },
                     ]}
                   />
-                )}
-              </div>
-              {hasValue && (
+                </div>
                 <p className="mt-2.5 text-[12.5px] leading-normal text-muted-foreground">
-                  {t(`mode.${mode}Hint`)}
+                  {t(`mode.${mode}Hint`)} {t("planAmount", { amount: money(suggestedMonthly) })}
                 </p>
-              )}
-              {complete ? (
-                <>
-                  {month && onToggle && (
-                    <div className="mt-3 flex flex-col gap-1.5" data-testid="basket-progress">
-                      <p className="text-[13px] font-bold">
-                        {t("investedThisMonth", {
-                          done: money(basketInvestedIn(log, month)),
-                          total: money(monthly),
-                        })}
-                      </p>
-                      <ProgressBar
-                        value={basketInvestedIn(log, month)}
-                        max={monthly}
-                        label={t("investedBar")}
-                        tone="success"
-                      />
-                    </div>
-                  )}
-                  <ul>
-                    {basket.map((entry) => {
-                      const share = shares.find((x) => x.id === entry.id);
-                      const planned = share?.amount ?? 0;
-                      const done = month ? basketDone(log, month, entry.id) : undefined;
-                      const target = holdingForTick(holdings, basket, entry.id);
-                      const name = entry.label || t("unnamed");
-                      return (
-                        <li
-                          key={entry.id}
-                          data-testid={`split-${entry.id}`}
-                          className={cn(
-                            "mt-2.5 flex items-center gap-3.5 rounded-[20px] px-4 py-3.5 transition-all duration-[350ms] [animation:slide_0.4s_backwards]",
-                            done ? "bg-c4/25" : "bg-muted",
-                          )}
+                {month && onToggle && (
+                  <div className="mt-3 flex flex-col gap-1.5" data-testid="basket-progress">
+                    <p className="text-[13px] font-bold">
+                      {t("investedThisMonth", {
+                        done: money(basketInvestedIn(log, month)),
+                        total: money(monthly),
+                      })}
+                    </p>
+                    <ProgressBar
+                      value={basketInvestedIn(log, month)}
+                      max={monthly}
+                      label={t("investedBar")}
+                      tone="success"
+                    />
+                  </div>
+                )}
+                <ul>
+                  {basket.map((entry) => {
+                    const share = shares.find((x) => x.id === entry.id);
+                    const planned = share?.amount ?? 0;
+                    const done = month ? basketDone(log, month, entry.id) : undefined;
+                    const target = holdingForTick(holdings, basket, entry.id);
+                    const name = entry.label || t("unnamed");
+                    return (
+                      <li
+                        key={entry.id}
+                        data-testid={`split-${entry.id}`}
+                        className={cn(
+                          "mt-2.5 flex items-center gap-3.5 rounded-[20px] px-4 py-3.5 transition-all duration-[350ms] [animation:slide_0.4s_backwards]",
+                          done ? "bg-transparent opacity-55" : "bg-muted",
+                        )}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[15px] font-extrabold">{name}</div>
+                          <div className="mt-0.5 text-xs text-muted-foreground">
+                            {done
+                              ? t("recorded")
+                              : target
+                                ? t("willRecord", { name: target.label })
+                                : t(mode === "catchUp" ? "targetClosing" : "targetOnly", {
+                                    pct: entry.percent,
+                                  })}
+                          </div>
+                        </div>
+                        <div
+                          data-testid={`split-amount-${entry.id}`}
+                          className="text-[19px] font-extrabold tracking-[-0.03em]"
                         >
-                          <div className="min-w-0 flex-1">
-                            <div className="text-[15px] font-extrabold">{name}</div>
-                            {onToggle && (
-                              <div className="mt-0.5 text-xs text-muted-foreground">
-                                {done
-                                  ? t("recorded")
-                                  : target
-                                    ? t("willRecord", { name: target.label })
-                                    : t("willLog")}
-                              </div>
+                          {money(done ? done.amount : planned)}
+                        </div>
+                        {onToggle && (
+                          <button
+                            type="button"
+                            aria-pressed={done !== undefined}
+                            aria-label={done ? t("undoDone", { name }) : t("markDone", { name })}
+                            disabled={!done && planned <= 0}
+                            onClick={() => onToggle(entry, planned, !done)}
+                            className={cn(
+                              "press flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[9px] text-[12.5px] font-extrabold transition-all duration-300 disabled:opacity-50",
+                              done ? "bg-c4 text-on" : "bg-foreground text-background",
                             )}
-                          </div>
-                          <div className="text-[19px] font-extrabold tracking-[-0.03em]">
-                            {money(done ? done.amount : planned)}
-                          </div>
-                          {onToggle && (
-                            <button
-                              type="button"
-                              aria-pressed={done !== undefined}
-                              aria-label={done ? t("undoDone", { name }) : t("markDone", { name })}
-                              disabled={!done && planned <= 0}
-                              onClick={() => onToggle(entry, planned, !done)}
-                              className={cn(
-                                "press flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[9px] text-[12.5px] font-extrabold transition-all duration-300 disabled:opacity-50",
-                                done ? "bg-c4 text-on" : "bg-primary text-primary-foreground",
-                              )}
-                            >
-                              {done && (
-                                <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden="true" />
-                              )}
-                              {done ? t("doneUndo") : t("markDoneShort")}
-                            </button>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </>
-              ) : (
-                <p className="mt-3 text-sm text-muted-foreground">{t("finishFirst")}</p>
-              )}
-              {complete && (
-                <p className="mt-3 text-xs font-semibold text-muted-foreground">
+                          >
+                            {done && (
+                              <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden="true" />
+                            )}
+                            {done ? t("doneUndo") : t("markDoneShort")}
+                          </button>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="mt-3 text-xs font-semibold leading-normal text-muted-foreground">
                   {t("splitSum", { sum: money(shares.reduce((sum, x) => sum + x.amount, 0)) })}
                 </p>
-              )}
-              <p className="mt-1 text-xs font-semibold text-muted-foreground">{t("notAdvice")}</p>
-            </div>
+                <p className="mt-1 text-xs text-muted-foreground">{t("notAdvice")}</p>
+              </div>
 
-            <div className={`${CARD} pop-in`} data-testid="basket-unassigned-card">
-              <h3 className="text-[19px] font-extrabold tracking-[-0.03em]">
-                {t("unassignedTitle")}
-              </h3>
-              <p className="mt-[3px] text-[12.5px] leading-normal text-muted-foreground">
-                {t("unassignedHint")}
-              </p>
-              {unassigned.length > 0 ? (
-                <ul data-testid="basket-unassigned">
-                  {unassigned.map((h) => (
-                    <li
-                      key={h.id}
-                      className="mt-3.5 flex items-center gap-3 border-t border-border pt-3.5"
-                    >
-                      <span className="min-w-0 flex-1 truncate text-[15px] font-extrabold">
-                        {h.label}
-                      </span>
-                      <select
-                        aria-label={t("assignTo", { name: h.label })}
-                        value=""
-                        onChange={(e) => e.target.value && onAssign(h.id, e.target.value)}
-                        className="h-9 rounded-full border-0 bg-muted px-3.5 text-[12.5px] font-extrabold"
-                      >
-                        <option value="">{t("choose")}</option>
-                        {basket.map((e) => (
-                          <option key={e.id} value={e.id}>
-                            {e.label || t("unnamed")}
-                          </option>
-                        ))}
-                      </select>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-4 text-[13px] text-muted-foreground">{t("allAssigned")}</p>
-              )}
+              <div className={`${CARD} pop-in`} data-testid="basket-unassigned-card">
+                <h3 className="text-[19px] font-extrabold tracking-[-0.03em]">
+                  {t("unassignedTitle")}
+                </h3>
+                <p className="mt-[3px] text-[12.5px] leading-normal text-muted-foreground">
+                  {t("unassignedHint")}
+                </p>
+                {unassigned.length > 0 ? (
+                  <ul data-testid="basket-unassigned">
+                    {unassigned.map((h) => (
+                      <li key={h.id} className="mt-3.5 border-t border-border pt-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="truncate text-[15px] font-extrabold">{h.label}</div>
+                            <div className="mt-0.5 text-xs text-muted-foreground">
+                              {h.typeId === "custom"
+                                ? (h.customType ?? "")
+                                : tTypes(`${h.typeId}.name`)}{" "}
+                              · {money(marketValue(h).value)}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            aria-label={t("assignTo", { name: h.label })}
+                            aria-expanded={pickId === h.id}
+                            className={PILL}
+                            onClick={() => setPickId(pickId === h.id ? null : h.id)}
+                          >
+                            {pickId === h.id ? t("closePick") : t("choose")}
+                          </button>
+                        </div>
+                        {pickId === h.id && (
+                          <div className="mt-3 flex flex-wrap gap-2 [animation:fade_0.3s_backwards]">
+                            {basket.map((e) => (
+                              <button
+                                key={e.id}
+                                type="button"
+                                className="press rounded-full bg-foreground px-3.5 py-2 text-[12.5px] font-bold text-background"
+                                onClick={() => {
+                                  onAssign(h.id, e.id);
+                                  setPickId(null);
+                                }}
+                              >
+                                {e.label || t("unnamed")}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-4 text-[13px] text-muted-foreground">{t("allAssigned")}</p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
       <ConfirmDialog
