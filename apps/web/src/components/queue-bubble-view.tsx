@@ -33,8 +33,8 @@ export function QueueBubbleView({
   const monthIndex = new Map(months.map((m, i) => [m.month, i]));
   const stacked: Record<number, number> = {};
   // Items that land on the same month stack up. Bubbles shrink so a crowded month stays within a
-  // fixed height, and only the picked one (or a month with at most two) carries a name label.
-  const GAP = 8;
+  // fixed height, and only the picked one (or a month with a single bubble) carries a name label, so labels never sit on a neighbour.
+  const GAP = 16;
   const STACK_MAX = 190;
   const rawSize = (item: QueueItem) => Math.min(106, 52 + (item.price / 42_000_00) * 54);
   const colOf = (item: QueueItem) => {
@@ -57,7 +57,7 @@ export function QueueBubbleView({
     const barHeight = (Math.max(0, months[col]?.left ?? 0) / max) * BAR_AREA;
     const offset = stacked[col] ?? 0;
     stacked[col] = offset + size + GAP;
-    return { item, rank, col, size, bottom: barHeight + 22 + offset, crowded: group.count > 2 };
+    return { item, rank, col, size, bottom: barHeight + 22 + offset, crowded: group.count > 1 };
   });
   // Taller than 340px only when bubbles pile up on one month, so nothing is cut off at the top.
   const height = Math.max(340, ...placements.map((p) => p.bottom + p.size * 1.2 + 44));
@@ -124,14 +124,27 @@ export function QueueBubbleView({
               </div>
               <div
                 className={cn(
-                  "pointer-events-none absolute z-[1] w-[90px] text-center text-[11.5px] font-bold leading-tight",
+                  "pointer-events-none absolute z-[1] text-[11.5px] font-bold leading-tight",
+                  crowded
+                    ? "max-w-[120px] rounded-lg bg-card/90 px-1.5 py-0.5 text-left"
+                    : "w-[90px] text-center",
                   crowded && !on && "hidden",
+                  on && !crowded && "rounded-lg bg-card/90 py-0.5",
                 )}
-                style={{
-                  left: col * COLUMN + 1,
-                  bottom: bottom + size * (on ? 1.09 : 1) + 10,
-                  zIndex: on ? 3 : 1,
-                }}
+                style={
+                  crowded
+                    ? {
+                        // Beside the bubble, so it never lands on the one stacked above.
+                        left: col * COLUMN + COLUMN / 2 + (size * 1.18) / 2 + 6,
+                        bottom: bottom + size / 2 - 8,
+                        zIndex: 3,
+                      }
+                    : {
+                        left: col * COLUMN + 1,
+                        bottom: bottom + size * (on ? 1.09 : 1) + 10,
+                        zIndex: on ? 3 : 1,
+                      }
+                }
               >
                 {item.name}
               </div>
