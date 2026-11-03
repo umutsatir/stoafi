@@ -152,7 +152,7 @@ export function ProfileForm({
                   ? "text-success"
                   : fundHoldingFit(held) === "risky"
                     ? "text-destructive"
-                    : "text-foreground"
+                    : "text-warning"
               }
             >
               {t(`held.fit.${fundHoldingFit(held)}.title`)}

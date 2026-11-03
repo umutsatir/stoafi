@@ -77,6 +77,7 @@ describe("QueuePage purchase flow", () => {
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
 
     const state = useAppStore.getState();
     expect(state.queueItems).toEqual([]);
@@ -98,6 +99,7 @@ describe("QueuePage purchase flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
     fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
 
     const state = useAppStore.getState();
     const bought = state.queueItems[0];
@@ -169,6 +171,7 @@ describe("QueuePage purchase flow", () => {
   it("shows the first month the scheduler finds room for the selected item", () => {
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     expect(screen.getByTestId("suggested-month")).toHaveTextContent("2026-09");
   });
 
@@ -178,6 +181,7 @@ describe("QueuePage purchase flow", () => {
     });
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     expect(screen.getByLabelText("Pay with card")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Visa" })).toBeInTheDocument();
   });
@@ -238,6 +242,7 @@ describe("QueuePage undo", () => {
     fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
     fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
     expect(useAppStore.getState().queueItems[0]?.installmentPurchase).toBeDefined();
 
     fireEvent.click(await screen.findByRole("button", { name: "Undo" }));

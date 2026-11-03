@@ -63,7 +63,12 @@ export function ProfileOverview({ profile, month }: ProfileOverviewProps) {
         </p>
         <p className="mt-1 text-xs text-muted-foreground">{t("hourHint")}</p>
       </Card>
-      <Card className={`${tile} flex items-center gap-4 bg-c2 text-on`} style={stagger(4)}>
+      <Card
+        className={`${tile} flex items-center gap-4 text-on ${
+          fundPct >= 1 ? "bg-c4" : fundPct >= 0.5 ? "bg-c2" : "bg-c3"
+        }`}
+        style={stagger(4)}
+      >
         <div
           role="progressbar"
           aria-label={t("fundRing")}

@@ -604,7 +604,10 @@
       "wants-limit": "Bu alım bu ayki istekler limitini aşar.",
       "unknown": "Bu alım güvenlik kurallarından birini aşıyor.",
       "card-limit": "Bu taksitler kartı limitinin üstüne çıkarır."
-    }
+    },
+    "sureTitle": "Emin misin?",
+    "sureText": "{name} için {amount} değerinde bir alım yapıyorsun. Onaylarsan kuyruktan çıkar ve kararlara yazılır.",
+    "sureOk": "Tamam"
   },
   "installments": {
     "title": "Taksitle hesapla",
@@ -955,6 +958,20 @@
       "installed": "Yüklendi",
       "installHelp": "Tarayıcın yüklemeyi önermedi. Safari’de Paylaş, sonra Ana Ekrana Ekle’yi kullan.",
       "localNote": "Verilerin yalnızca bu cihazda duruyor. Cihaz değiştirir ya da tarayıcı verisini silersen kaybolur; ara sıra yedek al."
+    },
+    "safety": {
+      "title": "Veri güvenliği",
+      "persistLabel": "Tarayıcı verini koruyor mu:",
+      "persistYes": "Koruyor",
+      "persistNo": "Korunmuyor",
+      "persistAsk": "Tarayıcıdan verimi korumasını iste",
+      "fileHint": "Bir dosya seç, Stoafi her değişiklikten sonra onu güncel tutsun. Dosya Google Drive, iCloud ya da Dropbox’ın senkron klasöründeyse sunucu olmadan ikinci bir kopyan olur.",
+      "pickFile": "Yedek dosyası seç",
+      "fileChosen": "Seçili dosya: {name}",
+      "copiesTitle": "Bu tarayıcıda tutulan kopyalar",
+      "dailyCopy": "{date} tarihli kopya",
+      "beforeImport": "Son içe aktarmadan önce",
+      "restore": "Geri yükle"
     }
   },
   "installmentExpenses": {

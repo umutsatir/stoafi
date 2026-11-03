@@ -11,7 +11,6 @@ import {
   type SnapshotKey,
 } from "@stoafi/core";
 import { ProgressBar, type Tone } from "@/components/ui/progress-bar";
-import { Sparkline } from "@/components/ui/sparkline";
 import { Card } from "@/components/ui/card";
 import { useMoney } from "@/lib/use-money";
 import { cn, stagger } from "@/lib/utils";
@@ -230,16 +229,31 @@ export function HealthMetrics({
                   <p className="text-lg font-extrabold">
                     {format(trend.points[trend.points.length - 1] ?? 0)}
                   </p>
-                  <Sparkline
-                    points={trend.points}
-                    label={t("trends.lineLabel", {
+                  <div
+                    role="img"
+                    aria-label={t("trends.lineLabel", {
                       name: t(`trends.${key}`),
                       months: trend.points.length,
                     })}
-                  />
+                    className="mt-2.5 flex h-14 items-end gap-[5px]"
+                  >
+                    {trend.points.map((point, i) => {
+                      const top = Math.max(...trend.points.map((p) => Math.abs(p)), 1e-9);
+                      return (
+                        <div
+                          key={i}
+                          className={cn(
+                            "flex-1 rounded-t-md rounded-b-[2px] transition-[height] duration-500",
+                            i === trend.points.length - 1 ? "bg-primary" : "bg-muted",
+                          )}
+                          style={{ height: Math.max(4, (Math.abs(point) / top) * 56) }}
+                        />
+                      );
+                    })}
+                  </div>
                   <p
                     className={cn(
-                      "text-[12.5px] font-bold",
+                      "mt-2 text-[12.5px] font-bold",
                       better === null
                         ? "text-muted-foreground"
                         : better

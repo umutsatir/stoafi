@@ -12,7 +12,9 @@ import { LockGate } from "@/components/lock-gate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { clearHadData, hadData, markHadData } from "@/lib/had-data";
 import { applyTheme } from "@/lib/theme";
-import { importFromJson } from "@/storage/backup";
+import { writeBackupFile } from "@/lib/backup-file";
+import { hasDailyCopy, saveCopy } from "@/lib/browser-copies";
+import { exportToJson, importFromJson } from "@/storage/backup";
 import { useSnapshotRecorder } from "@/lib/use-snapshot-recorder";
 import { useAppStore } from "@/store";
 
@@ -46,6 +48,37 @@ export function AppBootstrap({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [hydrate]);
+
+  // A copy once a day, and the chosen backup file kept current a little after the last change.
+  useEffect(() => {
+    if (!hydrated || demo || !profile) return;
+    const day = localIsoDate(new Date());
+    void (async () => {
+      try {
+        if (!(await hasDailyCopy(day)))
+          await saveCopy("daily", day, await exportToJson(db, new Date().toISOString()));
+      } catch {
+        // Copies are a convenience; the app works without them.
+      }
+    })();
+  }, [hydrated, demo, profile]);
+
+  useEffect(() => {
+    if (!hydrated || demo) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = useAppStore.subscribe(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        void exportToJson(db, new Date().toISOString())
+          .then(writeBackupFile)
+          .catch(() => undefined);
+      }, 3000);
+    });
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
+  }, [hydrated, demo]);
 
   // Remember that this browser held real data, so an empty database later is noticed instead of ignored.
   useEffect(() => {

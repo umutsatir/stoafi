@@ -604,7 +604,10 @@
       "wants-limit": "This purchase would push your wants above their limit for the month.",
       "unknown": "This purchase breaks one of your safety rules.",
       "card-limit": "These installments would take the card past its limit."
-    }
+    },
+    "sureTitle": "Are you sure?",
+    "sureText": "You are buying {name}, worth {amount}. If you confirm, it leaves the queue and is written to your decisions.",
+    "sureOk": "OK"
   },
   "installments": {
     "title": "Calculate with installments",
@@ -955,6 +958,20 @@
       "installed": "Installed",
       "installHelp": "Your browser has not offered to install it. In Safari use Share, then Add to Home Screen.",
       "localNote": "Your data lives only on this device. If you change device or clear the browser data, it is gone; take a backup now and then."
+    },
+    "safety": {
+      "title": "Data safety",
+      "persistLabel": "Does the browser protect your data:",
+      "persistYes": "Yes",
+      "persistNo": "Not protected",
+      "persistAsk": "Ask the browser to protect my data",
+      "fileHint": "Pick a file and Stoafi keeps it up to date after every change. If the file sits in a Google Drive, iCloud or Dropbox sync folder, you get a second copy without any server.",
+      "pickFile": "Pick a backup file",
+      "fileChosen": "Chosen file: {name}",
+      "copiesTitle": "Copies kept in this browser",
+      "dailyCopy": "Copy from {date}",
+      "beforeImport": "Before the last import",
+      "restore": "Restore"
     }
   },
   "installmentExpenses": {

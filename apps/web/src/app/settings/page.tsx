@@ -13,6 +13,7 @@ import { SettingsSection } from "@/components/settings-section";
 import { Page } from "@/components/ui/page";
 import { monthOf, localIsoDate } from "@/lib/clock";
 import { buildAiExportData } from "@/lib/ai-export-input";
+import { saveCopy } from "@/lib/browser-copies";
 import { exportToJson, importFromJson } from "@/storage/backup";
 import { loadAppState } from "@/storage/bootstrap";
 import { db } from "@/storage/instance";
@@ -95,6 +96,16 @@ export default function SettingsPage() {
               return json;
             }}
             onImport={async (json) => {
+              // A copy of what is there now, so a wrong import can be taken back.
+              try {
+                await saveCopy(
+                  "beforeImport",
+                  today,
+                  await exportToJson(db, new Date().toISOString()),
+                );
+              } catch {
+                // Without a safety copy the import still goes ahead; the confirm dialog already warned.
+              }
               const result = await importFromJson(db, json);
               // The store mirrors Dexie, so an imported backup must be loaded back in.
               if (!("errors" in result)) hydrate(await loadAppState(db), localIsoDate(new Date()));

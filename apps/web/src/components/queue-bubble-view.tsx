@@ -32,14 +32,32 @@ export function QueueBubbleView({
   const max = Math.max(1, ...months.map((m) => m.left));
   const monthIndex = new Map(months.map((m, i) => [m.month, i]));
   const stacked: Record<number, number> = {};
-  const placements = items.map((item, rank) => {
+  // Items that land on the same month stack up. Bubbles shrink so a crowded month stays within a
+  // fixed height, and only the picked one (or a month with at most two) carries a name label.
+  const GAP = 8;
+  const STACK_MAX = 190;
+  const rawSize = (item: QueueItem) => Math.min(106, 52 + (item.price / 42_000_00) * 54);
+  const colOf = (item: QueueItem) => {
     const month = monthByItemId.get(item.id);
-    const col = month ? (monthIndex.get(month) ?? months.length - 1) : months.length - 1;
-    const size = Math.min(106, 52 + (item.price / 42_000_00) * 54);
+    return month ? (monthIndex.get(month) ?? months.length - 1) : months.length - 1;
+  };
+  const crowd: Record<number, { count: number; total: number }> = {};
+  for (const item of items) {
+    const col = colOf(item);
+    const entry = crowd[col] ?? { count: 0, total: 0 };
+    entry.count += 1;
+    entry.total += rawSize(item) + GAP;
+    crowd[col] = entry;
+  }
+  const placements = items.map((item, rank) => {
+    const col = colOf(item);
+    const group = crowd[col] ?? { count: 1, total: 0 };
+    const factor = Math.min(1, STACK_MAX / Math.max(group.total, 1));
+    const size = Math.max(34, rawSize(item) * factor);
     const barHeight = (Math.max(0, months[col]?.left ?? 0) / max) * BAR_AREA;
     const offset = stacked[col] ?? 0;
-    stacked[col] = offset + size + 30;
-    return { item, rank, col, size, bottom: barHeight + 22 + offset };
+    stacked[col] = offset + size + GAP;
+    return { item, rank, col, size, bottom: barHeight + 22 + offset, crowded: group.count > 2 };
   });
   // Taller than 340px only when bubbles pile up on one month, so nothing is cut off at the top.
   const height = Math.max(340, ...placements.map((p) => p.bottom + p.size * 1.2 + 44));
@@ -72,7 +90,7 @@ export function QueueBubbleView({
             </div>
           ))}
         </div>
-        {placements.map(({ item, rank, col, size, bottom }) => {
+        {placements.map(({ item, rank, col, size, bottom, crowded }) => {
           const on = item.id === selectedId;
           return (
             <div key={item.id}>
@@ -91,6 +109,7 @@ export function QueueBubbleView({
                   type="button"
                   onClick={() => onSelect(item)}
                   aria-label={item.name}
+                  title={item.name}
                   aria-pressed={on}
                   className={cn(
                     "flex h-full w-full items-center justify-center rounded-full text-[19px] font-extrabold text-on transition-[transform,translate,scale,box-shadow] duration-[400ms] [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -104,7 +123,10 @@ export function QueueBubbleView({
                 </button>
               </div>
               <div
-                className="pointer-events-none absolute z-[1] w-[90px] text-center text-[11.5px] font-bold leading-tight"
+                className={cn(
+                  "pointer-events-none absolute z-[1] w-[90px] text-center text-[11.5px] font-bold leading-tight",
+                  crowded && !on && "hidden",
+                )}
                 style={{
                   left: col * COLUMN + 1,
                   bottom: bottom + size * (on ? 1.09 : 1) + 10,

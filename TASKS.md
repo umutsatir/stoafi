@@ -909,6 +909,8 @@ Order proposed in the plan: Home, Cards, Queue, Income & Expenses and Profile, P
   Note: both fields are additive and optional, like `installmentPurchase`, so stored data stays valid.
 - [ ] **T16.12** Run `npx playwright install` then `pnpm --filter @stoafi/web test:e2e`; browsers are not installed here, so e2e was not run.
 - [x] **T16.13** Queue item detail is now inline under the list, as in the design (three cards plus the installment calculator). The investments tab's holdings list is still only restyled.
+- [x] **T16.15** Second design pass: investments tab rebuilt in the design's order (basket, summary with the inflation card, holdings rows, "know before you buy"), example baskets now the design's three; queue purchase details moved into modals ("Are you sure?", installment calculator); plan notes for savings and investing; health trend bars; profile tones; AI panel, data safety (storage persistence, backup file, browser copies).
+  - Not built: the design's "small screen suggestion" panel in the basket, and moving a queue item to a clicked month.
 - [x] **T16.14** Design pass: navbar, orbit ring (centred, one installments bar), plan cards, basket, queue (timeline, list, Eisenhower, inline detail), health, lessons, profile, settings; shared inputs, buttons, switch and stepper; hover transitions animate (Tailwind v4 individual transform properties need their own transition).
   - Queue: the design lets you click a month to move an item there. That needs a "pinned month" on the queue item, so it was not built. Open question.
 

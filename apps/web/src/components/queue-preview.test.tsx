@@ -28,6 +28,21 @@ const item: QueueItem = {
   order: 0,
 };
 
+/** The purchase button opens an "Are you sure?" modal that holds the details and the final OK. */
+function openSure() {
+  if (screen.queryByRole("button", { name: "OK" })) return;
+  fireEvent.click(screen.getByRole("button", { name: /^(Confirm|I know, buy anyway)$/ }));
+}
+function closeSure() {
+  if (screen.queryByRole("button", { name: "OK" })) {
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+  }
+}
+function confirmPurchase() {
+  openSure();
+  fireEvent.click(screen.getByRole("button", { name: "OK" }));
+}
+
 describe("QueuePreview", () => {
   it("shows before/after effects on the wants bucket and free cash synchronously", () => {
     renderWithIntl(
@@ -44,6 +59,7 @@ describe("QueuePreview", () => {
       />,
     );
 
+    openSure();
     expect(screen.getByTestId("wants-before")).toHaveTextContent("₺0.00");
     expect(screen.getByTestId("wants-after")).toHaveTextContent("₺10.00");
     expect(screen.getByTestId("freecash-before")).toHaveTextContent("₺100.00");
@@ -88,7 +104,7 @@ describe("QueuePreview", () => {
       />,
     );
 
-    screen.getByRole("button", { name: "Confirm" }).click();
+    confirmPurchase();
     expect(onConfirm).toHaveBeenCalledTimes(1);
     const [commitment] = onConfirm.mock.calls[0] as [{ status: string }];
     expect(commitment.status).toBe("active");
@@ -119,6 +135,7 @@ describe("QueuePreview installment flow", () => {
     fireEvent.click(screen.getByTestId("offer-row-6").querySelector("button") as HTMLElement);
 
     expect(screen.queryByTestId("offer-row-6")).not.toBeInTheDocument();
+    openSure();
     expect(screen.getByTestId("installment-draft-state")).toHaveTextContent("6 months");
   });
 });
@@ -141,6 +158,7 @@ describe("QueuePreview card timing tip", () => {
       />,
     );
 
+    openSure();
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     const tip = screen.getByTestId("card-timing-tip");
     expect(tip).toHaveTextContent("31 extra float days");
@@ -165,9 +183,10 @@ describe("QueuePreview card timing tip", () => {
       />,
     );
 
+    openSure();
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    confirmPurchase();
 
     const [commitment] = onConfirm.mock.calls[0] as [{ payments: { month: string }[] }];
     expect(commitment.payments[0]?.month).toBe("2026-11");
@@ -194,6 +213,8 @@ describe("QueuePreview guard breach confirmation", () => {
 
     expect(screen.queryByRole("button", { name: "Confirm" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "I know, buy anyway" }));
+    expect(onConfirm).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "OK" }));
     expect(onConfirm).toHaveBeenCalledTimes(1);
     const [, breaches, guardBreachConfirmed] = onConfirm.mock.calls[0] as [
       unknown,
@@ -255,7 +276,7 @@ describe("QueuePreview purchase method", () => {
 
   it("confirms a cash purchase with the cash method", () => {
     const onConfirm = renderPreview({ item: { ...item, price: 1000 } });
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    confirmPurchase();
     const args = onConfirm.mock.calls[0] as unknown[];
     expect(args[3]).toEqual({ method: "cash" });
   });
@@ -268,6 +289,7 @@ describe("QueuePreview purchase method", () => {
     );
 
     pickOffer(6, "20");
+    openSure();
     expect(screen.getByTestId("installment-load-before")).toHaveTextContent("₺0.00");
     expect(screen.getByTestId("installment-load-after")).toHaveTextContent("₺20.00");
     // installments leave savings untouched, so the emergency-fund breach is gone
@@ -277,7 +299,7 @@ describe("QueuePreview purchase method", () => {
   it("confirms an installment purchase with the chosen offer and first payment month", () => {
     const onConfirm = renderPreview();
     pickOffer(6, "20");
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    confirmPurchase();
 
     const [commitment, , , purchase] = onConfirm.mock.calls[0] as [
       { source: { module: string }; status: string; payments: { month: string; amount: number }[] },
@@ -305,11 +327,12 @@ describe("QueuePreview purchase method", () => {
   it("can go back to paying cash after choosing an offer", () => {
     const onConfirm = renderPreview({ item: { ...item, price: 1000 } });
     pickOffer(3, "5");
+    openSure();
     expect(screen.getByTestId("installment-draft-state")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Pay cash instead" }));
     expect(screen.queryByTestId("installment-draft-state")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    confirmPurchase();
     expect((onConfirm.mock.calls[0] as unknown[])[3]).toEqual({ method: "cash" });
   });
 
@@ -319,10 +342,11 @@ describe("QueuePreview purchase method", () => {
       cards: [{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }],
       purchaseDate: "2026-09-20",
     });
+    pickOffer(3, "5");
+    openSure();
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
-    pickOffer(3, "5");
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    confirmPurchase();
     const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
     expect(purchase.firstMonth).toBe("2026-11");
   });
@@ -366,29 +390,34 @@ describe("QueuePreview skip, postpone, first fitting month and card choice", () 
 
   it("shows the first month that fits and previews that month on request", () => {
     const { onConfirm } = renderIt({ suggestedMonth: "2026-11" });
+    openSure();
     expect(screen.getByTestId("suggested-month")).toHaveTextContent("2026-11");
 
     fireEvent.click(screen.getByRole("button", { name: "Preview in 2026-11" }));
+    closeSure();
     fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
     fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    confirmPurchase();
     const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
     expect(purchase.firstMonth).toBe("2026-11");
   });
 
   it("says when nothing fits yet and offers no month to preview", () => {
     renderIt({ suggestedMonth: null });
+    openSure();
     expect(screen.getByTestId("suggested-month")).toHaveTextContent("not affordable yet");
     expect(screen.queryByRole("button", { name: /Preview in/ })).not.toBeInTheDocument();
   });
 
   it("offers no suggestion line when the caller has none", () => {
     renderIt();
+    openSure();
     expect(screen.queryByTestId("suggested-month")).not.toBeInTheDocument();
   });
 
   it("offers a card choice only when there are cards, and the tip follows the choice", () => {
     renderIt();
+    openSure();
     expect(screen.queryByLabelText("Pay with card")).not.toBeInTheDocument();
   });
 
@@ -397,6 +426,7 @@ describe("QueuePreview skip, postpone, first fitting month and card choice", () 
       cards: [{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }],
       purchaseDate: "2026-09-20",
     });
+    openSure();
     expect(screen.queryByTestId("card-timing-tip")).not.toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     expect(screen.getByTestId("card-timing-tip")).toHaveTextContent("31 extra float days");
@@ -409,12 +439,14 @@ describe("QueuePreview skip, postpone, first fitting month and card choice", () 
       cards: [{ id: "c1", label: "Visa", statementDay: 15, dueDay: 5 }],
       purchaseDate: "2026-09-20",
     });
+    openSure();
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "" } });
+    closeSure();
     fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
     fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    confirmPurchase();
     const purchase = (onConfirm.mock.calls[0] as unknown[])[3] as { firstMonth: string };
     expect(purchase.firstMonth).toBe("2026-09");
   });
@@ -455,11 +487,14 @@ describe("QueuePreview card limit", () => {
         onConfirm={vi.fn()}
       />,
     );
+    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
+    fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    // The card is picked in the "Are you sure?" modal; the warning shows on the page behind it.
+    openSure();
     fireEvent.change(screen.getByLabelText("Pay with card"), {
       target: { value: cards[cards.length - 1]?.id },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
-    fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);
+    closeSure();
   }
 
   it("is fine right up to the limit, and warns one unit beyond it", () => {
@@ -498,6 +533,7 @@ describe("QueuePreview card limit", () => {
         onConfirm={vi.fn()}
       />,
     );
+    openSure();
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "m" } });
     expect(screen.queryByText(/past its limit/i)).not.toBeInTheDocument();
   });

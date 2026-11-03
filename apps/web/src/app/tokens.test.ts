@@ -75,9 +75,12 @@ describe.each(["light", "dark"] as const)("%s theme tokens", (name) => {
     expect(contrast(tokens[fg] as string, tokens[bg] as string)).toBeGreaterThanOrEqual(4.5);
   });
 
-  it.each(CHART_TOKENS)("%s is visible on a card (1.7:1 minimum: pastel fills, never the only carrier of meaning)", (token) => {
-    expect(contrast(tokens[token] as string, tokens.card as string)).toBeGreaterThanOrEqual(1.7);
-  });
+  it.each(CHART_TOKENS)(
+    "%s is visible on a card (1.7:1 minimum: pastel fills, never the only carrier of meaning)",
+    (token) => {
+      expect(contrast(tokens[token] as string, tokens.card as string)).toBeGreaterThanOrEqual(1.7);
+    },
+  );
 
   it("has a visible focus ring and input border (3:1 on the card)", () => {
     expect(contrast(tokens.ring as string, tokens.card as string)).toBeGreaterThanOrEqual(3);
