@@ -952,6 +952,8 @@
     "hideDetails": "Ayrıntıyı gizle"
   },
   "insights": {
+    "idea": "Fikir.",
+    "fits": "Kime uyar.",
     "title": "Planın ne diyor",
     "allClear": "Planın önümüzdeki 12 ay için rakamlarına uyuyor.",
     "wantsOverLimit": "İstekler harcaması bu planın istekler sınırının üstünde ({months}).",
@@ -1337,6 +1339,11 @@
       "totalOk": "Toplam yüzde 100",
       "totalLow": "Toplam %{total}: %{missing} daha dağıtmalısın",
       "totalHigh": "Toplam %{total}: %{extra} fazla",
+      "editorTitle": "Sepetin",
+      "whereYouAreHint": "Çizgi hedefin, dolgu elindeki pay.",
+      "allAssigned": "Hepsi bir dilime bağlı.",
+      "invalidText": "Dilimlerin toplamı 100 olmadan bölünme ve sapma gösterilmez.",
+      "invalidTitle": "Yüzde toplamı 100 değil",
       "whereYouAre": "Şu an neredesin",
       "driftLine": "%{current} elinde, hedef %{target} ({diff} puan)",
       "driftBar": "{name}: elindeki pay",

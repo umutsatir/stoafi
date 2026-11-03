@@ -24,7 +24,7 @@ export default function PlanPage() {
 
   return (
     <Page title={t("title")} subtitle={t("subtitle")}>
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+      <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
         {profile && planState && (
           <PlanUsage
             profile={profile}

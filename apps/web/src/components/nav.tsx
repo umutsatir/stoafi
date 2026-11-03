@@ -227,7 +227,7 @@ export function Nav() {
                       aria-label={t(r.key)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex items-center gap-2 whitespace-nowrap rounded-full text-[13px] font-bold transition-[transform,background-color] duration-300 [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        "flex items-center gap-2 whitespace-nowrap rounded-full text-[13px] font-bold transition-[translate,scale,background-color] duration-300 [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         active
                           ? "bg-primary px-4 py-2.5 text-primary-foreground"
                           : "p-2.5 text-muted-foreground hover:-translate-y-1 hover:scale-[1.18]",

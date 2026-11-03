@@ -17,9 +17,21 @@ export interface ProgressBarProps {
   label: string;
   tone?: Tone;
   className?: string;
+  /** A CSS colour for the fill; overrides the tone's colour unless `overColor` is set. */
+  color?: string;
+  /** When true the tone's colour wins, so an over-limit bar still reads as a warning. */
+  overColor?: boolean;
 }
 
-export function ProgressBar({ value, max, label, tone = "primary", className }: ProgressBarProps) {
+export function ProgressBar({
+  value,
+  max,
+  label,
+  tone = "primary",
+  className,
+  color,
+  overColor = false,
+}: ProgressBarProps) {
   const ratio = max > 0 ? Math.min(1, Math.max(0, value / max)) : 0;
   return (
     <div
@@ -31,8 +43,11 @@ export function ProgressBar({ value, max, label, tone = "primary", className }: 
       className={cn("h-2.5 w-full overflow-hidden rounded-full bg-muted", className)}
     >
       <div
-        className={cn("h-full rounded-full transition-[width] duration-500", TONE_BAR[tone])}
-        style={{ width: `${ratio * 100}%` }}
+        className={cn(
+          "h-full rounded-full transition-[width] duration-500",
+          color && !overColor ? "" : TONE_BAR[tone],
+        )}
+        style={{ width: `${ratio * 100}%`, ...(color && !overColor ? { background: color } : {}) }}
       />
     </div>
   );

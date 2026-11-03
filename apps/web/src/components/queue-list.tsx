@@ -143,7 +143,7 @@ function QueueRow({
       ref={setNodeRef}
       style={style}
       data-testid={`queue-item-${item.id}`}
-      className={`rise-in flex items-center gap-4 rounded-[20px] bg-card px-5 py-4 transition-[transform,box-shadow] duration-300 hover:translate-x-[5px] ${
+      className={`rise-in flex items-center gap-4 rounded-[20px] bg-card px-5 py-4 transition-[transform,translate,scale,box-shadow] duration-300 hover:translate-x-[5px] ${
         isDragging ? "opacity-60 shadow-lg" : ""
       }`}
     >

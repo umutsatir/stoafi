@@ -137,8 +137,10 @@ export function CardWallet({
                       animationDelay: `${i * 80}ms`,
                     }}
                     className={cn(
-                      "pop-in relative flex h-[208px] w-[300px] flex-col overflow-hidden rounded-[28px] px-[26px] py-6 text-left transition-[transform,opacity,filter] duration-500 [transition-timing-function:cubic-bezier(.3,1.6,.5,1)] hover:-translate-y-3.5 hover:-rotate-[1.5deg] hover:scale-[1.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-[330px]",
-                      on ? "-translate-y-2 opacity-100" : "opacity-80 saturate-75",
+                      "pop-in relative flex h-[208px] w-[300px] flex-col overflow-hidden rounded-[28px] px-[26px] py-6 text-left transition-[translate,rotate,scale,opacity,filter] duration-500 [transition-timing-function:cubic-bezier(.3,1.6,.5,1)] hover:z-[5] hover:-translate-y-4 hover:-rotate-2 hover:scale-[1.04] hover:opacity-100 hover:saturate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-[330px]",
+                      on
+                        ? "z-[3] -translate-y-3.5 -rotate-[1.6deg] scale-[1.05] opacity-100"
+                        : "scale-[.93] opacity-70 saturate-[.6]",
                     )}
                   >
                     <span

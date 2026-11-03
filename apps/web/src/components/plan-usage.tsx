@@ -40,6 +40,14 @@ export interface PlanUsageProps {
 
 const BUCKET_LIST: Bucket[] = ["needs", "wants", "savings", "investing"];
 
+/** The design's bucket colours: needs, wants, savings, investing. */
+const BUCKET_COLOR: Record<Bucket, string> = {
+  needs: "var(--c1)",
+  wants: "var(--c2)",
+  savings: "var(--c4)",
+  investing: "var(--c3)",
+};
+
 function tone(committed: number, limit: number): Tone {
   if (limit <= 0) return committed > 0 ? "danger" : "primary";
   if (committed > limit) return "danger";
@@ -91,16 +99,24 @@ export function PlanUsage({
         {BUCKET_LIST.map((bucket, i) => {
           const { committed, limit } = projection.byBucket[bucket];
           return (
-            <li key={bucket} style={stagger(i)} className="rise-in flex flex-col gap-1.5">
-              <div className="flex items-center justify-between gap-2 text-sm">
-                <span className="flex items-center gap-1 font-medium">
+            <li key={bucket} style={stagger(i)} className="rise-in flex flex-col gap-2">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="flex items-center gap-2 text-[14.5px] font-bold">
+                  <span
+                    aria-hidden="true"
+                    className="h-[11px] w-[11px] flex-none rounded-full"
+                    style={{ background: BUCKET_COLOR[bucket] }}
+                  />
                   {t(`bucket.${bucket}`)}
                   <InfoPopover label={t("infoLabel", { bucket: t(`bucket.${bucket}`) })}>
                     {t(`info.${bucket}`)}
                   </InfoPopover>
                 </span>
-                <span className="text-muted-foreground" data-testid={`usage-${bucket}`}>
-                  <Money value={committed} /> / <Money value={limit} />
+                <span className="text-[13px] text-muted-foreground" data-testid={`usage-${bucket}`}>
+                  <b className="text-[15px] font-extrabold text-foreground">
+                    <Money value={committed} />
+                  </b>{" "}
+                  / <Money value={limit} />
                 </span>
               </div>
               <ProgressBar
@@ -108,6 +124,9 @@ export function PlanUsage({
                 max={limit}
                 label={t("barLabel", { bucket: t(`bucket.${bucket}`) })}
                 tone={tone(committed, limit)}
+                className="h-[11px]"
+                color={BUCKET_COLOR[bucket]}
+                overColor={tone(committed, limit) === "danger"}
               />
               <CategoryLines rows={categories} bucket={bucket} names={names} detailed />
               {bucket === "investing" && limit > 0 && (

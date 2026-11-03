@@ -952,6 +952,8 @@
     "hideDetails": "Hide details"
   },
   "insights": {
+    "idea": "The idea.",
+    "fits": "Who it suits.",
     "title": "What your plan says",
     "allClear": "Your plan fits your numbers for the next 12 months.",
     "wantsOverLimit": "Wants spending is above this plan's wants limit in {months}.",
@@ -1337,6 +1339,11 @@
       "totalOk": "Adds up to 100%",
       "totalLow": "Adds up to {total}%: {missing}% still to place",
       "totalHigh": "Adds up to {total}%: {extra}% too much",
+      "editorTitle": "Your basket",
+      "whereYouAreHint": "The line is your target, the fill is what you hold.",
+      "allAssigned": "Everything is in a slice.",
+      "invalidText": "The split and where you stand only show once the slices add up to 100.",
+      "invalidTitle": "Percentages don't add up to 100",
       "whereYouAre": "Where you are now",
       "driftLine": "{current}% held, target {target}% ({diff} points)",
       "driftBar": "{name}: share held",

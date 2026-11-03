@@ -120,7 +120,7 @@ export function CalendarView({ profile, cards, today }: CalendarViewProps) {
                   aria-current={isToday ? "date" : undefined}
                   onClick={() => setPicked(selected ? null : day)}
                   className={cn(
-                    "flex min-h-14 w-full flex-col gap-2 rounded-[20px] p-2 text-left transition-[transform,background] duration-200 [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] hover:-translate-y-[3px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:min-h-[84px] md:p-2.5",
+                    "flex min-h-14 w-full flex-col gap-2 rounded-[20px] p-2 text-left transition-[transform,translate,scale,background] duration-200 [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] hover:-translate-y-[3px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:min-h-[84px] md:p-2.5",
                     selected
                       ? "bg-foreground text-background"
                       : isToday

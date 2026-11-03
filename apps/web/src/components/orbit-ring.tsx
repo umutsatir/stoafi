@@ -18,6 +18,9 @@ export interface OrbitSegment {
   note: string;
 }
 
+/** Colours for the parts of the installments bar. */
+const ROW_COLORS = ["var(--c3)", "var(--c1)", "var(--c2)", "var(--c4)"];
+
 const CIRCUMFERENCE = 2 * Math.PI * 190;
 const INNER = 2 * Math.PI * 148;
 
@@ -112,11 +115,7 @@ export function OrbitRing({
         {/* Every part's detail sits in the same grid cell, so the card is as tall as the tallest one and never jumps when another part is picked. */}
         <div className="grid min-w-0">
           {segments.map((segment) => (
-            <SegmentDetail
-              key={segment.id}
-              segment={segment}
-              visible={segment.id === current.id}
-            />
+            <SegmentDetail key={segment.id} segment={segment} visible={segment.id === current.id} />
           ))}
         </div>
       </div>
@@ -152,14 +151,10 @@ export function OrbitRing({
   );
 }
 
-function SegmentDetail({
-  segment,
-  visible,
-}: {
-  segment: OrbitSegment;
-  visible: boolean;
-}) {
+function SegmentDetail({ segment, visible }: { segment: OrbitSegment; visible: boolean }) {
   const total = segment.rows.reduce((sum, r) => sum + Math.abs(r.amount), 0) || 1;
+  // Installments read as one bar split between the plans, not one bar each.
+  const stacked = segment.id === "installments" && segment.rows.length > 0;
   return (
     <div
       aria-hidden={visible ? undefined : true}
@@ -179,22 +174,52 @@ function SegmentDetail({
           {segment.shareText}
         </span>
       </div>
+      {stacked && (
+        <div
+          role="img"
+          aria-label={segment.label}
+          className="mt-4 flex h-3 gap-[3px] overflow-hidden rounded-xl"
+        >
+          {segment.rows.map((row, i) => (
+            <div
+              key={row.label}
+              title={row.label}
+              className="rounded-md transition-[width] duration-500"
+              style={{
+                width: `${(Math.abs(row.amount) / total) * 100}%`,
+                background: ROW_COLORS[i % ROW_COLORS.length],
+              }}
+            />
+          ))}
+        </div>
+      )}
       <ul>
-        {segment.rows.map((row) => (
+        {segment.rows.map((row, i) => (
           <li key={row.label} className="mt-4">
             <div className="flex justify-between gap-3 text-[13.5px] font-semibold">
-              <span className="min-w-0 truncate">{row.label}</span>
+              <span className="flex min-w-0 items-center gap-2">
+                {stacked && (
+                  <span
+                    aria-hidden="true"
+                    className="h-2.5 w-2.5 flex-none rounded-full"
+                    style={{ background: ROW_COLORS[i % ROW_COLORS.length] }}
+                  />
+                )}
+                <span className="truncate">{row.label}</span>
+              </span>
               <span className="font-extrabold">{row.amountText}</span>
             </div>
-            <div className="mt-2 h-2 rounded-lg bg-muted">
-              <div
-                className="h-2 rounded-lg"
-                style={{
-                  background: segment.color,
-                  width: `${Math.min(100, (Math.abs(row.amount) / total) * 100)}%`,
-                }}
-              />
-            </div>
+            {!stacked && (
+              <div className="mt-2 h-2 rounded-lg bg-muted">
+                <div
+                  className="h-2 rounded-lg"
+                  style={{
+                    background: segment.color,
+                    width: `${Math.min(100, (Math.abs(row.amount) / total) * 100)}%`,
+                  }}
+                />
+              </div>
+            )}
           </li>
         ))}
       </ul>
