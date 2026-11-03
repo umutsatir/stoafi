@@ -207,6 +207,15 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 20px 44px rgb(20 40 40 / 0.13);
 }
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
 @keyframes slide {
   from {
     opacity: 0;

@@ -482,17 +482,24 @@
       "importantOnly": "Important",
       "neither": "Can wait"
     },
+    "bubbles": {
+      "title": "12-month timeline",
+      "hint": "A bubble’s size is its price, its place the month it fits. Click a bubble to pick an item."
+    },
     "summary": {
+      "fitsCount": "{count, plural, one {# item} other {# items}}",
       "total": "Total waiting",
       "fits": "Fits this month",
       "nearest": "Nearest purchase",
       "none": "Nothing fits yet"
     },
+    "cash": "Cash",
+    "notYet": "not yet",
     "views": {
       "label": "View",
       "list": "List",
       "eisenhower": "Eisenhower",
-      "time": "Time"
+      "time": "Timeline"
     },
     "filters": {
       "label": "Show",
@@ -533,6 +540,7 @@
     "priceStale": "Price is {days} days old: still right?",
     "subtitle": "What you are thinking of buying, in order. Touch a bubble, then click a month to move it. The effect shows at once.",
     "cooldown": {
+      "askBadge": "Time to decide",
       "askTitle": "Still want it?",
       "askText": "You stayed calm for 30 days. The decision on {name} is yours.",
       "keep": "Yes, keep it",
@@ -542,6 +550,21 @@
     }
   },
   "queuePreview": {
+    "installmentMode": "{months} installments",
+    "workEquivalent": "Work equivalent · {cost}",
+    "hoursUnit": "hours",
+    "freeCashTitle": "Free cash in {month}",
+    "before": "Before",
+    "after": "After",
+    "thirtyDayRule": "30-day rule",
+    "ruleNone": "No waiting",
+    "ruleDone": "Time is up",
+    "ruleDays": "{days} / 30 days",
+    "needNoWait": "A need: no waiting.",
+    "perMonth": "In installments: {amount} a month.",
+    "cashPay": "Cash {amount}.",
+    "buyAnyway": "I know, buy anyway",
+    "room": {"none": "Doesn't fit", "short": "Not enough", "tight": "Tight", "roomy": "Comfortable"},
     "wantsBeforeAfter": "Wants before / after",
     "freeCashBeforeAfter": "Free cash before / after",
     "installmentDraft": "Installment draft: {months} months",

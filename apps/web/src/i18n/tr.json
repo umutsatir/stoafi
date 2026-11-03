@@ -482,17 +482,24 @@
       "importantOnly": "Önemli",
       "neither": "Bekleyebilir"
     },
+    "bubbles": {
+      "title": "12 aylık zaman çizelgesi",
+      "hint": "Kabarcığın boyu bedeli, yeri satın alma ayını gösterir. Seçili öğe için bir kabarcığa tıkla."
+    },
     "summary": {
+      "fitsCount": "{count} öğe",
       "total": "Bekleyen toplam",
       "fits": "Bu ay sığan",
       "nearest": "En yakın alım",
       "none": "Henüz hiçbiri sığmıyor"
     },
+    "cash": "Peşin",
+    "notYet": "henüz değil",
     "views": {
       "label": "Görünüm",
       "list": "Liste",
       "eisenhower": "Eisenhower",
-      "time": "Zaman"
+      "time": "Zaman çizelgesi"
     },
     "filters": {
       "label": "Göster",
@@ -533,6 +540,7 @@
     "priceStale": "Fiyat {days} günlük: hâlâ doğru mu?",
     "subtitle": "Almayı düşündüğün şeyler, sırayla. Bir kabarcığa dokun; sonra bir aya tıklayıp taşı. Etkisi anında görünür.",
     "cooldown": {
+      "askBadge": "Karar zamanı",
       "askTitle": "Hâlâ istiyor musun?",
       "askText": "Sakin kaldın, 30 gün geçti. {name} için karar senin.",
       "keep": "Evet, tut",
@@ -542,6 +550,21 @@
     }
   },
   "queuePreview": {
+    "installmentMode": "{months} taksit",
+    "workEquivalent": "Çalışma karşılığı · {cost}",
+    "hoursUnit": "saat",
+    "freeCashTitle": "{month} serbest nakit",
+    "before": "Önce",
+    "after": "Sonra",
+    "thirtyDayRule": "30 gün kuralı",
+    "ruleNone": "Bekleme yok",
+    "ruleDone": "Süre doldu",
+    "ruleDays": "{days} / 30 gün",
+    "needNoWait": "İhtiyaç: bekleme yok.",
+    "perMonth": "Taksitle: ayda {amount}.",
+    "cashPay": "Peşin {amount}.",
+    "buyAnyway": "Biliyorum, yine de al",
+    "room": {"none": "Sığmıyor", "short": "Yetmez", "tight": "Dar", "roomy": "Rahat"},
     "wantsBeforeAfter": "İstekler önce / sonra",
     "freeCashBeforeAfter": "Serbest nakit önce / sonra",
     "installmentDraft": "Taksit taslağı: {months} ay",

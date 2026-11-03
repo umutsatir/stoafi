@@ -177,7 +177,7 @@ export function BasketPanel({
                   </ul>
                   <button
                     type="button"
-                    className="press mt-[18px] rounded-full bg-primary p-3 text-[13.5px] font-extrabold text-primary-foreground"
+                    className="press mt-auto rounded-full bg-primary p-3 text-[13.5px] font-extrabold text-primary-foreground"
                     onClick={() => apply(template)}
                     aria-label={t("useTemplate", { name: t(`template.${template.id}.name`) })}
                   >
@@ -407,6 +407,7 @@ export function BasketPanel({
                 {hasValue && (
                   <SegmentedControl
                     label={t("mode.label")}
+                    tone="soft"
                     value={mode}
                     onChange={setMode}
                     options={[

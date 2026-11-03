@@ -175,7 +175,7 @@ describe("QueuePreview card timing tip", () => {
 });
 
 describe("QueuePreview guard breach confirmation", () => {
-  it("blocks confirm behind an explicit 'I know' action when there is a breach", () => {
+  it("asks for an explicit 'buy anyway' when there is a breach and records that it was confirmed", () => {
     const onConfirm = vi.fn();
     const expensiveItem = { ...item, price: 10000 };
     renderWithIntl(
@@ -192,13 +192,8 @@ describe("QueuePreview guard breach confirmation", () => {
       />,
     );
 
-    const confirmButton = screen.getByRole("button", { name: "Confirm" });
-    expect(confirmButton).toBeDisabled();
-
-    fireEvent.click(screen.getByRole("button", { name: "I know" }));
-    expect(confirmButton).not.toBeDisabled();
-
-    fireEvent.click(confirmButton);
+    expect(screen.queryByRole("button", { name: "Confirm" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "I know, buy anyway" }));
     expect(onConfirm).toHaveBeenCalledTimes(1);
     const [, breaches, guardBreachConfirmed] = onConfirm.mock.calls[0] as [
       unknown,
@@ -364,7 +359,7 @@ describe("QueuePreview skip, postpone, first fitting month and card choice", () 
 
   it("does not need a guard acknowledgement to skip or postpone", () => {
     const { onDecide } = renderIt({ item: { ...item, price: 10000 } });
-    expect(screen.getByRole("button", { name: "Confirm" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "I know, buy anyway" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Skip" }));
     expect(onDecide).toHaveBeenCalledWith("skipped");
   });
