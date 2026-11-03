@@ -54,7 +54,8 @@ describe("minimumPaymentBalances", () => {
     expect(balances[0]).toBe(100_000);
     expect(balances).toHaveLength(4);
     expect(balances[1]).toBeCloseTo(100_000 * 1.02 - 5_000, 6);
-    for (let i = 1; i < balances.length; i++) expect(balances[i]).toBeLessThan(balances[i - 1] ?? 0);
+    for (let i = 1; i < balances.length; i++)
+      expect(balances[i]).toBeLessThan(balances[i - 1] ?? 0);
   });
 
   it("reads zero once the debt is cleared, and for a zero balance", () => {

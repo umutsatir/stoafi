@@ -27,7 +27,8 @@ import type { PinLock } from "@/lib/pin";
 import { buildLedger } from "./ledger";
 
 /** Something the command palette asked the page it opens to start doing. */
-export type QuickAction = "addQueueItem" | "addCard" | "addPot" | "addInvestment" | "openOnboarding" | null;
+export type QuickAction =
+  "addQueueItem" | "addCard" | "addPot" | "addInvestment" | "openOnboarding" | null;
 
 export interface AppState {
   profile: Profile | null;
