@@ -20,6 +20,9 @@ export interface StatCardProps {
   style?: CSSProperties;
 }
 
+/** A tile filled with one of the pastel colours carries dark text (`text-on`); its small text must follow. */
+const onTone = (className?: string): boolean => Boolean(className?.split(" ").includes("text-on"));
+
 export function StatCard({
   label,
   value,
@@ -31,11 +34,12 @@ export function StatCard({
   className,
   style,
 }: StatCardProps) {
+  const quiet = onTone(className) ? "text-on" : "text-muted-foreground";
   return (
     <Card className={cn("h-full", className)} style={style}>
       <CardContent className="flex h-full flex-col gap-1 pt-6">
         <div className="flex items-center justify-between gap-2">
-          <p className="flex items-center gap-1 text-[13px] font-bold text-muted-foreground">
+          <p className={cn("flex items-center gap-1 text-[13px] font-bold", quiet)}>
             {label}
             {info}
           </p>
@@ -44,7 +48,7 @@ export function StatCard({
         <p className="text-[34px] font-extrabold tracking-[-0.05em]" data-testid={testId}>
           {value}
         </p>
-        {hint && <p className="text-caption text-muted-foreground">{hint}</p>}
+        {hint && <p className={cn("text-caption", quiet)}>{hint}</p>}
         {footer && <div className="mt-auto pt-2">{footer}</div>}
       </CardContent>
     </Card>

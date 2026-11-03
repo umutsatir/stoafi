@@ -152,14 +152,14 @@ export function PotCard({
             const Held = picturesFor(
               heldTypeId === "cash" ? "currency" : heldTypeId === "custom" ? "other" : heldTypeId,
             ).pot;
-            return <Held className="h-4 w-4 text-primary" aria-hidden="true" />;
+            return <Held className="h-4 w-4 text-primary-ink" aria-hidden="true" />;
           })()}
           <span>{t("heldIn.chip", { name: heldInName(pot.heldIn) })}</span>
           {onChooseHeldIn && (
             <button
               type="button"
               onClick={onChooseHeldIn}
-              className="text-xs font-medium text-primary hover:underline"
+              className="text-xs font-medium text-primary-ink hover:underline"
             >
               {t("heldIn.change")}
             </button>
@@ -170,7 +170,7 @@ export function PotCard({
           <button
             type="button"
             onClick={onChooseHeldIn}
-            className="w-fit text-sm font-medium text-primary hover:underline"
+            className="w-fit text-sm font-medium text-primary-ink hover:underline"
             data-testid={`held-in-choose-${pot.id}`}
           >
             {t("heldIn.choose")}

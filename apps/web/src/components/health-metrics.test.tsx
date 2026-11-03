@@ -83,7 +83,7 @@ describe("HealthMetrics", () => {
     for (const id of ["savings-rate", "emergency-fund-months", "installment-ratio", "runway"]) {
       expect(screen.getByTestId(id)).toBeInTheDocument();
     }
-    expect(screen.getAllByText(/./, { selector: "p.opacity-80" })).toHaveLength(4);
+    expect(screen.getAllByText(/./, { selector: "p.text-xs" })).toHaveLength(4);
   });
 
   it("shows how far the emergency fund is toward its target, capped at 100 percent", () => {

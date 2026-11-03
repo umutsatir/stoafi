@@ -138,7 +138,7 @@ export function HealthMetrics({
                       cap: Math.round(installmentCapPct * 100),
                     })}
                   </p>
-                  <p className="mt-2 text-xs leading-normal text-muted-foreground opacity-80">
+                  <p className="mt-2 text-xs leading-normal text-muted-foreground">
                     {t(`info.${kind}.text`)}
                   </p>
                 </div>

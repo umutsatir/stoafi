@@ -392,7 +392,7 @@ export default function QueuePage() {
               <button
                 type="button"
                 onClick={() => confirmStillWanted(askItem)}
-                className="press rounded-full bg-on px-6 py-3 text-sm font-extrabold text-background"
+                className="press rounded-full bg-foreground px-6 py-3 text-sm font-extrabold text-background"
               >
                 {t("cooldown.keep")}
               </button>
