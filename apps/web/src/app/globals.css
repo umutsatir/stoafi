@@ -207,6 +207,18 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 20px 44px rgb(20 40 40 / 0.13);
 }
+@keyframes sheen {
+  from {
+    transform: skewX(-20deg) translateX(-140%);
+  }
+  to {
+    transform: skewX(-20deg) translateX(420%);
+  }
+}
+.sheen {
+  animation: sheen 3.6s 1.4s infinite;
+}
+
 .press {
   transition:
     transform 0.3s cubic-bezier(0.3, 1.7, 0.5, 1),
