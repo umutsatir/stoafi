@@ -99,14 +99,19 @@ export function Nav() {
   const [dark, setDark] = useState(false);
   const hideAmounts = useAppStore((s) => s.hideAmounts);
   const setHideAmounts = useAppStore((s) => s.setHideAmounts);
-  const theme = useAppStore((s) => s.theme);
   const setTheme = useAppStore((s) => s.setTheme);
   const setQuickAction = useAppStore((s) => s.setQuickAction);
   const moreActive = MORE_ROUTES.some((r) => isActive(pathname, r.href));
 
+  // Watch the attribute the bootstrap sets, so the switch never lags a click behind the store.
   useEffect(() => {
-    setDark(document.documentElement.dataset.theme === "dark");
-  }, [theme]);
+    const root = document.documentElement;
+    const read = () => setDark(root.dataset.theme === "dark");
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
