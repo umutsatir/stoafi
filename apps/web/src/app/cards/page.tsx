@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { removeCardFromSet, type Card } from "@stoafi/core";
 import { CardWallet } from "@/components/card-wallet";
@@ -25,6 +26,7 @@ export default function CardsPage() {
   const today = useAppStore((s) => s.today);
   const t = useTranslations("cards");
   const tc = useTranslations("common");
+  const setQuickAction = useAppStore((s) => s.setQuickAction);
 
   const remaining = useMemo(
     () => remainingByCard(queueItems, profile, monthOf(today)),
@@ -57,7 +59,22 @@ export default function CardsPage() {
   }
 
   return (
-    <Page title={t("title")} subtitle={t("subtitle")}>
+    <Page
+      title={t("title")}
+      subtitle={t("subtitle")}
+      action={
+        cards.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setQuickAction("addCard")}
+            className="press inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-primary px-5 py-3 text-[13.5px] font-extrabold text-primary-foreground"
+          >
+            <Plus className="h-[15px] w-[15px]" strokeWidth={2.6} aria-hidden="true" />
+            {t("add")}
+          </button>
+        ) : undefined
+      }
+    >
       <CardWallet
         cards={cards}
         remainingInstallments={remaining}

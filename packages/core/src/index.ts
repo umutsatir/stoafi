@@ -120,7 +120,8 @@ export {
   type SavingsSummary,
 } from "../modules/decisions/selectors";
 export { timingTip, type TimingTip } from "../modules/cards/timing";
-export { minimumPaymentPayoff, type MinPaymentRule } from "../modules/cards/minimum-payment";
+export { minimumPaymentBalances,
+  minimumPaymentPayoff, type MinPaymentRule } from "../modules/cards/minimum-payment";
 export { toCommitment } from "../modules/sinking-funds/schema";
 export {
   compareOffers,

@@ -1,6 +1,7 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { Card } from "@stoafi/core";
+import { useAppStore } from "@/store";
 import { renderWithIntl } from "@/test-utils";
 import { CardWallet } from "./card-wallet";
 
@@ -141,7 +142,8 @@ describe("CardWallet forms", () => {
 
   it("refuses a card without a name or with a bad last four digits and says why", async () => {
     const { onSave } = renderWallet([main]);
-    fireEvent.click(screen.getByRole("button", { name: "Add card" }));
+    // The page header holds the add button; it asks the wallet through the palette's quick action.
+    act(() => useAppStore.setState({ quickAction: "addCard" }));
     const form = await screen.findByRole("dialog", { name: "Add a card" });
     fireEvent.change(within(form).getByLabelText("Last 4 digits"), { target: { value: "12" } });
     fireEvent.click(within(form).getByRole("button", { name: "Add card" }));
@@ -152,7 +154,8 @@ describe("CardWallet forms", () => {
 
   it("requires choosing a main card for a supplementary card", async () => {
     const { onSave } = renderWallet([main]);
-    fireEvent.click(screen.getByRole("button", { name: "Add card" }));
+    // The page header holds the add button; it asks the wallet through the palette's quick action.
+    act(() => useAppStore.setState({ quickAction: "addCard" }));
     const form = await screen.findByRole("dialog", { name: "Add a card" });
     fireEvent.change(within(form).getByLabelText("Card name"), { target: { value: "Kid" } });
     fireEvent.change(within(form).getByLabelText("Type"), { target: { value: "supplementary" } });

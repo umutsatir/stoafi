@@ -3,6 +3,10 @@
 import { useTranslations } from "next-intl";
 import {
   addMonths,
+  basketInvestedIn,
+  depositedInMonth,
+  emergencyGap,
+  monthlyNeeds,
   currentAllocation,
   netMonthlyIncome,
   projectSeries,
@@ -17,6 +21,8 @@ import { summarizeMonths } from "@/lib/months-summary";
 import { useLocale } from "next-intl";
 import { getLessonCard } from "@/lessons";
 import type { Locale } from "@/i18n/messages";
+import { useAppStore } from "@/store";
+import { useMoney } from "@/lib/use-money";
 import { LessonLink } from "./lesson-link";
 
 /** Screen text for each insight id; an id without an entry falls back to the insight's English message. */
@@ -48,6 +54,9 @@ export function PlanInsights({
   horizonMonths = 12,
 }: PlanInsightsProps) {
   const t = useTranslations("insights");
+  const money = useMoney();
+  const funds = useAppStore((s) => s.sinkingFunds);
+  const basketLog = useAppStore((s) => s.basketLog);
   const locale = useLocale() as Locale;
   const strategy = strategyRegistry[planState.strategyId];
   if (!strategy) return null;
@@ -57,6 +66,35 @@ export function PlanInsights({
   const projections = projectSeries({ income: netMonthlyIncome(profile) }, ledger, months, {
     bucketLimits: currentAllocation(profile, planState, strategyRegistry),
   });
+
+  // What this month still asks of the plan, as the design shows it: yellow dots for money to set
+  // aside, blue for the emergency-fund note.
+  const allocation = currentAllocation(profile, planState, strategyRegistry);
+  const savedThisMonth =
+    depositedInMonth(profile.deposits, month) +
+    funds.reduce((sum, f) => sum + depositedInMonth(f.deposits, month), 0);
+  const savingsToSet = Math.max(0, allocation.savings - savedThisMonth);
+  const investingToSet = Math.max(0, allocation.investing - basketInvestedIn(basketLog, month));
+  const fundGap = emergencyGap(
+    profile.savings,
+    monthlyNeeds(profile, month),
+    profile.emergencyFundTargetMonths,
+  );
+  const notes: { id: string; dot: string; text: string }[] = [];
+  if (savingsToSet > 0)
+    notes.push({
+      id: "savings",
+      dot: "bg-c2",
+      text: t("savingsToSet", { amount: money(savingsToSet) }),
+    });
+  if (investingToSet > 0)
+    notes.push({
+      id: "investing",
+      dot: "bg-c2",
+      text: t("investingToSet", { amount: money(investingToSet) }),
+    });
+  if (fundGap > 0 && planState.strategyId !== "baby-steps")
+    notes.push({ id: "fund", dot: "bg-c1", text: t("fundNotFull") });
 
   // One line per finding, listing every month it applies to, instead of twelve repeats.
   const byId = new Map<string, { insight: Insight; months: string[] }>();
@@ -73,7 +111,7 @@ export function PlanInsights({
       className="lift pop-in flex h-full flex-col gap-1 rounded-card bg-card px-[30px] py-7"
     >
       <h2 className="text-[22px] font-extrabold tracking-[-0.03em]">{t("title")}</h2>
-      {byId.size === 0 ? (
+      {byId.size === 0 && notes.length === 0 ? (
         <p className="mt-4 flex gap-3 text-sm font-semibold leading-[1.55]">
           <span
             aria-hidden="true"
@@ -83,6 +121,19 @@ export function PlanInsights({
         </p>
       ) : (
         <ul className="flex flex-col">
+          {notes.map((note) => (
+            <li
+              key={note.id}
+              data-testid="plan-note"
+              className="mt-4 flex gap-3 text-sm font-semibold leading-[1.55] [animation:slide_0.5s_backwards]"
+            >
+              <span
+                aria-hidden="true"
+                className={`mt-[7px] h-2.5 w-2.5 flex-none rounded-full ${note.dot}`}
+              />
+              <span>{note.text}</span>
+            </li>
+          ))}
           {[...byId.entries()].map(([id, { insight, months: affected }]) => {
             const key = MESSAGE_KEYS[id];
             return (

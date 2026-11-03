@@ -101,18 +101,6 @@ export function CardWallet({
         />
       ) : (
         <>
-          <div className="flex justify-end">
-            <Button
-              type="button"
-              onClick={() => {
-                setPresetBank(undefined);
-                setPanel({ kind: "form" });
-              }}
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              {t("add")}
-            </Button>
-          </div>
           <ul className="-mx-4 flex gap-8 overflow-x-auto px-4 pb-8 pt-12 md:-mx-8 md:px-8">
             {cards.map((card, i) => {
               const colors = cardColors(card);

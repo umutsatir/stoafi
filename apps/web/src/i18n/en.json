@@ -715,7 +715,8 @@
     "minFloor": "Minimum payment floor",
     "monthsToPayoff": "Months to payoff: {months}",
     "totalInterest": "Total interest: {interest}",
-    "neverPaysOff": "This debt never pays off: the minimum payment is smaller than the interest."
+    "neverPaysOff": "This debt never pays off: the minimum payment is smaller than the interest.",
+    "hint": "The minimum-payment trap: enter the balance, interest and minimum rate to see how long the debt takes to clear."
   },
   "health": {
     "title": "Health",
@@ -1001,7 +1002,10 @@
     "babyStepsStep1": "Step 1: build the starter emergency fund ({months}).",
     "babyStepsStep2": "Step 2: pay off debt before saving extra ({months}).",
     "babyStepsStep3": "Step 3: build the full emergency fund ({months}).",
-    "babyStepsStep4": "Step 4 and on: the emergency fund is complete, start investing ({months})."
+    "babyStepsStep4": "Step 4 and on: the emergency fund is complete, start investing ({months}).",
+    "savingsToSet": "To keep to your plan, set aside {amount} more for savings this month.",
+    "investingToSet": "To keep to your plan, put {amount} more into investing this month.",
+    "fundNotFull": "Your emergency fund is not full yet; the plan’s investing share goes to savings until it is."
   },
   "sinkingFunds": {
     "title": "Savings goals",

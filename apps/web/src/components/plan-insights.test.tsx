@@ -31,11 +31,14 @@ function renderInsights(
 }
 
 describe("PlanInsights", () => {
-  it("says all is clear when the plan fits", () => {
+  it("says what is still to set aside this month, instead of calling the plan clear", () => {
     renderInsights(base);
+    expect(screen.getByTestId("plan-note")).toHaveTextContent(
+      "To keep to your plan, set aside ₺2,000.00 more for savings this month.",
+    );
     expect(
-      screen.getByText("Your plan fits your numbers for the next 12 months."),
-    ).toBeInTheDocument();
+      screen.queryByText("Your plan fits your numbers for the next 12 months."),
+    ).not.toBeInTheDocument();
   });
 
   it("flags a wants limit that recurring costs already exceed, once, with its months", () => {

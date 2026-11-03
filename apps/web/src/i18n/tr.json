@@ -715,7 +715,8 @@
     "minFloor": "Asgari ödeme tabanı",
     "monthsToPayoff": "Kapanma süresi: {months} ay",
     "totalInterest": "Toplam faiz: {interest}",
-    "neverPaysOff": "Bu borç hiç bitmez: asgari ödeme faizden küçük."
+    "neverPaysOff": "Bu borç hiç bitmez: asgari ödeme faizden küçük.",
+    "hint": "Asgari ödeme tuzağı: bakiye, faiz ve asgari oranını gir; borcun ne kadar sürede biteceğini gör."
   },
   "health": {
     "title": "Sağlık",
@@ -1001,7 +1002,10 @@
     "babyStepsStep1": "1. adım: başlangıç acil durum fonunu biriktir ({months}).",
     "babyStepsStep2": "2. adım: fazladan biriktirmeden önce borçları öde ({months}).",
     "babyStepsStep3": "3. adım: tam acil durum fonunu biriktir ({months}).",
-    "babyStepsStep4": "4. adım ve sonrası: acil durum fonu tamam, yatırıma başla ({months})."
+    "babyStepsStep4": "4. adım ve sonrası: acil durum fonu tamam, yatırıma başla ({months}).",
+    "savingsToSet": "Planına uymak için bu ay birikime {amount} daha ayır.",
+    "investingToSet": "Planına uymak için bu ay yatırıma {amount} daha ayır.",
+    "fundNotFull": "Acil durum fonun henüz dolmadı; planın yatırım payı birikime gidiyor. Fon dolunca yatırım başlar."
   },
   "sinkingFunds": {
     "title": "Birikim hedefleri",

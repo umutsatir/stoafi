@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { minimumPaymentPayoff } from "./minimum-payment";
+import { minimumPaymentBalances, minimumPaymentPayoff } from "./minimum-payment";
 
 describe("minimumPaymentPayoff", () => {
   it("matches a hand-computed payoff for a simple case", () => {
@@ -45,5 +45,21 @@ describe("minimumPaymentPayoff", () => {
     expect(minimumPaymentPayoff(1000, 0.05, { pct: 0.01, floor: 0 }).neverPaysOff).toBe(true);
     expect(minimumPaymentPayoff(1000, 0.02, { pct: 0.05, floor: 0 }).neverPaysOff).toBe(false);
     expect(minimumPaymentPayoff(0, 0.02, { pct: 0.05, floor: 0 }).neverPaysOff).toBe(false);
+  });
+});
+
+describe("minimumPaymentBalances", () => {
+  it("starts at the balance and shrinks every month under a percentage rule", () => {
+    const balances = minimumPaymentBalances(100_000, 0.02, { pct: 0.05, floor: 0 }, 4);
+    expect(balances[0]).toBe(100_000);
+    expect(balances).toHaveLength(4);
+    expect(balances[1]).toBeCloseTo(100_000 * 1.02 - 5_000, 6);
+    for (let i = 1; i < balances.length; i++) expect(balances[i]).toBeLessThan(balances[i - 1] ?? 0);
+  });
+
+  it("reads zero once the debt is cleared, and for a zero balance", () => {
+    expect(minimumPaymentBalances(0, 0.02, { pct: 0.05, floor: 0 }, 3)).toEqual([0, 0, 0]);
+    const cleared = minimumPaymentBalances(10_000, 0, { pct: 0, floor: 6_000 }, 4);
+    expect(cleared).toEqual([10_000, 4_000, 0, 0]);
   });
 });
