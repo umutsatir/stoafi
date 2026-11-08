@@ -558,11 +558,11 @@
     "bubbles": {
       "moved": "“{name}” {month} ayına taşındı",
       "title": "12 aylık zaman çizelgesi",
-      "hint": "Kabarcığın boyu bedeli, yeri satın alma ayını gösterir. Seçili öğe için bir kabarcığa tıkla."
+      "hint": "Kabarcığın boyu bedeli, yeri satın alma ayını gösterir. Öğeyi görmek için bir kabarcık seç."
     },
     "cash": "Peşin",
     "notYet": "henüz değil",
-    "subtitle": "Almayı düşündüğün şeyler, sırayla. Bir kabarcığa dokun; sonra bir aya tıklayıp taşı. Etkisi anında görünür.",
+    "subtitle": "Almayı düşündüğün şeyler, sırayla. Bir kabarcık seç, sonra bir ay seç (ya da kabarcığı oraya sürükle) ve taşı. Etkisi anında görünür.",
     "cooldown": {
       "askBadge": "Karar zamanı",
       "askTitle": "Hâlâ istiyor musun?",

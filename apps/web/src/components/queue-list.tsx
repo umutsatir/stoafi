@@ -37,7 +37,7 @@ import { LessonLink } from "@/components/lesson-link";
 import { useMoney } from "@/lib/use-money";
 import { Button } from "@/components/ui/button";
 import { StatusChip, type ChipTone } from "@/components/ui/status-chip";
-import { formatMonth } from "@/lib/format-month";
+import { formatDay, formatMonth } from "@/lib/format-month";
 import { cn, stagger } from "@/lib/utils";
 
 const NO_COMMITMENTS: Commitment[] = [];
@@ -141,9 +141,10 @@ function QueueRow({
   };
 
   const kindColor = item.isNeed ? "bg-c4" : item.installmentPurchase ? "bg-c3" : "bg-c2";
-  const SOFT_CHIP = "rounded-full bg-muted px-2.5 py-[3px] text-[11.5px] font-bold";
+  const SOFT_CHIP =
+    "whitespace-nowrap rounded-full bg-muted px-2.5 py-[3px] text-[11.5px] font-bold";
   const ARROW =
-    "flex h-[22px] w-7 items-center justify-center rounded-lg bg-muted text-[11px] disabled:opacity-40";
+    "flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-[11px] disabled:opacity-40 sm:h-[22px] sm:w-7";
 
   return (
     <li
@@ -151,7 +152,7 @@ function QueueRow({
       style={style}
       data-testid={`queue-item-${item.id}`}
       className={cn(
-        "rise-in flex items-center gap-4 rounded-[20px] px-5 py-4 transition-[transform,translate,scale,box-shadow,background-color] duration-[250ms] hover:translate-x-[5px]",
+        "rise-in flex flex-wrap items-center gap-x-3 gap-y-3 rounded-[20px] px-4 py-4 transition-[transform,translate,scale,box-shadow,background-color] duration-[250ms] sm:flex-nowrap sm:gap-4 sm:px-5 sm:hover:translate-x-[5px]",
         selected ? "bg-muted shadow-[inset_0_0_0_2px_var(--primary)]" : "bg-card",
         isDragging && "opacity-60 shadow-lg",
       )}
@@ -206,7 +207,7 @@ function QueueRow({
           {cooldown.phase === "confirmed" && (
             <span className="rounded-full bg-c4 px-2.5 py-[3px] text-[11.5px] font-extrabold text-on">
               <span data-testid={`cooldown-${item.id}`}>
-                {t("cooldown.confirmed", { date: cooldown.on })}
+                {t("cooldown.confirmed", { date: formatDay(cooldown.on, locale) })}
               </span>
             </span>
           )}
@@ -230,61 +231,64 @@ function QueueRow({
         </div>
       </div>
 
-      <div className="text-right">
-        <div className="text-[16.5px] font-extrabold">{money(item.price)}</div>
-        <div
-          className={cn("mt-[3px] text-[12.5px] font-bold", !month && "text-destructive")}
-          data-testid={`month-${item.id}`}
-        >
-          {month ? formatMonth(month, locale) : notAffordableLabel}
-        </div>
-      </div>
-
-      <div className="flex items-center gap-1">
-        {reorderable && (
-          <div className="flex flex-col gap-1">
-            <button
-              type="button"
-              className={ARROW}
-              disabled={index === 0}
-              aria-label={t("moveUp", { name: item.name })}
-              onClick={() => onMove(index, -1)}
-            >
-              ▲
-            </button>
-            <button
-              type="button"
-              className={ARROW}
-              disabled={index === total - 1}
-              aria-label={t("moveDown", { name: item.name })}
-              onClick={() => onMove(index, 1)}
-            >
-              ▼
-            </button>
+      {/* On a phone the price and the buttons get their own line under the name, so nothing overlaps. */}
+      <div className="flex w-full items-center justify-between gap-3 border-t border-border pt-3 sm:contents">
+        <div className="sm:text-right">
+          <div className="text-[16.5px] font-extrabold">{money(item.price)}</div>
+          <div
+            className={cn("mt-[3px] text-[12.5px] font-bold", !month && "text-destructive")}
+            data-testid={`month-${item.id}`}
+          >
+            {month ? formatMonth(month, locale) : notAffordableLabel}
           </div>
-        )}
-        {onEdit && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label={t("edit", { name: item.name })}
-            onClick={() => onEdit(item)}
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-        )}
-        {onDelete && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label={t("delete", { name: item.name })}
-            onClick={() => onDelete(item)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        )}
+        </div>
+
+        <div className="flex items-center gap-1">
+          {reorderable && (
+            <div className="flex gap-1 sm:flex-col">
+              <button
+                type="button"
+                className={ARROW}
+                disabled={index === 0}
+                aria-label={t("moveUp", { name: item.name })}
+                onClick={() => onMove(index, -1)}
+              >
+                ▲
+              </button>
+              <button
+                type="button"
+                className={ARROW}
+                disabled={index === total - 1}
+                aria-label={t("moveDown", { name: item.name })}
+                onClick={() => onMove(index, 1)}
+              >
+                ▼
+              </button>
+            </div>
+          )}
+          {onEdit && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={t("edit", { name: item.name })}
+              onClick={() => onEdit(item)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
+          {onDelete && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={t("delete", { name: item.name })}
+              onClick={() => onDelete(item)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
     </li>
   );

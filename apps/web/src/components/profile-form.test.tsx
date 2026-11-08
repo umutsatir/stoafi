@@ -58,7 +58,7 @@ describe("ProfileForm settings", () => {
 
       fireEvent.change(screen.getByLabelText("Country"), { target: { value: "TR" } });
       expect(screen.getByLabelText("Annual inflation expectation")).toHaveValue("38");
-      expect(screen.getByText(/approximate snapshot \(2025-06\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/approximate snapshot \(June 2025\)/i)).toBeInTheDocument();
 
       type("Annual inflation expectation", "45");
       expect(screen.getByLabelText("Annual inflation expectation")).toHaveValue("45");
@@ -117,7 +117,7 @@ describe("ProfileForm settings", () => {
     it("suggests the month the target is reached at the current pace", () => {
       // needs 1,000.00 x 6 = 6,000.00 target, surplus 1,000.00 a month -> 6 months
       renderWithIntl(<ProfileForm initial={initial} currentMonth="2026-09" onSave={vi.fn()} />);
-      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("2027-03");
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("March 2027");
     });
 
     it("updates as the target months change", () => {
@@ -125,7 +125,7 @@ describe("ProfileForm settings", () => {
       for (let i = 0; i < 3; i++) {
         fireEvent.click(screen.getByRole("button", { name: "Fewer months" }));
       }
-      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("2026-12");
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("December 2026");
     });
 
     it("says so when the target is already met", () => {
@@ -162,7 +162,7 @@ describe("ProfileForm settings", () => {
         />,
       );
       // surplus 500.00 -> 12 months
-      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("2027-09");
+      expect(screen.getByTestId("emergency-fund-caption")).toHaveTextContent("September 2027");
     });
 
     it("is hidden without a current month", () => {

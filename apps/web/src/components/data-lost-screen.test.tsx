@@ -60,7 +60,7 @@ describe("DataLostScreen", () => {
     await saveDailyCopy(db, "2026-10-04", json, "2026-10-04T08:00:00.000Z");
     const onRestored = vi.fn();
     renderWithIntl(<DataLostScreen onRestored={onRestored} onStartFresh={vi.fn()} />);
-    fireEvent.click(await screen.findByRole("button", { name: "Copy from 2026-10-04" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Copy from Oct 4, 2026" }));
     await waitFor(() => expect(onRestored).toHaveBeenCalledTimes(1));
     expect(await db.profile.get("singleton")).toBeDefined();
   });

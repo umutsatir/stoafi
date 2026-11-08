@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDay } from "@/lib/format-month";
 import { X } from "lucide-react";
 import { decisionStats, filterDecisions, type Decision } from "@stoafi/core";
 import { Card } from "@/components/ui/card";
@@ -27,6 +28,7 @@ export interface DecisionLogProps {
 
 export function DecisionLog({ decisions, hourlyNetIncome, onDelete, onAddBack }: DecisionLogProps) {
   const t = useTranslations("decisions");
+  const locale = useLocale();
   const [filter, setFilter] = useState<Decision["outcome"] | "all">("all");
   const stats = decisionStats(decisions, hourlyNetIncome);
   const rows = [...filterDecisions(decisions, filter)].sort((a, b) =>
@@ -114,7 +116,7 @@ export function DecisionLog({ decisions, hourlyNetIncome, onDelete, onAddBack }:
                   <div className="min-w-0 flex-1 basis-40">
                     <p className="truncate text-base font-extrabold">{name}</p>
                     <p className="mt-0.5 text-[12.5px] text-muted-foreground">
-                      {d.timestamp.slice(0, 10)}
+                      {formatDay(d.timestamp, locale)}
                       {acceptedRisk && (
                         <span data-testid={`risk-${d.id}`}> · {t("riskAccepted")}</span>
                       )}
