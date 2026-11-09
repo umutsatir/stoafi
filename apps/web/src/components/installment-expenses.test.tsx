@@ -40,7 +40,7 @@ describe("InstallmentExpenses", () => {
     const row = screen.getByTestId("installment-expense-Fridge");
     expect(row).toHaveTextContent("Fridge");
     expect(row).toHaveTextContent("₺1,500.00");
-    expect(row).toHaveTextContent("2027-02");
+    expect(row).toHaveTextContent("February 2027");
   });
 
   it("totals this month's installments", () => {

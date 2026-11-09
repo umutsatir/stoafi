@@ -58,33 +58,36 @@ export function SalaryList({ salaries, onAdd, onEdit, onRemove }: SalaryListProp
             >
               {salary.payDay ?? 1}
             </span>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-[9rem] flex-1">
               <p className="truncate text-[15px] font-bold">{salary.label}</p>
               <p className="text-xs text-muted-foreground">
                 {t("row.day", { day: salary.payDay ?? 1 })}
               </p>
             </div>
-            <span className="text-[17px] font-extrabold text-success">
-              <Money value={salary.monthly} />
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label={t("editRow", { name: salary.label })}
-              onClick={() => onEdit(index)}
-            >
-              <Pencil className="h-4 w-4" aria-hidden="true" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label={t("removeRow", { name: salary.label })}
-              onClick={() => onRemove(index)}
-            >
-              <Trash2 className="h-4 w-4" aria-hidden="true" />
-            </Button>
+            {/* Wraps under the name on a narrow screen instead of squeezing it to a letter. */}
+            <div className="ml-auto flex items-center gap-1">
+              <span className="text-[17px] font-extrabold text-success">
+                <Money value={salary.monthly} />
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={t("editRow", { name: salary.label })}
+                onClick={() => onEdit(index)}
+              >
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={t("removeRow", { name: salary.label })}
+                onClick={() => onRemove(index)}
+              >
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </div>
           </li>
         ))}
       </ul>

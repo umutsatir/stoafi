@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDay } from "@/lib/format-month";
 import { DatabaseBackup, FileUp, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { notifyError } from "@/components/ui/toaster";
@@ -22,6 +23,7 @@ export interface DataLostScreenProps {
  */
 export function DataLostScreen({ onRestored, onStartFresh }: DataLostScreenProps) {
   const t = useTranslations("dataLost");
+  const locale = useLocale();
   const fileInput = useRef<HTMLInputElement>(null);
   const [copies, setCopies] = useState<CopyInfo[]>([]);
 
@@ -88,7 +90,9 @@ export function DataLostScreen({ onRestored, onStartFresh }: DataLostScreenProps
                     onClick={async () => restore(await readCopy(db, copy.id))}
                   >
                     <History className="h-4 w-4" aria-hidden="true" />
-                    {copy.beforeImport ? t("beforeImport") : t("copyOf", { date: copy.id })}
+                    {copy.beforeImport
+                      ? t("beforeImport")
+                      : t("copyOf", { date: formatDay(copy.id, locale) })}
                   </Button>
                 </li>
               ))}

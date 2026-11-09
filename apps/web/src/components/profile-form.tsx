@@ -21,6 +21,7 @@ import { Field } from "@/components/ui/field";
 import { Stepper } from "@/components/ui/stepper";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useMoney } from "@/lib/use-money";
+import { formatMonth } from "@/lib/format-month";
 import { stagger } from "@/lib/utils";
 import { MoneyInput } from "./money-input";
 import { PercentInput } from "./percent-input";
@@ -74,7 +75,9 @@ export function ProfileForm({
       installmentLoad;
     if (savings >= Math.round(needs * fundMonths)) return t("emergencyFundReached");
     const month = suggestedEmergencyFundMonth(savings, needs, fundMonths, surplus, currentMonth);
-    return month ? t("emergencyFundOnTrack", { month }) : t("emergencyFundUnreachable");
+    return month
+      ? t("emergencyFundOnTrack", { month: formatMonth(month, locale) })
+      : t("emergencyFundUnreachable");
   })();
 
   function handleSubmit(event: FormEvent) {
@@ -191,7 +194,9 @@ export function ProfileForm({
             htmlFor="inflation"
             hint={
               country
-                ? t("suggestedInflationCaption", { asOf: INFLATION_DATA_AS_OF })
+                ? t("suggestedInflationCaption", {
+                    asOf: formatMonth(INFLATION_DATA_AS_OF, locale),
+                  })
                 : t("inflationHint")
             }
           >

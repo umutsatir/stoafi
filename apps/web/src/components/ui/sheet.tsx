@@ -26,7 +26,7 @@ export function SheetContent({ title, description, children, className }: SheetC
       <DialogPrimitive.Content
         {...(description ? {} : { "aria-describedby": undefined })}
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100%-2rem)] max-w-[520px] -translate-x-1/2 -translate-y-1/2 flex-col gap-[18px] overflow-y-auto rounded-card bg-card px-6 py-7 shadow-2xl sm:px-[34px] sm:py-8",
+          "fixed left-1/2 top-1/2 z-50 flex max-h-[90dvh] w-[calc(100%-2rem)] max-w-[520px] -translate-x-1/2 -translate-y-1/2 flex-col gap-[18px] overflow-y-auto rounded-card bg-card px-6 py-7 shadow-2xl sm:px-[34px] sm:py-8",
           "data-[state=open]:animate-[dialog-pop_450ms_cubic-bezier(.2,.8,.2,1)] data-[state=closed]:animate-[dialog-out_160ms_ease-in_forwards]",
           className,
         )}

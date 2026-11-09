@@ -18,6 +18,14 @@ import {
 } from "@/components/ui/table";
 import { useAppStore } from "@/store";
 import { MoneyInput } from "./money-input";
+import { cn } from "@/lib/utils";
+
+// On a phone the table would scroll sideways and hide the "Select" button, so each offer becomes a
+// small card: two columns, every value carrying its own label (the header row is hidden).
+const MOBILE_ROW =
+  "max-sm:grid max-sm:grid-cols-2 max-sm:gap-x-3 max-sm:gap-y-2.5 max-sm:rounded-[18px] max-sm:border-0 max-sm:bg-muted/60 max-sm:p-3";
+const MOBILE_CELL =
+  "max-sm:block max-sm:p-0 max-sm:before:mb-1 max-sm:before:block max-sm:before:text-xs max-sm:before:font-bold max-sm:before:text-muted-foreground max-sm:before:content-[attr(data-label)]";
 
 export interface InstallmentCalculatorProps {
   cashPrice: number;
@@ -79,8 +87,8 @@ export function InstallmentCalculator({
         <p className="mt-1 text-[12.5px] font-semibold text-muted-foreground">{t("hint")}</p>
       </div>
       <LessonLink lessonId="time-value-of-money" testId="lesson-link-time-value-of-money" />
-      <Table>
-        <TableHeader>
+      <Table className="max-sm:block">
+        <TableHeader className="max-sm:hidden">
           <TableRow>
             <TableHead>{t("months")}</TableHead>
             <TableHead>{t("monthlyPayment")}</TableHead>
@@ -90,26 +98,34 @@ export function InstallmentCalculator({
             <TableHead />
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="max-sm:flex max-sm:flex-col max-sm:gap-2.5">
           {rows.map((row, index) => {
             const result = resultByKey.get(row.key);
             const n = index + 1;
             return (
-              <TableRow key={row.key} data-testid={`offer-row-${row.months}`}>
-                <TableCell>
+              <TableRow
+                key={row.key}
+                data-testid={`offer-row-${row.months}`}
+                className={MOBILE_ROW}
+              >
+                <TableCell data-label={t("months")} className={MOBILE_CELL}>
                   <Input
                     aria-label={t("monthsAriaLabel", { index: n })}
                     type="number"
                     min={1}
                     step={1}
-                    className="w-24 text-[15px]"
+                    className="w-full text-[15px] sm:w-24"
                     value={row.months}
                     onChange={(e) =>
                       patch(row.key, { months: Math.max(0, Math.floor(Number(e.target.value))) })
                     }
                   />
                 </TableCell>
-                <TableCell data-testid={`monthly-payment-${row.months}`} className="min-w-[180px]">
+                <TableCell
+                  data-testid={`monthly-payment-${row.months}`}
+                  data-label={t("monthlyPayment")}
+                  className={cn(MOBILE_CELL, "sm:min-w-[180px]")}
+                >
                   <MoneyInput
                     id={`offer-payment-${row.key}`}
                     aria-label={t("paymentAriaLabel", { index: n })}
@@ -118,13 +134,25 @@ export function InstallmentCalculator({
                     onChange={(monthlyPayment) => patch(row.key, { monthlyPayment })}
                   />
                 </TableCell>
-                <TableCell data-testid={`total-paid-${row.months}`}>
+                <TableCell
+                  data-testid={`total-paid-${row.months}`}
+                  data-label={t("totalPaid")}
+                  className={MOBILE_CELL}
+                >
                   {result ? money(row.months * row.monthlyPayment) : t("incomplete")}
                 </TableCell>
-                <TableCell data-testid={`pv-${row.months}`}>
+                <TableCell
+                  data-testid={`pv-${row.months}`}
+                  data-label={t("pv")}
+                  className={MOBILE_CELL}
+                >
                   {result ? money(Math.round(result.pv)) : t("incomplete")}
                 </TableCell>
-                <TableCell data-testid={`real-saving-${row.months}`}>
+                <TableCell
+                  data-testid={`real-saving-${row.months}`}
+                  data-label={t("realSaving")}
+                  className={MOBILE_CELL}
+                >
                   {result ? (
                     <span
                       className={`rounded-full bg-muted px-2.5 py-0.5 text-xs font-extrabold ${
@@ -137,7 +165,7 @@ export function InstallmentCalculator({
                     t("incomplete")
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell className="max-sm:flex max-sm:items-end max-sm:justify-end max-sm:p-0">
                   <div className="flex items-center justify-end gap-1">
                     {result && (
                       <Button type="button" size="sm" onClick={() => onSelect(result)}>

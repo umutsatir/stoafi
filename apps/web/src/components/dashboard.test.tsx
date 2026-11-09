@@ -135,7 +135,7 @@ describe("Dashboard", () => {
     expect(list.getAllByRole("listitem")).toHaveLength(3);
     expect(list.getByText("Headphones")).toBeInTheDocument();
     expect(list.queryByText("Lamp")).not.toBeInTheDocument();
-    expect(screen.getByTestId("next-month-Headphones")).toHaveTextContent("2026-09");
+    expect(screen.getByTestId("next-month-Headphones")).toHaveTextContent("September 2026");
   });
 
   it("flags an item that cannot be afforded within the horizon", () => {
@@ -210,7 +210,7 @@ describe("Dashboard", () => {
       profile: { ...profile, livingExpenses: 100_000 },
       queueItems: [waiting("Boiler", 0, 10_000, true)],
     });
-    expect(screen.getByTestId("next-month-Boiler")).toHaveTextContent("2026-09");
+    expect(screen.getByTestId("next-month-Boiler")).toHaveTextContent("September 2026");
   });
 
   it("takes sinking-fund set-asides off what is left in the months they run", () => {

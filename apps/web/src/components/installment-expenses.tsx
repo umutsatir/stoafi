@@ -1,6 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatMonth } from "@/lib/format-month";
 import { addMonths, compareMonths, monthsBetween, type Month, type QueueItem } from "@stoafi/core";
 import { Trash2 } from "lucide-react";
 import { useMoney } from "@/lib/use-money";
@@ -17,6 +18,7 @@ export interface InstallmentExpensesProps {
 /** Installment purchases as expenses. Read-only view of what the queue derived; nothing is entered here. */
 export function InstallmentExpenses({ items, month, onRemove }: InstallmentExpensesProps) {
   const t = useTranslations("installmentExpenses");
+  const locale = useLocale();
   const money = useMoney();
 
   const running = items.flatMap((item) => {
@@ -58,7 +60,10 @@ export function InstallmentExpenses({ items, month, onRemove }: InstallmentExpen
                 >
                   <span className="flex-1 font-medium">{item.name}</span>
                   <span className="text-muted-foreground">
-                    {t("row", { amount: money(monthlyPayment), month: lastMonth })}
+                    {t("row", {
+                      amount: money(monthlyPayment),
+                      month: formatMonth(lastMonth, locale),
+                    })}
                   </span>
                   <Button
                     type="button"

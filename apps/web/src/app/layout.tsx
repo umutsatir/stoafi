@@ -56,7 +56,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <IntlProvider>
           <div className="min-h-screen">
             <Nav />
-            <div className="min-w-0 px-4 pb-28 pt-2 md:px-8 md:pb-16">
+            <div className="min-w-0 px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-2 md:px-8 md:pb-16">
               <div className="mx-auto max-w-[1240px]">
                 <AppBootstrap>
                   <PageTransition>{children}</PageTransition>

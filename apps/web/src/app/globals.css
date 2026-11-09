@@ -236,6 +236,8 @@ body {
   }
 }
 .sheen {
+  /* Parked off the button while it waits for its first pass, and for good when motion is reduced. */
+  transform: skewX(-20deg) translateX(-140%);
   animation: sheen 3.6s 1.4s infinite;
 }
 

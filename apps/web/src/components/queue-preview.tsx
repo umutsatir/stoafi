@@ -313,18 +313,18 @@ export function QueuePreview({
             </div>
           )}
           <div className="mt-auto flex flex-col gap-2 pt-3.5">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => setConfirming(true)}
-                className="press flex-1 rounded-full bg-primary p-[13px] text-[13.5px] font-extrabold text-primary-foreground"
+                className="press flex-[1_1_8rem] rounded-full bg-primary px-4 py-[13px] text-[13.5px] font-extrabold text-primary-foreground"
               >
                 {hasBreach ? t("buyAnyway") : t("confirm")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowInstallments((open) => !open)}
-                className={`${SOFT_BTN} px-4 py-[13px]`}
+                className={`${SOFT_BTN} flex-[1_1_auto] px-4 py-[13px]`}
               >
                 {t("calculateWithInstallments")}
               </button>
@@ -388,7 +388,7 @@ export function QueuePreview({
               >
                 <span>
                   {suggestedMonth
-                    ? t("suggestedMonth", { month: suggestedMonth })
+                    ? t("suggestedMonth", { month: formatMonth(suggestedMonth, locale) })
                     : t("suggestedNone")}
                 </span>
                 {suggestedMonth && suggestedMonth !== firstMonth && (
@@ -400,7 +400,7 @@ export function QueuePreview({
                       setShiftedMonth(null);
                     }}
                   >
-                    {t("previewIn", { month: suggestedMonth })}
+                    {t("previewIn", { month: formatMonth(suggestedMonth, locale) })}
                   </button>
                 )}
               </div>
@@ -432,7 +432,10 @@ export function QueuePreview({
                 className="flex flex-wrap items-center justify-between gap-2 text-[13px] font-bold"
               >
                 <span>
-                  {t("cardTimingTip", { days: tip.extraFloatDays, month: tip.newDueMonth })}
+                  {t("cardTimingTip", {
+                    days: tip.extraFloatDays,
+                    month: formatMonth(tip.newDueMonth, locale),
+                  })}
                 </span>
                 <button
                   type="button"

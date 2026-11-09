@@ -172,7 +172,7 @@ describe("QueuePage purchase flow", () => {
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Headphones" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
-    expect(screen.getByTestId("suggested-month")).toHaveTextContent("2026-09");
+    expect(screen.getByTestId("suggested-month")).toHaveTextContent("September 2026");
   });
 
   it("offers the saved cards in the preview", () => {

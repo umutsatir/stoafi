@@ -253,7 +253,7 @@ export function Nav() {
 
       <nav
         aria-label={t("mobileAriaLabel")}
-        className="fixed inset-x-3 bottom-3 z-40 rounded-full bg-card px-1 pb-[env(safe-area-inset-bottom)] shadow-lg md:hidden"
+        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 rounded-full bg-card px-1 shadow-lg md:hidden"
       >
         <ul className="grid grid-cols-5">
           {TAB_ROUTES.map(({ route: r, labelKey }) => {
