@@ -65,11 +65,9 @@ describe("DecisionLog", () => {
 
   it("lists decisions newest first with their date", () => {
     renderWithIntl(<DecisionLog decisions={decisions} />);
-    const dates = screen
-      .getAllByTestId(/^decision-/)
-      .map((row) => /\d{4}-\d{2}-\d{2}/.exec(row.textContent ?? "")?.[0] ?? "");
-    expect(dates).toEqual([...dates].sort().reverse());
-    expect(screen.getByTestId("decision-d1")).toHaveTextContent("2026-10");
+    const order = screen.getAllByTestId(/^decision-/).map((row) => row.dataset.testid);
+    expect(order).toEqual(["decision-d1", "decision-d2", "decision-d3", "decision-d4"]);
+    expect(screen.getByTestId("decision-d1")).toHaveTextContent("Oct 3, 2026");
   });
 
   it("shows the item name recorded with the decision, never the raw id", () => {

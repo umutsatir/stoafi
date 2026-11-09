@@ -44,3 +44,16 @@ describe("SettingsPanel", () => {
     expect(onImport).not.toHaveBeenCalled();
   });
 });
+
+describe("SettingsPanel import of an unreadable file", () => {
+  it("says the file could not be read instead of doing nothing", async () => {
+    const onImport = vi.fn().mockRejectedValue(new SyntaxError("Unexpected token"));
+    renderWithIntl(<SettingsPanel onExport={vi.fn()} onImport={onImport} />);
+    const input = document.getElementById("import-file") as HTMLInputElement;
+    const file = new File(["not json"], "x.json", { type: "application/json" });
+    Object.defineProperty(file, "text", { value: () => Promise.resolve("not json") });
+    fireEvent.change(input, { target: { files: [file] } });
+    fireEvent.click(await screen.findByRole("button", { name: "Replace my data" }));
+    expect(await screen.findByTestId("import-errors")).toHaveTextContent("could not be read");
+  });
+});

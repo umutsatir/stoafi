@@ -162,7 +162,7 @@ describe("QueuePreview card timing tip", () => {
     fireEvent.change(screen.getByLabelText("Pay with card"), { target: { value: "c1" } });
     const tip = screen.getByTestId("card-timing-tip");
     expect(tip).toHaveTextContent("31 extra float days");
-    expect(tip).toHaveTextContent("2026-11");
+    expect(tip).toHaveTextContent("November 2026");
   });
 
   it("accepting the tip shifts the confirmed commitment's payment month", () => {
@@ -391,9 +391,9 @@ describe("QueuePreview skip, postpone, first fitting month and card choice", () 
   it("shows the first month that fits and previews that month on request", () => {
     const { onConfirm } = renderIt({ suggestedMonth: "2026-11" });
     openSure();
-    expect(screen.getByTestId("suggested-month")).toHaveTextContent("2026-11");
+    expect(screen.getByTestId("suggested-month")).toHaveTextContent("November 2026");
 
-    fireEvent.click(screen.getByRole("button", { name: "Preview in 2026-11" }));
+    fireEvent.click(screen.getByRole("button", { name: "Preview in November 2026" }));
     closeSure();
     fireEvent.click(screen.getByRole("button", { name: "Calculate with installments" }));
     fireEvent.click(screen.getByTestId("offer-row-3").querySelector("button") as HTMLElement);

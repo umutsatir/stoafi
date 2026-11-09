@@ -558,11 +558,11 @@
     "bubbles": {
       "moved": "“{name}” moved to {month}",
       "title": "12-month timeline",
-      "hint": "A bubble’s size is its price, its place the month it fits. Click a bubble to pick an item."
+      "hint": "A bubble’s size is its price, its place the month it fits. Pick a bubble to see the item."
     },
     "cash": "Cash",
     "notYet": "not yet",
-    "subtitle": "What you are thinking of buying, in order. Touch a bubble, then click a month to move it. The effect shows at once.",
+    "subtitle": "What you are thinking of buying, in order. Pick a bubble, then pick a month (or drag the bubble there) to move it. The effect shows at once.",
     "cooldown": {
       "askBadge": "Time to decide",
       "askTitle": "Still want it?",
@@ -899,6 +899,7 @@
       "light": "Light",
       "dark": "Dark"
     },
+    "importFailed": "This file could not be read. It should be a backup file (.json) taken from Stoafi.",
     "importConfirmTitle": "Replace your data with this backup?",
     "importConfirmText": "Importing replaces everything stored in this app. Export a backup first if you are not sure.",
     "importConfirm": "Replace my data",

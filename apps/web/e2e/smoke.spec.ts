@@ -385,3 +385,50 @@ test("the emergency fund can be marked as kept in something, with a clean panel 
     await context.close();
   }
 });
+
+test("on a phone, queue rows do not overlap and the installment calculator's Select is reachable", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 360, height: 780 },
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await page.getByRole("button", { name: "Look around with sample data" }).click();
+  await expect(page.getByTestId("demo-banner")).toBeVisible();
+  await page.goto("/queue");
+  await page.locator("label", { hasText: /^List$/ }).click();
+
+  await expect(page.locator('[data-testid^="queue-item-"]').first()).toBeVisible();
+  // Every piece of text in a row (name, chips, price, month) has its own space.
+  const clashes = await page.evaluate(() => {
+    const found: string[] = [];
+    for (const row of document.querySelectorAll('[data-testid^="queue-item-"]')) {
+      const leaves = [...row.querySelectorAll("*")].filter(
+        (el) => el.children.length === 0 && (el.textContent ?? "").trim() !== "",
+      );
+      const boxes = leaves.map((el) => ({ text: el.textContent, r: el.getBoundingClientRect() }));
+      boxes.forEach(({ text: pText, r: p }, a) => {
+        for (const { text: qText, r: q } of boxes.slice(a + 1)) {
+          const clash =
+            p.left < q.right - 1 &&
+            q.left < p.right - 1 &&
+            p.top < q.bottom - 1 &&
+            q.top < p.bottom - 1;
+          if (clash) found.push(`${pText} / ${qText}`);
+        }
+      });
+    }
+    return found;
+  });
+  expect(clashes).toEqual([]);
+
+  await page.getByRole("button", { name: "Calculate with installments" }).click();
+  const select = page.getByRole("dialog").getByRole("button", { name: "Select" }).first();
+  await expect(select).toBeVisible();
+  const box = await select.boundingBox();
+  expect(box && box.x + box.width <= 360, "Select sits inside the screen").toBe(true);
+  await context.close();
+});

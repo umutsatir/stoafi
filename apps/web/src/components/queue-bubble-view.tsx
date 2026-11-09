@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { useLocale } from "next-intl";
 import type { Month, QueueItem } from "@stoafi/core";
 import { formatMonth } from "@/lib/format-month";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { useTranslations } from "next-intl";
 
 export interface QueueBubbleViewProps {
@@ -19,7 +20,9 @@ export interface QueueBubbleViewProps {
   onPin?: (item: QueueItem, month: Month) => void;
 }
 
-const COLUMN = 93;
+const WIDE_COLUMN = 93;
+// On a phone five months fit on screen instead of three; the rest is a sideways scroll.
+const NARROW_COLUMN = 62;
 const BAR_AREA = 170;
 
 /** The 12-month timeline: a bar per month for what is free, and a bubble per item sitting on its month. */
@@ -33,7 +36,11 @@ export function QueueBubbleView({
 }: QueueBubbleViewProps) {
   const locale = useLocale();
   const t = useTranslations("queue.bubbles");
+  const narrow = useMediaQuery("(max-width: 639px)");
+  const COLUMN = narrow ? NARROW_COLUMN : WIDE_COLUMN;
+  const scale = COLUMN / WIDE_COLUMN;
   const stage = useRef<HTMLDivElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
   const [drag, setDrag] = useState<{
     id: string;
     startX: number;
@@ -89,7 +96,8 @@ export function QueueBubbleView({
   // fixed height, and only the picked one (or a month with a single bubble) carries a name label, so labels never sit on a neighbour.
   const GAP = 16;
   const STACK_MAX = 190;
-  const rawSize = (item: QueueItem) => Math.min(106, 52 + (item.price / 42_000_00) * 54);
+  const rawSize = (item: QueueItem) =>
+    Math.min(106, 52 + (item.price / 42_000_00) * 54) * Math.max(scale, 0.8);
   const colOf = (item: QueueItem) => {
     const month = monthByItemId.get(item.id);
     return month ? (monthIndex.get(month) ?? months.length - 1) : months.length - 1;
@@ -106,7 +114,7 @@ export function QueueBubbleView({
     const col = colOf(item);
     const group = crowd[col] ?? { count: 1, total: 0 };
     const factor = Math.min(1, STACK_MAX / Math.max(group.total, 1));
-    const size = Math.max(34, rawSize(item) * factor);
+    const size = Math.max(narrow ? 30 : 34, rawSize(item) * factor);
     const barHeight = (Math.max(0, months[col]?.left ?? 0) / max) * BAR_AREA;
     const offset = stacked[col] ?? 0;
     stacked[col] = offset + size + GAP;
@@ -120,135 +128,150 @@ export function QueueBubbleView({
     return m ? (monthIndex.get(m) ?? -1) : -1;
   })();
 
+  // The picked item's month may sit off to the right on a narrow screen: bring it into view.
+  useEffect(() => {
+    const box = scroller.current;
+    if (!box || selectedMonth < 0) return;
+    const left = selectedMonth * COLUMN;
+    if (left < box.scrollLeft || left + COLUMN > box.scrollLeft + box.clientWidth) {
+      box.scrollTo?.({ left: Math.max(0, left - COLUMN), behavior: "smooth" });
+    }
+  }, [selectedMonth, COLUMN]);
+
   return (
-    <div className="pop-in overflow-x-auto rounded-card bg-card px-7 pb-3.5 pt-[26px]">
-      <h3 className="mb-0.5 text-lg font-extrabold tracking-[-0.03em]">{t("title")}</h3>
-      <p className="mb-1.5 text-[12.5px] text-muted-foreground">{t("hint")}</p>
-      <div ref={stage} className="relative" style={{ width: COLUMN * months.length, height }}>
-        <div className="absolute inset-x-0 bottom-0 flex h-[200px] items-end">
-          {months.map((m, i) => (
-            <button
-              type="button"
+    <div className="pop-in rounded-card bg-card pb-3.5 pt-[26px]">
+      <div className="px-5 sm:px-7">
+        <h3 className="mb-0.5 text-lg font-extrabold tracking-[-0.03em]">{t("title")}</h3>
+        <p className="mb-1.5 text-[12.5px] text-muted-foreground">{t("hint")}</p>
+      </div>
+      <div ref={scroller} className="overflow-x-auto overscroll-x-contain px-5 sm:px-7">
+        <div ref={stage} className="relative" style={{ width: COLUMN * months.length, height }}>
+          <div className="absolute inset-x-0 bottom-0 flex h-[200px] items-end">
+            {months.map((m, i) => (
+              <button
+                type="button"
+                key={m.month}
+                tabIndex={onPin && selectedId ? 0 : -1}
+                aria-label={formatMonth(m.month, locale)}
+                disabled={!onPin || !selectedId}
+                onClick={() => {
+                  const sel = items.find((it) => it.id === selectedId);
+                  if (sel && onPin) onPin(sel, m.month);
+                }}
+                onMouseEnter={() => setHoverMonth(i)}
+                onMouseLeave={() => setHoverMonth(null)}
+                className="flex h-[200px] cursor-pointer items-end justify-center rounded-t-[18px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default"
+                style={{ width: COLUMN }}
+              >
+                <div
+                  aria-hidden="true"
+                  className={cn(
+                    "w-[40px] rounded-t-[18px] rounded-b-lg transition-[background-color,box-shadow] duration-[250ms] sm:w-[54px]",
+                    selectedMonth === i ? "bg-c1 shadow-[0_0_0_3px_var(--foreground)]" : "bg-muted",
+                    overCol === i && "shadow-[0_0_0_3px_var(--primary)]",
+                    overCol === null &&
+                      hoverMonth === i &&
+                      selectedMonth !== i &&
+                      "shadow-[0_0_0_2px_var(--border)]",
+                  )}
+                  style={{ height: Math.max(4, (Math.max(0, m.left) / max) * BAR_AREA) }}
+                />
+              </button>
+            ))}
+          </div>
+          {placements.map(({ item, rank, col, size, bottom, crowded }) => {
+            const on = item.id === selectedId;
+            return (
+              <div key={item.id}>
+                <div
+                  className="absolute z-[1] [animation:float_4.2s_ease-in-out_infinite]"
+                  style={{
+                    left: col * COLUMN + COLUMN / 2 - size / 2,
+                    bottom,
+                    width: size,
+                    height: size,
+                    animationDelay: `${rank * 0.6}s`,
+                    zIndex: drag?.id === item.id && drag.moved ? 6 : on ? 3 : 1,
+                  }}
+                >
+                  <button
+                    type="button"
+                    onPointerDown={(e) => dragStart(e, item)}
+                    onPointerMove={dragMove}
+                    onPointerUp={(e) => dragEnd(e, item)}
+                    onPointerCancel={() => {
+                      setDrag(null);
+                      setOverCol(null);
+                    }}
+                    onClick={() => {
+                      if (justDragged.current) {
+                        justDragged.current = false;
+                        return;
+                      }
+                      onSelect(item);
+                    }}
+                    aria-label={item.name}
+                    title={item.name}
+                    aria-pressed={on}
+                    style={
+                      drag?.id === item.id && drag.moved
+                        ? { translate: `${drag.dx}px ${drag.dy}px`, transition: "none" }
+                        : undefined
+                    }
+                    className={cn(
+                      "flex h-full w-full items-center justify-center rounded-full text-[19px] font-extrabold text-on transition-[transform,translate,scale,box-shadow] duration-[400ms] [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      onPin && "cursor-grab touch-none select-none active:cursor-grabbing",
+                      item.isNeed ? "bg-c4" : item.installmentPurchase ? "bg-c3" : "bg-c2",
+                      on
+                        ? "scale-[1.18] shadow-[0_0_0_5px_var(--card),0_0_0_8px_var(--foreground)]"
+                        : "shadow-[0_6px_16px_rgb(0_0_0/0.12)]",
+                    )}
+                  >
+                    {rank + 1}
+                  </button>
+                </div>
+                <div
+                  className={cn(
+                    "pointer-events-none absolute z-[1] text-[11.5px] font-bold leading-tight",
+                    crowded
+                      ? "max-w-[120px] rounded-lg bg-card/90 px-1.5 py-0.5 text-left"
+                      : "text-center",
+                    crowded && !on && "hidden",
+                    on && !crowded && "rounded-lg bg-card/90 py-0.5",
+                  )}
+                  style={
+                    crowded
+                      ? {
+                          // Beside the bubble, so it never lands on the one stacked above.
+                          left: col * COLUMN + COLUMN / 2 + (size * 1.18) / 2 + 6,
+                          bottom: bottom + size / 2 - 8,
+                          zIndex: 3,
+                        }
+                      : {
+                          left: col * COLUMN + 1,
+                          width: COLUMN - 3,
+                          bottom: bottom + size * (on ? 1.09 : 1) + 10,
+                          zIndex: on ? 3 : 1,
+                        }
+                  }
+                >
+                  {item.name}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-1.5 flex" style={{ width: COLUMN * months.length }}>
+          {months.map((m) => (
+            <div
               key={m.month}
-              tabIndex={onPin && selectedId ? 0 : -1}
-              aria-label={formatMonth(m.month, locale)}
-              disabled={!onPin || !selectedId}
-              onClick={() => {
-                const sel = items.find((it) => it.id === selectedId);
-                if (sel && onPin) onPin(sel, m.month);
-              }}
-              onMouseEnter={() => setHoverMonth(i)}
-              onMouseLeave={() => setHoverMonth(null)}
-              className="flex h-[200px] cursor-pointer items-end justify-center rounded-t-[18px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default"
+              className="text-center text-xs font-bold text-muted-foreground"
               style={{ width: COLUMN }}
             >
-              <div
-                aria-hidden="true"
-                className={cn(
-                  "w-[54px] rounded-t-[18px] rounded-b-lg transition-[background-color,box-shadow] duration-[250ms]",
-                  selectedMonth === i ? "bg-c1 shadow-[0_0_0_3px_var(--foreground)]" : "bg-muted",
-                  overCol === i && "shadow-[0_0_0_3px_var(--primary)]",
-                  overCol === null &&
-                    hoverMonth === i &&
-                    selectedMonth !== i &&
-                    "shadow-[0_0_0_2px_var(--border)]",
-                )}
-                style={{ height: Math.max(4, (Math.max(0, m.left) / max) * BAR_AREA) }}
-              />
-            </button>
+              {formatMonth(m.month, locale).slice(0, 3)}
+            </div>
           ))}
         </div>
-        {placements.map(({ item, rank, col, size, bottom, crowded }) => {
-          const on = item.id === selectedId;
-          return (
-            <div key={item.id}>
-              <div
-                className="absolute z-[1] [animation:float_4.2s_ease-in-out_infinite]"
-                style={{
-                  left: col * COLUMN + COLUMN / 2 - size / 2,
-                  bottom,
-                  width: size,
-                  height: size,
-                  animationDelay: `${rank * 0.6}s`,
-                  zIndex: drag?.id === item.id && drag.moved ? 6 : on ? 3 : 1,
-                }}
-              >
-                <button
-                  type="button"
-                  onPointerDown={(e) => dragStart(e, item)}
-                  onPointerMove={dragMove}
-                  onPointerUp={(e) => dragEnd(e, item)}
-                  onPointerCancel={() => {
-                    setDrag(null);
-                    setOverCol(null);
-                  }}
-                  onClick={() => {
-                    if (justDragged.current) {
-                      justDragged.current = false;
-                      return;
-                    }
-                    onSelect(item);
-                  }}
-                  aria-label={item.name}
-                  title={item.name}
-                  aria-pressed={on}
-                  style={
-                    drag?.id === item.id && drag.moved
-                      ? { translate: `${drag.dx}px ${drag.dy}px`, transition: "none" }
-                      : undefined
-                  }
-                  className={cn(
-                    "flex h-full w-full items-center justify-center rounded-full text-[19px] font-extrabold text-on transition-[transform,translate,scale,box-shadow] duration-[400ms] [transition-timing-function:cubic-bezier(.3,1.7,.5,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    onPin && "cursor-grab touch-none select-none active:cursor-grabbing",
-                    item.isNeed ? "bg-c4" : item.installmentPurchase ? "bg-c3" : "bg-c2",
-                    on
-                      ? "scale-[1.18] shadow-[0_0_0_5px_var(--card),0_0_0_8px_var(--foreground)]"
-                      : "shadow-[0_6px_16px_rgb(0_0_0/0.12)]",
-                  )}
-                >
-                  {rank + 1}
-                </button>
-              </div>
-              <div
-                className={cn(
-                  "pointer-events-none absolute z-[1] text-[11.5px] font-bold leading-tight",
-                  crowded
-                    ? "max-w-[120px] rounded-lg bg-card/90 px-1.5 py-0.5 text-left"
-                    : "w-[90px] text-center",
-                  crowded && !on && "hidden",
-                  on && !crowded && "rounded-lg bg-card/90 py-0.5",
-                )}
-                style={
-                  crowded
-                    ? {
-                        // Beside the bubble, so it never lands on the one stacked above.
-                        left: col * COLUMN + COLUMN / 2 + (size * 1.18) / 2 + 6,
-                        bottom: bottom + size / 2 - 8,
-                        zIndex: 3,
-                      }
-                    : {
-                        left: col * COLUMN + 1,
-                        bottom: bottom + size * (on ? 1.09 : 1) + 10,
-                        zIndex: on ? 3 : 1,
-                      }
-                }
-              >
-                {item.name}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="mt-1.5 flex" style={{ width: COLUMN * months.length }}>
-        {months.map((m) => (
-          <div
-            key={m.month}
-            className="text-center text-xs font-bold text-muted-foreground"
-            style={{ width: COLUMN }}
-          >
-            {formatMonth(m.month, locale).slice(0, 3)}
-          </div>
-        ))}
       </div>
     </div>
   );

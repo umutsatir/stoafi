@@ -82,7 +82,7 @@ export function ExpenseList({ expenses, month, onAdd, onEdit, onRemove }: Expens
                     >
                       {expense.dueDay ?? ""}
                     </span>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-[9rem] flex-1">
                       <p className="truncate text-[15px] font-bold">{expense.label}</p>
                       <p className="text-xs text-muted-foreground">
                         {[
@@ -100,27 +100,30 @@ export function ExpenseList({ expenses, month, onAdd, onEdit, onRemove }: Expens
                           .join(" · ")}
                       </p>
                     </div>
-                    <span className="text-base font-extrabold">
-                      <Money value={expense.monthly} />
-                    </span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t("editRow", { name: expense.label })}
-                      onClick={() => onEdit(index)}
-                    >
-                      <Pencil className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t("removeRow", { name: expense.label })}
-                      onClick={() => onRemove(index)}
-                    >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </Button>
+                    {/* Wraps under the name on a narrow screen instead of squeezing it to a letter. */}
+                    <div className="ml-auto flex items-center gap-1">
+                      <span className="text-base font-extrabold">
+                        <Money value={expense.monthly} />
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t("editRow", { name: expense.label })}
+                        onClick={() => onEdit(index)}
+                      >
+                        <Pencil className="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t("removeRow", { name: expense.label })}
+                        onClick={() => onRemove(index)}
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                    </div>
                   </li>
                 );
               })}

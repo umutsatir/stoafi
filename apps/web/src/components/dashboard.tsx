@@ -691,7 +691,7 @@ export function Dashboard({
                     <span className="text-sm font-bold">{item.name}</span>
                     <StatusChip tone={scheduled ? "success" : "neutral"}>
                       <span data-testid={`next-month-${item.id}`}>
-                        {scheduled ?? tTimeline("notAffordableYet")}
+                        {scheduled ? formatMonth(scheduled, locale) : tTimeline("notAffordableYet")}
                       </span>
                     </StatusChip>
                   </li>

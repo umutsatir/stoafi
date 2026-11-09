@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { formatDay } from "@/lib/format-month";
 import { CircleCheck, FolderSync, History, ShieldQuestion } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/ui/status-chip";
@@ -22,6 +23,7 @@ export interface DataSafetySettingsProps {
 /** Three layers against losing data: the browser's promise, a backup file kept in sync, copies inside the browser. */
 export function DataSafetySettings({ onRestored }: DataSafetySettingsProps) {
   const t = useTranslations("settings.safety");
+  const locale = useLocale();
   const format = useFormatter();
   const autoBackup = useAppStore((s) => s.autoBackup);
   const setAutoBackup = useAppStore((s) => s.setAutoBackup);
@@ -167,7 +169,9 @@ export function DataSafetySettings({ onRestored }: DataSafetySettingsProps) {
                 className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm"
               >
                 <span>
-                  {copy.beforeImport ? t("copies.beforeImport") : t("copies.of", { date: copy.id })}
+                  {copy.beforeImport
+                    ? t("copies.beforeImport")
+                    : t("copies.of", { date: formatDay(copy.id, locale) })}
                 </span>
                 {confirming === copy.id ? (
                   <span className="flex items-center gap-2">
